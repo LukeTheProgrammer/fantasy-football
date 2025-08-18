@@ -1,0 +1,258 @@
+[
+    {
+        "abbreviation": "ARZ",
+        "location": "Arizona",
+        "name": "Cardinals",
+        "conference": "NFC",
+        "division": "NFC West",
+        "espn_id": 22
+    },
+    {
+        "abbreviation": "ATL",
+        "location": "Atlanta",
+        "name": "Falcons",
+        "conference": "NFC",
+        "division": "NFC South",
+        "espn_id": 1
+    },
+    {
+        "abbreviation": "BAL",
+        "location": "Baltimore",
+        "name": "Ravens",
+        "conference": "AFC",
+        "division": "AFC North",
+        "espn_id": 33
+    },
+    {
+        "abbreviation": "BUF",
+        "location": "Buffalo",
+        "name": "Bills",
+        "conference": "AFC",
+        "division": "AFC East",
+        "espn_id": 2
+    },
+    {
+        "abbreviation": "CAR",
+        "location": "Carolina",
+        "name": "Panthers",
+        "conference": "NFC",
+        "division": "NFC South",
+        "espn_id": 29
+    },
+    {
+        "abbreviation": "CHI",
+        "location": "Chicago",
+        "name": "Bears",
+        "conference": "NFC",
+        "division": "NFC North",
+        "espn_id": 3
+    },
+    {
+        "abbreviation": "CIN",
+        "location": "Cincinnati",
+        "name": "Bengals",
+        "conference": "AFC",
+        "division": "AFC North",
+        "espn_id": 4
+    },
+    {
+        "abbreviation": "CLE",
+        "location": "Cleveland",
+        "name": "Browns",
+        "conference": "AFC",
+        "division": "AFC North",
+        "espn_id": 5
+    },
+    {
+        "abbreviation": "DAL",
+        "location": "Dallas",
+        "name": "Cowboys",
+        "conference": "NFC",
+        "division": "NFC East",
+        "espn_id": 6
+    },
+    {
+        "abbreviation": "DEN",
+        "location": "Denver",
+        "name": "Broncos",
+        "conference": "AFC",
+        "division": "AFC West",
+        "espn_id": 7
+    },
+    {
+        "abbreviation": "DET",
+        "location": "Detroit",
+        "name": "Lions",
+        "conference": "NFC",
+        "division": "NFC North",
+        "espn_id": 8
+    },
+    {
+        "abbreviation": "GB",
+        "location": "Green Bay",
+        "name": "Packers",
+        "conference": "NFC",
+        "division": "NFC North",
+        "espn_id": 9
+    },
+    {
+        "abbreviation": "HOU",
+        "location": "Houston",
+        "name": "Texans",
+        "conference": "AFC",
+        "division": "AFC South",
+        "espn_id": 34
+    },
+    {
+        "abbreviation": "IND",
+        "location": "Indianapolis",
+        "name": "Colts",
+        "conference": "AFC",
+        "division": "AFC South",
+        "espn_id": 11
+    },
+    {
+        "abbreviation": "JAX",
+        "location": "Jacksonville",
+        "name": "Jaguars",
+        "conference": "AFC",
+        "division": "AFC South",
+        "espn_id": 30
+    },
+    {
+        "abbreviation": "KC",
+        "location": "Kansas City",
+        "name": "Chiefs",
+        "conference": "AFC",
+        "division": "AFC West",
+        "espn_id": 12
+    },
+    {
+        "abbreviation": "LV",
+        "location": "Las Vegas",
+        "name": "Raiders",
+        "conference": "AFC",
+        "division": "AFC West",
+        "espn_id": 13
+    },
+    {
+        "abbreviation": "LAR",
+        "location": "Los Angeles",
+        "name": "Rams",
+        "conference": "NFC",
+        "division": "NFC West",
+        "espn_id": 14
+    },
+    {
+        "abbreviation": "MIA",
+        "location": "Miami",
+        "name": "Dolphins",
+        "conference": "AFC",
+        "division": "AFC East",
+        "espn_id": 15
+    },
+    {
+        "abbreviation": "MIN",
+        "location": "Minnesota",
+        "name": "Vikings",
+        "conference": "NFC",
+        "division": "NFC North",
+        "espn_id": 16
+    },
+    {
+        "abbreviation": "NE",
+        "location": "New England",
+        "name": "Patriots",
+        "conference": "AFC",
+        "division": "AFC East",
+        "espn_id": 17
+    },
+    {
+        "abbreviation": "NO",
+        "location": "New Orleans",
+        "name": "Saints",
+        "conference": "NFC",
+        "division": "NFC South",
+        "espn_id": 18
+    },
+    {
+        "abbreviation": "NYG",
+        "location": "New York",
+        "name": "Giants",
+        "conference": "NFC",
+        "division": "NFC East",
+        "espn_id": 19
+    },
+    {
+        "abbreviation": "NYJ",
+        "location": "New York",
+        "name": "Jets",
+        "conference": "AFC",
+        "division": "AFC East",
+        "espn_id": 20
+    },
+    {
+        "abbreviation": "PHI",
+        "location": "Philadelphia",
+        "name": "Eagles",
+        "conference": "NFC",
+        "division": "NFC East",
+        "espn_id": 21
+    },
+    {
+        "abbreviation": "PIT",
+        "location": "Pittsburgh",
+        "name": "Steelers",
+        "conference": "AFC",
+        "division": "AFC North",
+        "espn_id": 23
+    },
+    {
+        "abbreviation": "SEA",
+        "location": "Seattle",
+        "name": "Seahawks",
+        "conference": "NFC",
+        "division": "NFC West",
+        "espn_id": 26
+    },
+    {
+        "abbreviation": "SF",
+        "location": "San Francisco",
+        "name": "49ers",
+        "conference": "NFC",
+        "division": "NFC West",
+        "espn_id": 25
+    },
+    {
+        "abbreviation": "TB",
+        "location": "Tampa Bay",
+        "name": "Buccaneers",
+        "conference": "NFC",
+        "division": "NFC South",
+        "espn_id": 27
+    },
+    {
+        "abbreviation": "TEN",
+        "location": "Tennessee",
+        "name": "Titans",
+        "conference": "AFC",
+        "division": "AFC South",
+        "espn_id": 10
+    },
+    {
+        "abbreviation": "LAC",
+        "location": "Los Angeles",
+        "name": "Chargers",
+        "conference": "AFC",
+        "division": "AFC West",
+        "espn_id": 24
+    },
+    {
+        "abbreviation": "WAS",
+        "location": "Washington",
+        "name": "Commanders",
+        "conference": "NFC",
+        "division": "NFC East",
+        "espn_id": 28
+    }
+]

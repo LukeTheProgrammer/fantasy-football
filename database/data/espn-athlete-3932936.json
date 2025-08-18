@@ -1,0 +1,174 @@
+{
+  "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/3932936?lang=en&region=us",
+  "id": "3932936",
+  "uid": "s:20~l:28~a:3932936",
+  "guid": "da947cfd-5dd5-af8d-07ae-5eb0bb1efc98",
+  "type": "football",
+  "alternateIds": {
+    "sdr": "3932936"
+  },
+  "firstName": "Caleb",
+  "lastName": "Wilson",
+  "fullName": "Caleb Wilson",
+  "displayName": "Caleb Wilson",
+  "shortName": "C. Wilson",
+  "weight": 240,
+  "displayWeight": "240 lbs",
+  "height": 76,
+  "displayHeight": "6' 4\"",
+  "age": 29,
+  "dateOfBirth": "1996-07-15T07:00Z",
+  "debutYear": 2019,
+  "links": [
+    {
+      "language": "en-US",
+      "rel": [
+        "playercard",
+        "desktop",
+        "athlete"
+      ],
+      "href": "https://www.espn.com/nfl/player/_/id/3932936/caleb-wilson",
+      "text": "Player Card",
+      "shortText": "Player Card",
+      "isExternal": false,
+      "isPremium": false
+    },
+    {
+      "language": "en-US",
+      "rel": [
+        "stats",
+        "desktop",
+        "athlete"
+      ],
+      "href": "https://www.espn.com/nfl/player/stats/_/id/3932936/caleb-wilson",
+      "text": "Stats",
+      "shortText": "Stats",
+      "isExternal": false,
+      "isPremium": false
+    },
+    {
+      "language": "en-US",
+      "rel": [
+        "splits",
+        "desktop",
+        "athlete"
+      ],
+      "href": "https://www.espn.com/nfl/player/splits/_/id/3932936/caleb-wilson",
+      "text": "Splits",
+      "shortText": "Splits",
+      "isExternal": false,
+      "isPremium": false
+    },
+    {
+      "language": "en-US",
+      "rel": [
+        "gamelog",
+        "desktop",
+        "athlete"
+      ],
+      "href": "https://www.espn.com/nfl/player/gamelog/_/id/3932936/caleb-wilson",
+      "text": "Game Log",
+      "shortText": "Game Log",
+      "isExternal": false,
+      "isPremium": false
+    },
+    {
+      "language": "en-US",
+      "rel": [
+        "news",
+        "desktop",
+        "athlete"
+      ],
+      "href": "https://www.espn.com/nfl/player/news/_/id/3932936/caleb-wilson",
+      "text": "News",
+      "shortText": "News",
+      "isExternal": false,
+      "isPremium": false
+    },
+    {
+      "language": "en-US",
+      "rel": [
+        "bio",
+        "desktop",
+        "athlete"
+      ],
+      "href": "https://www.espn.com/nfl/player/bio/_/id/3932936/caleb-wilson",
+      "text": "Bio",
+      "shortText": "Bio",
+      "isExternal": false,
+      "isPremium": false
+    },
+    {
+      "language": "en-US",
+      "rel": [
+        "overview",
+        "desktop",
+        "athlete"
+      ],
+      "href": "https://www.espn.com/nfl/player/_/id/3932936/caleb-wilson",
+      "text": "Overview",
+      "shortText": "Overview",
+      "isExternal": false,
+      "isPremium": false
+    }
+  ],
+  "birthPlace": {
+    "city": "Dallas",
+    "state": "TX",
+    "country": "USA"
+  },
+  "college": {
+    "$ref": "http://sports.core.api.espn.com/v2/colleges/26?lang=en&region=us"
+  },
+  "slug": "caleb-wilson",
+  "headshot": {
+    "href": "https://a.espncdn.com/i/headshots/nfl/players/full/3932936.png",
+    "alt": "Caleb Wilson"
+  },
+  "position": {
+    "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/positions/7?lang=en&region=us",
+    "id": "7",
+    "name": "Tight End",
+    "displayName": "Tight End",
+    "abbreviation": "TE",
+    "leaf": true,
+    "parent": {
+      "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/positions/70?lang=en&region=us"
+    }
+  },
+  "linked": true,
+  "team": {
+    "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/teams/7?lang=en&region=us"
+  },
+  "statistics": {
+    "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/3932936/statistics?lang=en&region=us"
+  },
+  "contracts": {
+    "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/3932936/contracts?lang=en&region=us"
+  },
+  "experience": {
+    "years": 1
+  },
+  "collegeAthlete": {
+    "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/college-football/athletes/3932936?lang=en&region=us"
+  },
+  "active": true,
+  "draft": {
+    "displayText": "Year: 2019 Round: 7 Pick: 254",
+    "round": 7,
+    "year": 2019,
+    "selection": 254,
+    "team": {
+      "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2019/teams/22?lang=en&region=us"
+    }
+  },
+  "status": {
+    "id": "9",
+    "name": "Free Agent",
+    "type": "free-agent",
+    "abbreviation": "FA"
+  },
+  "statisticslog": {
+    "$ref": "http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/athletes/3932936/statisticslog?lang=en&region=us"
+  }
+}
