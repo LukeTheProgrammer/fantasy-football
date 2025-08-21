@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -11,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Position newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Position newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Position query()
@@ -20,14 +24,25 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Position whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Position whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Position whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class Position extends Model
 {
+    use HasFactory, SoftDeletes;
+
     /**
      * The attributes that are not mass assignable.
      *
      * @var list<string>
      */
     protected $guarded = [];
+
+    /**
+     * Get the players for this position.
+     */
+    public function players(): HasMany
+    {
+        return $this->hasMany(Player::class);
+    }
 }
