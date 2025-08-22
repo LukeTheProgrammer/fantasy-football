@@ -9,6 +9,7 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { useEffect, useState } from 'react';
+import { Team } from '@/types/global/Models/Team';
 
 // No breadcrumbs needed for React Router implementation
 
