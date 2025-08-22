@@ -26,28 +26,28 @@ class PlayerFactory extends Factory
     public function definition(): array
     {
         return [
-            'espn_id' => fake()->optional(0.8)->numberBetween(1000000, 9999999),
+            'espn_id'     => fake()->optional(0.8)->numberBetween(1000000, 9999999),
             'position_id' => Position::factory(),
-            'first_name' => fake()->firstNameMale(),
-            'last_name' => fake()->lastName(),
-            'height' => fake()->optional(0.9)->randomElement(['5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"', '6\'4"', '6\'5"', '6\'6"', '6\'7"']),
-            'weight' => fake()->optional(0.9)->numberBetween(180, 350).' lbs',
-            'college' => fake()->optional(0.8)->randomElement([
+            'first_name'  => fake()->firstNameMale(),
+            'last_name'   => fake()->lastName(),
+            'height'      => fake()->optional(0.9)->randomElement(['5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"', '6\'4"', '6\'5"', '6\'6"', '6\'7"']),
+            'weight'      => fake()->optional(0.9)->numberBetween(180, 350) . ' lbs',
+            'college'     => fake()->optional(0.8)->randomElement([
                 'Alabama', 'Ohio State', 'Michigan', 'Georgia', 'Clemson', 'Notre Dame',
                 'Oklahoma', 'Texas', 'USC', 'LSU', 'Florida', 'Penn State',
                 'Oregon', 'Auburn', 'Wisconsin', 'Stanford', 'Michigan State', 'Iowa',
                 'Texas A&M', 'Virginia Tech', 'Miami (FL)', 'Florida State', 'Tennessee',
                 'Kentucky', 'Mississippi State', 'Ole Miss', 'Arkansas', 'Missouri',
             ]),
-            'draft_year' => fake()->optional(0.7)->numberBetween(2015, 2024),
+            'draft_year'  => fake()->optional(0.7)->numberBetween(2015, 2024),
             'draft_round' => fake()->optional(0.6)->randomElement(['1', '2', '3', '4', '5', '6', '7', 'UDFA']),
-            'draft_pick' => fake()->optional(0.5)->numberBetween(1, 32),
-            'draft_team' => fake()->optional(0.5)->randomElement([
+            'draft_pick'  => fake()->optional(0.5)->numberBetween(1, 32),
+            'draft_team'  => fake()->optional(0.5)->randomElement([
                 'Kansas City Chiefs', 'Philadelphia Eagles', 'Cincinnati Bengals', 'Buffalo Bills',
                 'San Francisco 49ers', 'Dallas Cowboys', 'Green Bay Packers', 'New England Patriots',
             ]),
             'birth_date' => fake()->optional(0.8)->dateTimeBetween('-40 years', '-20 years'),
-            'headshot' => fake()->optional(0.6)->imageUrl(300, 300, 'people'),
+            'headshot'   => fake()->optional(0.6)->imageUrl(300, 300, 'people'),
         ];
     }
 
@@ -103,7 +103,7 @@ class PlayerFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'draft_round' => '1',
-            'draft_pick' => fake()->numberBetween(1, 32),
+            'draft_pick'  => fake()->numberBetween(1, 32),
         ]);
     }
 
@@ -111,7 +111,7 @@ class PlayerFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'draft_round' => 'UDFA',
-            'draft_pick' => null,
+            'draft_pick'  => null,
         ]);
     }
 

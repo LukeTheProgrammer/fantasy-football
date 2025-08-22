@@ -6,10 +6,8 @@ use App\Models\Player;
 use App\Models\Position;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Collection;
 
 class LoadTeamPlayersFromFile extends Command
 {
@@ -67,7 +65,7 @@ class LoadTeamPlayersFromFile extends Command
 
         $pos = Position::create([
             'abbreviation' => $abbreviation,
-            'name' => $name,
+            'name'         => $name,
         ]);
 
         $this->loadPositions();

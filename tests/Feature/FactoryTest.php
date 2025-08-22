@@ -17,9 +17,9 @@ class FactoryTest extends TestCase
         $position = Position::factory()->create();
 
         $this->assertDatabaseHas('positions', [
-            'id' => $position->id,
+            'id'           => $position->id,
             'abbreviation' => $position->abbreviation,
-            'name' => $position->name,
+            'name'         => $position->name,
         ]);
 
         $this->assertContains($position->abbreviation, ['QB', 'RB', 'WR', 'TE', 'K', 'DST']);
@@ -30,12 +30,12 @@ class FactoryTest extends TestCase
         $team = Team::factory()->create();
 
         $this->assertDatabaseHas('teams', [
-            'id' => $team->id,
+            'id'           => $team->id,
             'abbreviation' => $team->abbreviation,
-            'location' => $team->location,
-            'name' => $team->name,
-            'conference' => $team->conference,
-            'division' => $team->division,
+            'location'     => $team->location,
+            'name'         => $team->name,
+            'conference'   => $team->conference,
+            'division'     => $team->division,
         ]);
 
         $this->assertContains($team->conference, ['AFC', 'NFC']);
@@ -46,9 +46,9 @@ class FactoryTest extends TestCase
         $player = Player::factory()->create();
 
         $this->assertDatabaseHas('players', [
-            'id' => $player->id,
-            'first_name' => $player->first_name,
-            'last_name' => $player->last_name,
+            'id'          => $player->id,
+            'first_name'  => $player->first_name,
+            'last_name'   => $player->last_name,
             'position_id' => $player->position_id,
         ]);
 
@@ -89,7 +89,7 @@ class FactoryTest extends TestCase
     {
         $player = Player::factory()->create([
             'first_name' => 'John',
-            'last_name' => 'Doe',
+            'last_name'  => 'Doe',
         ]);
 
         $this->assertEquals('John Doe', $player->full_name);
@@ -99,7 +99,7 @@ class FactoryTest extends TestCase
     {
         $team = Team::factory()->create([
             'location' => 'New York',
-            'name' => 'Giants',
+            'name'     => 'Giants',
         ]);
 
         $this->assertEquals('New York Giants', $team->full_name);

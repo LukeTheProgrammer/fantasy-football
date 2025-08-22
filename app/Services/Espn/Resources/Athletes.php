@@ -2,7 +2,4 @@
 
 namespace App\Services\Espn\Resources;
 
-class Athletes
-{
-
-}
+class Athletes {}

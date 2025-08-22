@@ -30,10 +30,10 @@ class TeamFactory extends Factory
         $division = $this->getRandomDivisionForConference($conference);
 
         return [
-            'espn_id' => fake()->optional(0.8)->numberBetween(1, 1000),
+            'espn_id'      => fake()->optional(0.8)->numberBetween(1, 1000),
             'abbreviation' => fake()->unique()->regexify('[A-Z]{2,3}'),
-            'location' => fake()->city(),
-            'name' => fake()->randomElement([
+            'location'     => fake()->city(),
+            'name'         => fake()->randomElement([
                 'Bears', 'Bengals', 'Bills', 'Broncos', 'Browns', 'Buccaneers',
                 'Cardinals', 'Chargers', 'Chiefs', 'Colts', 'Cowboys', 'Dolphins',
                 'Eagles', 'Falcons', 'Giants', 'Jaguars', 'Jets', 'Lions',
@@ -41,9 +41,9 @@ class TeamFactory extends Factory
                 'Saints', 'Seahawks', 'Steelers', 'Texans', 'Titans', 'Vikings',
                 'Commanders', '49ers',
             ]),
-            'logo' => fake()->optional(0.7)->imageUrl(200, 200, 'sports'),
+            'logo'       => fake()->optional(0.7)->imageUrl(200, 200, 'sports'),
             'conference' => $conference->value,
-            'division' => $division->value,
+            'division'   => $division->value,
         ];
     }
 
@@ -77,7 +77,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::AFC->value,
-            'division' => fake()->randomElement([
+            'division'   => fake()->randomElement([
                 DivisionEnum::AFC_EAST->value,
                 DivisionEnum::AFC_NORTH->value,
                 DivisionEnum::AFC_SOUTH->value,
@@ -90,7 +90,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::NFC->value,
-            'division' => fake()->randomElement([
+            'division'   => fake()->randomElement([
                 DivisionEnum::NFC_EAST->value,
                 DivisionEnum::NFC_NORTH->value,
                 DivisionEnum::NFC_SOUTH->value,
@@ -106,7 +106,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::AFC->value,
-            'division' => DivisionEnum::AFC_EAST->value,
+            'division'   => DivisionEnum::AFC_EAST->value,
         ]);
     }
 
@@ -114,7 +114,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::AFC->value,
-            'division' => DivisionEnum::AFC_NORTH->value,
+            'division'   => DivisionEnum::AFC_NORTH->value,
         ]);
     }
 
@@ -122,7 +122,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::AFC->value,
-            'division' => DivisionEnum::AFC_SOUTH->value,
+            'division'   => DivisionEnum::AFC_SOUTH->value,
         ]);
     }
 
@@ -130,7 +130,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::AFC->value,
-            'division' => DivisionEnum::AFC_WEST->value,
+            'division'   => DivisionEnum::AFC_WEST->value,
         ]);
     }
 
@@ -138,7 +138,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::NFC->value,
-            'division' => DivisionEnum::NFC_EAST->value,
+            'division'   => DivisionEnum::NFC_EAST->value,
         ]);
     }
 
@@ -146,7 +146,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::NFC->value,
-            'division' => DivisionEnum::NFC_NORTH->value,
+            'division'   => DivisionEnum::NFC_NORTH->value,
         ]);
     }
 
@@ -154,7 +154,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::NFC->value,
-            'division' => DivisionEnum::NFC_SOUTH->value,
+            'division'   => DivisionEnum::NFC_SOUTH->value,
         ]);
     }
 
@@ -162,7 +162,7 @@ class TeamFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'conference' => ConferenceEnum::NFC->value,
-            'division' => DivisionEnum::NFC_WEST->value,
+            'division'   => DivisionEnum::NFC_WEST->value,
         ]);
     }
 }

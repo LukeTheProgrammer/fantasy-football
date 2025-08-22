@@ -23,7 +23,7 @@ class CreateUserCommandTest extends TestCase
             ->assertExitCode(0);
 
         $this->assertDatabaseHas('users', [
-            'name' => 'Test User',
+            'name'  => 'Test User',
             'email' => 'user@test.com',
         ]);
 
@@ -40,15 +40,15 @@ class CreateUserCommandTest extends TestCase
     public function test_command_creates_user_with_custom_values(): void
     {
         $this->artisan('user:create', [
-            '--email' => 'admin@example.com',
+            '--email'    => 'admin@example.com',
             '--password' => 'secret123',
-            '--name' => 'Admin User',
+            '--name'     => 'Admin User',
         ])
             ->expectsOutput("User 'Admin User' created successfully with email 'admin@example.com'.")
             ->assertExitCode(0);
 
         $this->assertDatabaseHas('users', [
-            'name' => 'Admin User',
+            'name'  => 'Admin User',
             'email' => 'admin@example.com',
         ]);
 
@@ -73,7 +73,7 @@ class CreateUserCommandTest extends TestCase
         // Should have created a new token
         $this->assertDatabaseHas('personal_access_tokens', [
             'tokenable_type' => User::class,
-            'tokenable_id' => $user->id,
+            'tokenable_id'   => $user->id,
         ]);
     }
 
@@ -87,7 +87,7 @@ class CreateUserCommandTest extends TestCase
         // Check that a token was created
         $this->assertDatabaseHas('personal_access_tokens', [
             'tokenable_type' => User::class,
-            'tokenable_id' => $user->id,
+            'tokenable_id'   => $user->id,
         ]);
     }
 
@@ -103,7 +103,7 @@ class CreateUserCommandTest extends TestCase
             ->assertExitCode(0);
 
         $this->assertDatabaseHas('users', [
-            'name' => 'Config User',
+            'name'  => 'Config User',
             'email' => 'config@test.com',
         ]);
     }

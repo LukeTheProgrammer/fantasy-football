@@ -13,8 +13,8 @@ return [
     */
 
     'default' => [
-        'email' => env('DEFAULT_USER_EMAIL', 'user@test.com'),
+        'email'    => env('DEFAULT_USER_EMAIL', 'user@test.com'),
         'password' => env('DEFAULT_USER_PASSWORD', 'password'),
-        'name' => env('DEFAULT_USER_NAME', 'Test User'),
+        'name'     => env('DEFAULT_USER_NAME', 'Test User'),
     ],
 ];
