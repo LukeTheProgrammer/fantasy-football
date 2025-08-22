@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -22,36 +25,37 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $draft_team
  * @property string|null $birth_date
  * @property string|null $headshot
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereBirthDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereCollege($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereDraftPick($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereDraftRound($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereDraftTeam($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereDraftYear($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereEspnId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereFirstName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereHeadshot($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereHeight($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player wherePositionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Player whereWeight($value)
+ * @method static Builder<static>|Player newModelQuery()
+ * @method static Builder<static>|Player newQuery()
+ * @method static Builder<static>|Player query()
+ * @method static Builder<static>|Player whereBirthDate($value)
+ * @method static Builder<static>|Player whereCollege($value)
+ * @method static Builder<static>|Player whereCreatedAt($value)
+ * @method static Builder<static>|Player whereDeletedAt($value)
+ * @method static Builder<static>|Player whereDraftPick($value)
+ * @method static Builder<static>|Player whereDraftRound($value)
+ * @method static Builder<static>|Player whereDraftTeam($value)
+ * @method static Builder<static>|Player whereDraftYear($value)
+ * @method static Builder<static>|Player whereEspnId($value)
+ * @method static Builder<static>|Player whereFirstName($value)
+ * @method static Builder<static>|Player whereHeadshot($value)
+ * @method static Builder<static>|Player whereHeight($value)
+ * @method static Builder<static>|Player whereId($value)
+ * @method static Builder<static>|Player whereLastName($value)
+ * @method static Builder<static>|Player wherePositionId($value)
+ * @method static Builder<static>|Player whereUpdatedAt($value)
+ * @method static Builder<static>|Player whereWeight($value)
  *
  * @mixin \Eloquent
  */
 class Player extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are not mass assignable.
@@ -67,6 +71,7 @@ class Player extends Model
      */
     protected $casts = [
         'birth_date' => 'datetime',
+        'draft_year' => 'datetime:Y',
     ];
 
     /**
@@ -88,40 +93,40 @@ class Player extends Model
     /**
      * Get the player's full name.
      */
-    public function getFullNameAttribute(): string
+    public function fullName(): Attribute
     {
-        return "{$this->first_name} {$this->last_name}";
+        return Attribute::make(
+            get: fn () => "{$this->first_name} {$this->last_name}",
+        );
     }
 
     /**
      * Get the player's age.
      */
-    public function getAgeAttribute(): ?int
+    public function age(): Attribute
     {
-        if (! $this->birth_date) {
-            return null;
-        }
-
-        return $this->birth_date->age;
+        return Attribute::make(
+            get: fn () => $this->birth_date?->age ?? null,
+        );
     }
 
     /**
      * Check if the player is a rookie.
      */
-    public function getIsRookieAttribute(): bool
+    public function isRookie(): Attribute
     {
-        if (! $this->draft_year) {
-            return false;
-        }
-
-        return $this->draft_year >= now()->year - 1;
+        return Attribute::make(
+            get: fn () => $this->draft_year?->gt(Carbon::now()->subYear()) ?? false,
+        );
     }
 
     /**
      * Check if the player is a first-round pick.
      */
-    public function getIsFirstRoundPickAttribute(): bool
+    public function isFirstRoundPick(): Attribute
     {
-        return $this->draft_round === '1';
+        return Attribute::make(
+            get: fn () => (string) $this->draft_round === '1',
+        );
     }
 }
