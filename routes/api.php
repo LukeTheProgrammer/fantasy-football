@@ -14,8 +14,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    
+
     // Protected team routes for create, update, delete
-    Route::apiResource('teams', ApiTeamController::class)->except(['index', 'show']);
-    Route::apiResource('players', ApiPlayerController::class)->except(['index', 'show']);
+    // Route::apiResource('teams', ApiTeamController::class)->except(['index', 'show']);
+    // Route::apiResource('players', ApiPlayerController::class)->except(['index', 'show']);
 });

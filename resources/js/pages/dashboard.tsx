@@ -1,7 +1,4 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
 import {
     Table,
     TableBody,
@@ -12,27 +9,8 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 
-interface Team {
-    id: number;
-    espn_id: number | null;
-    abbreviation: string;
-    location: string;
-    name: string;
-    conference: string;
-    division: string;
-    logo: string | null;
-    created_at: string;
-    updated_at: string;
-}
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-];
+// No breadcrumbs needed for React Router implementation
 
 export default function Dashboard() {
     const [teams, setTeams] = useState<Team[]>([]);
@@ -59,9 +37,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
+        <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
@@ -111,6 +87,5 @@ export default function Dashboard() {
                     )}
                 </div>
             </div>
-        </AppLayout>
     );
 }
