@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -16,30 +19,31 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $conference
  * @property string $division
  * @property int|null $espn_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereAbbreviation($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereConference($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereDivision($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereEspnId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereLocation($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereLogo($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Team whereUpdatedAt($value)
+ * @method static Builder<static>|Team newModelQuery()
+ * @method static Builder<static>|Team newQuery()
+ * @method static Builder<static>|Team query()
+ * @method static Builder<static>|Team whereAbbreviation($value)
+ * @method static Builder<static>|Team whereConference($value)
+ * @method static Builder<static>|Team whereCreatedAt($value)
+ * @method static Builder<static>|Team whereDeletedAt($value)
+ * @method static Builder<static>|Team whereDivision($value)
+ * @method static Builder<static>|Team whereEspnId($value)
+ * @method static Builder<static>|Team whereId($value)
+ * @method static Builder<static>|Team whereLocation($value)
+ * @method static Builder<static>|Team whereLogo($value)
+ * @method static Builder<static>|Team whereName($value)
+ * @method static Builder<static>|Team whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
 class Team extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are not mass assignable.
@@ -59,8 +63,10 @@ class Team extends Model
     /**
      * Get the full team name (location + name).
      */
-    public function getFullNameAttribute(): string
+    public function fullName(): Attribute
     {
-        return "{$this->location} {$this->name}";
+        return Attribute::make(
+            get: fn () => "{$this->location} {$this->name}",
+        );
     }
 }

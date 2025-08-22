@@ -3,9 +3,7 @@
 namespace App\Console\Commands\Espn\Players;
 
 use App\Models\Team;
-use App\Facades\Espn;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 
 class GetAllTeamPlayers extends Command
 {

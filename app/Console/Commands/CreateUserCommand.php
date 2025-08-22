@@ -43,8 +43,8 @@ class CreateUserCommand extends Command
         } else {
             // Create new user
             $userData = [
-                'name' => $name,
-                'email' => $email,
+                'name'     => $name,
+                'email'    => $email,
                 'password' => Hash::make($password),
             ];
 

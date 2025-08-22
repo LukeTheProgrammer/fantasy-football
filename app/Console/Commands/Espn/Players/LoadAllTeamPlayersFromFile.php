@@ -2,12 +2,11 @@
 
 namespace App\Console\Commands\Espn\Players;
 
-use App\Models\Team;
 use App\Models\Player;
 use App\Models\Position;
+use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -63,7 +62,7 @@ class LoadAllTeamPlayersFromFile extends Command
 
         $pos = Position::create([
             'abbreviation' => $abbreviation,
-            'name' => $name,
+            'name'         => $name,
         ]);
 
         $this->loadPositions();
@@ -85,17 +84,17 @@ class LoadAllTeamPlayersFromFile extends Command
 
             Player::updateOrCreate(['espn_id' => Arr::get($player, 'id')], [
                 'position_id' => $pos->id,
-                'first_name' => Arr::get($player, 'firstName'),
-                'last_name' => Arr::get($player, 'lastName'),
-                'height' => Arr::get($player, 'height'),
-                'weight' => Arr::get($player, 'weight'),
-                'college' => Arr::get($player, 'college.name'),
-                'draft_year' => Arr::get($player, 'draft.year'),
+                'first_name'  => Arr::get($player, 'firstName'),
+                'last_name'   => Arr::get($player, 'lastName'),
+                'height'      => Arr::get($player, 'height'),
+                'weight'      => Arr::get($player, 'weight'),
+                'college'     => Arr::get($player, 'college.name'),
+                'draft_year'  => Arr::get($player, 'draft.year'),
                 'draft_round' => Arr::get($player, 'draft.round'),
-                'draft_pick' => Arr::get($player, 'draft.selection'),
-                'draft_team' => Arr::get($player, 'draft.team.name'),
-                'birth_date' => Carbon::parse(Arr::get($player, 'dateOfBirth'))->toDateTimeString(),
-                'headshot' => Arr::get($player, 'headshot.href'),
+                'draft_pick'  => Arr::get($player, 'draft.selection'),
+                'draft_team'  => Arr::get($player, 'draft.team.name'),
+                'birth_date'  => Carbon::parse(Arr::get($player, 'dateOfBirth'))->toDateTimeString(),
+                'headshot'    => Arr::get($player, 'headshot.href'),
             ]);
 
             $bar->advance();

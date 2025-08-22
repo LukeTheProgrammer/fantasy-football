@@ -29,7 +29,7 @@ class PositionFactory extends Factory
 
         return [
             'abbreviation' => $position->value,
-            'name' => $this->getPositionName($position->value),
+            'name'         => $this->getPositionName($position->value),
         ];
     }
 
@@ -39,12 +39,12 @@ class PositionFactory extends Factory
     private function getPositionName(string $abbreviation): string
     {
         return match ($abbreviation) {
-            'QB' => 'Quarterback',
-            'RB' => 'Running Back',
-            'WR' => 'Wide Receiver',
-            'TE' => 'Tight End',
-            'K' => 'Kicker',
-            'DST' => 'Defense/Special Teams',
+            'QB'    => 'Quarterback',
+            'RB'    => 'Running Back',
+            'WR'    => 'Wide Receiver',
+            'TE'    => 'Tight End',
+            'K'     => 'Kicker',
+            'DST'   => 'Defense/Special Teams',
             default => $abbreviation,
         };
     }
@@ -56,7 +56,7 @@ class PositionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'abbreviation' => 'QB',
-            'name' => 'Quarterback',
+            'name'         => 'Quarterback',
         ]);
     }
 
@@ -64,7 +64,7 @@ class PositionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'abbreviation' => 'RB',
-            'name' => 'Running Back',
+            'name'         => 'Running Back',
         ]);
     }
 
@@ -72,7 +72,7 @@ class PositionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'abbreviation' => 'WR',
-            'name' => 'Wide Receiver',
+            'name'         => 'Wide Receiver',
         ]);
     }
 
@@ -80,7 +80,7 @@ class PositionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'abbreviation' => 'TE',
-            'name' => 'Tight End',
+            'name'         => 'Tight End',
         ]);
     }
 
@@ -88,7 +88,7 @@ class PositionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'abbreviation' => 'K',
-            'name' => 'Kicker',
+            'name'         => 'Kicker',
         ]);
     }
 
@@ -96,7 +96,7 @@ class PositionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'abbreviation' => 'DST',
-            'name' => 'Defense/Special Teams',
+            'name'         => 'Defense/Special Teams',
         ]);
     }
 }
