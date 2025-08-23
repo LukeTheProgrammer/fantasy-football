@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import axios from 'axios';
+import axios, { getCsrfToken } from '@/lib/axios';
 
 interface League {
   id: number;
@@ -28,7 +27,7 @@ interface League {
   };
 }
 
-export default function Leagues({ auth }: PageProps) {
+export default function Leagues() {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,11 +36,22 @@ export default function Leagues({ auth }: PageProps) {
     const fetchLeagues = async () => {
       try {
         setLoading(true);
+        // Get CSRF cookie first
+        // await getCsrfToken();
+        // Then make the API request
         const response = await axios.get<League[]>('/api/leagues');
         setLeagues(response.data);
         setError(null);
       } catch (err) {
-        setError('Failed to load leagues. Please try again later.');
+        // Check if this is an authentication error
+        const error = err as { response?: { status: number; data?: { message?: string } } };
+        if (error.response && error.response.status === 401) {
+          setError('You need to be logged in to view your leagues.');
+          // Login link is already provided in the UI
+        } else {
+          const errorMessage = error.response?.data?.message || 'Failed to load leagues. Please try again later.';
+          setError(errorMessage);
+        }
         console.error('Error fetching leagues:', err);
       } finally {
         setLoading(false);
@@ -54,7 +64,7 @@ export default function Leagues({ auth }: PageProps) {
   return (
     <>
       <Head title="My Leagues" />
-      
+
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -65,7 +75,7 @@ export default function Leagues({ auth }: PageProps) {
                   <Button>Create New League</Button>
                 </Link>
               </div>
-              
+
               {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[...Array(3)].map((_, i) => (
@@ -86,7 +96,14 @@ export default function Leagues({ auth }: PageProps) {
                 </div>
               ) : error ? (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-md text-red-600 dark:text-red-400">
-                  {error}
+                  <p className="mb-2">{error}</p>
+                  {error.includes('logged in') && (
+                    <div className="mt-4">
+                      <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:underline">
+                        Log in to view your leagues
+                      </Link>
+                    </div>
+                  )}
                 </div>
               ) : leagues.length === 0 ? (
                 <div className="text-center py-12">

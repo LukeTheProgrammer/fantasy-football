@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import LeagueMemberManager from '@/components/leagues/LeagueMemberManager';
-import axios from 'axios';
+import axios from '@/lib/axios';
 
 interface LeagueMember {
   id: number;

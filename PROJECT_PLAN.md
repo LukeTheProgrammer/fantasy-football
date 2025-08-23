@@ -24,11 +24,11 @@ This project aims to create a web application that assists users during their fa
 - [x] Implement API endpoints for league management
 
 #### Frontend
-- [ ] Create league creation form with fields for league details
-- [ ] Build league settings configuration interface (roster positions, scoring rules)
-- [ ] Implement league dashboard view
-- [ ] Create league member management interface
-- [ ] Add validation for all forms
+- [x] Create league creation form with fields for league details
+- [x] Build league settings configuration interface (roster positions, scoring rules)
+- [x] Implement league dashboard view
+- [x] Create league member management interface
+- [x] Add validation for all forms
 
 #### Tests
 - [ ] Write unit tests for league models
