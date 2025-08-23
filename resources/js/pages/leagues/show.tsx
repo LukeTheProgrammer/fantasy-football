@@ -1,16 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import LeagueMemberManager from '@/components/leagues/LeagueMemberManager';
 import axios from 'axios';
 
 interface LeagueMember {
@@ -92,10 +88,7 @@ export default function ShowLeague({ params, auth }: PageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteTeamName, setInviteTeamName] = useState('');
-  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-  const [inviting, setInviting] = useState(false);
+  // We'll manage invite state in the LeagueMemberManager component
 
   useEffect(() => {
     const fetchLeague = async () => {
@@ -115,47 +108,12 @@ export default function ShowLeague({ params, auth }: PageProps) {
     fetchLeague();
   }, [params.id]);
 
-  const handleInviteMember = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!inviteEmail || !inviteTeamName) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive"
+  const handleMembersChange = (updatedMembers: LeagueMember[]) => {
+    if (league) {
+      setLeague({
+        ...league,
+        members: updatedMembers
       });
-      return;
-    }
-    
-    try {
-      setInviting(true);
-      await axios.post(`/api/league-members`, {
-        league_id: league?.id,
-        email: inviteEmail,
-        team_name: inviteTeamName
-      });
-      
-      toast({
-        title: "Success",
-        description: "Member invited successfully"
-      });
-      
-      // Refresh league data
-      const response = await axios.get<League>(`/api/leagues/${params.id}`);
-      setLeague(response.data);
-      
-      // Reset form
-      setInviteEmail('');
-      setInviteTeamName('');
-      setInviteDialogOpen(false);
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.response?.data?.message || "Failed to invite member",
-        variant: "destructive"
-      });
-    } finally {
-      setInviting(false);
     }
   };
 
@@ -235,58 +193,9 @@ export default function ShowLeague({ params, auth }: PageProps) {
                 </div>
                 <div className="flex mt-4 md:mt-0 space-x-2">
                   {league.user_is_admin && (
-                    <>
-                      <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline">Invite Member</Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Invite New Member</DialogTitle>
-                            <DialogDescription>
-                              Add a new member to your fantasy league.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <form onSubmit={handleInviteMember}>
-                            <div className="grid gap-4 py-4">
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="email" className="text-right">
-                                  Email
-                                </Label>
-                                <Input
-                                  id="email"
-                                  type="email"
-                                  value={inviteEmail}
-                                  onChange={(e) => setInviteEmail(e.target.value)}
-                                  className="col-span-3"
-                                  placeholder="member@example.com"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="teamName" className="text-right">
-                                  Team Name
-                                </Label>
-                                <Input
-                                  id="teamName"
-                                  value={inviteTeamName}
-                                  onChange={(e) => setInviteTeamName(e.target.value)}
-                                  className="col-span-3"
-                                  placeholder="Team Name"
-                                />
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <Button type="submit" disabled={inviting}>
-                                {inviting ? 'Inviting...' : 'Invite Member'}
-                              </Button>
-                            </DialogFooter>
-                          </form>
-                        </DialogContent>
-                      </Dialog>
-                      <Link href={route('leagues.edit', league.id)}>
-                        <Button variant="outline">Edit League</Button>
-                      </Link>
-                    </>
+                    <Link href={route('leagues.edit', league.id)}>
+                      <Button variant="outline">Edit League</Button>
+                    </Link>
                   )}
                   <Link href={route('leagues.index')}>
                     <Button variant="ghost">Back to Leagues</Button>
@@ -388,42 +297,18 @@ export default function ShowLeague({ params, auth }: PageProps) {
                     <CardHeader>
                       <CardTitle>League Members</CardTitle>
                       <CardDescription>
-                        {league.members.length} of {league.max_teams} teams
+                        Manage your league's members and their draft positions
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
-                        {league.members.map(member => (
-                          <div key={member.id} className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                              <Avatar>
-                                {member.team_logo ? (
-                                  <AvatarImage src={member.team_logo} alt={member.team_name} />
-                                ) : null}
-                                <AvatarFallback>
-                                  {member.team_name.substring(0, 2).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <p className="font-medium">{member.team_name}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                  {member.user.name}
-                                  {member.is_admin && (
-                                    <Badge variant="outline" className="ml-2">Admin</Badge>
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-sm">
-                              {member.draft_position !== null ? (
-                                <Badge variant="secondary">Pick #{member.draft_position}</Badge>
-                              ) : (
-                                <span className="text-gray-500 dark:text-gray-400">No draft position</span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <LeagueMemberManager
+                        leagueId={league.id}
+                        members={league.members}
+                        maxTeams={league.max_teams}
+                        userIsAdmin={league.user_is_admin}
+                        currentUserId={auth.user?.id || 0}
+                        onMembersChange={handleMembersChange}
+                      />
                     </CardContent>
                   </Card>
                 </TabsContent>

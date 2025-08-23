@@ -11,17 +11,17 @@ This project aims to create a web application that assists users during their fa
 
 ### 1. Fantasy League Creation
 #### Database & Models
-- [ ] Create `League` model with fields for name, description, created_by, etc.
-- [ ] Create `LeagueSettings` model for roster and scoring configuration
-- [ ] Create `LeagueMember` model to track league participants
-- [ ] Create migrations for all new models
-- [ ] Define relationships between models (User, League, LeagueSettings)
+- [x] Create `League` model with fields for name, description, created_by, etc.
+- [x] Create `LeagueSettings` model for roster and scoring configuration
+- [x] Create `LeagueMember` model to track league participants
+- [x] Create migrations for all new models
+- [x] Define relationships between models (User, League, LeagueSettings)
 
 #### API & Controllers
-- [ ] Create `LeagueController` with CRUD operations
-- [ ] Create `LeagueSettingsController` for managing league settings
-- [ ] Create `LeagueMemberController` for managing league members
-- [ ] Implement API endpoints for league management
+- [x] Create `LeagueController` with CRUD operations
+- [x] Create `LeagueSettingsController` for managing league settings
+- [x] Create `LeagueMemberController` for managing league members
+- [x] Implement API endpoints for league management
 
 #### Frontend
 - [ ] Create league creation form with fields for league details
