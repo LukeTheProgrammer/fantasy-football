@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import axios from '@/lib/axios';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Head, Link } from '@inertiajs/react';
 import { Skeleton } from '@/components/ui/skeleton';
-import axios, { getCsrfToken } from '@/lib/axios';
+import { useState, useEffect } from 'react';
+import { type BreadcrumbItem } from '@/types';
 
 interface League {
   id: number;
@@ -26,6 +28,14 @@ interface League {
     members: number;
   };
 }
+
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Leagues',
+        href: '/leagues',
+    },
+];
 
 export default function Leagues() {
   const [leagues, setLeagues] = useState<League[]>([]);
@@ -62,7 +72,7 @@ export default function Leagues() {
   }, []);
 
   return (
-    <>
+    <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="My Leagues" />
 
       <div className="py-12">
@@ -149,6 +159,6 @@ export default function Leagues() {
           </div>
         </div>
       </div>
-    </>
+    </AppLayout>
   );
 }
