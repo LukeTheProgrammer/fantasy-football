@@ -77,4 +77,36 @@ class User extends Authenticatable
             'password'          => 'hashed',
         ];
     }
+    
+    /**
+     * Get the leagues created by the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function createdLeagues()
+    {
+        return $this->hasMany(League::class, 'created_by');
+    }
+    
+    /**
+     * Get the league memberships for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function leagueMemberships()
+    {
+        return $this->hasMany(LeagueMember::class);
+    }
+    
+    /**
+     * Get all leagues the user is a member of.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function leagues()
+    {
+        return $this->belongsToMany(League::class, 'league_members')
+            ->withPivot(['team_name', 'team_logo', 'draft_position', 'is_admin', 'is_active'])
+            ->withTimestamps();
+    }
 }
