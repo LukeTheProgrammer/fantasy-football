@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Api\ApiPlayerController;
 use App\Http\Controllers\Api\ApiTeamController;
+use App\Http\Controllers\Api\LeagueController;
+use App\Http\Controllers\Api\LeagueSettingsController;
+use App\Http\Controllers\Api\LeagueMemberController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +25,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Protected team routes for create, update, delete
     Route::apiResource('teams', ApiTeamController::class)->except(['create', 'show']);
     Route::apiResource('players', ApiPlayerController::class)->except(['index', 'show']);
+    
+    // League management routes
+    Route::apiResource('leagues', LeagueController::class);
+    Route::apiResource('league-settings', LeagueSettingsController::class)->except(['index', 'store', 'destroy']);
+    Route::apiResource('league-members', LeagueMemberController::class);
+    
+    // Custom league routes
+    Route::post('leagues/join', [LeagueController::class, 'join']);
+    Route::patch('league-members/{id}/draft-position', [LeagueMemberController::class, 'updateDraftPosition']);
 });
