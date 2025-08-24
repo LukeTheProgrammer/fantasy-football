@@ -3,6 +3,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Link } from '@inertiajs/react';
 import {
     Trophy,
     Play,
@@ -19,7 +20,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-  } from '@/components/ui/select';
+} from '@/components/ui/select';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,9 +40,14 @@ export default function Dashboard() {
                             <h1 className="mb-2 text-3xl">My Fantasy Leagues</h1>
                             <p className="">Manage and track your fantasy football leagues</p>
                         </div>
-                        <Button size="lg" variant="secondary">
-                            <Plus className="h-4 w-4" /> Create New League
-                        </Button>
+                        <Link href="/leagues/create">
+                            <Button size="lg" variant="secondary" className="cursor-pointer">
+                                <span className="flex justify-between">
+                                    <Plus className="h-5 w-5 pt-1" strokeWidth={4} />
+                                    <span className="pl-1">Create New League</span>
+                                </span>
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 

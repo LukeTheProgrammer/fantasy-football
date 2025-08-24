@@ -1,17 +1,26 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+// import { Alert, AlertDescription } from '@/components/ui/alert';
+import AppLayout from '@/layouts/app-layout';
+import RosterPositionsEditor from '@/components/leagues/RosterPositionsEditor';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Head, useForm } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-// import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import RosterPositionsEditor from '@/components/leagues/RosterPositionsEditor';
+import { useState, useEffect, useCallback } from 'react';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+];
 
 export default function CreateLeague() {
   const [activeTab, setActiveTab] = useState('general');
@@ -218,15 +227,19 @@ export default function CreateLeague() {
   }
 
   return (
-    <>
-      <Head title="Create League" />
+    <AppLayout breadcrumbs={breadcrumbs}>
+        <Head title="Create League" />
+
+        <div className="flex-1 p-8">
+            <div className="mb-8">
+                <h1 className="mb-2 text-3xl">Create a New Fantasy League</h1>
+            </div>
+        </div>
 
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6">
-              <h1 className="text-2xl font-semibold mb-6">Create a New Fantasy League</h1>
-
               <form onSubmit={handleSubmit}>
                 <div className="w-full">
                   <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -608,6 +621,6 @@ export default function CreateLeague() {
           </div>
         </div>
       </div>
-    </>
+    </AppLayout>
   );
 }
