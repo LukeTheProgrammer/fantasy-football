@@ -2,9 +2,6 @@
 
 namespace App\Services\Espn\Resources;
 
-use App\Facades\Espn;
-use Illuminate\Support\Facades\Http;
-
 /**
  * ATL   /v2/sports/football/leagues/nfl/seasons/2025/teams/1	/athletes, /depthcharts, /record, /events, /projections
  * BUF   /v2/sports/football/leagues/nfl/seasons/2025/teams/2	/athletes, /depthcharts, /record, /events, /projections
@@ -39,13 +36,23 @@ use Illuminate\Support\Facades\Http;
  * BAL   /v2/sports/football/leagues/nfl/seasons/2025/teams/33	/athletes, /depthcharts, /record, /events, /projections
  * HOU   /v2/sports/football/leagues/nfl/seasons/2025/teams/34	/athletes, /depthcharts, /record, /events, /projections
  */
-class Teams
+class Teams extends BaseResource
 {
     public function getTeam(int|string $id)
     {
-        $url = Espn::BASE_URL . '/v2/sports/football/leagues/nfl/seasons/2025/teams/' . $id;
+        $url = $this->buildUrl('teams/' . $id);
 
-        $response = Http::get($url);
+        $response = $this->get($url, $this->query());
+
+        return $response->json();
+    }
+
+    public function getPlayers(int|string $teamId, int $page = 1)
+    {
+        // /v2/sports/football/leagues/nfl/seasons/2025/teams/1/athletes?lang=en&region=us&page=1
+        $url = $this->buildUrl('teams/' . $teamId . '/athletes');
+
+        $response = $this->get($url, $this->query(['page' => $page]));
 
         return $response->json();
     }
