@@ -62,40 +62,50 @@ class LeagueController extends Controller
     {
         $validated = $request->validated();
 
-        $league = Action::model(League::class)->create($request->user(), [
-            'name'        => Arr::get($validated, 'name'),
-            'slug'        => Str::slug(Arr::get($validated, 'name')),
-            'description' => Arr::get($validated, 'description'),
-            'team_count'  => Arr::get($validated, 'team_count'),
-            'is_public'   => Arr::get($validated, 'is_public', false),
-            'join_code'   => Str::upper(Str::random(8)),
-            'draft_type'  => Arr::get($validated, 'draft_type'),
-            'draft_date'  => Arr::get($validated, 'draft_date'),
-            'is_active'   => true,
-        ]);
+        $league = Action::model(League::class)->create(
+            creator: $request->user(),
+            data: [
+                'name'        => Arr::get($validated, 'name'),
+                'slug'        => Str::slug(Arr::get($validated, 'name')),
+                'description' => Arr::get($validated, 'description'),
+                'team_count'  => Arr::get($validated, 'team_count'),
+                'is_public'   => Arr::get($validated, 'is_public', false),
+                'join_code'   => Str::upper(Str::random(8)),
+                'draft_type'  => Arr::get($validated, 'draft_type'),
+                'draft_date'  => Arr::get($validated, 'draft_date'),
+                'is_active'   => true,
+            ]
+        );
 
-        Action::model(LeagueSettings::class)->create($league, [
-            'roster_positions'            => Arr::get($validated, 'settings.roster_positions', []),
-            'roster_size'                 => Arr::get($validated, 'settings.roster_size', 16),
-            'starters_count'              => Arr::get($validated, 'settings.starters_count', 9),
-            'bench_count'                 => Arr::get($validated, 'settings.bench_count', 7),
-            'ir_spots'                    => Arr::get($validated, 'settings.ir_spots', 1),
-            'passing_points_per_yard'     => Arr::get($validated, 'settings.passing_points_per_yard', 0.04),
-            'passing_td_points'           => Arr::get($validated, 'settings.passing_td_points', 4.0),
-            'interception_points'         => Arr::get($validated, 'settings.interception_points', -2.0),
-            'rushing_points_per_yard'     => Arr::get($validated, 'settings.rushing_points_per_yard', 0.1),
-            'rushing_td_points'           => Arr::get($validated, 'settings.rushing_td_points', 6.0),
-            'receiving_points_per_yard'   => Arr::get($validated, 'settings.receiving_points_per_yard', 0.1),
-            'receiving_td_points'         => Arr::get($validated, 'settings.receiving_td_points', 6.0),
-            'reception_points'            => Arr::get($validated, 'settings.reception_points', 0.0),
-            'fumble_lost_points'          => Arr::get($validated, 'settings.fumble_lost_points', -2.0),
-            'two_point_conversion_points' => Arr::get($validated, 'settings.two_point_conversion_points', 2.0),
-        ]);
+        Action::model(LeagueSettings::class)->create(
+            league: $league,
+            data: [
+                'roster_positions'            => Arr::get($validated, 'settings.roster_positions', []),
+                'roster_size'                 => Arr::get($validated, 'settings.roster_size', 16),
+                'starters_count'              => Arr::get($validated, 'settings.starters_count', 9),
+                'bench_count'                 => Arr::get($validated, 'settings.bench_count', 7),
+                'ir_spots'                    => Arr::get($validated, 'settings.ir_spots', 1),
+                'passing_points_per_yard'     => Arr::get($validated, 'settings.passing_points_per_yard', 0.04),
+                'passing_td_points'           => Arr::get($validated, 'settings.passing_td_points', 4.0),
+                'interception_points'         => Arr::get($validated, 'settings.interception_points', -2.0),
+                'rushing_points_per_yard'     => Arr::get($validated, 'settings.rushing_points_per_yard', 0.1),
+                'rushing_td_points'           => Arr::get($validated, 'settings.rushing_td_points', 6.0),
+                'receiving_points_per_yard'   => Arr::get($validated, 'settings.receiving_points_per_yard', 0.1),
+                'receiving_td_points'         => Arr::get($validated, 'settings.receiving_td_points', 6.0),
+                'reception_points'            => Arr::get($validated, 'settings.reception_points', 0.0),
+                'fumble_lost_points'          => Arr::get($validated, 'settings.fumble_lost_points', -2.0),
+                'two_point_conversion_points' => Arr::get($validated, 'settings.two_point_conversion_points', 2.0),
+            ],
+        );
 
-        Action::model(LeagueMember::class)->create($league, $request->user(), [
-            'team_name' => $request->user()->name . "'s Team",
-            'is_admin'  => true,
-        ]);
+        Action::model(LeagueMember::class)->create(
+            league: $league,
+            user: $request->user(),
+            data: [
+                'team_name' => $request->user()->name . "'s Team",
+                'is_admin'  => true,
+            ],
+        );
 
         return response()->json($league->load('settings', 'members'), 201);
     }
@@ -120,8 +130,8 @@ class LeagueController extends Controller
         $validated = $request->validated();
 
         $league = Action::model(League::class)->update(
-            $league,
-            array_filter(Arr::only($validated, [
+            league: $league,
+            data: array_filter(Arr::only($validated, [
                 'name',
                 'description',
                 'team_count',
@@ -134,15 +144,18 @@ class LeagueController extends Controller
         );
 
         Action::model(LeagueSettings::class)->update(
-            $league->settings,
-            array_filter(Arr::get($validated, 'settings', [])),
+            settings: $league->settings,
+            data: array_filter(Arr::get($validated, 'settings', [])),
         );
 
         foreach (Arr::get($validated, 'members', []) as $memberData) {
             try {
                 $member = LeagueMember::findOrFail(Arr::get($memberData, 'id'));
 
-                Action::model(LeagueMember::class)->update($member, $memberData);
+                Action::model(LeagueMember::class)->update(
+                    member: $member,
+                    data: $memberData,
+                );
             } catch (Exception $e) {
                 return response()->json(['message' => 'Failed to update member'], 500);
             }

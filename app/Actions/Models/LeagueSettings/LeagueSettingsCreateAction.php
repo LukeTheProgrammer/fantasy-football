@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 
 class LeagueSettingsCreateAction
 {
-    public function run(League $league, array $data): League
+    public function run(League $league, array $data): LeagueSettings
     {
         $settings = LeagueSettings::create([
             'league_id'                   => $league->id,

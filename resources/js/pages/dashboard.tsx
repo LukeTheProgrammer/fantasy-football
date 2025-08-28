@@ -136,12 +136,14 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <Link href={`/leagues/${league.id}`}>
-                      <span className="rounded-full px-3 py-1 text-sm">Active</span>
-                      <button className="">
-                        <ChevronRight className="h-5 w-5" />
-                      </button>
-                    </Link>
+                    <div className="flex items-center justify-end space-x-2">
+                      <Link href={`/leagues/${league.id}`}>
+                        <Button variant="outline">View</Button>
+                      </Link>
+                      <Link href={`/leagues/${league.id}/edit`}>
+                        <Button variant="outline">Edit</Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

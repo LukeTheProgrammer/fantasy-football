@@ -45,7 +45,7 @@ class ModelActions
             throw new Exception('There is no create method registered for ' . $this->modelClassName);
         }
 
-        return app($action)->run($args);
+        return app($action)->run(...$args);
     }
 
     public function update(...$args)
@@ -57,6 +57,6 @@ class ModelActions
             throw new Exception('There is no update method registered for ' . $this->modelClassName);
         }
 
-        return app($action)->run($args);
+        return app($action)->run(...$args);
     }
 }
