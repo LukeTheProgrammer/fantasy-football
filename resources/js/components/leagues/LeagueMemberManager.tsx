@@ -1,3 +1,4 @@
+import axios from '@/lib/axios';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -5,9 +6,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import axios from '@/lib/axios';
 import { MoreHorizontal, Shield, UserPlus } from 'lucide-react';
+import { toast } from 'sonner';
 import { useCallback, useEffect, useState } from 'react';
 
 interface User {
@@ -40,7 +40,6 @@ interface LeagueMemberManagerProps {
 }
 
 export default function LeagueMemberManager({ leagueId, members, maxTeams, userIsAdmin, currentUserId, onMembersChange }: LeagueMemberManagerProps) {
-  const { toast } = useToast();
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteTeamName, setInviteTeamName] = useState('');
@@ -87,11 +86,7 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
     setFormSubmitted(true);
 
     if (!validateInviteForm()) {
-      toast({
-        title: 'Validation Error',
-        description: 'Please fix the errors in the form',
-        variant: 'destructive',
-      });
+      toast.error('Validation Error. Please fix the errors in the form');
       return;
     }
 
@@ -103,10 +98,7 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
         team_name: inviteTeamName,
       });
 
-      toast({
-        title: 'Success',
-        description: 'Member invited successfully',
-      });
+      toast.success('Member invited successfully');
 
       // Add the new member to the list
       onMembersChange([...members, response.data]);
@@ -119,11 +111,7 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
       setInviteDialogOpen(false);
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to invite member';
-      toast({
-        title: 'Error',
-        description: errorMsg,
-        variant: 'destructive',
-      });
+      toast.error(errorMsg);
     } finally {
       setInviting(false);
     }
@@ -137,20 +125,13 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
     try {
       await axios.delete(`/api/league-members/${memberId}`);
 
-      toast({
-        title: 'Success',
-        description: 'Member removed successfully',
-      });
+      toast('Member removed successfully');
 
       // Remove the member from the list
       onMembersChange(members.filter((member) => member.id !== memberId));
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to remove member';
-      toast({
-        title: 'Error',
-        description: errorMsg,
-        variant: 'destructive',
-      });
+      toast.error(errorMsg);
     }
   };
 
@@ -161,20 +142,13 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
         is_admin: !member.is_admin,
       });
 
-      toast({
-        title: 'Success',
-        description: `Admin status ${member.is_admin ? 'removed' : 'granted'}`,
-      });
+      toast(`Admin status ${member.is_admin ? 'removed' : 'granted'}`);
 
       // Update the member in the list
       onMembersChange(members.map((m) => (m.id === member.id ? response.data : m)));
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to update admin status';
-      toast({
-        title: 'Error',
-        description: errorMsg,
-        variant: 'destructive',
-      });
+      toast.error(errorMsg);
     }
   };
 
@@ -216,11 +190,7 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
     if (!selectedMember) return;
 
     if (!validateDraftPosition()) {
-      toast({
-        title: 'Validation Error',
-        description: draftPositionError,
-        variant: 'destructive',
-      });
+      toast.error(draftPositionError);
       return;
     }
 
@@ -230,10 +200,7 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
         draft_position: draftPosition,
       });
 
-      toast({
-        title: 'Success',
-        description: 'Draft position updated successfully',
-      });
+      toast('Draft position updated successfully');
 
       // Update the member in the list
       onMembersChange(members.map((m) => (m.id === selectedMember.id ? response.data : m)));
@@ -241,11 +208,7 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
       setDraftPositionDialogOpen(false);
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to update draft position';
-      toast({
-        title: 'Error',
-        description: errorMsg,
-        variant: 'destructive',
-      });
+      toast.error(errorMsg);
     } finally {
       setUpdatingDraftPosition(false);
     }

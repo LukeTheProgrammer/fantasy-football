@@ -57,7 +57,7 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
 
   return (
     <div className="mt-4 space-y-4">
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         <div className="col-span-1 mr-6">
           <Label htmlFor="roster-positions">Starting Lineup</Label>
           <div className="mt-2 flex min-h-[100px] flex-wrap gap-2 rounded-md border p-2">
@@ -99,15 +99,12 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
             )}
           </div>
         </div>
-        <div className="col-span-2 gap-4">
-          <div className="mt-1 flex items-end justify-between gap-2">
+        <div className="gap-4">
+          <div className="mt-1 flex flex-col items-start gap-2">
             <Label htmlFor="add-position">Add Position</Label>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              <p className="text-right text-xs">Order matters!</p>
-            </div>
           </div>
-          <div className="mt-4 flex items-center gap-2">
-            <div className="flex-1">
+          <div className="mt-4 flex flex-col items-center gap-2">
+            <div className="grow-1 w-full px-0">
               <Select value={selectedPosition} onValueChange={setSelectedPosition}>
                 <SelectTrigger id="add-position">
                   <SelectValue placeholder="Select position" />
@@ -121,10 +118,13 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex-0">
-              <Button type="button" onClick={addPosition} disabled={!selectedPosition}>
+            <div className="grow-1 px-0">
+              <Button type="button" className="w-full" onClick={addPosition} disabled={!selectedPosition}>
                 Add
               </Button>
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-xs">Order matters!</p>
             </div>
           </div>
         </div>

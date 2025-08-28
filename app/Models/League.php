@@ -36,7 +36,7 @@ class League extends Model
      */
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
     /**
@@ -53,5 +53,29 @@ class League extends Model
     public function members(): HasMany
     {
         return $this->hasMany(LeagueMember::class);
+    }
+
+    /**
+     * Checks if a user is an admin of this league.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function userIsAdmin(User $user): bool
+    {
+        return $this->members()->where('user_id', $user->id)->where('is_admin', true)->exists();
+    }
+
+    /**
+     * Checks if a user is a member of this league.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function userIsMember(User $user): bool
+    {
+        return $this->members()->where('user_id', $user->id)->exists();
     }
 }

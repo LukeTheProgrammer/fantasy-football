@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Head } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PageProps } from '@inertiajs/core';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,17 +26,103 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/dashboard',
   },
   {
-    title: 'Create League',
-    href: '/leagues/create',
+    title: 'Leagues',
+    href: '/leagues',
+  },
+  {
+    title: 'Edit League',
+    href: '#',
   },
 ];
 
-export default function CreateLeague() {
+interface LeagueMember {
+  id: number;
+  league_id: number;
+  user_id: number;
+  team_name: string;
+  team_logo: string | null;
+  draft_position: number | null;
+  is_admin: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
+interface LeagueSettings {
+  id: number;
+  league_id: number;
+  roster_positions: string[];
+  roster_size: number;
+  starters_count: number;
+  bench_count: number;
+  ir_spots: number;
+  passing_points_per_yard?: number;
+  passing_yards_per_point?: number;
+  passing_td_points: number;
+  interception_points: number;
+  rushing_points_per_yard?: number;
+  rushing_yards_per_point?: number;
+  rushing_td_points: number;
+  receiving_points_per_yard?: number;
+  receiving_yards_per_point?: number;
+  receiving_td_points: number;
+  reception_points: number;
+  fumble_lost_points: number;
+  two_point_conversion_points: number;
+  field_goal_0_39_points: number;
+  field_goal_40_49_points: number;
+  field_goal_50_plus_points: number;
+  extra_point_points: number;
+  defense_sack_points: number;
+  defense_interception_points: number;
+  defense_fumble_recovery_points: number;
+  defense_td_points: number;
+  defense_safety_points: number;
+  defense_points_allowed_tiers: Record<string, number>;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface League {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  team_count?: number;
+  max_teams?: number;
+  is_public: boolean;
+  draft_type: string;
+  draft_date: string | null;
+  join_code: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  creator?: {
+    id: number;
+    name: string;
+  };
+  settings: LeagueSettings;
+  members?: LeagueMember[];
+  user_is_admin?: boolean;
+  user_is_member?: boolean;
+}
+
+interface EditLeagueProps extends PageProps {
+  league: League;
+}
+
+export default function EditLeague({ league: initialLeague }: EditLeagueProps) {
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Initialize form data with the league data
   const [data, setData] = useState({
     name: '',
     description: '',
@@ -162,6 +249,55 @@ export default function CreateLeague() {
     }
   }, [data, formSubmitted, validateForm]);
 
+  // Load initial league data when component mounts
+  useEffect(() => {
+    if (initialLeague) {
+      setData({
+        name: initialLeague.name || '',
+        description: initialLeague.description || '',
+        team_count: initialLeague.team_count || 10,
+        is_public: initialLeague.is_public || false,
+        draft_type: initialLeague.draft_type || 'snake',
+        draft_date: initialLeague.draft_date || '',
+        settings: {
+          roster_positions: initialLeague.settings?.roster_positions || ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'K', 'DEF'],
+          roster_size: initialLeague.settings?.roster_size || 16,
+          starters_count: initialLeague.settings?.starters_count || 9,
+          bench_count: initialLeague.settings?.bench_count || 7,
+          ir_spots: initialLeague.settings?.ir_spots || 1,
+          passing_points_per_yard: initialLeague.settings?.passing_points_per_yard || 0.04,
+          passing_td_points: initialLeague.settings?.passing_td_points || 4,
+          interception_points: initialLeague.settings?.interception_points || -2,
+          rushing_points_per_yard: initialLeague.settings?.rushing_points_per_yard || 0.1,
+          rushing_td_points: initialLeague.settings?.rushing_td_points || 6,
+          receiving_points_per_yard: initialLeague.settings?.receiving_points_per_yard || 0.1,
+          receiving_td_points: initialLeague.settings?.receiving_td_points || 6,
+          reception_points: initialLeague.settings?.reception_points || 0.5,
+          fumble_lost_points: initialLeague.settings?.fumble_lost_points || -2,
+          two_point_conversion_points: initialLeague.settings?.two_point_conversion_points || 2,
+          field_goal_0_39_points: initialLeague.settings?.field_goal_0_39_points || 3,
+          field_goal_40_49_points: initialLeague.settings?.field_goal_40_49_points || 4,
+          field_goal_50_plus_points: initialLeague.settings?.field_goal_50_plus_points || 5,
+          extra_point_points: initialLeague.settings?.extra_point_points || 1,
+          defense_sack_points: initialLeague.settings?.defense_sack_points || 1,
+          defense_interception_points: initialLeague.settings?.defense_interception_points || 2,
+          defense_fumble_recovery_points: initialLeague.settings?.defense_fumble_recovery_points || 2,
+          defense_td_points: initialLeague.settings?.defense_td_points || 6,
+          defense_safety_points: initialLeague.settings?.defense_safety_points || 2,
+          defense_points_allowed_tiers: {
+            '0': initialLeague.settings?.defense_points_allowed_tiers?.['0'] ?? 10,
+            '1-6': initialLeague.settings?.defense_points_allowed_tiers?.['1-6'] ?? 7,
+            '7-13': initialLeague.settings?.defense_points_allowed_tiers?.['7-13'] ?? 4,
+            '14-20': initialLeague.settings?.defense_points_allowed_tiers?.['14-20'] ?? 1,
+            '21-27': initialLeague.settings?.defense_points_allowed_tiers?.['21-27'] ?? 0,
+            '28-34': initialLeague.settings?.defense_points_allowed_tiers?.['28-34'] ?? -1,
+            '35+': initialLeague.settings?.defense_points_allowed_tiers?.['35+'] ?? -4,
+          },
+        },
+      });
+    }
+  }, [initialLeague]);
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setFormSubmitted(true);
@@ -191,74 +327,30 @@ export default function CreateLeague() {
     setProcessing(true);
 
     axios
-      .post('/api/leagues', data)
+      .patch(`/api/leagues/${initialLeague.id}`, data)
       .then(() => {
-        // Reset form data
-        setData({
-          name: '',
-          description: '',
-          team_count: 10,
-          is_public: false,
-          draft_type: 'snake',
-          draft_date: '',
-          settings: {
-            roster_positions: ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'K', 'DEF'],
-            roster_size: 16,
-            starters_count: 9,
-            bench_count: 7,
-            ir_spots: 1,
-            passing_points_per_yard: 0.04,
-            passing_td_points: 4,
-            interception_points: -2,
-            rushing_points_per_yard: 0.1,
-            rushing_td_points: 6,
-            receiving_points_per_yard: 0.1,
-            receiving_td_points: 6,
-            reception_points: 0.5,
-            fumble_lost_points: -2,
-            two_point_conversion_points: 2,
-            field_goal_0_39_points: 3,
-            field_goal_40_49_points: 4,
-            field_goal_50_plus_points: 5,
-            extra_point_points: 1,
-            defense_sack_points: 1,
-            defense_interception_points: 2,
-            defense_fumble_recovery_points: 2,
-            defense_td_points: 6,
-            defense_safety_points: 2,
-            defense_points_allowed_tiers: {
-              '0': 10,
-              '1-6': 7,
-              '7-13': 4,
-              '14-20': 1,
-              '21-27': 0,
-              '28-34': -1,
-              '35+': -4,
-            },
-          },
-        });
         setFormSubmitted(false);
         setProcessing(false);
-        toast.success('Your fantasy league has been created successfully!');
+        toast.success('Your fantasy league has been updated successfully!');
 
-        // Optionally redirect to the leagues page
-        window.location.href = '/dashboard';
+        // Redirect to the league details page
+        window.location.href = `/leagues/${initialLeague.id}`;
       })
       .catch((error) => {
         setProcessing(false);
         if (error.response && error.response.data && error.response.data.errors) {
           setErrors(error.response.data.errors);
         }
-        toast.error('There was a problem creating your league. Please check the form and try again.');
+        toast.error('There was a problem updating your league. Please check the form and try again.');
       });
   }
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Create League" />
+      <Head title="Edit League" />
 
       <div className="flex-1 p-8">
-        <Heading title="Create a New Fantasy League" description="Set up your new fantasy football league with custom settings" />
+        <Heading title="Edit Fantasy League" description="Update your fantasy football league settings" />
 
         <form onSubmit={handleSubmit}>
           <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -337,16 +429,6 @@ export default function CreateLeague() {
                     <p className="text-sm text-red-500">{errors.draft_date || validationErrors.draft_date}</p>
                   )}
                 </div>
-
-                {/*
-                <div className="mb-8 flex items-center space-x-2">
-                  <Switch id="is_public" checked={data.is_public} onCheckedChange={(checked: boolean) => setData(prev => ({ ...prev, is_public: checked }))} />
-                  <Label htmlFor="is_public">Make league public</Label>
-                  {(errors.is_public || validationErrors.is_public) && (
-                    <p className="text-sm text-red-500">{errors.is_public || validationErrors.is_public}</p>
-                  )}
-                </div>
-                */}
               </CardContent>
             </Card>
             <Card>
@@ -461,13 +543,13 @@ export default function CreateLeague() {
                   <p className="text-sm text-muted-foreground">Configure your league's scoring rules.</p>
                 </div>
 
-                <div className="mt-2 grid w-full grid-cols-2 gap-4">
+                <div className="mt-2 grid w-full grid-cols-1 lg:grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-lg font-medium">Passing</h3>
                     <Separator className="my-2" />
-                    <div className="mt-2 grid w-full grid-cols-3 gap-1">
-                      <div className="col-span-2">
-                        <Label>Points per Yard</Label>
+                    <div className="mt-2 grid w-full grid-cols-2 gap-1">
+                      <div className="col-span-1">
+                        <Label>per Yard</Label>
                       </div>
                       <div className="col-span-1">
                         <Input
@@ -485,7 +567,7 @@ export default function CreateLeague() {
                           }
                         />
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-1">
                         <Label>TD Pass</Label>
                       </div>
                       <div className="col-span-1">
@@ -504,8 +586,8 @@ export default function CreateLeague() {
                           }
                         />
                       </div>
-                      <div className="col-span-2">
-                        <Label>Interception</Label>
+                      <div className="col-span-1">
+                        <Label>INT</Label>
                       </div>
                       <div className="col-span-1">
                         <Input
@@ -529,9 +611,9 @@ export default function CreateLeague() {
                   <div>
                     <h3 className="text-lg font-medium">Receiving</h3>
                     <Separator className="my-2" />
-                    <div className="mt-2 grid grid-cols-3 gap-1">
-                      <div className="col-span-2">
-                        <Label>Yards per Point</Label>
+                    <div className="mt-2 grid grid-cols-2 gap-1">
+                      <div className="col-span-1">
+                        <Label>per Yard</Label>
                       </div>
                       <div className="col-span-1">
                         <Input
@@ -549,7 +631,7 @@ export default function CreateLeague() {
                           }
                         />
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-1">
                         <Label>TD Rec</Label>
                       </div>
                       <div className="col-span-1">
@@ -568,8 +650,8 @@ export default function CreateLeague() {
                           }
                         />
                       </div>
-                      <div className="col-span-2">
-                        <Label>Reception Points</Label>
+                      <div className="col-span-1">
+                        <Label>Reception</Label>
                       </div>
                       <div className="col-span-1">
                         <Input
@@ -591,13 +673,13 @@ export default function CreateLeague() {
                   </div>
                 </div>
 
-                <div className="mt-2 grid w-full grid-cols-2 gap-4">
-                  <div className="mt-4">
+                <div className="mt-2 grid w-full grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="mt-2">
                     <h3 className="text-lg font-medium">Rushing</h3>
                     <Separator className="my-2" />
-                    <div className="mt-2 grid grid-cols-3 gap-1">
-                      <div className="col-span-2">
-                        <Label>Yards per Point</Label>
+                    <div className="mt-2 grid grid-cols-2 gap-1">
+                      <div className="col-span-1">
+                        <Label>per Yard</Label>
                       </div>
                       <div className="col-span-1">
                         <Input
@@ -615,8 +697,8 @@ export default function CreateLeague() {
                           }
                         />
                       </div>
-                      <div className="col-span-2">
-                        <Label>TD Points</Label>
+                      <div className="col-span-1">
+                        <Label>TD Rush</Label>
                       </div>
                       <div className="col-span-1">
                         <Input
@@ -637,12 +719,12 @@ export default function CreateLeague() {
                     </div>
                   </div>
 
-                  <div className="mt-4">
-                    <h3 className="text-lg font-medium">Miscellaneous</h3>
+                  <div className="mt-2">
+                    <h3 className="text-lg font-medium">Misc</h3>
                     <Separator className="my-2" />
-                    <div className="mt-2 grid grid-cols-3 gap-1">
-                      <div className="col-span-2">
-                        <Label>Fumble Lost Points</Label>
+                    <div className="mt-2 grid grid-cols-2 gap-1">
+                      <div className="col-span-1">
+                        <Label>Fumb</Label>
                       </div>
                       <div className="col-span-1">
                         <Input
@@ -660,8 +742,8 @@ export default function CreateLeague() {
                           }
                         />
                       </div>
-                      <div className="col-span-2">
-                        <Label>2-Point Conversion</Label>
+                      <div className="col-span-1">
+                        <Label>2-Pt</Label>
                       </div>
                       <div className="col-span-1">
                         <Input
@@ -687,7 +769,7 @@ export default function CreateLeague() {
           </div>
           <div className="mt-6 flex justify-end">
             <Button type="submit" disabled={processing} className="px-6">
-              {processing ? 'Creating...' : 'Create League'}
+              {processing ? 'Updating...' : 'Update League'}
             </Button>
           </div>
         </form>

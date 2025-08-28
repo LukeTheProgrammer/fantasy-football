@@ -4,10 +4,10 @@ namespace App\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Espn extends Facade
+class Action extends Facade
 {
     public static function getFacadeAccessor()
     {
-        return 'Espn';
+        return 'Action';
     }
 }

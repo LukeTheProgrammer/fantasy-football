@@ -1,12 +1,12 @@
+import AppLayout from '@/layouts/app-layout';
 import Heading from '@/components/heading';
+import axios from 'axios';
 import { Button } from '@/components/ui/button';
+import { ChevronRight, Play, Plus, Search, Star, Trophy } from 'lucide-react';
+import { Head, Link } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-import axios from 'axios';
-import { ChevronRight, Play, Plus, Search, Star, Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface League {
@@ -136,10 +136,12 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span className="rounded-full px-3 py-1 text-sm">Active</span>
-                    <button className="">
-                      <ChevronRight className="h-5 w-5" />
-                    </button>
+                    <Link href={`/leagues/${league.id}`}>
+                      <span className="rounded-full px-3 py-1 text-sm">Active</span>
+                      <button className="">
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>

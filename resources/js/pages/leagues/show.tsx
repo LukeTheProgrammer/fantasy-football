@@ -1,13 +1,15 @@
+import AppLayout from '@/layouts/app-layout';
+import Heading from '@/components/heading';
 import LeagueMemberManager from '@/components/leagues/LeagueMemberManager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
-import axios from '@/lib/axios';
-import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { PageProps } from '@/types';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
+import { type BreadcrumbItem } from '@/types';
 
 interface LeagueMember {
   id: number;
@@ -64,7 +66,7 @@ interface League {
   name: string;
   slug: string;
   description: string | null;
-  max_teams: number;
+  team_count: number;
   is_public: boolean;
   draft_type: string;
   draft_date: string | null;
@@ -82,31 +84,44 @@ interface League {
   user_is_member: boolean;
 }
 
-export default function ShowLeague({ params, auth }: PageProps) {
-  const { toast } = useToast();
-  const [league, setLeague] = useState<League | null>(null);
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Dashboard',
+    href: '/dashboard',
+  },
+  {
+    title: 'Leagues',
+    href: '/leagues',
+  },
+  {
+    title: 'League Details',
+    href: '#',
+  },
+];
+
+export default function ShowLeague({ league: initialLeague, auth }: PageProps & { league: League }) {
+  const [league, setLeague] = useState<League | null>(initialLeague || null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  // We don't need activeTab state as we're using defaultValue in Tabs
   // We'll manage invite state in the LeagueMemberManager component
 
   useEffect(() => {
-    const fetchLeague = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get<League>(`/api/leagues/${params.id}`);
-        setLeague(response.data);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load league details. Please try again later.');
-        console.error('Error fetching league:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (initialLeague) {
+      // Set user_is_admin based on membership status
+      const userIsAdmin = initialLeague.members.some(
+        (member) => member.user_id === auth.user?.id && member.is_admin
+      );
 
-    fetchLeague();
-  }, [params.id]);
+      setLeague({
+        ...initialLeague,
+        user_is_admin: userIsAdmin
+      });
+
+      setLoading(false);
+      return;
+    }
+  }, [initialLeague, auth.user?.id]);
 
   const handleMembersChange = (updatedMembers: LeagueMember[]) => {
     if (league) {
@@ -120,10 +135,7 @@ export default function ShowLeague({ params, auth }: PageProps) {
   const copyJoinCode = () => {
     if (league?.join_code) {
       navigator.clipboard.writeText(league.join_code);
-      toast({
-        title: 'Join Code Copied',
-        description: 'The join code has been copied to your clipboard',
-      });
+      toast.success('The join code has been copied to your clipboard');
     }
   };
 
@@ -134,7 +146,7 @@ export default function ShowLeague({ params, auth }: PageProps) {
 
   if (loading) {
     return (
-      <>
+      <AppLayout breadcrumbs={breadcrumbs}>
         <Head title="Loading League..." />
         <div className="py-12">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -150,13 +162,13 @@ export default function ShowLeague({ params, auth }: PageProps) {
             </div>
           </div>
         </div>
-      </>
+      </AppLayout>
     );
   }
 
   if (error || !league) {
     return (
-      <>
+      <AppLayout breadcrumbs={breadcrumbs}>
         <Head title="Error" />
         <div className="py-12">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -172,240 +184,209 @@ export default function ShowLeague({ params, auth }: PageProps) {
             </div>
           </div>
         </div>
-      </>
+      </AppLayout>
     );
   }
 
   return (
-    <>
+    <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={league.name} />
 
-      <div className="py-12">
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-            <div className="p-6">
-              <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
+      <div className="flex-1 p-8">
+        <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
+          <div>
+            <Heading
+              title={league.name}
+              description={`Created by ${league.creator.name} • ${league.members.length}/${league.team_count} teams`}
+            />
+          </div>
+          <div className="mt-4 flex space-x-2 md:mt-0">
+            {league.user_is_admin && (
+              <Link href={route('leagues.edit', league.id)}>
+                <Button variant="outline">Edit League</Button>
+              </Link>
+            )}
+            <Link href={route('leagues.index')}>
+              <Button variant="outline">Back to Leagues</Button>
+            </Link>
+          </div>
+        </div>
+
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {/* League Details Card */}
+          <Card>
+            <CardContent className="space-y-4">
+              <div className="mb-8 grid w-full">
+                <h2 className="text-lg font-semibold">League Info</h2>
+                <p className="text-sm text-muted-foreground">Basic information about your fantasy football league.</p>
+              </div>
+
+              <dl className="space-y-4">
                 <div>
-                  <h1 className="text-2xl font-semibold">{league.name}</h1>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    Created by {league.creator.name} • {league.members.length}/{league.max_teams} teams
-                  </p>
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</dt>
+                  <dd className="mt-1">{league.description || 'No description provided'}</dd>
                 </div>
-                <div className="mt-4 flex space-x-2 md:mt-0">
-                  {league.user_is_admin && (
-                    <Link href={route('leagues.edit', league.id)}>
-                      <Button variant="outline">Edit League</Button>
-                    </Link>
-                  )}
-                  <Link href={route('leagues.index')}>
-                    <Button variant="ghost">Back to Leagues</Button>
-                  </Link>
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Draft Type</dt>
+                  <dd className="mt-1 capitalize">{league.draft_type}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Draft Date</dt>
+                  <dd className="mt-1">{formatDate(league.draft_date)}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Visibility</dt>
+                  <dd className="mt-1">{league.is_public ? 'Public' : 'Private'}</dd>
+                </div>
+              </dl>
+
+              <div className="mt-6">
+                <h3 className="mb-2 text-md font-medium">Join Code</h3>
+                {league.user_is_admin ? (
+                  <div className="flex items-center space-x-2">
+                    <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">{league.join_code}</code>
+                    <Button variant="outline" size="sm" onClick={copyJoinCode}>
+                      Copy
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Only league admins can view the join code</p>
+                )}
+              </div>
+
+              <div className="mt-6">
+                <h3 className="mb-2 text-md font-medium">Draft Status</h3>
+                {league.draft_date ? (
+                  <div className="space-y-2">
+                    <p>{new Date(league.draft_date) > new Date() ? 'Draft scheduled for:' : 'Draft was scheduled for:'}</p>
+                    <p className="font-medium">{formatDate(league.draft_date)}</p>
+                    {new Date(league.draft_date) > new Date() && <Button className="mt-2 w-full">Enter Draft Room</Button>}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400">Draft not yet scheduled</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Roster Settings Card */}
+          <Card>
+            <CardContent className="space-y-4">
+              <div className="mb-8 grid w-full">
+                <h2 className="text-lg font-semibold">Roster Settings</h2>
+                <p className="text-sm text-muted-foreground">Your league's roster positions and size.</p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Starters</h3>
+                  <p className="mt-1 text-lg font-semibold">{league.settings.starters_count}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Bench</h3>
+                  <p className="mt-1 text-lg font-semibold">{league.settings.bench_count}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">IR</h3>
+                  <p className="mt-1 text-lg font-semibold">{league.settings.ir_spots}</p>
                 </div>
               </div>
 
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="members">Members</TabsTrigger>
-                  <TabsTrigger value="settings">Settings</TabsTrigger>
-                </TabsList>
+              <div className="mt-6">
+                <h3 className="mb-2 text-md font-medium">Roster Positions</h3>
+                <div className="flex flex-wrap gap-2">
+                  {league.settings.roster_positions.map((position, index) => (
+                    <div key={index} className="rounded-md bg-gray-100 px-2 py-1 text-sm dark:bg-gray-700">
+                      {position}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-                <TabsContent value="overview" className="mt-6">
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>League Info</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <dl className="space-y-2">
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</dt>
-                            <dd>{league.description || 'No description provided'}</dd>
-                          </div>
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Draft Type</dt>
-                            <dd className="capitalize">{league.draft_type}</dd>
-                          </div>
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Draft Date</dt>
-                            <dd>{formatDate(league.draft_date)}</dd>
-                          </div>
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Visibility</dt>
-                            <dd>{league.is_public ? 'Public' : 'Private'}</dd>
-                          </div>
-                        </dl>
-                      </CardContent>
-                    </Card>
+              <div className="mt-6">
+                <h3 className="mb-2 text-md font-medium">Total Roster Size</h3>
+                <p className="text-lg font-semibold">{league.settings.roster_size} players</p>
+              </div>
+            </CardContent>
+          </Card>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Join Code</CardTitle>
-                        <CardDescription>Share this code with others to join your league</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        {league.user_is_admin ? (
-                          <div className="flex items-center space-x-2">
-                            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">{league.join_code}</code>
-                            <Button variant="outline" size="sm" onClick={copyJoinCode}>
-                              Copy
-                            </Button>
-                          </div>
-                        ) : (
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Only league admins can view the join code</p>
-                        )}
-                      </CardContent>
-                    </Card>
+          {/* Scoring Settings Card */}
+          <Card>
+            <CardContent className="space-y-4">
+              <div className="mb-8 grid w-full">
+                <h2 className="text-lg font-semibold">Scoring Settings</h2>
+                <p className="text-sm text-muted-foreground">Your league's scoring rules.</p>
+              </div>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Draft Status</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {league.draft_date ? (
-                          <div className="space-y-2">
-                            <p>{new Date(league.draft_date) > new Date() ? 'Draft scheduled for:' : 'Draft was scheduled for:'}</p>
-                            <p className="font-medium">{formatDate(league.draft_date)}</p>
-                            {new Date(league.draft_date) > new Date() && <Button className="mt-2 w-full">Enter Draft Room</Button>}
-                          </div>
-                        ) : (
-                          <p className="text-gray-500 dark:text-gray-400">Draft not yet scheduled</p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </div>
-                </TabsContent>
+              <div>
+                <h3 className="text-lg font-medium">Passing</h3>
+                <Separator className="my-2" />
+                <div className="mt-2 grid grid-cols-2 gap-1">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Points per Yard</div>
+                  <div className="text-right">{league.settings.passing_yards_per_point}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">TD Pass</div>
+                  <div className="text-right">{league.settings.passing_td_points} pts</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Interception</div>
+                  <div className="text-right">{league.settings.interception_points} pts</div>
+                </div>
+              </div>
 
-                <TabsContent value="members" className="mt-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>League Members</CardTitle>
-                      <CardDescription>Manage your league's members and their draft positions</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <LeagueMemberManager
-                        leagueId={league.id}
-                        members={league.members}
-                        maxTeams={league.max_teams}
-                        userIsAdmin={league.user_is_admin}
-                        currentUserId={auth.user?.id || 0}
-                        onMembersChange={handleMembersChange}
-                      />
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+              <div className="mt-4">
+                <h3 className="text-lg font-medium">Rushing</h3>
+                <Separator className="my-2" />
+                <div className="mt-2 grid grid-cols-2 gap-1">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Points per Yard</div>
+                  <div className="text-right">{league.settings.rushing_yards_per_point}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">TD</div>
+                  <div className="text-right">{league.settings.rushing_td_points} pts</div>
+                </div>
+              </div>
 
-                <TabsContent value="settings" className="mt-6">
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Roster Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <dl className="space-y-2">
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Roster Size</dt>
-                            <dd>{league.settings.roster_size} players</dd>
-                          </div>
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Starting Players</dt>
-                            <dd>{league.settings.starters_count} players</dd>
-                          </div>
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Bench Spots</dt>
-                            <dd>{league.settings.bench_count} players</dd>
-                          </div>
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">IR Spots</dt>
-                            <dd>{league.settings.ir_spots} spots</dd>
-                          </div>
-                          <div>
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Roster Positions</dt>
-                            <dd>{league.settings.roster_positions.join(', ')}</dd>
-                          </div>
-                        </dl>
-                      </CardContent>
-                    </Card>
+              <div className="mt-4">
+                <h3 className="text-lg font-medium">Receiving</h3>
+                <Separator className="my-2" />
+                <div className="mt-2 grid grid-cols-2 gap-1">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Points per Yard</div>
+                  <div className="text-right">{league.settings.receiving_yards_per_point}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">TD</div>
+                  <div className="text-right">{league.settings.receiving_td_points} pts</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Reception</div>
+                  <div className="text-right">{league.settings.reception_points} pts</div>
+                </div>
+              </div>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Scoring Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent className="h-[300px] overflow-y-auto">
-                        <dl className="space-y-2">
-                          <div className="border-b pb-2">
-                            <dt className="text-sm font-medium">Passing</dt>
-                            <dd className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                              <div className="flex justify-between">
-                                <span>Yards per point:</span>
-                                <span>{league.settings.passing_yards_per_point}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>TD:</span>
-                                <span>{league.settings.passing_td_points} pts</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Interception:</span>
-                                <span>{league.settings.interception_points} pts</span>
-                              </div>
-                            </dd>
-                          </div>
-
-                          <div className="border-b pb-2">
-                            <dt className="text-sm font-medium">Rushing</dt>
-                            <dd className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                              <div className="flex justify-between">
-                                <span>Yards per point:</span>
-                                <span>{league.settings.rushing_yards_per_point}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>TD:</span>
-                                <span>{league.settings.rushing_td_points} pts</span>
-                              </div>
-                            </dd>
-                          </div>
-
-                          <div className="border-b pb-2">
-                            <dt className="text-sm font-medium">Receiving</dt>
-                            <dd className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                              <div className="flex justify-between">
-                                <span>Yards per point:</span>
-                                <span>{league.settings.receiving_yards_per_point}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>TD:</span>
-                                <span>{league.settings.receiving_td_points} pts</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Reception:</span>
-                                <span>{league.settings.reception_points} pts</span>
-                              </div>
-                            </dd>
-                          </div>
-
-                          <div className="border-b pb-2">
-                            <dt className="text-sm font-medium">Miscellaneous</dt>
-                            <dd className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                              <div className="flex justify-between">
-                                <span>Fumble Lost:</span>
-                                <span>{league.settings.fumble_lost_points} pts</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>2-Point Conversion:</span>
-                                <span>{league.settings.two_point_conversion_points} pts</span>
-                              </div>
-                            </dd>
-                          </div>
-                        </dl>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
+              <div className="mt-4">
+                <h3 className="text-lg font-medium">Miscellaneous</h3>
+                <Separator className="my-2" />
+                <div className="mt-2 grid grid-cols-2 gap-1">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Fumble Lost</div>
+                  <div className="text-right">{league.settings.fumble_lost_points} pts</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">2-Point Conversion</div>
+                  <div className="text-right">{league.settings.two_point_conversion_points} pts</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* League Members Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>League Members</CardTitle>
+            <CardDescription>Manage your league's members and their draft positions</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <LeagueMemberManager
+              leagueId={league.id}
+              members={league.members}
+              maxTeams={league.team_count}
+              userIsAdmin={league.user_is_admin}
+              currentUserId={auth.user?.id || 0}
+              onMembersChange={handleMembersChange}
+            />
+          </CardContent>
+        </Card>
       </div>
-    </>
+    </AppLayout>
   );
 }

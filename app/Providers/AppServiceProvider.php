@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Services\Actions\ActionService;
 use App\Services\Espn\EspnService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     public $bindings = [
+        'Action' => ActionService::class,
         'Espn' => EspnService::class,
     ];
 
