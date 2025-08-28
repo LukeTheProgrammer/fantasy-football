@@ -29,7 +29,7 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
   const [selectedPosition, setSelectedPosition] = useState<string>('');
 
   const addPosition = () => {
-    if (selectedPosition && !positions.includes(selectedPosition)) {
+    if (selectedPosition) {
       const newPositions = [...positions, selectedPosition];
       onChange(newPositions);
       setSelectedPosition('');
@@ -59,72 +59,80 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <Label htmlFor="roster-positions">Starting Lineup Positions</Label>
-        <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[100px] mt-2">
-          {positions.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400 w-full text-center py-4">
-              No positions added yet. Add positions below.
-            </p>
-          ) : (
-            positions.map((position, index) => (
-              <Badge key={`${position}-${index}`} variant="secondary" className="flex items-center gap-1 py-1 px-2">
-                <span>{position}</span>
-                <div className="flex items-center ml-1">
-                  <button
-                    type="button"
-                    onClick={() => movePosition(index, 'up')}
-                    disabled={index === 0}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-30"
-                  >
-                    <ChevronUp size={14} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => movePosition(index, 'down')}
-                    disabled={index === positions.length - 1}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-30"
-                  >
-                    <ChevronDown size={14} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => removePosition(index)}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              </Badge>
-            ))
-          )}
+    <div className="space-y-4 mt-4">
+      <div className="grid grid-cols-3 gap-2">
+        <div className="col-span-1 mr-6">
+          <Label htmlFor="roster-positions">Starting Lineup</Label>
+          <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[100px] mt-2">
+            {positions.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400 w-full text-center py-4">
+                No positions added yet. Add positions below.
+              </p>
+            ) : (
+              <div className="flex flex-col justify-start align-start">
+                {positions.map((position, index) => (
+                  <Badge key={`${position}-${index}`} variant="secondary" className="flex items-center gap-1 py-1 px-2 mb-2">
+                    <span>{position}</span>
+                    <div className="flex items-center ml-1">
+                      <button
+                        type="button"
+                        onClick={() => movePosition(index, 'up')}
+                        disabled={index === 0}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-30"
+                      >
+                        <ChevronUp size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => movePosition(index, 'down')}
+                        disabled={index === positions.length - 1}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-30"
+                      >
+                        <ChevronDown size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removePosition(index)}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-
-      <div className="flex items-end gap-2">
-        <div className="flex-1">
-          <Label htmlFor="add-position">Add Position</Label>
-          <Select value={selectedPosition} onValueChange={setSelectedPosition}>
-            <SelectTrigger id="add-position">
-              <SelectValue placeholder="Select position" />
-            </SelectTrigger>
-            <SelectContent>
-              {AVAILABLE_POSITIONS.map((position) => (
-                <SelectItem key={position.value} value={position.value}>
-                  {position.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="col-span-2 gap-4">
+          <div className="flex items-end justify-between gap-2 mt-1">
+            <Label htmlFor="add-position">Add Position</Label>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-right">Order matters!</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-4">
+            <div className="flex-1">
+              <Select value={selectedPosition} onValueChange={setSelectedPosition}>
+                <SelectTrigger id="add-position">
+                  <SelectValue placeholder="Select position" />
+                </SelectTrigger>
+                <SelectContent>
+                  {AVAILABLE_POSITIONS.map((position) => (
+                    <SelectItem key={position.value} value={position.value}>
+                      {position.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-0">
+              <Button type="button" onClick={addPosition} disabled={!selectedPosition}>
+                Add
+              </Button>
+            </div>
+          </div>
         </div>
-        <Button type="button" onClick={addPosition} disabled={!selectedPosition}>
-          Add
-        </Button>
-      </div>
-
-      <div className="text-sm text-gray-500 dark:text-gray-400">
-        <p>Order matters! The positions will be displayed in the order they appear above.</p>
       </div>
     </div>
   );

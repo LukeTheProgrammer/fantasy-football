@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            
+
             // Ensure a user can only join a league once
             $table->unique(['league_id', 'user_id']);
         });

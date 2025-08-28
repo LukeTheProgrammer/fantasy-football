@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Player;
 use Illuminate\Http\Request;
 
-class ApiPlayerController extends Controller
+class PlayerController extends Controller
 {
     /**
      * Display a listing of the resource.

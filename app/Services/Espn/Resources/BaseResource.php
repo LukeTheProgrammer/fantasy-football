@@ -67,7 +67,7 @@ abstract class BaseResource
     public function query(array $additional = []): array
     {
         $query = [
-            'lang' => 'en',
+            'lang'   => 'en',
             'region' => 'us',
         ];
 
@@ -81,7 +81,7 @@ abstract class BaseResource
             ->throw(fn (Response $resp, RequestException $e) => $this->handleError($resp, $e))
             ->retry(
                 $this->retryLimit,
-                fn (int $attempt) => $attempt * 100,
+                fn (int $attempt)        => $attempt * 100,
                 fn (RequestException $e) => $this->canRetry($e),
             );
     }
@@ -109,15 +109,15 @@ abstract class BaseResource
     public function handleError(Response $response, RequestException $e)
     {
         Log::error('ESPN Api Failure', [
-            'context' => $this->currentRequest,
+            'context'  => $this->currentRequest,
             'response' => [
-                'code' => $response->status(),
-                'body' => $response->json(),
+                'code'   => $response->status(),
+                'body'   => $response->json(),
                 'reason' => $response->reason(),
             ],
             'exception' => [
-                'class' => get_class($e),
-                'code' => $e->getCode(),
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
                 'message' => $e->getMessage(),
             ],
         ]);

@@ -77,7 +77,7 @@ class User extends Authenticatable
             'password'          => 'hashed',
         ];
     }
-    
+
     /**
      * Get the leagues created by the user.
      *
@@ -87,7 +87,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(League::class, 'created_by');
     }
-    
+
     /**
      * Get the league memberships for the user.
      *
@@ -97,7 +97,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(LeagueMember::class);
     }
-    
+
     /**
      * Get all leagues the user is a member of.
      *
