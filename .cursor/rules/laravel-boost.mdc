@@ -86,6 +86,8 @@ This application is a Laravel application and its main Laravel ecosystems packag
 ## PHP
 
 - Always use curly braces for control structures, even if it has one line.
+- Always import classes using the fully qualified class name with the `use` keyword at the top of the file. Never use fully qualified class names (FQCNs) in the body of the code, PHPDoc comments, or return type hints. Instead, import all classes and use their short names.
+- Always put class traits on their own line ending with a semicolon, following the PSR-12 standard.
 
 ### Constructors
 - Use PHP 8 constructor property promotion in `__construct()`.
@@ -213,6 +215,20 @@ Route::get('/users', function () {
 
 ### Models
 - Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
+- When creating a new model, do not set a `$fillable` property. Instead, create the `$guarded` property and set it to an empty array.
+
+### Arrays
+- Do not ever access array properties directly, always use the Arr::get()` helper.
+
+### Controllers
+- Use Form Requests for validation, do not use inline validation.
+
+### Form Requests
+- When creating form requests, name the class by starting with the name of the model, then the action ('update', 'create', etc.), and end with 'Request'.
+  - For example, `DraftCreateRequest` or `DraftUpdateRequest`.
+
+### Validation
+- Always use arrays to define validation rules, never strings.
 
 
 === pint/core rules ===

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -128,5 +129,13 @@ class Player extends Model
         return Attribute::make(
             get: fn () => (string) $this->draft_round === '1',
         );
+    }
+
+    /**
+     * Get the draft picks for this player.
+     */
+    public function draftPicks(): HasMany
+    {
+        return $this->hasMany(DraftPick::class);
     }
 }

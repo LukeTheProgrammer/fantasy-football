@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class League extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are not mass assignable.
@@ -53,6 +54,42 @@ class League extends Model
     public function members(): HasMany
     {
         return $this->hasMany(LeagueMember::class);
+    }
+
+    /**
+     * Get the drafts for the league.
+     */
+    public function drafts(): HasMany
+    {
+        return $this->hasMany(Draft::class);
+    }
+
+    /**
+     * Get the seasons for the league.
+     */
+    public function seasons(): HasMany
+    {
+        return $this->hasMany(LeagueSeason::class);
+    }
+
+    /**
+     * Get the current active season for the league.
+     */
+    public function currentSeason()
+    {
+        return $this->seasons()->where('is_active', true)->first();
+    }
+
+    /**
+     * Checks if a user is the Creator of this league.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function userIsCreator(User $user): bool
+    {
+        return $this->creator_id === $user->id;
     }
 
     /**

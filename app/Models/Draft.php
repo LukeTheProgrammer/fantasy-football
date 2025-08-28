@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class LeagueMember extends Model
+class Draft extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     /**
      * The attributes that are not mass assignable.
@@ -26,12 +24,15 @@ class LeagueMember extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_admin'  => 'boolean',
+        'draft_date' => 'datetime',
+        'is_completed' => 'boolean',
         'is_active' => 'boolean',
+        'auction_budget' => 'integer',
+        'time_per_pick' => 'integer',
     ];
 
     /**
-     * Get the league that the member belongs to.
+     * Get the league that owns the draft.
      */
     public function league(): BelongsTo
     {
@@ -39,17 +40,17 @@ class LeagueMember extends Model
     }
 
     /**
-     * Get the user that the member represents.
+     * Get the league season that owns the draft.
      */
-    public function user(): BelongsTo
+    public function leagueSeason(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(LeagueSeason::class);
     }
 
     /**
-     * Get the draft picks for the league member.
+     * Get the picks for the draft.
      */
-    public function draftPicks(): HasMany
+    public function picks(): HasMany
     {
         return $this->hasMany(DraftPick::class);
     }
