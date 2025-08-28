@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
-import axios from '@/lib/axios';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { MoreHorizontal, UserPlus, Shield } from 'lucide-react';
+import axios from '@/lib/axios';
+import { MoreHorizontal, Shield, UserPlus } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface User {
   id: number;
@@ -39,14 +39,7 @@ interface LeagueMemberManagerProps {
   onMembersChange: (members: LeagueMember[]) => void;
 }
 
-export default function LeagueMemberManager({
-  leagueId,
-  members,
-  maxTeams,
-  userIsAdmin,
-  currentUserId,
-  onMembersChange
-}: LeagueMemberManagerProps) {
+export default function LeagueMemberManager({ leagueId, members, maxTeams, userIsAdmin, currentUserId, onMembersChange }: LeagueMemberManagerProps) {
   const { toast } = useToast();
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -63,13 +56,13 @@ export default function LeagueMemberManager({
   // Validate invite form
   const validateInviteForm = useCallback(() => {
     const errors: Record<string, string> = {};
-    
+
     if (!inviteEmail.trim()) {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inviteEmail)) {
       errors.email = 'Please enter a valid email address';
     }
-    
+
     if (!inviteTeamName.trim()) {
       errors.teamName = 'Team name is required';
     } else if (inviteTeamName.length < 3) {
@@ -77,11 +70,11 @@ export default function LeagueMemberManager({
     } else if (inviteTeamName.length > 30) {
       errors.teamName = 'Team name must be less than 30 characters';
     }
-    
+
     setInviteErrors(errors);
     return Object.keys(errors).length === 0;
   }, [inviteEmail, inviteTeamName]);
-  
+
   // Update validation when form data changes
   useEffect(() => {
     if (formSubmitted) {
@@ -92,32 +85,32 @@ export default function LeagueMemberManager({
   const handleInviteMember = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormSubmitted(true);
-    
+
     if (!validateInviteForm()) {
       toast({
-        title: "Validation Error",
-        description: "Please fix the errors in the form",
-        variant: "destructive"
+        title: 'Validation Error',
+        description: 'Please fix the errors in the form',
+        variant: 'destructive',
       });
       return;
     }
-    
+
     try {
       setInviting(true);
       const response = await axios.post('/api/league-members', {
         league_id: leagueId,
         email: inviteEmail,
-        team_name: inviteTeamName
+        team_name: inviteTeamName,
       });
-      
+
       toast({
-        title: "Success",
-        description: "Member invited successfully"
+        title: 'Success',
+        description: 'Member invited successfully',
       });
-      
+
       // Add the new member to the list
       onMembersChange([...members, response.data]);
-      
+
       // Reset form
       setInviteEmail('');
       setInviteTeamName('');
@@ -125,11 +118,11 @@ export default function LeagueMemberManager({
       setFormSubmitted(false);
       setInviteDialogOpen(false);
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to invite member";
+      const errorMsg = err instanceof Error ? err.message : 'Failed to invite member';
       toast({
-        title: "Error",
+        title: 'Error',
         description: errorMsg,
-        variant: "destructive"
+        variant: 'destructive',
       });
     } finally {
       setInviting(false);
@@ -140,23 +133,23 @@ export default function LeagueMemberManager({
     if (!confirm('Are you sure you want to remove this member?')) {
       return;
     }
-    
+
     try {
       await axios.delete(`/api/league-members/${memberId}`);
-      
+
       toast({
-        title: "Success",
-        description: "Member removed successfully"
+        title: 'Success',
+        description: 'Member removed successfully',
       });
-      
+
       // Remove the member from the list
-      onMembersChange(members.filter(member => member.id !== memberId));
+      onMembersChange(members.filter((member) => member.id !== memberId));
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to remove member";
+      const errorMsg = err instanceof Error ? err.message : 'Failed to remove member';
       toast({
-        title: "Error",
+        title: 'Error',
         description: errorMsg,
-        variant: "destructive"
+        variant: 'destructive',
       });
     }
   };
@@ -165,22 +158,22 @@ export default function LeagueMemberManager({
     try {
       const response = await axios.put(`/api/league-members/${member.id}`, {
         ...member,
-        is_admin: !member.is_admin
+        is_admin: !member.is_admin,
       });
-      
+
       toast({
-        title: "Success",
-        description: `Admin status ${member.is_admin ? 'removed' : 'granted'}`
+        title: 'Success',
+        description: `Admin status ${member.is_admin ? 'removed' : 'granted'}`,
       });
-      
+
       // Update the member in the list
-      onMembersChange(members.map(m => m.id === member.id ? response.data : m));
+      onMembersChange(members.map((m) => (m.id === member.id ? response.data : m)));
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update admin status";
+      const errorMsg = err instanceof Error ? err.message : 'Failed to update admin status';
       toast({
-        title: "Error",
+        title: 'Error',
         description: errorMsg,
-        variant: "destructive"
+        variant: 'destructive',
       });
     }
   };
@@ -198,23 +191,20 @@ export default function LeagueMemberManager({
         setDraftPositionError(`Draft position must be between 1 and ${maxTeams}`);
         return false;
       }
-      
+
       // Check if this draft position is already taken by another member
-      const existingMember = members.find(m => 
-        m.id !== selectedMember?.id && 
-        m.draft_position === draftPosition
-      );
-      
+      const existingMember = members.find((m) => m.id !== selectedMember?.id && m.draft_position === draftPosition);
+
       if (existingMember) {
         setDraftPositionError(`Draft position ${draftPosition} is already assigned to ${existingMember.team_name}`);
         return false;
       }
     }
-    
+
     setDraftPositionError('');
     return true;
   }, [draftPosition, maxTeams, members, selectedMember]);
-  
+
   // Validate draft position when it changes
   useEffect(() => {
     if (draftPositionDialogOpen) {
@@ -224,37 +214,37 @@ export default function LeagueMemberManager({
 
   const handleUpdateDraftPosition = async () => {
     if (!selectedMember) return;
-    
+
     if (!validateDraftPosition()) {
       toast({
-        title: "Validation Error",
+        title: 'Validation Error',
         description: draftPositionError,
-        variant: "destructive"
+        variant: 'destructive',
       });
       return;
     }
-    
+
     try {
       setUpdatingDraftPosition(true);
       const response = await axios.patch(`/api/league-members/${selectedMember.id}/draft-position`, {
-        draft_position: draftPosition
+        draft_position: draftPosition,
       });
-      
+
       toast({
-        title: "Success",
-        description: "Draft position updated successfully"
+        title: 'Success',
+        description: 'Draft position updated successfully',
       });
-      
+
       // Update the member in the list
-      onMembersChange(members.map(m => m.id === selectedMember.id ? response.data : m));
-      
+      onMembersChange(members.map((m) => (m.id === selectedMember.id ? response.data : m)));
+
       setDraftPositionDialogOpen(false);
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update draft position";
+      const errorMsg = err instanceof Error ? err.message : 'Failed to update draft position';
       toast({
-        title: "Error",
+        title: 'Error',
         description: errorMsg,
-        variant: "destructive"
+        variant: 'destructive',
       });
     } finally {
       setUpdatingDraftPosition(false);
@@ -262,13 +252,15 @@ export default function LeagueMemberManager({
   };
 
   const isLastAdmin = (member: LeagueMember) => {
-    return member.is_admin && members.filter(m => m.is_admin).length === 1;
+    return member.is_admin && members.filter((m) => m.is_admin).length === 1;
   };
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">League Members ({members.length}/{maxTeams})</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium">
+          League Members ({members.length}/{maxTeams})
+        </h3>
         {userIsAdmin && members.length < maxTeams && (
           <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
             <DialogTrigger asChild>
@@ -280,9 +272,7 @@ export default function LeagueMemberManager({
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Invite New Member</DialogTitle>
-                <DialogDescription>
-                  Add a new member to your fantasy league.
-                </DialogDescription>
+                <DialogDescription>Add a new member to your fantasy league.</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleInviteMember}>
                 <div className="grid gap-4 py-4">
@@ -298,9 +288,7 @@ export default function LeagueMemberManager({
                       className={`col-span-3 ${inviteErrors.email ? 'border-red-500' : ''}`}
                       placeholder="member@example.com"
                     />
-                    {inviteErrors.email && (
-                      <p className="text-sm text-red-500 col-span-3 col-start-2">{inviteErrors.email}</p>
-                    )}
+                    {inviteErrors.email && <p className="col-span-3 col-start-2 text-sm text-red-500">{inviteErrors.email}</p>}
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="teamName" className="text-right">
@@ -313,9 +301,7 @@ export default function LeagueMemberManager({
                       className={`col-span-3 ${inviteErrors.teamName ? 'border-red-500' : ''}`}
                       placeholder="Team Name"
                     />
-                    {inviteErrors.teamName && (
-                      <p className="text-sm text-red-500 col-span-3 col-start-2">{inviteErrors.teamName}</p>
-                    )}
+                    {inviteErrors.teamName && <p className="col-span-3 col-start-2 text-sm text-red-500">{inviteErrors.teamName}</p>}
                   </div>
                 </div>
                 <DialogFooter>
@@ -330,16 +316,12 @@ export default function LeagueMemberManager({
       </div>
 
       <div className="space-y-4">
-        {members.map(member => (
-          <div key={member.id} className="flex items-center justify-between p-3 border rounded-md">
+        {members.map((member) => (
+          <div key={member.id} className="flex items-center justify-between rounded-md border p-3">
             <div className="flex items-center space-x-4">
               <Avatar>
-                {member.team_logo ? (
-                  <AvatarImage src={member.team_logo} alt={member.team_name} />
-                ) : null}
-                <AvatarFallback>
-                  {member.team_name.substring(0, 2).toUpperCase()}
-                </AvatarFallback>
+                {member.team_logo ? <AvatarImage src={member.team_logo} alt={member.team_name} /> : null}
+                <AvatarFallback>{member.team_name.substring(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-medium">{member.team_name}</p>
@@ -352,12 +334,14 @@ export default function LeagueMemberManager({
                     </Badge>
                   )}
                   {member.user_id === currentUserId && (
-                    <Badge variant="secondary" className="ml-2">You</Badge>
+                    <Badge variant="secondary" className="ml-2">
+                      You
+                    </Badge>
                   )}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <div className="text-sm">
                 {member.draft_position !== null ? (
@@ -366,7 +350,7 @@ export default function LeagueMemberManager({
                   <span className="text-gray-500 dark:text-gray-400">No draft position</span>
                 )}
               </div>
-              
+
               {userIsAdmin && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -375,21 +359,16 @@ export default function LeagueMemberManager({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => openDraftPositionDialog(member)}>
-                      Set Draft Position
-                    </DropdownMenuItem>
-                    
+                    <DropdownMenuItem onClick={() => openDraftPositionDialog(member)}>Set Draft Position</DropdownMenuItem>
+
                     {member.user_id !== currentUserId && (
-                      <DropdownMenuItem
-                        onClick={() => handleToggleAdmin(member)}
-                        disabled={isLastAdmin(member)}
-                      >
+                      <DropdownMenuItem onClick={() => handleToggleAdmin(member)} disabled={isLastAdmin(member)}>
                         {member.is_admin ? 'Remove Admin' : 'Make Admin'}
                       </DropdownMenuItem>
                     )}
-                    
+
                     {(userIsAdmin || member.user_id === currentUserId) && (
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         onClick={() => handleRemoveMember(member.id)}
                         disabled={isLastAdmin(member)}
                         className="text-red-600 focus:text-red-600"
@@ -403,9 +382,9 @@ export default function LeagueMemberManager({
             </div>
           </div>
         ))}
-        
+
         {members.length === 0 && (
-          <div className="text-center py-8 border rounded-md">
+          <div className="rounded-md border py-8 text-center">
             <p className="text-gray-500 dark:text-gray-400">No members yet</p>
           </div>
         )}
@@ -415,9 +394,7 @@ export default function LeagueMemberManager({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Set Draft Position</DialogTitle>
-            <DialogDescription>
-              {selectedMember?.team_name}
-            </DialogDescription>
+            <DialogDescription>{selectedMember?.team_name}</DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <div className="flex items-center gap-4">
@@ -431,13 +408,9 @@ export default function LeagueMemberManager({
                 onChange={(e) => setDraftPosition(e.target.value ? parseInt(e.target.value) : null)}
                 className={draftPositionError ? 'border-red-500' : ''}
               />
-              {draftPositionError && (
-                <p className="text-sm text-red-500 mt-1">{draftPositionError}</p>
-              )}
+              {draftPositionError && <p className="mt-1 text-sm text-red-500">{draftPositionError}</p>}
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-              Set to 0 or leave empty to clear the draft position.
-            </p>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Set to 0 or leave empty to clear the draft position.</p>
           </div>
           <DialogFooter>
             <Button onClick={handleUpdateDraftPosition} disabled={updatingDraftPosition}>

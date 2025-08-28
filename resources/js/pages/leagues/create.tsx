@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -33,7 +32,7 @@ export default function CreateLeague() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   const [data, setData] = useState({
     name: '',
     description: '',
@@ -85,12 +84,12 @@ export default function CreateLeague() {
 
     const newRosterSize = startersCount + benchCount;
 
-    setData(prevData => ({
+    setData((prevData) => ({
       ...prevData,
       settings: {
         ...prevData.settings,
-        roster_size: newRosterSize
-      }
+        roster_size: newRosterSize,
+      },
     }));
   }, [data.settings, setData]);
 
@@ -185,10 +184,11 @@ export default function CreateLeague() {
       }
       return;
     }
-    
+
     setProcessing(true);
-    
-    axios.post('/api/leagues', data)
+
+    axios
+      .post('/api/leagues', data)
       .then(() => {
         // Reset form data
         setData({
@@ -237,11 +237,11 @@ export default function CreateLeague() {
         setFormSubmitted(false);
         setProcessing(false);
         toast.success('Your fantasy league has been created successfully!');
-        
+
         // Optionally redirect to the leagues page
         window.location.href = '/dashboard';
       })
-      .catch(error => {
+      .catch((error) => {
         setProcessing(false);
         if (error.response && error.response.data && error.response.data.errors) {
           setErrors(error.response.data.errors);
@@ -268,7 +268,12 @@ export default function CreateLeague() {
 
                 <div className="mb-8 grid w-full items-center gap-2">
                   <Label htmlFor="name">League Name</Label>
-                  <Input id="name" value={data.name} onChange={(e) => setData(prev => ({ ...prev, name: e.target.value }))} placeholder="Enter league name" />
+                  <Input
+                    id="name"
+                    value={data.name}
+                    onChange={(e) => setData((prev) => ({ ...prev, name: e.target.value }))}
+                    placeholder="Enter league name"
+                  />
                   {(errors.name || validationErrors.name) && <p className="text-sm text-red-500">{errors.name || validationErrors.name}</p>}
                 </div>
 
@@ -277,7 +282,7 @@ export default function CreateLeague() {
                   <Textarea
                     id="description"
                     value={data.description || ''}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData((prev) => ({ ...prev, description: e.target.value }))}
                     placeholder="Describe your league"
                     rows={3}
                   />
@@ -294,7 +299,7 @@ export default function CreateLeague() {
                     min={2}
                     max={32}
                     value={data.team_count}
-                    onChange={(e) => setData(prev => ({ ...prev, team_count: Number(e.target.value) }))}
+                    onChange={(e) => setData((prev) => ({ ...prev, team_count: Number(e.target.value) }))}
                   />
                   {(errors.team_count || validationErrors.team_count) && (
                     <p className="text-sm text-red-500">{errors.team_count || validationErrors.team_count}</p>
@@ -303,7 +308,7 @@ export default function CreateLeague() {
 
                 <div className="mb-8 grid w-full items-center gap-2">
                   <Label htmlFor="draft_type">Draft Type</Label>
-                  <Select value={data.draft_type} onValueChange={(value) => setData(prev => ({ ...prev, draft_type: value }))}>
+                  <Select value={data.draft_type} onValueChange={(value) => setData((prev) => ({ ...prev, draft_type: value }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select draft type" />
                     </SelectTrigger>
@@ -319,7 +324,12 @@ export default function CreateLeague() {
 
                 <div className="mb-8 grid w-full items-center gap-2">
                   <Label htmlFor="draft_date">Draft Date & Time</Label>
-                  <Input id="draft_date" type="datetime-local" value={data.draft_date} onChange={(e) => setData(prev => ({ ...prev, draft_date: e.target.value }))} />
+                  <Input
+                    id="draft_date"
+                    type="datetime-local"
+                    value={data.draft_date}
+                    onChange={(e) => setData((prev) => ({ ...prev, draft_date: e.target.value }))}
+                  />
                   {(errors.draft_date || validationErrors.draft_date) && (
                     <p className="text-sm text-red-500">{errors.draft_date || validationErrors.draft_date}</p>
                   )}
@@ -375,12 +385,12 @@ export default function CreateLeague() {
                       value={data.settings.starters_count}
                       onChange={(e) => {
                         const value = parseInt(e.target.value) || 0;
-                        setData(prev => ({
+                        setData((prev) => ({
                           ...prev,
                           settings: {
                             ...prev.settings,
                             starters_count: value,
-                          }
+                          },
                         }));
                         setTimeout(updateRosterSize, 0);
                       }}
@@ -400,12 +410,12 @@ export default function CreateLeague() {
                       value={data.settings.bench_count}
                       onChange={(e) => {
                         const value = parseInt(e.target.value) || 0;
-                        setData(prev => ({
+                        setData((prev) => ({
                           ...prev,
                           settings: {
                             ...prev.settings,
                             bench_count: value,
-                          }
+                          },
                         }));
                         setTimeout(updateRosterSize, 0);
                       }}
@@ -425,12 +435,12 @@ export default function CreateLeague() {
                       value={data.settings.ir_spots}
                       onChange={(e) => {
                         const value = parseInt(e.target.value) || 0;
-                        setData(prev => ({
+                        setData((prev) => ({
                           ...prev,
                           settings: {
                             ...prev.settings,
                             ir_spots: value,
-                          }
+                          },
                         }));
                         setTimeout(updateRosterSize, 0);
                       }}
@@ -447,12 +457,12 @@ export default function CreateLeague() {
                   <RosterPositionsEditor
                     positions={data.settings.roster_positions}
                     onChange={(positions) =>
-                      setData(prev => ({
+                      setData((prev) => ({
                         ...prev,
                         settings: {
                           ...prev.settings,
                           roster_positions: positions,
-                        }
+                        },
                       }))
                     }
                   />
@@ -471,11 +481,11 @@ export default function CreateLeague() {
                   <p className="text-sm text-muted-foreground">Configure your league's scoring rules.</p>
                 </div>
 
-                <div className="mt-2 w-full grid grid-cols-2 gap-4">
+                <div className="mt-2 grid w-full grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-lg font-medium">Passing</h3>
                     <Separator className="my-2" />
-                    <div className="mt-2 w-full grid grid-cols-3 gap-1">
+                    <div className="mt-2 grid w-full grid-cols-3 gap-1">
                       <div className="col-span-2">
                         <Label>Points per Yard</Label>
                       </div>
@@ -485,12 +495,12 @@ export default function CreateLeague() {
                           step="0.01"
                           value={data.settings.passing_points_per_yard}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 passing_points_per_yard: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -504,12 +514,12 @@ export default function CreateLeague() {
                           step="0.5"
                           value={data.settings.passing_td_points}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 passing_td_points: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -523,12 +533,12 @@ export default function CreateLeague() {
                           step="0.5"
                           value={data.settings.interception_points}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 interception_points: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -549,12 +559,12 @@ export default function CreateLeague() {
                           step="0.01"
                           value={data.settings.receiving_points_per_yard}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 receiving_points_per_yard: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -568,12 +578,12 @@ export default function CreateLeague() {
                           step="0.5"
                           value={data.settings.receiving_td_points}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 receiving_td_points: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -587,12 +597,12 @@ export default function CreateLeague() {
                           step="0.1"
                           value={data.settings.reception_points}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 reception_points: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -601,7 +611,7 @@ export default function CreateLeague() {
                   </div>
                 </div>
 
-                <div className="mt-2 w-full grid grid-cols-2 gap-4">
+                <div className="mt-2 grid w-full grid-cols-2 gap-4">
                   <div className="mt-4">
                     <h3 className="text-lg font-medium">Rushing</h3>
                     <Separator className="my-2" />
@@ -615,12 +625,12 @@ export default function CreateLeague() {
                           step="0.01"
                           value={data.settings.rushing_points_per_yard}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 rushing_points_per_yard: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -634,12 +644,12 @@ export default function CreateLeague() {
                           step="0.5"
                           value={data.settings.rushing_td_points}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 rushing_td_points: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -660,12 +670,12 @@ export default function CreateLeague() {
                           step="0.5"
                           value={data.settings.fumble_lost_points}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 fumble_lost_points: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />
@@ -679,12 +689,12 @@ export default function CreateLeague() {
                           step="0.5"
                           value={data.settings.two_point_conversion_points}
                           onChange={(e) =>
-                            setData(prev => ({
+                            setData((prev) => ({
                               ...prev,
                               settings: {
                                 ...prev.settings,
                                 two_point_conversion_points: parseFloat(e.target.value),
-                              }
+                              },
                             }))
                           }
                         />

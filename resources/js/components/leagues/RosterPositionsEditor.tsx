@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { X, ChevronUp, ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface RosterPositionsEditorProps {
   positions: string[];
@@ -43,10 +43,7 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
   };
 
   const movePosition = (index: number, direction: 'up' | 'down') => {
-    if (
-      (direction === 'up' && index === 0) ||
-      (direction === 'down' && index === positions.length - 1)
-    ) {
+    if ((direction === 'up' && index === 0) || (direction === 'down' && index === positions.length - 1)) {
       return;
     }
 
@@ -59,26 +56,24 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
   };
 
   return (
-    <div className="space-y-4 mt-4">
+    <div className="mt-4 space-y-4">
       <div className="grid grid-cols-3 gap-2">
         <div className="col-span-1 mr-6">
           <Label htmlFor="roster-positions">Starting Lineup</Label>
-          <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[100px] mt-2">
+          <div className="mt-2 flex min-h-[100px] flex-wrap gap-2 rounded-md border p-2">
             {positions.length === 0 ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400 w-full text-center py-4">
-                No positions added yet. Add positions below.
-              </p>
+              <p className="w-full py-4 text-center text-sm text-gray-500 dark:text-gray-400">No positions added yet. Add positions below.</p>
             ) : (
-              <div className="flex flex-col justify-start align-start">
+              <div className="align-start flex flex-col justify-start">
                 {positions.map((position, index) => (
-                  <Badge key={`${position}-${index}`} variant="secondary" className="flex items-center gap-1 py-1 px-2 mb-2">
+                  <Badge key={`${position}-${index}`} variant="secondary" className="mb-2 flex items-center gap-1 px-2 py-1">
                     <span>{position}</span>
-                    <div className="flex items-center ml-1">
+                    <div className="ml-1 flex items-center">
                       <button
                         type="button"
                         onClick={() => movePosition(index, 'up')}
                         disabled={index === 0}
-                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-30"
+                        className="text-gray-500 hover:text-gray-700 disabled:opacity-30 dark:text-gray-400 dark:hover:text-gray-200"
                       >
                         <ChevronUp size={14} />
                       </button>
@@ -86,7 +81,7 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
                         type="button"
                         onClick={() => movePosition(index, 'down')}
                         disabled={index === positions.length - 1}
-                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-30"
+                        className="text-gray-500 hover:text-gray-700 disabled:opacity-30 dark:text-gray-400 dark:hover:text-gray-200"
                       >
                         <ChevronDown size={14} />
                       </button>
@@ -105,13 +100,13 @@ export default function RosterPositionsEditor({ positions, onChange }: RosterPos
           </div>
         </div>
         <div className="col-span-2 gap-4">
-          <div className="flex items-end justify-between gap-2 mt-1">
+          <div className="mt-1 flex items-end justify-between gap-2">
             <Label htmlFor="add-position">Add Position</Label>
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              <p className="text-xs text-right">Order matters!</p>
+              <p className="text-right text-xs">Order matters!</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 mt-4">
+          <div className="mt-4 flex items-center gap-2">
             <div className="flex-1">
               <Select value={selectedPosition} onValueChange={setSelectedPosition}>
                 <SelectTrigger id="add-position">

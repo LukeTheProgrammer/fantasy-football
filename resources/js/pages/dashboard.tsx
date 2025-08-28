@@ -5,7 +5,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { Building, ChevronRight, Play, Plus, Search, Star, Trophy, Users } from 'lucide-react';
+import axios from 'axios';
+import { ChevronRight, Play, Plus, Search, Star, Trophy } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+interface League {
+  id: number;
+  name: string;
+  team_count: number;
+  draft_type: string;
+  draft_date: string;
+  status?: string;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -26,6 +37,23 @@ const headerRightContent = (
 );
 
 export default function Dashboard() {
+  const [leagues, setLeagues] = useState<League[]>([]);
+
+  function fetchLeagues() {
+    axios
+      .get('/api/leagues')
+      .then((response) => {
+        setLeagues(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  useEffect(() => {
+    fetchLeagues();
+  }, []);
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Dashboard" />
@@ -92,89 +120,30 @@ export default function Dashboard() {
           </div>
 
           <div className="divide-y">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg">
-                    <Trophy className="h-5 w-5" />
+            {leagues.map((league: League) => (
+              <div key={league.id} className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg">
+                      <Trophy className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="">{league.name}</h3>
+                      <p className="text-sm">
+                        {league.team_count} teams • {league.draft_type}
+                      </p>
+                      <p className="text-sm">Draft: {league.draft_date}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="">Championship League 2025</h3>
-                    <p className="text-sm">12 teams • PPR • Snake Draft</p>
-                    <p className="text-sm">Draft: March 15, 2025 at 8:00 PM</p>
+                  <div className="flex items-center space-x-4">
+                    <span className="rounded-full px-3 py-1 text-sm">Active</span>
+                    <button className="">
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
                   </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className="rounded-full px-3 py-1 text-sm">Active</span>
-                  <button className="">
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
                 </div>
               </div>
-            </div>
-
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg">
-                    <Users className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="">Friends & Family League</h3>
-                    <p className="text-sm">10 teams • Standard • Auction Draft</p>
-                    <p className="text-sm">Draft: March 20, 2025 at 7:00 PM</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className="rounded-full px-3 py-1 text-sm">Drafting</span>
-                  <button className="">
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg">
-                    <Building className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="">Office League 2025</h3>
-                    <p className="text-sm">8 teams • Half PPR • Snake Draft</p>
-                    <p className="text-sm">Draft: March 25, 2025 at 6:30 PM</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className="rounded-full px-3 py-1 text-sm">Scheduled</span>
-                  <button className="">
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg">
-                    <Trophy className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="">Dynasty League 2024</h3>
-                    <p className="text-sm">12 teams • PPR • Dynasty Format</p>
-                    <p className="text-sm">Season completed: January 15, 2025</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className="rounded-full px-3 py-1 text-sm">Completed</span>
-                  <button className="">
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '@/types';
+import LeagueMemberManager from '@/components/leagues/LeagueMemberManager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import LeagueMemberManager from '@/components/leagues/LeagueMemberManager';
 import axios from '@/lib/axios';
+import { PageProps } from '@/types';
+import { Head, Link } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 interface LeagueMember {
   id: number;
@@ -112,7 +112,7 @@ export default function ShowLeague({ params, auth }: PageProps) {
     if (league) {
       setLeague({
         ...league,
-        members: updatedMembers
+        members: updatedMembers,
       });
     }
   };
@@ -121,8 +121,8 @@ export default function ShowLeague({ params, auth }: PageProps) {
     if (league?.join_code) {
       navigator.clipboard.writeText(league.join_code);
       toast({
-        title: "Join Code Copied",
-        description: "The join code has been copied to your clipboard"
+        title: 'Join Code Copied',
+        description: 'The join code has been copied to your clipboard',
       });
     }
   };
@@ -137,12 +137,12 @@ export default function ShowLeague({ params, auth }: PageProps) {
       <>
         <Head title="Loading League..." />
         <div className="py-12">
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-              <Skeleton className="h-8 w-1/3 mb-6" />
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-5/6 mb-6" />
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
+              <Skeleton className="mb-6 h-8 w-1/3" />
+              <Skeleton className="mb-2 h-4 w-full" />
+              <Skeleton className="mb-6 h-4 w-5/6" />
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <Skeleton className="h-32" />
                 <Skeleton className="h-32" />
                 <Skeleton className="h-32" />
@@ -159,10 +159,10 @@ export default function ShowLeague({ params, auth }: PageProps) {
       <>
         <Head title="Error" />
         <div className="py-12">
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-md text-red-600 dark:text-red-400">
-                {error || "League not found"}
+          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
+              <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+                {error || 'League not found'}
               </div>
               <div className="mt-4">
                 <Link href={route('leagues.index')}>
@@ -179,19 +179,19 @@ export default function ShowLeague({ params, auth }: PageProps) {
   return (
     <>
       <Head title={league.name} />
-      
+
       <div className="py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
             <div className="p-6">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+              <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
                 <div>
                   <h1 className="text-2xl font-semibold">{league.name}</h1>
                   <p className="text-gray-500 dark:text-gray-400">
                     Created by {league.creator.name} • {league.members.length}/{league.max_teams} teams
                   </p>
                 </div>
-                <div className="flex mt-4 md:mt-0 space-x-2">
+                <div className="mt-4 flex space-x-2 md:mt-0">
                   {league.user_is_admin && (
                     <Link href={route('leagues.edit', league.id)}>
                       <Button variant="outline">Edit League</Button>
@@ -202,16 +202,16 @@ export default function ShowLeague({ params, auth }: PageProps) {
                   </Link>
                 </div>
               </div>
-              
+
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="members">Members</TabsTrigger>
                   <TabsTrigger value="settings">Settings</TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent value="overview" className="mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                     <Card>
                       <CardHeader>
                         <CardTitle>League Info</CardTitle>
@@ -237,32 +237,26 @@ export default function ShowLeague({ params, auth }: PageProps) {
                         </dl>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardHeader>
                         <CardTitle>Join Code</CardTitle>
-                        <CardDescription>
-                          Share this code with others to join your league
-                        </CardDescription>
+                        <CardDescription>Share this code with others to join your league</CardDescription>
                       </CardHeader>
                       <CardContent>
                         {league.user_is_admin ? (
                           <div className="flex items-center space-x-2">
-                            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
-                              {league.join_code}
-                            </code>
+                            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">{league.join_code}</code>
                             <Button variant="outline" size="sm" onClick={copyJoinCode}>
                               Copy
                             </Button>
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Only league admins can view the join code
-                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Only league admins can view the join code</p>
                         )}
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardHeader>
                         <CardTitle>Draft Status</CardTitle>
@@ -270,35 +264,23 @@ export default function ShowLeague({ params, auth }: PageProps) {
                       <CardContent>
                         {league.draft_date ? (
                           <div className="space-y-2">
-                            <p>
-                              {new Date(league.draft_date) > new Date() 
-                                ? 'Draft scheduled for:' 
-                                : 'Draft was scheduled for:'}
-                            </p>
+                            <p>{new Date(league.draft_date) > new Date() ? 'Draft scheduled for:' : 'Draft was scheduled for:'}</p>
                             <p className="font-medium">{formatDate(league.draft_date)}</p>
-                            {new Date(league.draft_date) > new Date() && (
-                              <Button className="w-full mt-2">
-                                Enter Draft Room
-                              </Button>
-                            )}
+                            {new Date(league.draft_date) > new Date() && <Button className="mt-2 w-full">Enter Draft Room</Button>}
                           </div>
                         ) : (
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Draft not yet scheduled
-                          </p>
+                          <p className="text-gray-500 dark:text-gray-400">Draft not yet scheduled</p>
                         )}
                       </CardContent>
                     </Card>
                   </div>
                 </TabsContent>
-                
+
                 <TabsContent value="members" className="mt-6">
                   <Card>
                     <CardHeader>
                       <CardTitle>League Members</CardTitle>
-                      <CardDescription>
-                        Manage your league's members and their draft positions
-                      </CardDescription>
+                      <CardDescription>Manage your league's members and their draft positions</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <LeagueMemberManager
@@ -312,9 +294,9 @@ export default function ShowLeague({ params, auth }: PageProps) {
                     </CardContent>
                   </Card>
                 </TabsContent>
-                
+
                 <TabsContent value="settings" className="mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Card>
                       <CardHeader>
                         <CardTitle>Roster Settings</CardTitle>
@@ -344,16 +326,16 @@ export default function ShowLeague({ params, auth }: PageProps) {
                         </dl>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardHeader>
                         <CardTitle>Scoring Settings</CardTitle>
                       </CardHeader>
                       <CardContent className="h-[300px] overflow-y-auto">
                         <dl className="space-y-2">
-                          <div className="pb-2 border-b">
+                          <div className="border-b pb-2">
                             <dt className="text-sm font-medium">Passing</dt>
-                            <dd className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <dd className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                               <div className="flex justify-between">
                                 <span>Yards per point:</span>
                                 <span>{league.settings.passing_yards_per_point}</span>
@@ -368,10 +350,10 @@ export default function ShowLeague({ params, auth }: PageProps) {
                               </div>
                             </dd>
                           </div>
-                          
-                          <div className="pb-2 border-b">
+
+                          <div className="border-b pb-2">
                             <dt className="text-sm font-medium">Rushing</dt>
-                            <dd className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <dd className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                               <div className="flex justify-between">
                                 <span>Yards per point:</span>
                                 <span>{league.settings.rushing_yards_per_point}</span>
@@ -382,10 +364,10 @@ export default function ShowLeague({ params, auth }: PageProps) {
                               </div>
                             </dd>
                           </div>
-                          
-                          <div className="pb-2 border-b">
+
+                          <div className="border-b pb-2">
                             <dt className="text-sm font-medium">Receiving</dt>
-                            <dd className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <dd className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                               <div className="flex justify-between">
                                 <span>Yards per point:</span>
                                 <span>{league.settings.receiving_yards_per_point}</span>
@@ -400,10 +382,10 @@ export default function ShowLeague({ params, auth }: PageProps) {
                               </div>
                             </dd>
                           </div>
-                          
-                          <div className="pb-2 border-b">
+
+                          <div className="border-b pb-2">
                             <dt className="text-sm font-medium">Miscellaneous</dt>
-                            <dd className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <dd className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                               <div className="flex justify-between">
                                 <span>Fumble Lost:</span>
                                 <span>{league.settings.fumble_lost_points} pts</span>

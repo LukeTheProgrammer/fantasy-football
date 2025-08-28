@@ -11,23 +11,26 @@ axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
 
 // Add a request interceptor to include the CSRF token
-axios.interceptors.request.use(function (config) {
-  // Get the CSRF token from the meta tag
-  const token = document.head.querySelector('meta[name="csrf-token"]');
+axios.interceptors.request.use(
+  function (config) {
+    // Get the CSRF token from the meta tag
+    const token = document.head.querySelector('meta[name="csrf-token"]');
 
-  if (token) {
-    config.headers['X-CSRF-TOKEN'] = (token as HTMLMetaElement).content;
-  }
+    if (token) {
+      config.headers['X-CSRF-TOKEN'] = (token as HTMLMetaElement).content;
+    }
 
-  return config;
-}, function (error) {
-  return Promise.reject(error);
-});
+    return config;
+  },
+  function (error) {
+    return Promise.reject(error);
+  },
+);
 
 // Add response interceptor to handle common errors
 axios.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  (error) => {
     // Only redirect on 401 for non-API routes
     if (error.response && error.response.status === 401) {
       // Don't redirect for API routes, let the component handle it
@@ -42,7 +45,7 @@ axios.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axios;
