@@ -2,7 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import Heading from '@/components/heading';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Play, Plus, Search, Star, Trophy } from 'lucide-react';
+import { Play, Plus, Search, Star, Trophy } from 'lucide-react';
 import { Head, Link } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -25,17 +25,6 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const headerRightContent = (
-  <Link href="/leagues/create">
-    <Button size="lg" variant="secondary" className="cursor-pointer">
-      <span className="flex justify-between">
-        <Plus className="h-5 w-5 pt-1" strokeWidth={4} />
-        <span className="pl-1">Create New League</span>
-      </span>
-    </Button>
-  </Link>
-);
-
 export default function Dashboard() {
   const [leagues, setLeagues] = useState<League[]>([]);
 
@@ -57,8 +46,22 @@ export default function Dashboard() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Dashboard" />
+
       <div className="flex-1 p-8">
-        <Heading title="My Fantasy Leagues" description="Manage and track your fantasy football leagues" rightContent={headerRightContent} />
+        <Heading
+          title="My Fantasy Leagues"
+          description="Manage and track your fantasy football leagues"
+          rightContent={(
+            <Link href="/leagues/create">
+              <Button size="lg" variant="secondary" className="cursor-pointer">
+                <span className="flex justify-between">
+                  <Plus className="h-5 w-5 pt-1" strokeWidth={4} />
+                  <span className="pl-1">Create New League</span>
+                </span>
+              </Button>
+            </Link>
+          )}
+        />
 
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
           <div className="rounded-lg border bg-card p-6">

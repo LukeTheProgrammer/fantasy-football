@@ -65,22 +65,6 @@ class League extends Model
     }
 
     /**
-     * Get the seasons for the league.
-     */
-    public function seasons(): HasMany
-    {
-        return $this->hasMany(LeagueSeason::class);
-    }
-
-    /**
-     * Get the current active season for the league.
-     */
-    public function currentSeason()
-    {
-        return $this->seasons()->where('is_active', true)->first();
-    }
-
-    /**
      * Checks if a user is the Creator of this league.
      *
      * @param User $user

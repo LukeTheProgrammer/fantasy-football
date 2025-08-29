@@ -1,4 +1,4 @@
-import RosterPositionsEditor from '@/components/leagues/RosterPositionsEditor';
+import RosterPositionsEditor from '@/components/form/roster-positions';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';

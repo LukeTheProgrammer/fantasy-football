@@ -27,8 +27,6 @@ class LeagueCreateRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'team_count'  => ['required', 'integer', 'min:2', 'max:32'],
             'is_public'   => ['boolean'],
-            'draft_type'  => ['required', 'string', 'in:snake,auction'],
-            'draft_date'  => ['nullable', 'date'],
 
             // League settings validation
             'settings.roster_positions' => ['sometimes', 'array'],

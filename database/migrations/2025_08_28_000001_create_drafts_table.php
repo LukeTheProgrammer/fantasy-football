@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('drafts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('league_id')->constrained('leagues')->cascadeOnDelete();
-            $table->foreignId('league_season_id')->nullable()->constrained('league_seasons')->nullOnDelete();
-            $table->dateTime('draft_date');
+            $table->dateTime('draft_date')->nullable();
             $table->enum('draft_type', ['snake', 'auction'])->default('snake');
             $table->boolean('is_completed')->default(false);
             $table->integer('auction_budget')->nullable();

@@ -6,19 +6,22 @@ use App\Models\Draft;
 use App\Models\League;
 use App\Models\Player;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class DraftController extends Controller
 {
     /**
      * Display a listing of drafts for a league.
      */
-    public function index(League $league)
+    public function index()
     {
-        $league->load(['drafts.leagueSeason']);
+        $user = Auth::user();
 
         return Inertia::render('drafts/index', [
-            'league' => $league,
-            'drafts' => $league->drafts()->with('leagueSeason')->orderBy('draft_date', 'desc')->get(),
+            'drafts' => $user->drafts()
+                ->with(['league.members'])
+                ->orderBy('draft_date', 'desc')
+                ->get(),
         ]);
     }
 
@@ -27,13 +30,8 @@ class DraftController extends Controller
      */
     public function create(League $league)
     {
-        $seasons = $league->seasons()
-            ->whereDoesntHave('draft')
-            ->get();
-
         return Inertia::render('drafts/create', [
             'league' => $league,
-            'seasons' => $seasons,
         ]);
     }
 
@@ -50,7 +48,6 @@ class DraftController extends Controller
             'picks.leagueMember.user',
             'picks.player.position',
             'picks.player.team',
-            'leagueSeason'
         ]);
 
         // Get available players for drafting
@@ -81,8 +78,6 @@ class DraftController extends Controller
                 ->with('error', 'Cannot edit a completed draft');
         }
 
-        $draft->load(['leagueSeason']);
-
         return Inertia::render('drafts/edit', [
             'league' => $league,
             'draft' => $draft,
@@ -102,7 +97,6 @@ class DraftController extends Controller
             'picks.leagueMember.user',
             'picks.player.position',
             'picks.player.team',
-            'leagueSeason'
         ]);
 
         // Get available players for drafting
@@ -131,7 +125,6 @@ class DraftController extends Controller
             'picks.leagueMember.user',
             'picks.player.position',
             'picks.player.team',
-            'leagueSeason'
         ]);
 
         // Group picks by league member to show each team's draft results

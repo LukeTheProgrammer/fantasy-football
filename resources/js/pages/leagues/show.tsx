@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import Heading from '@/components/heading';
-import LeagueMemberManager from '@/components/leagues/LeagueMemberManager';
+import LeagueMemberManager from '@/components/form/member-manager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Head, Link } from '@inertiajs/react';
@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
 import { type BreadcrumbItem } from '@/types';
+import DraftsTable from '@/components/leagues/drafts-table';
 
 interface LeagueMember {
   id: number;
@@ -190,14 +191,14 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={league.name} />
+      <Head title={league?.name} />
 
       <div className="flex-1 p-8">
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
           <div>
             <Heading
-              title={league.name}
-              description={`Created by ${league.creator.name} • ${league.members.length}/${league.team_count} teams`}
+              title={league?.name}
+              description={`Created by ${league.creator?.name} • ${league.members.length}/${league.team_count} teams`}
             />
           </div>
           <div className="mt-4 flex space-x-2 md:mt-0">
@@ -210,6 +211,29 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
               <Button variant="outline">Back to Leagues</Button>
             </Link>
           </div>
+        </div>
+
+        <div className="mb-8 rounded-lg border bg-card">
+          <div className="border-b p-6">
+            <h2 className="text-lg font-semibold">Drafts</h2>
+            <DraftsTable leagueId={league.id} />
+          </div>
+        </div>
+
+        {/* League Members Card */}
+        <div className="mb-8">
+          <Card>
+            <CardContent>
+              <LeagueMemberManager
+                leagueId={league.id}
+                members={league.members}
+                maxTeams={league.team_count}
+                userIsAdmin={league.user_is_admin}
+                currentUserId={auth.user?.id || 0}
+                onMembersChange={handleMembersChange}
+              />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -369,23 +393,6 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
           </Card>
         </div>
 
-        {/* League Members Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>League Members</CardTitle>
-            <CardDescription>Manage your league's members and their draft positions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LeagueMemberManager
-              leagueId={league.id}
-              members={league.members}
-              maxTeams={league.team_count}
-              userIsAdmin={league.user_is_admin}
-              currentUserId={auth.user?.id || 0}
-              onMembersChange={handleMembersChange}
-            />
-          </CardContent>
-        </Card>
       </div>
     </AppLayout>
   );

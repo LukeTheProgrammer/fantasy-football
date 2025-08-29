@@ -40,14 +40,6 @@ class Draft extends Model
     }
 
     /**
-     * Get the league season that owns the draft.
-     */
-    public function leagueSeason(): BelongsTo
-    {
-        return $this->belongsTo(LeagueSeason::class);
-    }
-
-    /**
      * Get the picks for the draft.
      */
     public function picks(): HasMany

@@ -13,6 +13,16 @@ const mainNavItems: NavItem[] = [
     href: '/dashboard',
     icon: LayoutGrid,
   },
+  {
+    title: 'Leagues',
+    href: '/leagues',
+    icon: LayoutGrid,
+  },
+  {
+    title: 'Drafts',
+    href: '/drafts',
+    icon: LayoutGrid,
+  },
 ];
 
 const footerNavItems: NavItem[] = [

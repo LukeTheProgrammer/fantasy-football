@@ -13,8 +13,7 @@ class DraftCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $league = $this->route('league');
-        return $this->user()->can('update', $league);
+        return $this->user()->can('update', $this->route('league'));
     }
 
     /**
@@ -24,15 +23,7 @@ class DraftCreateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $league = $this->route('league');
-
         return [
-            'league_season_id' => [
-                'required',
-                Rule::exists('league_seasons', 'id')->where(function ($query) use ($league) {
-                    return $query->where('league_id', $league->id);
-                }),
-            ],
             'draft_date' => ['required', 'date', 'after:now'],
             'draft_type' => ['required', Rule::in(['snake', 'auction'])],
             'auction_budget' => ['required_if:draft_type,auction', 'nullable', 'integer', 'min:1', 'max:1000'],

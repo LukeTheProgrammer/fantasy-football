@@ -222,9 +222,9 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">
-          League Members ({members.length}/{maxTeams})
+          League Members ( {members.length} / {maxTeams} )
         </h3>
-        {userIsAdmin && members.length < maxTeams && (
+        {/* {userIsAdmin && members.length < maxTeams && (
           <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" className="flex items-center gap-1">
@@ -275,37 +275,38 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
               </form>
             </DialogContent>
           </Dialog>
-        )}
+        )} */}
       </div>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         {members.map((member) => (
-          <div key={member.id} className="flex items-center justify-between rounded-md border p-3">
-            <div className="flex items-center space-x-4">
-              <Avatar>
-                {member.team_logo ? <AvatarImage src={member.team_logo} alt={member.team_name} /> : null}
-                <AvatarFallback>{member.team_name.substring(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{member.team_name}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {member.user.name}
-                  {member.is_admin && (
-                    <Badge variant="outline" className="ml-2">
-                      <Shield size={12} className="mr-1" />
-                      Admin
-                    </Badge>
-                  )}
-                  {member.user_id === currentUserId && (
-                    <Badge variant="secondary" className="ml-2">
-                      You
-                    </Badge>
-                  )}
-                </p>
+          <div key={member.id} className="col-span-1 flex items-center justify-between rounded-md border p-3">
+            <div className="flex items-center justify-between">
+              <div className="grow-0">
+                <Avatar>
+                  {member.team_logo ? <AvatarImage src={member.team_logo} alt={member.team_name} /> : null}
+                  <AvatarFallback>{member.team_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="grow-1 grid grid-cols-4 pl-2">
+                <div className="col-span-3">
+                  <p className="font-medium">{member.team_name}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {member.user?.name}
+                  </p>
+                </div>
+                <div className="col-span-1 flex items-start justify-end">
+                    {member.is_admin && (
+                      <Badge variant="outline" className="ml-2">
+                        <Shield size={12} className="mr-1" />
+                        Admin
+                      </Badge>
+                    )}
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <div className="text-sm">
                 {member.draft_position !== null ? (
                   <Badge variant="secondary">Pick #{member.draft_position}</Badge>
@@ -342,7 +343,7 @@ export default function LeagueMemberManager({ leagueId, members, maxTeams, userI
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-            </div>
+            </div> */}
           </div>
         ))}
 

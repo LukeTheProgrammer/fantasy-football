@@ -11,7 +11,6 @@ use App\Models\Draft;
 use App\Models\DraftPick;
 use App\Models\League;
 use App\Models\LeagueMember;
-use App\Models\LeagueSeason;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +25,7 @@ class DraftController extends Controller
     {
         $this->authorize('view', $league);
 
-        return response()->json($league->drafts()->with('leagueSeason')->orderBy('draft_date', 'desc')->get());
+        return response()->json($league->drafts()->orderBy('draft_date', 'desc')->get());
     }
 
     /**
@@ -36,14 +35,7 @@ class DraftController extends Controller
     {
         $validated = $request->validated();
 
-        // Check if the season already has a draft
-        $season = LeagueSeason::find($validated['league_season_id']);
-        if ($season->draft()->exists()) {
-            return response()->json(['message' => 'This season already has a draft'], 422);
-        }
-
         $draft = $league->drafts()->create([
-            'league_season_id' => Arr::get($validated, 'league_season_id'),
             'draft_date' => Arr::get($validated, 'draft_date'),
             'draft_type' => Arr::get($validated, 'draft_type'),
             'auction_budget' => Arr::get($validated, 'auction_budget') ?? null,
@@ -69,7 +61,7 @@ class DraftController extends Controller
             return response()->json(['message' => 'Draft does not belong to this league'], 404);
         }
 
-        return response()->json($draft->load('picks.leagueMember', 'picks.player', 'leagueSeason'));
+        return response()->json($draft->load('picks.leagueMember', 'picks.player'));
     }
 
     /**

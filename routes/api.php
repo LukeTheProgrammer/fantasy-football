@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('league-members', LeagueMemberController::class);
 
     // League season routes
-    Route::apiResource('league.seasons', LeagueSeasonController::class)->parameters([
+    Route::apiResource('leagues.seasons', LeagueSeasonController::class)->parameters([
         'seasons' => 'season'
     ]);
 
