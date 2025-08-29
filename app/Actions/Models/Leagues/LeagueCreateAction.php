@@ -72,8 +72,7 @@ class LeagueCreateAction
 
     private function createDraft(League $league): void
     {
-        Draft::create([
-            'league_id'        => $league->id,
+        Action::model(Draft::class)->create($league, [
             'draft_type'       => 'snake',
             'draft_date'       => null,
             'is_active'        => true,

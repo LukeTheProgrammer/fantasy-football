@@ -1,89 +1,17 @@
 import AppLayout from '@/layouts/app-layout';
+import DraftsTable from '@/components/leagues/drafts-table';
 import Heading from '@/components/heading';
 import LeagueMemberManager from '@/components/form/member-manager';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Head, Link } from '@inertiajs/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
+import { isUserLeagueAdmin } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
-import { type BreadcrumbItem } from '@/types';
-import DraftsTable from '@/components/leagues/drafts-table';
-
-interface LeagueMember {
-  id: number;
-  league_id: number;
-  user_id: number;
-  team_name: string;
-  team_logo: string | null;
-  draft_position: number | null;
-  is_admin: boolean;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
-}
-
-interface LeagueSettings {
-  id: number;
-  league_id: number;
-  roster_positions: string[];
-  roster_size: number;
-  starters_count: number;
-  bench_count: number;
-  ir_spots: number;
-  passing_yards_per_point: number;
-  passing_td_points: number;
-  interception_points: number;
-  rushing_yards_per_point: number;
-  rushing_td_points: number;
-  receiving_yards_per_point: number;
-  receiving_td_points: number;
-  reception_points: number;
-  fumble_lost_points: number;
-  two_point_conversion_points: number;
-  field_goal_0_39_points: number;
-  field_goal_40_49_points: number;
-  field_goal_50_plus_points: number;
-  extra_point_points: number;
-  defense_sack_points: number;
-  defense_interception_points: number;
-  defense_fumble_recovery_points: number;
-  defense_td_points: number;
-  defense_safety_points: number;
-  defense_points_allowed_tiers: Record<string, number>;
-  created_at: string;
-  updated_at: string;
-}
-
-interface League {
-  id: number;
-  name: string;
-  slug: string;
-  description: string | null;
-  team_count: number;
-  is_public: boolean;
-  draft_type: string;
-  draft_date: string | null;
-  join_code: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  creator: {
-    id: number;
-    name: string;
-  };
-  settings: LeagueSettings;
-  members: LeagueMember[];
-  user_is_admin: boolean;
-  user_is_member: boolean;
-}
+import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type League, type LeagueMember } from '@/types/models';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -100,29 +28,12 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function ShowLeague({ league: initialLeague, auth }: PageProps & { league: League }) {
-  const [league, setLeague] = useState<League | null>(initialLeague || null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  // We don't need activeTab state as we're using defaultValue in Tabs
-  // We'll manage invite state in the LeagueMemberManager component
+export default function ShowLeague({ league: initialLeague }: PageProps & { league: League }) {
+  const { auth } = usePage<SharedData>().props;
+  const [league, setLeague] = useState<League>(initialLeague);
 
-  useEffect(() => {
-    if (initialLeague) {
-      // Set user_is_admin based on membership status
-      const userIsAdmin = initialLeague.members.some(
-        (member) => member.user_id === auth.user?.id && member.is_admin
-      );
-
-      setLeague({
-        ...initialLeague,
-        user_is_admin: userIsAdmin
-      });
-
-      setLoading(false);
-      return;
-    }
-  }, [initialLeague, auth.user?.id]);
+  const userId = auth.user.id;
+  const userIsAdmin = isUserLeagueAdmin(league, userId);
 
   const handleMembersChange = (updatedMembers: LeagueMember[]) => {
     if (league) {
@@ -145,64 +56,20 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
     return new Date(dateString).toLocaleString();
   };
 
-  if (loading) {
-    return (
-      <AppLayout breadcrumbs={breadcrumbs}>
-        <Head title="Loading League..." />
-        <div className="py-12">
-          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div className="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
-              <Skeleton className="mb-6 h-8 w-1/3" />
-              <Skeleton className="mb-2 h-4 w-full" />
-              <Skeleton className="mb-6 h-4 w-5/6" />
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <Skeleton className="h-32" />
-                <Skeleton className="h-32" />
-                <Skeleton className="h-32" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
-
-  if (error || !league) {
-    return (
-      <AppLayout breadcrumbs={breadcrumbs}>
-        <Head title="Error" />
-        <div className="py-12">
-          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div className="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
-              <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
-                {error || 'League not found'}
-              </div>
-              <div className="mt-4">
-                <Link href={route('leagues.index')}>
-                  <Button variant="outline">Back to Leagues</Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
-
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={league?.name} />
+      <Head title={league.name} />
 
       <div className="flex-1 p-8">
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
           <div>
             <Heading
-              title={league?.name}
+              title={league.name}
               description={`Created by ${league.creator?.name} • ${league.members.length}/${league.team_count} teams`}
             />
           </div>
           <div className="mt-4 flex space-x-2 md:mt-0">
-            {league.user_is_admin && (
+            {userIsAdmin && (
               <Link href={route('leagues.edit', league.id)}>
                 <Button variant="outline">Edit League</Button>
               </Link>
@@ -225,11 +92,8 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
           <Card>
             <CardContent>
               <LeagueMemberManager
-                leagueId={league.id}
                 members={league.members}
                 maxTeams={league.team_count}
-                userIsAdmin={league.user_is_admin}
-                currentUserId={auth.user?.id || 0}
                 onMembersChange={handleMembersChange}
               />
             </CardContent>
@@ -252,11 +116,11 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Draft Type</dt>
-                  <dd className="mt-1 capitalize">{league.draft_type}</dd>
+                  <dd className="mt-1 capitalize">{league.draft?.draft_type}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Draft Date</dt>
-                  <dd className="mt-1">{formatDate(league.draft_date)}</dd>
+                  <dd className="mt-1">{formatDate(league.draft?.draft_date)}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Visibility</dt>
@@ -266,7 +130,7 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
 
               <div className="mt-6">
                 <h3 className="mb-2 text-md font-medium">Join Code</h3>
-                {league.user_is_admin ? (
+                {userIsAdmin ? (
                   <div className="flex items-center space-x-2">
                     <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">{league.join_code}</code>
                     <Button variant="outline" size="sm" onClick={copyJoinCode}>
@@ -280,11 +144,11 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
 
               <div className="mt-6">
                 <h3 className="mb-2 text-md font-medium">Draft Status</h3>
-                {league.draft_date ? (
+                {league?.draft?.draft_date ? (
                   <div className="space-y-2">
-                    <p>{new Date(league.draft_date) > new Date() ? 'Draft scheduled for:' : 'Draft was scheduled for:'}</p>
-                    <p className="font-medium">{formatDate(league.draft_date)}</p>
-                    {new Date(league.draft_date) > new Date() && <Button className="mt-2 w-full">Enter Draft Room</Button>}
+                    <p>{new Date(league.draft.draft_date) > new Date() ? 'Draft scheduled for:' : 'Draft was scheduled for:'}</p>
+                    <p className="font-medium">{formatDate(league.draft.draft_date)}</p>
+                    {new Date(league.draft.draft_date) > new Date() && <Button className="mt-2 w-full">Enter Draft Room</Button>}
                   </div>
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400">Draft not yet scheduled</p>
@@ -347,7 +211,7 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
                 <Separator className="my-2" />
                 <div className="mt-2 grid grid-cols-2 gap-1">
                   <div className="text-sm text-gray-500 dark:text-gray-400">Points per Yard</div>
-                  <div className="text-right">{league.settings.passing_yards_per_point}</div>
+                  <div className="text-right">{league.settings.passing_points_per_yard}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">TD Pass</div>
                   <div className="text-right">{league.settings.passing_td_points} pts</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">Interception</div>
@@ -360,7 +224,7 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
                 <Separator className="my-2" />
                 <div className="mt-2 grid grid-cols-2 gap-1">
                   <div className="text-sm text-gray-500 dark:text-gray-400">Points per Yard</div>
-                  <div className="text-right">{league.settings.rushing_yards_per_point}</div>
+                  <div className="text-right">{league.settings.rushing_points_per_yard}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">TD</div>
                   <div className="text-right">{league.settings.rushing_td_points} pts</div>
                 </div>
@@ -371,7 +235,7 @@ export default function ShowLeague({ league: initialLeague, auth }: PageProps & 
                 <Separator className="my-2" />
                 <div className="mt-2 grid grid-cols-2 gap-1">
                   <div className="text-sm text-gray-500 dark:text-gray-400">Points per Yard</div>
-                  <div className="text-right">{league.settings.receiving_yards_per_point}</div>
+                  <div className="text-right">{league.settings.receiving_points_per_yard}</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">TD</div>
                   <div className="text-right">{league.settings.receiving_td_points} pts</div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">Reception</div>

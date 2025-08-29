@@ -7,28 +7,8 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@inertiajs/core';
 import { Plus } from 'lucide-react';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-
-interface Draft {
-  id: number;
-  league_id: number;
-  draft_date: string;
-  draft_type: string;
-  is_completed: boolean;
-  auction_budget: number;
-  current_pick: number;
-  current_round: number;
-  time_per_pick: number;
-  is_active: boolean;
-  league: {
-    name: string;
-    year: number;
-    members: {
-      user_id: number;
-      is_admin: boolean;
-      team_name: string;
-    }[];
-  };
-}
+import { type Draft } from '@/types/models';
+import { getDraftUserMember, isUserDraftAdmin } from '@/lib/utils';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -39,14 +19,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface DraftIndexProps extends PageProps {
   drafts: Draft[];
-}
-
-function getUserMember(draft: Draft, userId: number) {
-  return draft.league.members.find((member) => member.user_id === userId);
-}
-
-function isUserAdmin(draft: Draft, userId: number) {
-  return getUserMember(draft, userId)?.is_admin;
 }
 
 export default function Drafts({ drafts }: DraftIndexProps) {
@@ -90,7 +62,7 @@ export default function Drafts({ drafts }: DraftIndexProps) {
                 <CardHeader>
                   <CardTitle>{draft.league.name} {draft.league.year}</CardTitle>
                   <CardDescription>
-                    {isUserAdmin(draft, userId) && (
+                    {isUserDraftAdmin(draft, userId) && (
                       <Badge variant="outline" className="mr-2">
                         Admin
                       </Badge>
@@ -100,9 +72,9 @@ export default function Drafts({ drafts }: DraftIndexProps) {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                    <span>Your team: {getUserMember(draft, userId)?.team_name}</span>
+                    <span>Your team: {getDraftUserMember(draft, userId)?.team_name}</span>
                     <span className="mx-2">•</span>
-                    <span>{isUserAdmin(draft, userId) ? 'Admin' : 'Player'}</span>
+                    <span>{isUserDraftAdmin(draft, userId) ? 'Admin' : 'Player'}</span>
                   </div>
                 </CardContent>
                 <CardFooter>

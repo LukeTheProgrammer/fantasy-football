@@ -4,6 +4,7 @@ import LeagueForm from './form';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '@inertiajs/core';
 import { type BreadcrumbItem } from '@/types';
+import { type League } from '@/types/models';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -19,83 +20,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '#',
   },
 ];
-
-// interface LeagueMember {
-//   id: number;
-//   league_id: number;
-//   user_id: number;
-//   team_name: string;
-//   team_logo: string | null;
-//   draft_position: number | null;
-//   is_admin: boolean;
-//   is_active: boolean;
-//   created_at: string;
-//   updated_at: string;
-//   user: {
-//     id: number;
-//     name: string;
-//     email: string;
-//   };
-// }
-
-// interface LeagueSettings {
-//   id: number;
-//   league_id: number;
-//   roster_positions: string[];
-//   roster_size: number;
-//   starters_count: number;
-//   bench_count: number;
-//   ir_spots: number;
-//   passing_points_per_yard?: number;
-//   passing_yards_per_point?: number;
-//   passing_td_points: number;
-//   interception_points: number;
-//   rushing_points_per_yard?: number;
-//   rushing_yards_per_point?: number;
-//   rushing_td_points: number;
-//   receiving_points_per_yard?: number;
-//   receiving_yards_per_point?: number;
-//   receiving_td_points: number;
-//   reception_points: number;
-//   fumble_lost_points: number;
-//   two_point_conversion_points: number;
-//   field_goal_0_39_points: number;
-//   field_goal_40_49_points: number;
-//   field_goal_50_plus_points: number;
-//   extra_point_points: number;
-//   defense_sack_points: number;
-//   defense_interception_points: number;
-//   defense_fumble_recovery_points: number;
-//   defense_td_points: number;
-//   defense_safety_points: number;
-//   defense_points_allowed_tiers: Record<string, number>;
-//   created_at?: string;
-//   updated_at?: string;
-// }
-
-interface League {
-  id: number;
-  name: string;
-  slug: string;
-  description: string | null;
-  team_count?: number;
-  max_teams?: number;
-  is_public: boolean;
-  draft_type: string;
-  draft_date: string | null;
-  join_code: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  creator?: {
-    id: number;
-    name: string;
-  };
-  settings: LeagueSettings;
-  members?: LeagueMember[];
-  user_is_admin?: boolean;
-  user_is_member?: boolean;
-}
 
 interface EditLeagueProps extends PageProps {
   league: League;

@@ -4,6 +4,7 @@ import DraftForm from './form';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '@inertiajs/core';
 import { type BreadcrumbItem } from '@/types';
+import { type Draft } from '@/types/models';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -20,19 +21,6 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-interface Draft {
-  id: number;
-  league_id: number;
-  draft_date: string;
-  draft_type: string;
-  is_completed: boolean;
-  auction_budget: number;
-  current_pick: number;
-  current_round: number;
-  time_per_pick: number;
-  is_active: boolean;
-}
-
 interface EditDraftProps extends PageProps {
   draft: Draft;
 }
@@ -40,6 +28,7 @@ interface EditDraftProps extends PageProps {
 export default function EditDraft({ draft }: EditDraftProps) {
   // Map Draft to DraftFormData
   const formData = {
+    id: draft.id,
     league_id: draft.league_id,
     draft_date: draft.draft_date,
     draft_type: draft.draft_type,

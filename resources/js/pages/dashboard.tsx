@@ -8,15 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { type BreadcrumbItem } from '@/types';
 import { useEffect, useState } from 'react';
-
-interface League {
-  id: number;
-  name: string;
-  team_count: number;
-  draft_type: string;
-  draft_date: string;
-  status?: string;
-}
+import { type League } from '@/types/models';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -133,9 +125,9 @@ export default function Dashboard() {
                     <div>
                       <h3 className="">{league.name}</h3>
                       <p className="text-sm">
-                        {league.team_count} teams • {league.draft_type}
+                        {league.team_count} teams • {league.draft?.draft_type}
                       </p>
-                      <p className="text-sm">Draft: {league.draft_date}</p>
+                      <p className="text-sm">Draft: {league.draft?.draft_date}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">

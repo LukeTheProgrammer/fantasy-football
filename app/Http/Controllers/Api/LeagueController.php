@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -60,10 +61,20 @@ class LeagueController extends Controller
      */
     public function store(LeagueCreateRequest $request)
     {
-        $league = Action::model(League::class)->create(
-            creator: $request->user(),
-            data: $request->validated(),
-        );
+        try {
+            DB::beginTransaction();
+
+            $league = Action::model(League::class)->create(
+                creator: $request->user(),
+                data: $request->validated(),
+            );
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => 'Failed to create league', 'error' => $e->getMessage()], 500);
+        }
 
         return response()->json($league->load('settings', 'members'), 201);
     }

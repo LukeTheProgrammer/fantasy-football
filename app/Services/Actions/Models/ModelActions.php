@@ -2,12 +2,14 @@
 
 namespace App\Services\Actions\Models;
 
+use App\Actions\Models\Draft\DraftCreateAction;
 use App\Actions\Models\LeagueMembers\LeagueMemberCreateAction;
 use App\Actions\Models\LeagueMembers\LeagueMemberUpdateAction;
 use App\Actions\Models\LeagueSettings\LeagueSettingsCreateAction;
 use App\Actions\Models\LeagueSettings\LeagueSettingsUpdateAction;
 use App\Actions\Models\Leagues\LeagueCreateAction;
 use App\Actions\Models\Leagues\LeagueUpdateAction;
+use App\Models\Draft;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
@@ -17,6 +19,9 @@ use Illuminate\Support\Arr;
 class ModelActions
 {
     public $registry = [
+        Draft::class => [
+            'create' => DraftCreateAction::class,
+        ],
         League::class => [
             'create' => LeagueCreateAction::class,
             'update' => LeagueUpdateAction::class,

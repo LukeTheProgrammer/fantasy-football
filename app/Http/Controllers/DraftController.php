@@ -38,28 +38,29 @@ class DraftController extends Controller
     /**
      * Display the specified draft.
      */
-    public function show(League $league, Draft $draft)
+    public function show(Draft $draft)
     {
-        if ($draft->league_id !== $league->id) {
-            abort(404, 'Draft does not belong to this league');
-        }
-
         $draft->load([
-            'picks.leagueMember.user',
-            'picks.player.position',
-            'picks.player.team',
+            'league.members',
+            'picks' => [
+                'leagueMember.user',
+                'player' => [
+                    'position',
+                    'team',
+                ],
+            ],
         ]);
 
         // Get available players for drafting
-        $draftedPlayerIds = $draft->picks()->whereNotNull('player_id')->pluck('player_id');
-        $availablePlayers = Player::whereNotIn('id', $draftedPlayerIds)
-            ->with(['position', 'team'])
-            ->get();
+        // $draftedPlayerIds = $draft->picks()->whereNotNull('player_id')->pluck('player_id');
+        // $availablePlayers = Player::whereNotIn('id', $draftedPlayerIds)
+        //     ->with(['position', 'team'])
+        //     ->get();
 
         return Inertia::render('drafts/show', [
-            'league' => $league,
+            // 'league' => $league,
             'draft' => $draft,
-            'availablePlayers' => $availablePlayers,
+            // 'availablePlayers' => $availablePlayers,
         ]);
     }
 

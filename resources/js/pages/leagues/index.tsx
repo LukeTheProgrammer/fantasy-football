@@ -4,32 +4,13 @@ import axios from '@/lib/axios';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 import { useEffect, useState } from 'react';
-
-interface League {
-  id: number;
-  name: string;
-  slug: string;
-  description: string | null;
-  max_teams: number;
-  is_public: boolean;
-  draft_type: string;
-  draft_date: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  pivot: {
-    team_name: string;
-    is_admin: boolean;
-  };
-  _count?: {
-    members: number;
-  };
-}
+import { type League } from '@/types/models';
+import { getLeagueUserMember, isUserLeagueAdmin } from '@/lib/utils';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -39,9 +20,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Leagues() {
+  const { auth } = usePage<SharedData>().props;
   const [leagues, setLeagues] = useState<League[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const userId = auth.user.id;
 
   useEffect(() => {
     const fetchLeagues = async () => {
@@ -127,7 +111,7 @@ export default function Leagues() {
                 <CardHeader>
                   <CardTitle>{league.name}</CardTitle>
                   <CardDescription>
-                    {league.pivot.is_admin && (
+                    {isUserLeagueAdmin(league, userId) && (
                       <Badge variant="outline" className="mr-2">
                         Admin
                       </Badge>
@@ -138,10 +122,10 @@ export default function Leagues() {
                 <CardContent>
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">{league.description || 'No description provided'}</p>
                   <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                    <span>Your team: {league.pivot.team_name}</span>
+                    <span>Your team: {getLeagueUserMember(league, userId)?.team_name}</span>
                     <span className="mx-2">•</span>
                     <span>
-                      {league._count?.members || 'N/A'} / {league.max_teams} teams
+                      {league.members?.length || 'N/A'} / {league.team_count} teams
                     </span>
                   </div>
                 </CardContent>

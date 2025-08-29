@@ -16,16 +16,19 @@ return new class extends Migration
             $table->foreignId('draft_id')->constrained()->cascadeOnDelete();
             $table->foreignId('league_member_id')->constrained()->cascadeOnDelete();
             $table->foreignId('player_id')->nullable()->constrained()->nullOnDelete();
-            $table->integer('pick_number');
             $table->integer('round');
+            $table->integer('pick_number');
             $table->decimal('amount', 10, 2)->nullable(); // For auction drafts
             $table->boolean('is_keeper')->default(false);
             $table->decimal('previous_year_cost', 10, 2)->nullable(); // For keepers
             $table->dateTime('pick_time')->nullable();
             $table->timestamps();
-            
+
             // Ensure pick numbers are unique within a draft
-            $table->unique(['draft_id', 'pick_number']);
+            $table->unique(['draft_id', 'round', 'pick_number']);
+
+            // Ensure players are only drafted once
+            $table->unique(['draft_id', 'player_id']);
         });
     }
 

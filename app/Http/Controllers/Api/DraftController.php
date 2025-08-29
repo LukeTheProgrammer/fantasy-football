@@ -25,7 +25,7 @@ class DraftController extends Controller
     {
         $this->authorize('view', $league);
 
-        return response()->json($league->drafts()->orderBy('draft_date', 'desc')->get());
+        return response()->json($league->draft()->orderBy('draft_date', 'desc')->get());
     }
 
     /**
@@ -35,7 +35,7 @@ class DraftController extends Controller
     {
         $validated = $request->validated();
 
-        $draft = $league->drafts()->create([
+        $draft = $league->draft()->create([
             'draft_date' => Arr::get($validated, 'draft_date'),
             'draft_type' => Arr::get($validated, 'draft_type'),
             'auction_budget' => Arr::get($validated, 'auction_budget') ?? null,
@@ -82,7 +82,7 @@ class DraftController extends Controller
 
         // Only one draft can be active at a time
         if ($request->has('is_active') && $request->input('is_active')) {
-            $league->drafts()->where('id', '!=', $draft->id)->update(['is_active' => false]);
+            $league->draft()->where('id', '!=', $draft->id)->update(['is_active' => false]);
         }
 
         $draft->update($validated);

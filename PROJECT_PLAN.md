@@ -45,10 +45,10 @@ This project aims to create a web application that assists users during their fa
 - [x] Create routes for the above controllers in the appropriate routes files (web.php and api.php)
 
 #### Frontend
-- [ ] Create draft creation form with fields for draft details
-- [ ] Build draft settings configuration interface (roster positions, scoring rules)
-- [ ] Implement draft dashboard view
-- [ ] Add validation for all forms
+- [x] Create draft creation form with fields for draft details
+- [x] Build draft settings configuration interface (roster positions, scoring rules)
+- [x] Implement draft dashboard view
+- [x] Add validation for all forms
 
 ### 3. Historical League Auction Data
 #### Database & Models

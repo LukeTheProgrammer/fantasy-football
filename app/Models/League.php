@@ -57,11 +57,11 @@ class League extends Model
     }
 
     /**
-     * Get the drafts for the league.
+     * Get the draft for the league.
      */
-    public function drafts(): HasMany
+    public function draft(): HasOne
     {
-        return $this->hasMany(Draft::class);
+        return $this->hasOne(Draft::class);
     }
 
     /**

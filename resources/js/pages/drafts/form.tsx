@@ -4,29 +4,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { router } from '@inertiajs/react';
 import { toast } from 'sonner';
+import { type League, type Draft } from '@/types/models';
 import { useCallback, useState, useEffect } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-
-interface League {
-  id: number;
-  name: string;
-  year: number;
-}
-
-interface Draft {
-  id: number;
-  league_id: number;
-  draft_date: string;
-  draft_type: string;
-  is_completed: boolean;
-  auction_budget: number;
-  current_pick: number;
-  current_round: number;
-  time_per_pick: number;
-  is_active: boolean;
-}
 
 interface DraftFormProps {
   initialData?: Draft;
@@ -49,7 +31,7 @@ export default function DraftForm({
   redirectPath,
   onSuccess,
 }: DraftFormProps) {
-  const [data, setData] = useState<Draft>(initialData || {
+  const [data, setData] = useState<Partial<Draft>>(initialData || {
     id: 0,
     league_id: 0,
     draft_date: '',
@@ -59,7 +41,8 @@ export default function DraftForm({
     current_pick: 0,
     current_round: 0,
     time_per_pick: 60,
-    is_active: false
+    is_active: false,
+    league: undefined
   });
   const [leagues, setLeagues] = useState<League[]>([]);
   const [loadingLeagues, setLoadingLeagues] = useState(false);
