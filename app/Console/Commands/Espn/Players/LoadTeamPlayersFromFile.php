@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands\Espn\Players;
 
+use App\Facades\Action;
 use App\Models\Player;
 use App\Models\Position;
+use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -16,7 +18,7 @@ class LoadTeamPlayersFromFile extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:load:team-players:file {team_id}';
+    protected $signature = 'espn:load:team-players:file {espn_team_id}';
 
     /**
      * The console command description.
@@ -25,23 +27,38 @@ class LoadTeamPlayersFromFile extends Command
      */
     protected $description = 'Loads player data from a file.';
 
+    /**
+     * NFL Positions.
+     *
+     * @var Collection|null
+     */
     protected ?Collection $positions = null;
+
+    /**
+     * The Team.
+     *
+     * @var Team|null
+     */
+    protected ?Team $team = null;
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $teamId = $this->argument('team_id');
+        $espnTeamId = $this->argument('espn_team_id');
+
+        $this->team = Team::where('espn_id', '=', $espnTeamId)->first();
 
         $this->loadPositions();
 
-        $this->info(PHP_EOL . 'Loading players for team ' . $teamId . PHP_EOL);
+        $this->info('Loading players for ' . $this->team->abbreviation . ' [' . $espnTeamId . ']');
 
-        $path = database_path('data/espn-team-' . $teamId . '-players.json');
+        $path = database_path('data/ESPN/players/espn-team-' . $espnTeamId . '-players.json');
 
         if (!file_exists($path)) {
-            $this->call('espn:team-players:get', ['team_id' => $teamId]);
+            $this->error('Player file does not exist: ' . $path);
+            $this->call('espn:team-players:get', ['team_id' => $espnTeamId]);
         }
 
         $this->loadPlayers($path);
@@ -79,41 +96,45 @@ class LoadTeamPlayersFromFile extends Command
 
         $players = json_decode($data, true);
 
-        // $bar = $this->output->createProgressBar(count($players));
-        // $bar->start();
+        $bar = $this->output->createProgressBar(count($players));
+        $bar->start();
 
-        $stats = [];
+        // $stats = [];
 
         foreach ($players as $i => $player) {
             $pos = $this->getPosition(Arr::get($player, 'position'));
             // $this->info(Arr::get($player, 'id') . ' ' . $status);
-            $status = Arr::get($player, 'status.name');
+            // $status = Arr::get($player, 'status.name');
 
-            if (!in_array($status, $stats)) {
-                $stats[] = $status;
-            }
+            // if (!in_array($status, $stats)) {
+            //     $stats[] = $status;
+            // }
 
-            // Player::updateOrCreate(['espn_id' => Arr::get($player, 'id')], [
-            //     'position_id' => $pos->id,
-            //     'first_name' => Arr::get($player, 'firstName'),
-            //     'last_name' => Arr::get($player, 'lastName'),
-            //     'height' => Arr::get($player, 'height'),
-            //     'weight' => Arr::get($player, 'weight'),
-            //     'college' => Arr::get($player, 'college.name'),
-            //     'draft_year' => Arr::get($player, 'draft.year'),
-            //     'draft_round' => Arr::get($player, 'draft.round'),
-            //     'draft_pick' => Arr::get($player, 'draft.selection'),
-            //     'draft_team' => Arr::get($player, 'draft.team.name'),
-            //     'birth_date' => Carbon::parse(Arr::get($player, 'dateOfBirth'))->toDateTimeString(),
-            //     'headshot' => Arr::get($player, 'headshot.href'),
-            // ]);
+            Action::model(Player::class)->upsert([
+                'espn_id'       => Arr::get($player, 'id'),
+                'position_id'   => $pos->id,
+                'team_id'       => $this->team->id,
+                'first_name'    => Arr::get($player, 'firstName'),
+                'last_name'     => Arr::get($player, 'lastName'),
+                'full_name'     => Arr::get($player, 'fullName'),
+                'jersey_number' => Arr::get($player, 'jersey'),
+                'height'        => Arr::get($player, 'height'),
+                'weight'        => Arr::get($player, 'weight'),
+                'college'       => Arr::get($player, 'college.name'),
+                'draft_year'    => Arr::get($player, 'draft.year'),
+                'draft_round'   => Arr::get($player, 'draft.round'),
+                'draft_pick'    => Arr::get($player, 'draft.selection'),
+                'draft_team'    => Arr::get($player, 'draft.team.name'),
+                'birth_date'    => Carbon::parse(Arr::get($player, 'dateOfBirth'))->toDateTimeString(),
+                'headshot'      => Arr::get($player, 'headshot.href'),
+            ]);
 
-            // $bar->advance();
+            $bar->advance();
         }
 
-        $this->info('Stats: ' . implode(', ', $stats));
+        // $this->info('Stats: ' . implode(', ', $stats));
 
-        // $bar->finish();
+        $bar->finish();
         echo PHP_EOL;
     }
 }

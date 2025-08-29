@@ -28,6 +28,22 @@ export interface DraftPick {
     leagueMember: LeagueMember;
 }
 
+export interface DraftRanking {
+    id: number;
+    player_id: number;
+    year: number;
+    average_rank: number;
+    average_value: number;
+    fp_ranking: number | null;
+    fp_tier: number | null;
+    fp_adp: number | null;
+    fp_adv: number | null;
+    fp_ecr_vs_adp: number | null;
+    notes: string | null;
+    deleted_at: string | null;
+    player: Player;
+}
+
 export interface League {
     id: number;
     created_by_user_id: number;
@@ -84,6 +100,7 @@ export interface Player {
     position_id: number;
     first_name: string;
     last_name: string;
+    full_name: string;
     height: string | null;
     weight: string | null;
     college: string | null;
@@ -94,16 +111,28 @@ export interface Player {
     birth_date: string | null;
     headshot: string | null;
     deleted_at: string | null;
+    position: Position;
+    team: Team;
+}
+
+export interface PlayerAlias {
+    id: number;
+    player_id: number;
+    alias: string;
+    deleted_at: string | null;
+    player: Player;
 }
 
 export interface Position {
     id: number;
     name: string;
+    abbreviation: string;
 }
 
 export interface Team {
     id: number;
     name: string;
+    abbreviation: string;
 }
 
 export interface User {

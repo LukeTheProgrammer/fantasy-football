@@ -50,42 +50,12 @@ This project aims to create a web application that assists users during their fa
 - [x] Implement draft dashboard view
 - [x] Add validation for all forms
 
-### 3. Historical League Auction Data
+### 3. Draft Rankings and Values
 #### Database & Models
-- [ ] Create `HistoricalDraft` model to store past draft data
-- [ ] Create `DraftPick` model to store individual picks
-- [ ] Create migrations for historical data models
-- [ ] Define relationships between models
-
-#### Data Import
-- [ ] Create ESPN data import service
-- [ ] Create Yahoo data import service
-- [ ] Implement file upload for CSV/JSON draft data
-- [ ] Add data normalization and validation
-
-#### API & Controllers
-- [ ] Create `HistoricalDataController` for managing historical data
-- [ ] Implement API endpoints for data import and retrieval
-- [ ] Add data filtering and search capabilities
-
-#### Frontend
-- [ ] Build data import interface with file upload
-- [ ] Create historical data visualization dashboard
-- [ ] Implement data filtering and search UI
-- [ ] Add export functionality
-
-### 4. Draft Rankings and Values
-#### Database & Models
-- [ ] Create `DraftRanking` model for storing player rankings
-- [ ] Create `PlayerValue` model for storing auction values
-- [ ] Create migrations for ranking and value models
-- [ ] Define relationships with Player model
-
-#### Data Sources
-- [ ] Implement ESPN rankings import
-- [ ] Create custom ranking input interface
-- [ ] Add average draft position (ADP) data source
-- [ ] Implement auction value calculations
+- [x] Create `DraftRanking` model for storing player rankings with fields for year, player, ranking, source, tier, average draft value (adv), etc.
+- [x] Create `PlayerAlias` model for storing player aliases.
+- [x] Create migration for new models
+- [x] Define relationships with models
 
 #### API & Controllers
 - [ ] Create `RankingsController` for managing rankings
@@ -99,6 +69,31 @@ This project aims to create a web application that assists users during their fa
 - [ ] Implement value adjustment interface
 - [ ] Add comparison views for different ranking sources
 - [ ] Create visualization for player values
+
+#### Data Sources
+- [ ] Implement ESPN rankings import
+- [ ] Create custom ranking input interface
+- [ ] Add average draft position (ADP) data source
+- [ ] Implement auction value calculations
+
+
+### 4. Historical League Auction Data
+#### Data Import
+- [ ] Create ESPN data import service
+- [ ] Create CBS data import service
+- [ ] Implement file upload for CSV/JSON draft data
+- [ ] Add data normalization and validation
+
+#### API & Controllers
+- [ ] Create `HistoricalDataController` for managing historical data
+- [ ] Implement API endpoints for data import and retrieval
+- [ ] Add data filtering and search capabilities
+
+#### Frontend
+- [ ] Build data import interface with file upload
+- [ ] Create historical data visualization dashboard
+- [ ] Implement data filtering and search UI
+- [ ] Add export functionality
 
 ### 5. Real-Time Draft Suggestions
 #### Core Logic

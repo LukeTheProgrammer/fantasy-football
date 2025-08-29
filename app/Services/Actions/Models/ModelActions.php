@@ -9,10 +9,13 @@ use App\Actions\Models\LeagueSettings\LeagueSettingsCreateAction;
 use App\Actions\Models\LeagueSettings\LeagueSettingsUpdateAction;
 use App\Actions\Models\Leagues\LeagueCreateAction;
 use App\Actions\Models\Leagues\LeagueUpdateAction;
+use App\Actions\Models\Player\PlayerCreateAction;
+use App\Actions\Models\Player\PlayerUpsertAction;
 use App\Models\Draft;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
+use App\Models\Player;
 use Exception;
 use Illuminate\Support\Arr;
 
@@ -33,6 +36,10 @@ class ModelActions
         LeagueMember::class => [
             'create' => LeagueMemberCreateAction::class,
             'update' => LeagueMemberUpdateAction::class,
+        ],
+        Player::class => [
+            'create' => PlayerCreateAction::class,
+            'upsert' => PlayerUpsertAction::class,
         ],
     ];
 
@@ -60,6 +67,18 @@ class ModelActions
 
         if (! $action) {
             throw new Exception('There is no update method registered for ' . $this->modelClassName);
+        }
+
+        return app($action)->run(...$args);
+    }
+
+    public function upsert(...$args)
+    {
+        $actions = Arr::get($this->registry, $this->modelClassName);
+        $action = Arr::get($actions, 'upsert', false);
+
+        if (! $action) {
+            throw new Exception('There is no upsert method registered for ' . $this->modelClassName);
         }
 
         return app($action)->run(...$args);

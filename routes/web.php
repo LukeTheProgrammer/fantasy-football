@@ -3,7 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DraftController;
 use App\Http\Controllers\LeagueController;
-// use App\Https\Controllers\LeagueSeasonController;
+use App\Http\Controllers\DraftRankingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,14 +20,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{league}', [LeagueController::class, 'show'])->name('show');
     });
 
-    // LeagueSeason model
-    // Route::prefix('seasons')->name('seasons.')->group(function () {
-    //     Route::get('/', [LeagueSeasonController::class, 'index'])->name('index');
-    //     Route::get('/create', [LeagueSeasonController::class, 'create'])->name('create');
-    //     Route::get('/{season}/edit', [LeagueSeasonController::class, 'edit'])->name('edit');
-    //     Route::get('/{season}', [LeagueSeasonController::class, 'show'])->name('show');
-    // });
-
     // Draft model
     Route::prefix('drafts')->name('drafts.')->group(function () {
         Route::get('/', [DraftController::class, 'index'])->name('index');
@@ -36,6 +28,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{draft}/edit', [DraftController::class, 'edit'])->name('edit');
         Route::get('/{draft}/board', [DraftController::class, 'board'])->name('board');
         Route::get('/{draft}/results', [DraftController::class, 'results'])->name('results');
+    });
+
+    // DraftRanking model
+    Route::prefix('rankings')->name('rankings.')->group(function () {
+        Route::get('/', [DraftRankingController::class, 'index'])->name('index');
+        Route::get('/create', [DraftRankingController::class, 'create'])->name('create');
+        Route::get('/{draftRanking}/edit', [DraftRankingController::class, 'edit'])->name('edit');
+        Route::get('/{draftRanking}', [DraftRankingController::class, 'show'])->name('show');
     });
 });
 

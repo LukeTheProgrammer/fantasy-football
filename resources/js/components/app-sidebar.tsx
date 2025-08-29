@@ -23,6 +23,11 @@ const mainNavItems: NavItem[] = [
     href: '/drafts',
     icon: LayoutGrid,
   },
+  {
+    title: 'Draft Rankings',
+    href: '/rankings',
+    icon: LayoutGrid,
+  },
 ];
 
 const footerNavItems: NavItem[] = [

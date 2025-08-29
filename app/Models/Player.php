@@ -92,13 +92,27 @@ class Player extends Model
     }
 
     /**
-     * Get the player's full name.
+     * Get the aliases for this player.
      */
-    public function fullName(): Attribute
+    public function aliases(): HasMany
     {
-        return Attribute::make(
-            get: fn () => "{$this->first_name} {$this->last_name}",
-        );
+        return $this->hasMany(PlayerAlias::class);
+    }
+
+    /**
+     * Get the draft picks for this player.
+     */
+    public function draftPicks(): HasMany
+    {
+        return $this->hasMany(DraftPick::class);
+    }
+
+    /**
+     * Get the draft rankings for this player.
+     */
+    public function draftRankings(): HasMany
+    {
+        return $this->hasMany(DraftRanking::class);
     }
 
     /**
@@ -129,13 +143,5 @@ class Player extends Model
         return Attribute::make(
             get: fn () => (string) $this->draft_round === '1',
         );
-    }
-
-    /**
-     * Get the draft picks for this player.
-     */
-    public function draftPicks(): HasMany
-    {
-        return $this->hasMany(DraftPick::class);
     }
 }
