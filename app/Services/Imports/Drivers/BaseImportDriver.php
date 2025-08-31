@@ -7,11 +7,15 @@ use App\Services\Imports\Contracts\ImportDriver;
 
 abstract class BaseImportDriver implements ImportDriver
 {
+    public array $dataMap = [];
+
     public array $headers = [];
+
+    public array $fieldsToImport = [];
 
     abstract public function import();
 
-    abstract public function setUp();
+    abstract public function setUp(array $options = []);
 
     abstract public function loadFile();
 

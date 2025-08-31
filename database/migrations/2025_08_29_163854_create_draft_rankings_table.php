@@ -17,18 +17,19 @@ return new class extends Migration
             $table->id();
             $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
             $table->year('year');
-            $table->decimal('average_rank', 6, 2)->nullable();
-            $table->decimal('average_value', 6, 2)->nullable();
-            $table->integer('fp_ranking')->nullable();
-            $table->integer('fp_tier')->nullable();
-            $table->decimal('fp_adp', 6, 2)->nullable();
-            $table->decimal('fp_adv', 6, 2)->nullable();
-            $table->decimal('fp_ecr_vs_adp', 6, 2)->nullable();
+            $table->date('ranked_at');
+            $table->enum('type', ['redraft', 'dynasty'])->default('redraft');
+            $table->string('source')->nullable();
+            $table->decimal('ppr', 6, 2)->default(0);
+            $table->integer('rank')->nullable();
+            $table->integer('tier')->nullable();
+            $table->decimal('adp', 6, 2)->nullable();
+            $table->decimal('adv', 6, 2)->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['player_id', 'year']);
+            $table->unique(['player_id', 'year', 'ranked_at', 'type', 'source', 'ppr'], 'draft_rankings_unique');
         });
     }
 

@@ -24,4 +24,14 @@ class PlayerAlias extends Model
     {
         return $this->belongsTo(Player::class);
     }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class);
+    }
 }

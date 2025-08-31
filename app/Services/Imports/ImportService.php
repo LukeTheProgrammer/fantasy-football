@@ -2,8 +2,11 @@
 
 namespace App\Services\Imports;
 
+use App\Enums\RankingSourcesEnum;
 use App\Services\Imports\Drivers\Rankings\FantasyProsDriver;
 use App\Services\Imports\Models\DraftRankingsImport;
+use Exception;
+use Illuminate\Support\Arr;
 
 class ImportService
 {
@@ -17,14 +20,21 @@ class ImportService
      */
     public function draftRankingsImport(string $driver, ...$args)
     {
-        $drivers = [
-            'fantasy-pros' => FantasyProsDriver::class,
-        ];
+        $driverClass = Arr::get($this->importDrivers(), $driver, false);
 
-        $driverClass = $drivers[$driver];
+        if (! $driverClass) {
+            throw new Exception('Invalid driver: ' . $driver);
+        }
 
         $driver = new $driverClass(...$args);
 
         return new DraftRankingsImport($driver);
+    }
+
+    public function importDrivers()
+    {
+        return [
+            RankingSourcesEnum::FANTASY_PROS->value => FantasyProsDriver::class,
+        ];
     }
 }

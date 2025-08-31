@@ -1,0 +1,372 @@
+{
+    "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/2?lang=en&region=us",
+    "id": "2",
+    "guid": "232afaf2-01ac-fcc2-8bd6-66550df1703a",
+    "uid": "s:20~l:28~t:2",
+    "alternateIds": {
+        "sdr": "8804"
+    },
+    "slug": "buffalo-bills",
+    "location": "Buffalo",
+    "name": "Bills",
+    "nickname": "Bills",
+    "abbreviation": "BUF",
+    "displayName": "Buffalo Bills",
+    "shortDisplayName": "Bills",
+    "color": "00338d",
+    "alternateColor": "d50a0a",
+    "isActive": true,
+    "isAllStar": false,
+    "logos": [
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/buf.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "default"
+            ],
+            "lastUpdated": "2024-06-25T18:45Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/buf.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:45Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/scoreboard\/buf.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard"
+            ],
+            "lastUpdated": "2024-06-25T18:45Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/scoreboard\/buf.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:45Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/232afaf2-01ac-fcc2-8bd6-66550df1703a\/logos\/primary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/232afaf2-01ac-fcc2-8bd6-66550df1703a\/logos\/primary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/232afaf2-01ac-fcc2-8bd6-66550df1703a\/logos\/primary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/232afaf2-01ac-fcc2-8bd6-66550df1703a\/logos\/primary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/232afaf2-01ac-fcc2-8bd6-66550df1703a\/logos\/secondary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/232afaf2-01ac-fcc2-8bd6-66550df1703a\/logos\/secondary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/232afaf2-01ac-fcc2-8bd6-66550df1703a\/logos\/secondary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/232afaf2-01ac-fcc2-8bd6-66550df1703a\/logos\/secondary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        }
+    ],
+    "record": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/2\/record?lang=en&region=us"
+    },
+    "oddsRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/0\/teams\/2\/odds-records?lang=en&region=us"
+    },
+    "athletes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/2\/athletes?lang=en&region=us"
+    },
+    "venue": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/venues\/3883?lang=en&region=us",
+        "id": "3883",
+        "guid": "3c80cf14-6837-377a-b30d-1b9559f2f6f4",
+        "fullName": "Highmark Stadium",
+        "address": {
+            "city": "Orchard Park",
+            "state": "NY",
+            "zipCode": "14127",
+            "country": "USA"
+        },
+        "grass": false,
+        "indoor": false,
+        "images": [
+            {
+                "href": "https:\/\/a.espncdn.com\/i\/venues\/nfl\/day\/3883.jpg",
+                "width": 2000,
+                "height": 1125,
+                "alt": "",
+                "rel": [
+                    "full",
+                    "day"
+                ]
+            },
+            {
+                "href": "https:\/\/a.espncdn.com\/i\/venues\/nfl\/day\/interior\/3883.jpg",
+                "width": 2000,
+                "height": 1125,
+                "alt": "",
+                "rel": [
+                    "full",
+                    "day",
+                    "interior"
+                ]
+            }
+        ]
+    },
+    "groups": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/groups\/4?lang=en&region=us"
+    },
+    "ranks": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/2\/ranks?lang=en&region=us"
+    },
+    "statistics": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/2\/statistics?lang=en&region=us"
+    },
+    "leaders": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/2\/leaders?lang=en&region=us"
+    },
+    "links": [
+        {
+            "language": "en-US",
+            "rel": [
+                "clubhouse",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/_\/name\/buf\/buffalo-bills",
+            "text": "Clubhouse",
+            "shortText": "Clubhouse",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "roster",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/roster\/_\/name\/buf\/buffalo-bills",
+            "text": "Roster",
+            "shortText": "Roster",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "stats",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/stats\/_\/name\/buf\/buffalo-bills",
+            "text": "Statistics",
+            "shortText": "Statistics",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "schedule",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/schedule\/_\/name\/buf",
+            "text": "Schedule",
+            "shortText": "Schedule",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "photos",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/photos\/_\/name\/buf",
+            "text": "photos",
+            "shortText": "photos",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "tickets",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.vividseats.com\/buffalo-bills-tickets--sports-nfl-football\/performer\/128?wsUser=717",
+            "text": "Tickets",
+            "shortText": "Tickets",
+            "isExternal": true,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "draftpicks",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/draft\/teams\/_\/name\/buf\/buffalo-bills",
+            "text": "Draft Picks",
+            "shortText": "Draft Picks",
+            "isExternal": false,
+            "isPremium": true
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "transactions",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/transactions\/_\/name\/buf",
+            "text": "Transactions",
+            "shortText": "Transactions",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "injuries",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/injuries\/_\/name\/buf",
+            "text": "Injuries",
+            "shortText": "Injuries",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "depthchart",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/depth\/_\/name\/buf",
+            "text": "Depth Chart",
+            "shortText": "Depth Chart",
+            "isExternal": false,
+            "isPremium": false
+        }
+    ],
+    "injuries": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/2\/injuries?lang=en&region=us"
+    },
+    "notes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/2\/notes?lang=en&region=us"
+    },
+    "againstTheSpreadRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/2\/ats?lang=en&region=us"
+    },
+    "franchise": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/franchises\/2?lang=en&region=us"
+    },
+    "depthCharts": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/2\/depthcharts?lang=en&region=us"
+    },
+    "projection": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/2\/projection?lang=en&region=us"
+    },
+    "events": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/2\/events?lang=en&region=us"
+    },
+    "transactions": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/2\/transactions?lang=en&region=us"
+    },
+    "coaches": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/2\/coaches?lang=en&region=us"
+    }
+}

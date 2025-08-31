@@ -15,6 +15,8 @@ class LeagueMemberCreateAction
             'league_id' => $league->id,
             'user_id'   => ($user) ? $user->id : null,
             'team_name' => Arr::get($data, 'team_name', 'New Team'),
+            'owner_name' => Arr::get($data, 'owner_name', 'New Owner'),
+            'team_logo' => Arr::get($data, 'team_logo', null),
             'is_admin'  => Arr::get($data, 'is_admin', false),
             'is_active' => Arr::get($data, 'is_active', true),
         ]);

@@ -48,24 +48,37 @@ class CalculateAverageDraftRankings extends Command
 
     private function getAvgRank(DraftRanking $dr)
     {
-        $rankings = array_filter([
-            floatval($dr->fp_ranking),
-        ]);
+        $vals = [
+            $dr->fp_standard_ranking,
+            $dr->fp_ppr_ranking,
+            $dr->fp_dynasty_ranking,
+        ];
 
-        $n = floatval(array_sum($rankings));
-        $d = intval(count($rankings));
-
-        return $d > 0 ? $n / $d : 0;
+        return $this->avg($vals);
     }
 
     private function getADV(DraftRanking $dr)
     {
-        $adv = array_filter([
-            floatval($dr->fp_adv),
-        ]);
+        $vals = [
+            $dr->fp_standard_adv,
+            $dr->fp_ppr_adv,
+            $dr->fp_dynasty_adv,
+        ];
 
-        $n = floatval(array_sum($adv));
-        $d = intval(count($adv));
+        return $this->avg($vals);
+    }
+
+    private function avg(array $vals)
+    {
+        $values = array_filter(
+            array_map(function($val) {
+                $float = floatval($val);
+                return $float > 0 ? $float : null;
+            }, $vals)
+        );
+
+        $n = array_sum($vals);
+        $d = count($vals);
 
         return $d > 0 ? $n / $d : 0;
     }

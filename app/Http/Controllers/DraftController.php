@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Draft;
+use App\Models\DraftRanking;
 use App\Models\League;
 use App\Models\Player;
 use Inertia\Inertia;
@@ -51,16 +52,8 @@ class DraftController extends Controller
             ],
         ]);
 
-        // Get available players for drafting
-        // $draftedPlayerIds = $draft->picks()->whereNotNull('player_id')->pluck('player_id');
-        // $availablePlayers = Player::whereNotIn('id', $draftedPlayerIds)
-        //     ->with(['position', 'team'])
-        //     ->get();
-
         return Inertia::render('drafts/show', [
-            // 'league' => $league,
             'draft' => $draft,
-            // 'availablePlayers' => $availablePlayers,
         ]);
     }
 
@@ -88,26 +81,33 @@ class DraftController extends Controller
     /**
      * Display the draft board for an active draft.
      */
-    public function board(League $league, Draft $draft)
+    public function draftRoom(Draft $draft)
     {
-        if ($draft->league_id !== $league->id) {
-            abort(404, 'Draft does not belong to this league');
-        }
-
         $draft->load([
-            'picks.leagueMember.user',
-            'picks.player.position',
-            'picks.player.team',
+            'league.members.user',
+            'picks' => [
+                'leagueMember.user',
+                'player' => [
+                    'position',
+                    'team',
+                ],
+            ],
         ]);
 
         // Get available players for drafting
-        $draftedPlayerIds = $draft->picks()->whereNotNull('player_id')->pluck('player_id');
-        $availablePlayers = Player::whereNotIn('id', $draftedPlayerIds)
-            ->with(['position', 'team'])
+        $availablePlayers = DraftRanking::where('year', $draft->league->year)
+            ->where(function ($q) {
+                $q->orWhere('average_rank', '>', 0)
+                    ->orWhere('average_value', '>', 0)
+                    ->orWhere('fp_standard_ranking', '>', 0)
+                    ->orWhere('fp_standard_adp', '>', 0)
+                    ->orWhere('fp_ppr_ranking', '>', 0)
+                    ->orWhere('fp_ppr_adp', '>', 0);
+            })
+            ->with(['player.position', 'player.team'])
             ->get();
 
-        return Inertia::render('drafts/board', [
-            'league' => $league,
+        return Inertia::render('drafts/draft-room', [
             'draft' => $draft,
             'availablePlayers' => $availablePlayers,
         ]);

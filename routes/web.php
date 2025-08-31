@@ -28,14 +28,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{draft}/edit', [DraftController::class, 'edit'])->name('edit');
         Route::get('/{draft}/board', [DraftController::class, 'board'])->name('board');
         Route::get('/{draft}/results', [DraftController::class, 'results'])->name('results');
+        Route::get('/{draft}/draft-room', [DraftController::class, 'draftRoom'])->name('draft-room');
     });
 
     // DraftRanking model
     Route::prefix('rankings')->name('rankings.')->group(function () {
         Route::get('/', [DraftRankingController::class, 'index'])->name('index');
-        Route::get('/create', [DraftRankingController::class, 'create'])->name('create');
-        Route::get('/{draftRanking}/edit', [DraftRankingController::class, 'edit'])->name('edit');
-        Route::get('/{draftRanking}', [DraftRankingController::class, 'show'])->name('show');
+        // Route::get('/create', [DraftRankingController::class, 'create'])->name('create');
+        // Route::get('/{draftRanking}/edit', [DraftRankingController::class, 'edit'])->name('edit');
+        // Route::get('/{draftRanking}', [DraftRankingController::class, 'show'])->name('show');
     });
 });
 

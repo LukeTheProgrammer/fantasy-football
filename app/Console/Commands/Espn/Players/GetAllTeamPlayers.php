@@ -33,7 +33,7 @@ class GetAllTeamPlayers extends Command
      */
     public function handle()
     {
-        $teams = Team::all();
+        $teams = Team::whereNotNull('espn_id')->get();
 
         $c = $teams->count();
 

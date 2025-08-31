@@ -3,6 +3,7 @@
 namespace App\Services\Espn;
 
 use App\Services\Espn\Resources\Players;
+use App\Services\Espn\Resources\Rosters;
 use App\Services\Espn\Resources\Teams;
 
 /**
@@ -23,5 +24,10 @@ class EspnService
     public function getPlayer(int|string $id)
     {
         return (new Players)->getPlayer($id);
+    }
+
+    public function getRoster(int|string $id)
+    {
+        return (new Rosters)->getRoster($id);
     }
 }

@@ -40,7 +40,7 @@ class Teams extends BaseResource
 {
     public function getTeam(int|string $id)
     {
-        $url = $this->buildUrl('teams/' . $id);
+        $url = $this->buildSportsUrl('teams/' . $id);
 
         $response = $this->get($url, $this->query());
 
@@ -50,7 +50,7 @@ class Teams extends BaseResource
     public function getPlayers(int|string $teamId, int $page = 1)
     {
         // /v2/sports/football/leagues/nfl/seasons/2025/teams/1/athletes?lang=en&region=us&page=1
-        $url = $this->buildUrl('teams/' . $teamId . '/athletes');
+        $url = $this->buildSportsUrl('teams/' . $teamId . '/athletes');
 
         $response = $this->get($url, $this->query(['page' => $page]));
 

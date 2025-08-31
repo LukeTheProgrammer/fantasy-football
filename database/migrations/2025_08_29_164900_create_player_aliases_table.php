@@ -11,16 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
+        /**
+         * Team and Position IDs are intended to provide the ability
+         * to disambiguate players with the same name but different
+         * teams or positions.
+         */
         Schema::create('player_aliases', function (Blueprint $table) {
             $table->id();
             $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
+            $table->foreignId('team_id')->nullable()->constrained('teams')->nullOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
             $table->string('name');
-            $table->string('team')->nullable();
-            $table->string('position')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['player_id', 'name', 'team', 'position']);
+            $table->unique(['player_id', 'name', 'team_id', 'position_id']);
         });
     }
 

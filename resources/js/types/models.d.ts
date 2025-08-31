@@ -18,14 +18,16 @@ export interface DraftPick {
     id: number;
     draft_id: number;
     draft: Draft;
+    league_member_id: number;
+    leagueMember: LeagueMember;
+    player_id: number;
+    player: Player;
     pick_number: number;
     round: number;
     amount: number;
     is_keeper: boolean;
     previous_year_cost: number;
     pick_time: string;
-    player: Player;
-    leagueMember: LeagueMember;
 }
 
 export interface DraftRanking {
@@ -34,11 +36,25 @@ export interface DraftRanking {
     year: number;
     average_rank: number;
     average_value: number;
-    fp_ranking: number | null;
-    fp_tier: number | null;
-    fp_adp: number | null;
-    fp_adv: number | null;
-    fp_ecr_vs_adp: number | null;
+
+    fp_standard_ranking: number | null;
+    fp_standard_tier: number | null;
+    fp_standard_adp: number | null;
+    fp_standard_adv: number | null;
+    fp_standard_ecr_vs_adp: number | null;
+
+    fp_ppr_ranking: number | null;
+    fp_ppr_tier: number | null;
+    fp_ppr_adp: number | null;
+    fp_ppr_adv: number | null;
+    fp_ppr_ecr_vs_adp: number | null;
+
+    fp_dynasty_ranking: number | null;
+    fp_dynasty_tier: number | null;
+    fp_dynasty_adp: number | null;
+    fp_dynasty_adv: number | null;
+    fp_dynasty_ecr_vs_adp: number | null;
+
     notes: string | null;
     deleted_at: string | null;
     player: Player;
@@ -68,6 +84,7 @@ export interface LeagueMember {
     user_id: number;
     user: User;
     team_name: string;
+    owner_name: string | null;
     team_logo: string | null;
     draft_position: number | null;
     is_admin: boolean;

@@ -15,10 +15,11 @@ return [
     */
 
     'espn' => [
-        'base_url'    => env('ESPN_BASE_URL', 'http://sports.core.api.espn.com'),
-        'version'     => env('ESPN_VERSION', 'v2'),
-        'retry_limit' => env('ESPN_RETRY_LIMIT', 2),
-        'api_year'    => env('ESPN_API_YEAR', 2025),
+        'sports_base_url' => env('ESPN_BASE_URL', 'http://sports.core.api.espn.com'),
+        'site_base_url'   => env('ESPN_SITE_BASE_URL', 'http://site.api.espn.com'),
+        'version'         => env('ESPN_VERSION', 'v2'),
+        'retry_limit'     => env('ESPN_RETRY_LIMIT', 2),
+        'api_year'        => env('ESPN_API_YEAR', 2025),
     ],
 
     'postmark' => [

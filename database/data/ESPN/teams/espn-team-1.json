@@ -1,5 +1,5 @@
 {
-    "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/teams\/1?lang=en&region=us",
+    "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/1?lang=en&region=us",
     "id": "1",
     "guid": "49fd392a-86fe-4df3-1b77-9bbfa18b2ad5",
     "uid": "s:20~l:28~t:1",
@@ -13,7 +13,7 @@
     "abbreviation": "ATL",
     "displayName": "Atlanta Falcons",
     "shortDisplayName": "Falcons",
-    "color": "000000",
+    "color": "a71930",
     "alternateColor": "000000",
     "isActive": true,
     "isAllStar": false,
@@ -153,7 +153,13 @@
         }
     ],
     "record": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/types\/2\/teams\/1\/record?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/1\/record?lang=en&region=us"
+    },
+    "oddsRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/0\/teams\/1\/odds-records?lang=en&region=us"
+    },
+    "athletes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/1\/athletes?lang=en&region=us"
     },
     "venue": {
         "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/venues\/5348?lang=en&region=us",
@@ -183,16 +189,16 @@
         ]
     },
     "groups": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/types\/2\/groups\/11?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/groups\/11?lang=en&region=us"
     },
     "ranks": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/teams\/1\/ranks?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/1\/ranks?lang=en&region=us"
     },
     "statistics": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/types\/2\/teams\/1\/statistics?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/1\/statistics?lang=en&region=us"
     },
     "leaders": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/types\/2\/teams\/1\/leaders?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/1\/leaders?lang=en&region=us"
     },
     "links": [
         {
@@ -333,21 +339,24 @@
         "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/1\/notes?lang=en&region=us"
     },
     "againstTheSpreadRecords": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/types\/2\/teams\/1\/ats?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/1\/ats?lang=en&region=us"
     },
     "franchise": {
         "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/franchises\/1?lang=en&region=us"
     },
+    "depthCharts": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/1\/depthcharts?lang=en&region=us"
+    },
+    "projection": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/1\/projection?lang=en&region=us"
+    },
     "events": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/teams\/1\/events?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/1\/events?lang=en&region=us"
     },
     "transactions": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/teams\/1\/transactions?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/1\/transactions?lang=en&region=us"
     },
     "coaches": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/teams\/1\/coaches?lang=en&region=us"
-    },
-    "attendance": {
-        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2021\/types\/2\/teams\/1\/attendance?lang=en&region=us"
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/1\/coaches?lang=en&region=us"
     }
 }

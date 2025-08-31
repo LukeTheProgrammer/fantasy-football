@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function Laravel\Prompts\confirm;
 
 class LoadTeamPlayersFromFile extends Command
 {
@@ -35,6 +36,13 @@ class LoadTeamPlayersFromFile extends Command
     protected ?Collection $positions = null;
 
     /**
+     * NFL Teams.
+     *
+     * @var Collection|null
+     */
+    protected ?Collection $teams = null;
+
+    /**
      * The Team.
      *
      * @var Team|null
@@ -51,6 +59,7 @@ class LoadTeamPlayersFromFile extends Command
         $this->team = Team::where('espn_id', '=', $espnTeamId)->first();
 
         $this->loadPositions();
+        $this->loadTeams();
 
         $this->info('Loading players for ' . $this->team->abbreviation . ' [' . $espnTeamId . ']');
 
@@ -64,30 +73,24 @@ class LoadTeamPlayersFromFile extends Command
         $this->loadPlayers($path);
     }
 
+    protected function loadTeams()
+    {
+        $this->teams = Team::all()->keyBy('espn_id');
+    }
+
+    protected function getTeam(int $teamId)
+    {
+        return $this->teams->get($teamId);
+    }
+
     protected function loadPositions()
     {
         $this->positions = Position::all()->keyBy('abbreviation');
     }
 
-    protected function getPosition(array $position)
+    protected function getPosition(string $abbreviation)
     {
-        $abbreviation = Arr::get($position, 'abbreviation');
-        $name = Arr::get($position, 'name');
-
-        $pos = $this->positions->get($abbreviation);
-
-        if ($pos instanceof Position) {
-            return $pos;
-        }
-
-        $pos = Position::create([
-            'abbreviation' => $abbreviation,
-            'name'         => $name,
-        ]);
-
-        $this->loadPositions();
-
-        return $pos;
+        return $this->positions->get($abbreviation);
     }
 
     protected function loadPlayers(string $path)
@@ -95,46 +98,72 @@ class LoadTeamPlayersFromFile extends Command
         $data = file_get_contents($path);
 
         $players = json_decode($data, true);
+        $pc = count($players);
 
-        $bar = $this->output->createProgressBar(count($players));
-        $bar->start();
-
-        // $stats = [];
+        // $bar = $this->output->createProgressBar(count($players));
+        // $bar->start();
 
         foreach ($players as $i => $player) {
+            $this->info('Player ' . ($i + 1) . ' of ' . $pc);
+            $team = $this->getTeam(Arr::get($player, 'team_id'));
+
+            if (! $team instanceof Team) {
+                continue;
+            }
+
             $pos = $this->getPosition(Arr::get($player, 'position'));
-            // $this->info(Arr::get($player, 'id') . ' ' . $status);
-            // $status = Arr::get($player, 'status.name');
 
-            // if (!in_array($status, $stats)) {
-            //     $stats[] = $status;
-            // }
+            if (! $pos instanceof Position) {
+                continue;
+            }
 
-            Action::model(Player::class)->upsert([
-                'espn_id'       => Arr::get($player, 'id'),
-                'position_id'   => $pos->id,
-                'team_id'       => $this->team->id,
-                'first_name'    => Arr::get($player, 'firstName'),
-                'last_name'     => Arr::get($player, 'lastName'),
-                'full_name'     => Arr::get($player, 'fullName'),
-                'jersey_number' => Arr::get($player, 'jersey'),
-                'height'        => Arr::get($player, 'height'),
-                'weight'        => Arr::get($player, 'weight'),
-                'college'       => Arr::get($player, 'college.name'),
-                'draft_year'    => Arr::get($player, 'draft.year'),
-                'draft_round'   => Arr::get($player, 'draft.round'),
-                'draft_pick'    => Arr::get($player, 'draft.selection'),
-                'draft_team'    => Arr::get($player, 'draft.team.name'),
-                'birth_date'    => Carbon::parse(Arr::get($player, 'dateOfBirth'))->toDateTimeString(),
-                'headshot'      => Arr::get($player, 'headshot.href'),
-            ]);
+            $this->upsert($player, $team, $pos);
 
-            $bar->advance();
+            // $bar->advance();
         }
 
-        // $this->info('Stats: ' . implode(', ', $stats));
+        // $bar->finish();
+        // echo PHP_EOL . PHP_EOL;
+    }
 
-        $bar->finish();
-        echo PHP_EOL;
+    protected function upsert(array $data, Team $team, Position $position): Player
+    {
+        $this->table(
+            ['ESPN ID', 'Position', 'Team', 'First Name', 'Last Name', 'Full Name'],
+            [
+                [
+                    Arr::get($data, 'id'),
+                    $position->abbreviation,
+                    $team->abbreviation,
+                    Arr::get($data, 'firstName'),
+                    Arr::get($data, 'lastName'),
+                    Arr::get($data, 'fullName'),
+                ]
+            ]
+        );
+
+        if (confirm('Upsert player?')) {
+            $player = Action::model(Player::class)->upsert([
+                'espn_id'       => Arr::get($data, 'id'),
+                'position_id'   => $position->id,
+                'team_id'       => $team->id,
+                'first_name'    => Arr::get($data, 'firstName'),
+                'last_name'     => Arr::get($data, 'lastName'),
+                'full_name'     => Arr::get($data, 'fullName'),
+                'jersey_number' => Arr::get($data, 'jersey'),
+                'height'        => Arr::get($data, 'height'),
+                'weight'        => Arr::get($data, 'weight'),
+                'draft_year'    => Arr::get($data, 'draft.year'),
+                'draft_round'   => Arr::get($data, 'draft.round'),
+                'draft_pick'    => Arr::get($data, 'draft.selection'),
+                'draft_team'    => Arr::get($data, 'draft.team.name'),
+                'birth_date'    => Carbon::parse(Arr::get($data, 'dateOfBirth'))->toDateTimeString(),
+                'headshot'      => Arr::get($data, 'headshot.href'),
+            ]);
+        } else {
+            dd('fuck');
+        }
+
+        return $player;
     }
 }

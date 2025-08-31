@@ -13,11 +13,11 @@ abstract class BaseResource
 {
     public array $currentRequest = [];
 
-    public ?string $apiUrl = null;
+    public ?string $sportsApiUrl = null;
+
+    public ?string $siteApiUrl = null;
 
     public ?string $apiVersion = null;
-
-    public string $urlBase = '/sports/football/leagues/nfl/seasons/';
 
     public int $apiYear = 2025;
 
@@ -25,9 +25,10 @@ abstract class BaseResource
 
     public function __construct()
     {
-        $this->apiUrl = config('services.espn.base_url');
+        $this->sportsApiUrl = config('services.espn.sports_base_url');
+        $this->siteApiUrl = config('services.espn.site_base_url');
         $this->apiVersion = config('services.espn.version');
-        $this->retryLimit = config('service.espn.retry_limit');
+        $this->retryLimit = config('services.espn.retry_limit');
     }
 
     public function get(string $url, array|string|null $query = null)
@@ -138,13 +139,32 @@ abstract class BaseResource
         return false;
     }
 
-    public function buildUrl(string $endpoint)
+    public function buildSportsUrl(string $endpoint)
     {
         $parts = [
-            $this->apiUrl,
+            $this->sportsApiUrl,
             $this->apiVersion,
-            $this->urlBase,
+            'sports/football/leagues/nfl/seasons',
             $this->apiYear,
+            $endpoint,
+        ];
+
+        $url = implode('/', $parts);
+
+        // Find and replace any double slashes, exempting http:// and https://
+        // e.g. http://example.com/foo//bar -> http://example.com/foo/bar
+        $url = preg_replace('/(?<!:)\/\//', '/', $url);
+
+        return $url;
+    }
+
+    public function buildSiteUrl(string $endpoint)
+    {
+        $parts = [
+            $this->siteApiUrl,
+            'apis/site',
+            $this->apiVersion,
+            '/sports/football/nfl/',
             $endpoint,
         ];
 

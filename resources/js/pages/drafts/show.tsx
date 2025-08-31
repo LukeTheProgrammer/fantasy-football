@@ -46,9 +46,7 @@ export default function ShowDraft({ draft }: DraftShowProps) {
       <div className="flex-1 p-8">
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
           <div>
-            <Heading
-              title={`${draft.league.name} ${draft.league.year}`}
-            />
+            <Heading title={`${draft.league.name} ${draft.league.year}`} />
           </div>
           <div className="mt-4 flex space-x-2 md:mt-0">
             {isUserDraftAdmin(draft, userId) && (

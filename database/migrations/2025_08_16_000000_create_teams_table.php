@@ -31,6 +31,10 @@ return new class extends Migration
             ]);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique('espn_id');
+            $table->unique('abbreviation');
+            $table->unique('name');
         });
     }
 

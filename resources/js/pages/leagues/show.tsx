@@ -81,9 +81,21 @@ export default function ShowLeague({ league: initialLeague }: PageProps & { leag
         </div>
 
         <div className="mb-8 rounded-lg border bg-card">
-          <div className="border-b p-6">
-            <h2 className="text-lg font-semibold">Drafts</h2>
-            <DraftsTable leagueId={league.id} />
+          <div className="border-b p-6 grid grid-cols-3">
+            <div className="text-left">
+              <h2 className="text-lg font-semibold">Draft</h2>
+              <p>{league.name} {league.year} Draft</p>
+            </div>
+            <div className="flex items-center justify-center">
+              {league.draft.picks.filter(p => p.player_id !== null).length} / {league.draft.picks.length} Players Drafted
+            </div>
+            <div className="flex items-center justify-end">
+              <Link href={route('drafts.draft-room', league.draft.id)}>
+                <Button variant="outline" className="text-right">
+                  Enter Draft Room
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 

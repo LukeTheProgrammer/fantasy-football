@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Console\Commands\Espn;
+namespace App\Console\Commands\Espn\Rosters;
 
 use App\Facades\Espn;
 use Illuminate\Console\Command;
 
-class GetTeam extends Command
+class GetRoster extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'espn:team:get {team_id}';
+    protected $signature = 'espn:roster:get {espn_team_id}';
 
     /**
      * The console command description.
@@ -26,14 +26,14 @@ class GetTeam extends Command
      */
     public function handle()
     {
-        $teamId = $this->argument('team_id');
+        $espnTeamId = $this->argument('espn_team_id');
 
-        $data = Espn::getTeam($teamId);
+        $data = Espn::getRoster($espnTeamId);
 
-        $path = database_path('data/espn-team-' . $teamId . '.json');
+        $path = database_path('data/ESPN/rosters/espn-team-' . $espnTeamId . '-roster.json');
 
         $bytes = file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
 
-        $this->info("Team data saved to $path ($bytes bytes)");
+        $this->info("Roster data saved to $path ($bytes bytes)");
     }
 }

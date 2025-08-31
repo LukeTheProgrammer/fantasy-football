@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('league_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('team_name');
+            $table->string('owner_name')->nullable();
             $table->string('team_logo')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_active')->default(true);

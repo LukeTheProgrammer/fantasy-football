@@ -9,7 +9,6 @@ use App\Models\Team;
 use Illuminate\Support\Collection;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
-use function Laravel\Prompts\text;
 
 trait DisambiguatesPlayers
 {
@@ -24,7 +23,7 @@ trait DisambiguatesPlayers
             return $this->returnPlayer($player);
         }
 
-        $player = $this->findPlayerByAlias($playerName);
+        $player = $this->findPlayerByAlias($playerName, $position, $team);
 
         if ($player instanceof Player) {
             return $this->returnPlayer($player);
@@ -33,6 +32,7 @@ trait DisambiguatesPlayers
         $player = $this->findPlayerByPositionAndTeam($playerName, $position, $team);
 
         if ($player instanceof Player) {
+            $this->savePlayerAlias($player, $playerName);
             return $this->returnPlayer($player);
         }
 
@@ -41,10 +41,15 @@ trait DisambiguatesPlayers
 
     public function findPlayerByFullName(string $fullName): Player|bool
     {
-        $playerQuery = Player::where('full_name', '=', $fullName)->with(['position', 'team']);
+        $playerQuery = Player::where('full_name', '=', $fullName);
 
         if ($playerQuery->count() === 1) {
             return $playerQuery->first();
+        }
+
+        if ($playerQuery->count() > 1) {
+            $players = $playerQuery->get();
+            return $this->selectPlayerFromList($fullName, $players);
         }
 
         return false;
@@ -53,8 +58,8 @@ trait DisambiguatesPlayers
     public function findPlayerByAlias(string $alias, ?Position $position = null, ?Team $team = null): Player|bool
     {
         $aliasQuery = PlayerAlias::where('name', '=', $alias)
-            ->when($position !== null, fn($query) => $query->where('position_id', '=', $position->id))
-            ->when($team !== null, fn($query) => $query->where('team_id', '=', $team->id));
+            ->when($position !== null, fn($q) => $q->where('position_id', '=', $position->id))
+            ->when($team !== null, fn($q) => $q->where('team_id', '=', $team->id));
 
         $queryCount = $aliasQuery->count();
 
@@ -68,8 +73,7 @@ trait DisambiguatesPlayers
 
         if ($queryCount > 1) {
             $aliases = $aliasQuery->get();
-            $player = $this->selectPlayerAliasFromList($alias, $aliases);
-            return $player;
+            return $this->selectPlayerAliasFromList($alias, $aliases);
         }
 
         return false;
@@ -81,77 +85,84 @@ trait DisambiguatesPlayers
             return false;
         }
 
-        $playerQuery = Player::where('full_name', '=', $playerName)
-            ->when($position !== null, fn($query) => $query->where('position_id', '=', $position->id))
-            ->when($team !== null, fn($query) => $query->where('team_id', '=', $team->id));
+        $playerQuery = Player::query()
+            ->when($position !== null, fn($q) => $q->where('position_id', '=', $position->id))
+            ->when($team !== null, fn($q) => $q->where('team_id', '=', $team->id));
 
         $queryCount = $playerQuery->count();
 
-        if ($queryCount === 0) {
-            return false;
-        }
-
         if ($queryCount === 1) {
-            $player = $playerQuery->first();
-
-            if (confirm('Player match found! Would you like to save an Alias?')) {
-                $this->savePlayerAlias($player, $playerName, $team->abbreviation, $position->abbreviation);
-            }
-
-            return $player;
+            return $playerQuery->first();
         }
 
         if ($queryCount > 1) {
             $players = $playerQuery->get();
-            $player = $this->selectPlayerFromList($playerName, $players);
-            dd($player);
+            return $this->selectPlayerFromList($playerName, $players);
         }
 
         return false;
     }
 
-    public function selectPlayerFromList(string $playerName, Collection $players): Player
+    public function selectPlayerFromList(string $playerName, Collection $players): Player|bool
     {
-        $options = $players->map(function ($player) {
-            return [
-                $player->full_name . ' (' . $player->position->name . ')',
-                $player->id,
-            ];
+        $options = $players->mapWithKeys(function ($player) {
+            $label = implode (' ', [
+                $player->full_name,
+                $player->position->abbreviation,
+                $player->team->abbreviation,
+            ]);
+
+            return [$player->id => $label];
         });
 
-        $player = select(
-            label: 'Which player matches ' . $playerName,
-            options: $options->toArray(),
-        );
-
-        return $players->where('id', '=', $player)->first();
-    }
-
-    public function selectPlayerAliasFromList(string $playerName, Collection $aliases): Player
-    {
-        $options = $aliases->map(function ($alias) {
-            return [
-                $alias->name . ' (' . $alias->position . ' ' . $alias->team . ')',
-                $alias->player_id,
-            ];
-        });
+        $options['none'] = 'None';
 
         $playerId = select(
             label: 'Which player matches ' . $playerName,
             options: $options->toArray(),
         );
 
+        if ($playerId === 'none') {
+            return false;
+        }
+
+        return $players->where('id', '=', $playerId)->first();
+    }
+
+    public function selectPlayerAliasFromList(string $playerName, Collection $aliases): Player|bool
+    {
+        $options = $aliases->map(function ($alias) {
+            $label = implode (' ', [
+                $alias->name,
+                $alias->position->abbreviation,
+                $alias->team->abbreviation,
+            ]);
+
+            return [$alias->player_id => $label];
+        });
+
+        $options['none'] = 'None';
+
+        $playerId = select(
+            label: 'Which player matches ' . $playerName,
+            options: $options->toArray(),
+        );
+
+        if ($playerId === 'none') {
+            return false;
+        }
+
         return Player::findOrFail($playerId);
     }
 
-    public function savePlayerAlias(Player $player, string $alias, ?string $team = null, ?string $position = null): void
+    public function savePlayerAlias(Player $player, string $alias): void
     {
         if (confirm('Player match found! Would you like to save an Alias?')) {
             PlayerAlias::create([
-                'player_id' => $player->id,
-                'alias' => $alias,
-                'team' => $team,
-                'position' => $position,
+                'player_id'   => $player->id,
+                'team_id'     => $player->team_id,
+                'position_id' => $player->position_id,
+                'name'        => $alias,
             ]);
         }
     }

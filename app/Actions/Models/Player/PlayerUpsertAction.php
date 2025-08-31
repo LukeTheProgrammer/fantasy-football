@@ -9,9 +9,10 @@ class PlayerUpsertAction
 {
     public function run(array $data = []): Player
     {
-        $playerId = Player::upsert($this->getData($data), ['espn_id']);
-
-        return Player::find($playerId);
+        return Player::updateOrCreate(
+            ['espn_id' => Arr::get($data, 'espn_id')],
+            $this->getData($data)
+        );
     }
 
     private function getData(array $data = []): array
@@ -22,7 +23,7 @@ class PlayerUpsertAction
             'team_id'       => Arr::get($data, 'team_id'),
             'first_name'    => Arr::get($data, 'first_name'),
             'last_name'     => Arr::get($data, 'last_name'),
-            'full_name'     => Arr::get($data, 'first_name') . ' ' . Arr::get($data, 'last_name'),
+            'full_name'     => Arr::get($data, 'full_name'),
             'jersey_number' => Arr::get($data, 'jersey_number'),
             'draft_year'    => Arr::get($data, 'draft_year'),
             'draft_round'   => Arr::get($data, 'draft_round'),

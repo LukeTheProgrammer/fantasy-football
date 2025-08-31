@@ -59,23 +59,16 @@ This project aims to create a web application that assists users during their fa
 
 #### API & Controllers
 - [ ] Create `RankingsController` for managing rankings
-- [ ] Create `PlayerValueController` for managing values
 - [ ] Implement API endpoints for rankings and values
-- [ ] Add personalized ranking capabilities
 
 #### Frontend
-- [ ] Build rankings management interface
-- [ ] Create drag-and-drop ranking editor
-- [ ] Implement value adjustment interface
+- [x] Build rankings index
 - [ ] Add comparison views for different ranking sources
-- [ ] Create visualization for player values
+- [ ] Create Player Rankings detail dialog
 
 #### Data Sources
-- [ ] Implement ESPN rankings import
-- [ ] Create custom ranking input interface
-- [ ] Add average draft position (ADP) data source
-- [ ] Implement auction value calculations
-
+- [x] Implement FantasyPros rankings import Command
+- [x] Implement auction value calculations
 
 ### 4. Historical League Auction Data
 #### Data Import
