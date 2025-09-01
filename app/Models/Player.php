@@ -115,6 +115,11 @@ class Player extends Model
         return $this->hasMany(DraftRanking::class);
     }
 
+    public function currentDraftRankings(): HasMany
+    {
+        return $this->draftRankings()->where('draft_year', Carbon::now()->year);
+    }
+
     /**
      * Get the player's age.
      */

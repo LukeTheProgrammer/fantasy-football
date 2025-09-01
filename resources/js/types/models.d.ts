@@ -34,29 +34,15 @@ export interface DraftRanking {
     id: number;
     player_id: number;
     year: number;
-    average_rank: number;
-    average_value: number;
-
-    fp_standard_ranking: number | null;
-    fp_standard_tier: number | null;
-    fp_standard_adp: number | null;
-    fp_standard_adv: number | null;
-    fp_standard_ecr_vs_adp: number | null;
-
-    fp_ppr_ranking: number | null;
-    fp_ppr_tier: number | null;
-    fp_ppr_adp: number | null;
-    fp_ppr_adv: number | null;
-    fp_ppr_ecr_vs_adp: number | null;
-
-    fp_dynasty_ranking: number | null;
-    fp_dynasty_tier: number | null;
-    fp_dynasty_adp: number | null;
-    fp_dynasty_adv: number | null;
-    fp_dynasty_ecr_vs_adp: number | null;
-
+    ranked_at: string;
+    type: string;
+    source: string | null;
+    ppr: number;
+    rank: number | null;
+    tier: number | null;
+    adp: number | null;
+    adv: number | null;
     notes: string | null;
-    deleted_at: string | null;
     player: Player;
 }
 

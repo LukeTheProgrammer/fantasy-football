@@ -12,18 +12,8 @@ use Illuminate\Support\Carbon;
 
 class FantasyProsDriver extends BaseImportDriver
 {
+    // File pointer
     public $fp;
-
-    public array $headers = [];
-
-    public array $dataMap = [
-        'RK' => 'rank',
-        'TIERS' => 'tier',
-        'AVG' => 'adp',
-        'ADV' => 'adv',
-        'AVG.' => 'adp',
-        'ADV.' => 'adv',
-    ];
 
     public ?int $year = null;
 
@@ -105,31 +95,36 @@ class FantasyProsDriver extends BaseImportDriver
 
     public function prepareRankingData(array $item)
     {
+        if (empty($this->dataMap)) {
+            throw new Exception('Data map must be set with at least one prop.');
+        }
+
         $ranking = [];
 
-        foreach ($this->fieldsToImport as $field) {
-            $dbField = $this->dataMap[$field];
-
-            $ranking[$dbField] = $this->formatValue(
-                Arr::get($item, $field),
-                $field,
+        foreach ($this->dataMap as $dbProp => $fileKey) {
+            $ranking[$dbProp] = $this->formatValue(
+                Arr::get($item, $fileKey),
+                $dbProp,
             );
         }
 
         return array_filter($ranking);
     }
 
-    public function formatValue($rawValue, $field)
+    public function formatValue($rawValue, $dbProp)
     {
+        $ints = ['rank', 'tier'];
+        $floats = ['adp', 'adv'];
+
+        if (! in_array($dbProp, $ints) && ! in_array($dbProp, $floats)) {
+            return $rawValue;
+        }
+
         $value = preg_replace('/[^0-9.-]/', '', $rawValue);
 
-        return match ($field) {
-            'RK'          => intval($value) ?: null,
-            'TIERS'       => intval($value) ?: null,
-            'AVG'         => floatval($value) ?: null,
-            'ADV'         => floatval($value) ?: null,
-            default       => $value,
-        };
+        return (in_array($dbProp, $ints))
+            ? intval($value)
+            : floatval($value);
     }
 
     public function tearDown()

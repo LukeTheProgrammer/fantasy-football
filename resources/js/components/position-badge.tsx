@@ -1,8 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { type Position } from '@/types/models';
 
 interface PositionBadgeProps {
-    position: string;
+    position: Position;
 }
 
 export function PositionBadge({ position }: PositionBadgeProps) {
@@ -27,10 +28,12 @@ export function PositionBadge({ position }: PositionBadgeProps) {
 
   return (
     <Badge className={cn(
-      "px-2 py-1 text-xs font-medium",
-      getPositionColor(position)
+      'px-2 py-1 text-xs font-medium',
+      getPositionColor(position.abbreviation)
     )}>
-      {position}
+      <div className="size-6 flex items-center justify-center">
+        {position.abbreviation}
+      </div>
     </Badge>
   );
 }

@@ -13,6 +13,7 @@ use App\Enums\RankingSourcesEnum;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
@@ -37,6 +38,10 @@ class ImportFantasyProsRankingsCommand extends Command
 
     protected ?DraftRankingsImport $import = null;
 
+    protected array $fileHeaders = [];
+
+    protected array $dataMap = [];
+
     protected array $fieldsToImport = [];
 
     protected array $rankingTypes = [
@@ -55,9 +60,9 @@ class ImportFantasyProsRankingsCommand extends Command
 
         while (($line = $this->import->getNextLine()) !== false) {
             if (is_array($line)) {
-                if (empty($this->fieldsToImport)) {
-                    $this->selectFieldsToImport();
-                }
+                // if (empty($this->fieldsToImport)) {
+                //     $this->selectFieldsToImport();
+                // }
 
                 $player = $this->resolvePlayer($line);
 
@@ -95,49 +100,83 @@ class ImportFantasyProsRankingsCommand extends Command
             'csv',
         );
 
+        // Just for testing
         $this->import->setUp([
-            'year' => text('What year are these rankings for?', date('Y')),
-            'ranked_at' => text('What date were these rankings ranked at?', Carbon::now()->toDateString()),
-            'ranking_type' => select(
-                label: 'Select a ranking type',
-                options: $this->rankingTypes,
-                default: 'redraft',
-            ),
-            'ppr' => select(
-                label: 'Select a PPR',
-                options: [0, 0.5, 1],
-                default: 0,
-            ),
-            'fields_to_import' => $this->fieldsToImport,
+            'year' => date('Y'),
+            'ranked_at' => Carbon::now()->toDateString(),
+            'ranking_type' => 'redraft',
+            'ppr' => 0.5,
         ]);
 
+        // $this->import->setUp([
+        //     'year' => text('What year are these rankings for?', date('Y')),
+        //     'ranked_at' => text('What date were these rankings ranked at?', Carbon::now()->toDateString()),
+        //     'ranking_type' => select(
+        //         label: 'Select a ranking type',
+        //         options: $this->rankingTypes,
+        //         default: 'redraft',
+        //     ),
+        //     'ppr' => select(
+        //         label: 'Select a PPR',
+        //         options: [0, 0.5, 1],
+        //         default: 0,
+        //     ),
+        //     'fields_to_import' => $this->fieldsToImport,
+        // ]);
+
         $this->import->loadFile();
+
+        $this->fileHeaders = $this->import->getHeaders();
+
+        $this->mapFileHeaders();
     }
 
-    public function selectFieldsToImport()
+    public function mapFileHeaders()
     {
-        $fields = array_values(array_intersect(
-            array_keys($this->import->driver->dataMap),
-            $this->import->getHeaders()
-        ));
+        $props = [
+            'player_name',
+            'team',
+            'position',
+            'rank',
+            'tier',
+            'adp',
+            'adv',
+        ];
 
-        $this->fieldsToImport = multiselect(
-            label: 'Select fields to import',
-            options: $fields,
-            required: true,
-        );
+        // Make the keys and values the same
+        $options = array_combine($this->fileHeaders, $this->fileHeaders);
 
-        $this->import->driver->fieldsToImport = $this->fieldsToImport;
-    }
+        $options['_NULL_'] = 'None';
 
-    public function rejectPlayer(array $data): bool
-    {
-        return Arr::get($data, 'PLAYER NAME') === 'Team';
+        $kvPairs = [];
+
+        foreach ($props as $dbProp) {
+            $fileKey = select(
+                label: 'Which column is ' . $dbProp,
+                options: $options,
+                default: '_NULL_',
+            );
+
+            $this->dataMap[$dbProp] = $fileKey;
+            $kvPairs[] = [$dbProp, $fileKey];
+        }
+
+        $this->dataMap = array_filter($this->dataMap, fn($v) => $v !== '_NULL_');
+
+        $this->import->driver->dataMap = $this->dataMap;
+
+        $this->table(['Key', 'Value'], $kvPairs);
+
+        if (! confirm('Is this correct?')) {
+            // Allow User to retry
+            return $this->mapFileHeaders();
+        }
     }
 
     public function resolvePlayer(array $data): Player|bool
     {
-        $playerName = Arr::get($data, 'PLAYER NAME');
+        $nameKey = $this->dataMap['player_name'];
+        $playerName = Arr::get($data, $nameKey);
 
         $position = $this->getPosition($data);
 
@@ -165,15 +204,8 @@ class ImportFantasyProsRankingsCommand extends Command
 
     public function getPosition(array $data)
     {
-        $keys = ['POS', 'Position'];
-        $pos = null;
-
-        foreach ($keys as $key) {
-            if (Arr::has($data, $key)) {
-                $pos = Arr::get($data, $key);
-                break;
-            }
-        }
+        $key = $this->dataMap['position'];
+        $pos = Arr::get($data, $key);
 
         if (empty($pos)) {
             return false;
@@ -192,15 +224,8 @@ class ImportFantasyProsRankingsCommand extends Command
 
     public function getTeam(array $data)
     {
-        $keys = ['TEAM', 'Team'];
-        $abb = null;
-
-        foreach ($keys as $key) {
-            if (Arr::has($data, $key)) {
-                $abb = Arr::get($data, $key);
-                break;
-            }
-        }
+        $key = $this->dataMap['team'];
+        $abb = Arr::get($data, $key);
 
         if (empty($abb)) {
             return false;

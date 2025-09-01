@@ -11,8 +11,6 @@ abstract class BaseImportDriver implements ImportDriver
 
     public array $headers = [];
 
-    public array $fieldsToImport = [];
-
     abstract public function import();
 
     abstract public function setUp(array $options = []);

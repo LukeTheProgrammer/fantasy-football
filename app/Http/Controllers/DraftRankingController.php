@@ -13,15 +13,15 @@ class DraftRankingController extends Controller
     public function index()
     {
         $draftRankings = DraftRanking::query()
-            ->whereNotNull('average_rank')
-            ->where('average_rank', '>', 0)
+            ->whereNotNull('rank')
+            ->where('rank', '>', 0)
             ->with([
                 'player' => [
                     'position',
                     'team',
                 ],
             ])
-            ->orderBy('average_rank', 'asc')
+            ->orderBy('rank', 'asc')
             ->get();
 
         return Inertia::render('rankings/index', [

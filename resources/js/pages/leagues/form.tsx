@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { router } from '@inertiajs/react';
@@ -21,8 +20,6 @@ interface LeagueFormData {
   description: string;
   team_count: number;
   is_public: boolean;
-  draft_type: string;
-  draft_date: string;
   settings: {
     roster_positions: string[];
     roster_size: number;
@@ -58,8 +55,6 @@ const defaultFormData: LeagueFormData = {
   description: '',
   team_count: 10,
   is_public: false,
-  draft_type: 'snake',
-  draft_date: '',
   settings: {
     roster_positions: ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'K', 'DEF'],
     roster_size: 16,
@@ -94,9 +89,21 @@ export default function LeagueForm({
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState(false);
 
-  // Update roster size when starters or bench count changes
+  // Update starters_count based on roster_positions
   useEffect(() => {
-    const rosterSize = data.settings.starters_count + data.settings.bench_count;
+    const startersCount = data.settings.roster_positions.length;
+    setData(prev => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        starters_count: startersCount,
+      }
+    }));
+  }, [data.settings.roster_positions]);
+
+  // Update roster_size based on starters_count, bench_count, and ir_spots
+  useEffect(() => {
+    const rosterSize = data.settings.starters_count + data.settings.bench_count + data.settings.ir_spots;
     setData(prev => ({
       ...prev,
       settings: {
@@ -104,7 +111,7 @@ export default function LeagueForm({
         roster_size: rosterSize,
       }
     }));
-  }, [data.settings.starters_count, data.settings.bench_count]);
+  }, [data.settings.starters_count, data.settings.bench_count, data.settings.ir_spots]);
 
   // Handle form submission
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -192,38 +199,6 @@ export default function LeagueForm({
                 )}
               </div>
 
-              <div>
-                <Label htmlFor="draft_type">Draft Type</Label>
-                <Select
-                  value={data.draft_type}
-                  onValueChange={(value) => setData(prev => ({ ...prev, draft_type: value }))}
-                >
-                  <SelectTrigger id="draft_type" className="mt-1">
-                    <SelectValue placeholder="Select draft type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="snake">Snake</SelectItem>
-                    <SelectItem value="auction">Auction</SelectItem>
-                  </SelectContent>
-                </Select>
-                {(errors.draft_type || validationErrors.draft_type) && (
-                  <p className="text-sm text-red-500 mt-1">{errors.draft_type || validationErrors.draft_type}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="draft_date">Draft Date</Label>
-                <Input
-                  id="draft_date"
-                  type="datetime-local"
-                  value={data.draft_date}
-                  onChange={(e) => setData(prev => ({ ...prev, draft_date: e.target.value }))}
-                  className="mt-1"
-                />
-                {(errors.draft_date || validationErrors.draft_date) && (
-                  <p className="text-sm text-red-500 mt-1">{errors.draft_date || validationErrors.draft_date}</p>
-                )}
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -234,27 +209,26 @@ export default function LeagueForm({
               <h2 className="text-lg font-medium">Roster Settings</h2>
               <p className="text-sm text-muted-foreground">Configure your league's roster positions and size.</p>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+              <div>
+                <Label htmlFor="roster_size">Total</Label>
+                <Input
+                  id="roster_size"
+                  type="number"
+                  disabled
+                  min={1}
+                  value={data.settings.roster_size}
+                />
+              </div>
               <div>
                 <Label htmlFor="starters_count">Starters</Label>
                 <Input
                   id="starters_count"
                   type="number"
                   min={1}
+                  disabled
                   value={data.settings.starters_count}
-                  onChange={(e) =>
-                    setData(prev => ({
-                      ...prev,
-                      settings: {
-                        ...prev.settings,
-                        starters_count: parseInt(e.target.value) || 0,
-                      }
-                    }))
-                  }
                 />
-                {(getNestedError(errors, 'settings.starters_count') || validationErrors['settings.starters_count']) && (
-                  <p className="text-sm text-red-500 mt-1">{getNestedError(errors, 'settings.starters_count') || validationErrors['settings.starters_count']}</p>
-                )}
               </div>
               <div>
                 <Label htmlFor="bench_count">Bench</Label>
@@ -328,17 +302,18 @@ export default function LeagueForm({
               <p className="text-sm text-muted-foreground">Configure your league's scoring rules.</p>
             </div>
 
-            <div className="mt-2 grid w-full grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="mt-2 grid w-full grid-cols-1 gap-4">
               <div>
-                <h3 className="text-lg font-medium">Passing</h3>
+                <h3 className="text-md font-medium">Passing</h3>
                 <Separator className="my-2" />
-                <div className="mt-2 grid w-full grid-cols-2 gap-1">
-                  <div className="col-span-1">
-                    <Label>per Yard</Label>
+                <div className="mt-2 grid w-full grid-cols-4 gap-1">
+                  <div className="col-span-3">
+                    <Label className="text-xs">per Yard</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
                       type="number"
+                      className="text-xs py-1 px-2"
                       step="0.01"
                       value={data.settings.passing_points_per_yard}
                       onChange={(e) =>
@@ -352,12 +327,13 @@ export default function LeagueForm({
                       }
                     />
                   </div>
-                  <div className="col-span-1">
-                    <Label>TD Pass</Label>
+                  <div className="col-span-3">
+                    <Label className="text-xs">TD Pass</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
                       type="number"
+                      className="text-xs py-1 px-2"
                       step="0.5"
                       value={data.settings.passing_td_points}
                       onChange={(e) =>
@@ -371,12 +347,13 @@ export default function LeagueForm({
                       }
                     />
                   </div>
-                  <div className="col-span-1">
-                    <Label>INT</Label>
+                  <div className="col-span-3">
+                    <Label className="text-xs">INT</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
                       type="number"
+                      className="text-xs py-1 px-2"
                       step="0.5"
                       value={data.settings.interception_points}
                       onChange={(e) =>
@@ -394,15 +371,16 @@ export default function LeagueForm({
               </div>
 
               <div>
-                <h3 className="text-lg font-medium">Receiving</h3>
+                <h3 className="text-md font-medium">Receiving</h3>
                 <Separator className="my-2" />
-                <div className="mt-2 grid grid-cols-2 gap-1">
-                  <div className="col-span-1">
-                    <Label>per Yard</Label>
+                <div className="mt-2 grid grid-cols-4 gap-1">
+                  <div className="col-span-3">
+                    <Label className="text-xs">per Yard</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
                       type="number"
+                      className="text-xs py-1 px-2"
                       step="0.01"
                       value={data.settings.receiving_points_per_yard}
                       onChange={(e) =>
@@ -416,12 +394,13 @@ export default function LeagueForm({
                       }
                     />
                   </div>
-                  <div className="col-span-1">
-                    <Label>TD Rec</Label>
+                  <div className="col-span-3">
+                    <Label className="text-xs">TD Rec</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
                       type="number"
+                      className="text-xs py-1 px-2"
                       step="0.5"
                       value={data.settings.receiving_td_points}
                       onChange={(e) =>
@@ -435,12 +414,13 @@ export default function LeagueForm({
                       }
                     />
                   </div>
-                  <div className="col-span-1">
-                    <Label>Reception</Label>
+                  <div className="col-span-3">
+                    <Label className="text-xs">Reception</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
                       type="number"
+                      className="text-xs py-1 px-2"
                       step="0.01"
                       value={data.settings.reception_points}
                       onChange={(e) =>
@@ -458,13 +438,13 @@ export default function LeagueForm({
               </div>
             </div>
 
-            <div className="mt-2 grid w-full grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="mt-2 grid w-full grid-cols-1 gap-4">
               <div className="mt-2">
-                <h3 className="text-lg font-medium">Rushing</h3>
+                <h3 className="text-md font-medium">Rushing</h3>
                 <Separator className="my-2" />
-                <div className="mt-2 grid grid-cols-2 gap-1">
-                  <div className="col-span-1">
-                    <Label>per Yard</Label>
+                <div className="mt-2 grid grid-cols-4 gap-1">
+                  <div className="col-span-3">
+                    <Label className="text-xs">per Yard</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
@@ -482,8 +462,8 @@ export default function LeagueForm({
                       }
                     />
                   </div>
-                  <div className="col-span-1">
-                    <Label>TD Rush</Label>
+                  <div className="col-span-3">
+                    <Label className="text-xs">TD Rush</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
@@ -505,11 +485,11 @@ export default function LeagueForm({
               </div>
 
               <div className="mt-2">
-                <h3 className="text-lg font-medium">Misc</h3>
+                <h3 className="text-md font-medium">Misc</h3>
                 <Separator className="my-2" />
-                <div className="mt-2 grid grid-cols-2 gap-1">
-                  <div className="col-span-1">
-                    <Label>Fumbles</Label>
+                <div className="mt-2 grid grid-cols-4 gap-1">
+                  <div className="col-span-3">
+                    <Label className="text-xs">Fumbles</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
@@ -527,12 +507,13 @@ export default function LeagueForm({
                       }
                     />
                   </div>
-                  <div className="col-span-1">
-                    <Label>2-Pt Conv</Label>
+                  <div className="col-span-3">
+                    <Label className="text-xs">2-Pt Conv</Label>
                   </div>
                   <div className="col-span-1">
                     <Input
                       type="number"
+                      className="text-xs py-1 px-2"
                       step="0.5"
                       value={data.settings.two_point_conversion_points}
                       onChange={(e) =>
