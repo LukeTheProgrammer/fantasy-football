@@ -12,7 +12,7 @@ class GetSettings extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:ffl:settings {league_id}';
+    protected $signature = 'espn:ffl:get:settings {league_id}';
 
     /**
      * The console command description.

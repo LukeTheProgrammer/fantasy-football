@@ -12,7 +12,7 @@ class GetRoster extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:ffl:roster {league_id}';
+    protected $signature = 'espn:ffl:get:roster {league_id}';
 
     /**
      * The console command description.

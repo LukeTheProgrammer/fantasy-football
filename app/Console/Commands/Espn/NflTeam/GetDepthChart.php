@@ -12,7 +12,7 @@ class GetDepthChart extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl-team:depth-chart {team_id}';
+    protected $signature = 'espn:nfl-team:get:depth-chart {team_id}';
 
     /**
      * The console command description.

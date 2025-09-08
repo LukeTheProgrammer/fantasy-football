@@ -12,7 +12,7 @@ class GetMatchup extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:ffl:matchup {league_id}';
+    protected $signature = 'espn:ffl:get:matchup {league_id}';
 
     /**
      * The console command description.

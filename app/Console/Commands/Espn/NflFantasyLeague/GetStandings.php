@@ -12,7 +12,7 @@ class GetStandings extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:ffl:standings {league_id}';
+    protected $signature = 'espn:ffl:get:standings {league_id}';
 
     /**
      * The console command description.

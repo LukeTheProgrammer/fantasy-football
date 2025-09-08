@@ -12,7 +12,7 @@ class GetTeamNews extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:team-news {team_id}';
+    protected $signature = 'espn:nfl:get:team-news {team_id}';
 
     /**
      * The console command description.

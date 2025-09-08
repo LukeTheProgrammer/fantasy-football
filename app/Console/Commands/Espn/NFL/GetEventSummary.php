@@ -12,7 +12,7 @@ class GetEventSummary extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:event-summary {event_id}';
+    protected $signature = 'espn:nfl:get:event-summary {event_id}';
 
     /**
      * The console command description.

@@ -2,18 +2,15 @@
 
 namespace App\Facades;
 
-use App\Services\Espn\Resources\FantasyLeagues;
-use App\Services\Espn\Resources\Players;
-use App\Services\Espn\Resources\Rosters;
-use App\Services\Espn\Resources\Teams;
+use App\Services\Espn\Resources\NFL;
+use App\Services\Espn\Resources\NflTeam;
+use App\Services\Espn\Resources\NflFantasyLeague;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static FantasyLeagues fantasyLeague(int|string $leagueId)
- * @method static Players player(int|string $id)
- * @method static Rosters roster(int|string $id)
- * @method static Teams team(int|string $id)
- * @method static Teams teamPlayers(int|string $id, int $pageIndex = 1)
+ * @method static NFL nfl()
+ * @method static NflTeam team(int|string $id)
+ * @method static NflFantasyLeague fantasyLeague(int|string $leagueId)
  */
 class Espn extends Facade
 {
