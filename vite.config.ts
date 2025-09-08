@@ -10,6 +10,7 @@ export default defineConfig({
         port: 5173,
         hmr: {
             host: 'fantasy.local',
+            // host: 'localhost',
             port: 5173,
         },
     },

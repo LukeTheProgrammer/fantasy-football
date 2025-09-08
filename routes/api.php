@@ -1,16 +1,14 @@
 <?php
 
-use App\Http\Controllers\Api\ApiPlayerController;
-use App\Http\Controllers\Api\ApiTeamController;
+use App\Http\Controllers\Api\DraftController;
 use App\Http\Controllers\Api\LeagueController;
-use App\Http\Controllers\Api\LeagueSettingsController;
 use App\Http\Controllers\Api\LeagueMemberController;
+use App\Http\Controllers\Api\LeagueSeasonController;
+use App\Http\Controllers\Api\LeagueSettingsController;
+use App\Http\Controllers\Api\PlayerController;
+use App\Http\Controllers\Api\TeamController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-// Public API routes
-// Route::apiResource('teams', ApiTeamController::class)->only(['index', 'show']);
-Route::apiResource('players', ApiPlayerController::class)->only(['index', 'show']);
 
 // Protected API routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -18,20 +16,27 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::get('test', function () {
-        return response()->json(['message' => 'Hello, world!']);
-    });
-
     // Protected team routes for create, update, delete
-    Route::apiResource('teams', ApiTeamController::class)->except(['create', 'show']);
-    Route::apiResource('players', ApiPlayerController::class)->except(['index', 'show']);
-    
+    Route::apiResource('teams', TeamController::class)->except(['create', 'show']);
+    Route::apiResource('players', PlayerController::class)->except(['index', 'show']);
+
     // League management routes
     Route::apiResource('leagues', LeagueController::class);
     Route::apiResource('league-settings', LeagueSettingsController::class)->except(['index', 'store', 'destroy']);
     Route::apiResource('league-members', LeagueMemberController::class);
-    
+
+    // League season routes
+    Route::apiResource('leagues.seasons', LeagueSeasonController::class)->parameters([
+        'seasons' => 'season'
+    ]);
+
     // Custom league routes
     Route::post('leagues/join', [LeagueController::class, 'join']);
     Route::patch('league-members/{id}/draft-position', [LeagueMemberController::class, 'updateDraftPosition']);
+
+
+    // Draft routes
+    Route::apiResource('leagues.drafts', DraftController::class);
+    Route::post('leagues/{league}/drafts/{draft}/picks', [DraftController::class, 'makePick']);
+    Route::get('leagues/{league}/drafts/{draft}/board', [DraftController::class, 'board']);
 });

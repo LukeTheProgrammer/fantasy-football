@@ -1,0 +1,372 @@
+{
+    "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/18?lang=en&region=us",
+    "id": "18",
+    "guid": "97d2f6c9-2f22-459c-306a-046941ccab2a",
+    "uid": "s:20~l:28~t:18",
+    "alternateIds": {
+        "sdr": "8819"
+    },
+    "slug": "new-orleans-saints",
+    "location": "New Orleans",
+    "name": "Saints",
+    "nickname": "Saints",
+    "abbreviation": "NO",
+    "displayName": "New Orleans Saints",
+    "shortDisplayName": "Saints",
+    "color": "d3bc8d",
+    "alternateColor": "000000",
+    "isActive": true,
+    "isAllStar": false,
+    "logos": [
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/no.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "default"
+            ],
+            "lastUpdated": "2024-06-25T18:54Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/no.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:54Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/scoreboard\/no.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard"
+            ],
+            "lastUpdated": "2024-06-25T18:54Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/scoreboard\/no.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:54Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/97d2f6c9-2f22-459c-306a-046941ccab2a\/logos\/primary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/97d2f6c9-2f22-459c-306a-046941ccab2a\/logos\/primary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/97d2f6c9-2f22-459c-306a-046941ccab2a\/logos\/primary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/97d2f6c9-2f22-459c-306a-046941ccab2a\/logos\/primary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/97d2f6c9-2f22-459c-306a-046941ccab2a\/logos\/secondary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/97d2f6c9-2f22-459c-306a-046941ccab2a\/logos\/secondary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/97d2f6c9-2f22-459c-306a-046941ccab2a\/logos\/secondary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/97d2f6c9-2f22-459c-306a-046941ccab2a\/logos\/secondary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        }
+    ],
+    "record": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/18\/record?lang=en&region=us"
+    },
+    "oddsRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/0\/teams\/18\/odds-records?lang=en&region=us"
+    },
+    "athletes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/18\/athletes?lang=en&region=us"
+    },
+    "venue": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/venues\/3493?lang=en&region=us",
+        "id": "3493",
+        "guid": "aa9f0642-8b00-34cf-b043-9b3965116455",
+        "fullName": "Caesars Superdome",
+        "address": {
+            "city": "New Orleans",
+            "state": "LA",
+            "zipCode": "70112",
+            "country": "USA"
+        },
+        "grass": false,
+        "indoor": true,
+        "images": [
+            {
+                "href": "https:\/\/a.espncdn.com\/i\/venues\/nfl\/day\/3493.jpg",
+                "width": 2000,
+                "height": 1125,
+                "alt": "",
+                "rel": [
+                    "full",
+                    "day"
+                ]
+            },
+            {
+                "href": "https:\/\/a.espncdn.com\/i\/venues\/nfl\/day\/interior\/3493.jpg",
+                "width": 2000,
+                "height": 1125,
+                "alt": "",
+                "rel": [
+                    "full",
+                    "day",
+                    "interior"
+                ]
+            }
+        ]
+    },
+    "groups": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/groups\/11?lang=en&region=us"
+    },
+    "ranks": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/18\/ranks?lang=en&region=us"
+    },
+    "statistics": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/18\/statistics?lang=en&region=us"
+    },
+    "leaders": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/18\/leaders?lang=en&region=us"
+    },
+    "links": [
+        {
+            "language": "en-US",
+            "rel": [
+                "clubhouse",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/_\/name\/no\/new-orleans-saints",
+            "text": "Clubhouse",
+            "shortText": "Clubhouse",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "roster",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/roster\/_\/name\/no\/new-orleans-saints",
+            "text": "Roster",
+            "shortText": "Roster",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "stats",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/stats\/_\/name\/no\/new-orleans-saints",
+            "text": "Statistics",
+            "shortText": "Statistics",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "schedule",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/schedule\/_\/name\/no",
+            "text": "Schedule",
+            "shortText": "Schedule",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "photos",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/photos\/_\/name\/no",
+            "text": "photos",
+            "shortText": "photos",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "tickets",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.vividseats.com\/new-orleans-saints-tickets--sports-nfl-football\/performer\/597?wsUser=717",
+            "text": "Tickets",
+            "shortText": "Tickets",
+            "isExternal": true,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "draftpicks",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/draft\/teams\/_\/name\/no\/new-orleans-saints",
+            "text": "Draft Picks",
+            "shortText": "Draft Picks",
+            "isExternal": false,
+            "isPremium": true
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "transactions",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/transactions\/_\/name\/no",
+            "text": "Transactions",
+            "shortText": "Transactions",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "injuries",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/injuries\/_\/name\/no",
+            "text": "Injuries",
+            "shortText": "Injuries",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "depthchart",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/depth\/_\/name\/no",
+            "text": "Depth Chart",
+            "shortText": "Depth Chart",
+            "isExternal": false,
+            "isPremium": false
+        }
+    ],
+    "injuries": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/18\/injuries?lang=en&region=us"
+    },
+    "notes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/18\/notes?lang=en&region=us"
+    },
+    "againstTheSpreadRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/18\/ats?lang=en&region=us"
+    },
+    "franchise": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/franchises\/18?lang=en&region=us"
+    },
+    "depthCharts": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/18\/depthcharts?lang=en&region=us"
+    },
+    "projection": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/18\/projection?lang=en&region=us"
+    },
+    "events": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/18\/events?lang=en&region=us"
+    },
+    "transactions": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/18\/transactions?lang=en&region=us"
+    },
+    "coaches": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/18\/coaches?lang=en&region=us"
+    }
+}

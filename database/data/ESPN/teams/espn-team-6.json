@@ -1,0 +1,372 @@
+{
+    "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/6?lang=en&region=us",
+    "id": "6",
+    "guid": "b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234",
+    "uid": "s:20~l:28~t:6",
+    "alternateIds": {
+        "sdr": "8809"
+    },
+    "slug": "dallas-cowboys",
+    "location": "Dallas",
+    "name": "Cowboys",
+    "nickname": "Cowboys",
+    "abbreviation": "DAL",
+    "displayName": "Dallas Cowboys",
+    "shortDisplayName": "Cowboys",
+    "color": "002a5c",
+    "alternateColor": "b0b7bc",
+    "isActive": true,
+    "isAllStar": false,
+    "logos": [
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/dal.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "default"
+            ],
+            "lastUpdated": "2024-06-25T18:47Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/dal.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:59Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/scoreboard\/dal.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard"
+            ],
+            "lastUpdated": "2024-06-25T18:48Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/scoreboard\/dal.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:59Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234\/logos\/primary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234\/logos\/primary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234\/logos\/primary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234\/logos\/primary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234\/logos\/secondary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234\/logos\/secondary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234\/logos\/secondary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/b0fc8fb7-9dbe-e574-9008-6f0ee7c6b234\/logos\/secondary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:49Z"
+        }
+    ],
+    "record": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/6\/record?lang=en&region=us"
+    },
+    "oddsRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/0\/teams\/6\/odds-records?lang=en&region=us"
+    },
+    "athletes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/6\/athletes?lang=en&region=us"
+    },
+    "venue": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/venues\/3687?lang=en&region=us",
+        "id": "3687",
+        "guid": "a6d02626-ee51-3e35-98f1-2b05c0b9b2b3",
+        "fullName": "AT&T Stadium",
+        "address": {
+            "city": "Arlington",
+            "state": "TX",
+            "zipCode": "76011",
+            "country": "USA"
+        },
+        "grass": false,
+        "indoor": true,
+        "images": [
+            {
+                "href": "https:\/\/a.espncdn.com\/i\/venues\/nfl\/day\/3687.jpg",
+                "width": 2000,
+                "height": 1125,
+                "alt": "",
+                "rel": [
+                    "full",
+                    "day"
+                ]
+            },
+            {
+                "href": "https:\/\/a.espncdn.com\/i\/venues\/nfl\/day\/interior\/3687.jpg",
+                "width": 2000,
+                "height": 1125,
+                "alt": "",
+                "rel": [
+                    "full",
+                    "day",
+                    "interior"
+                ]
+            }
+        ]
+    },
+    "groups": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/groups\/1?lang=en&region=us"
+    },
+    "ranks": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/6\/ranks?lang=en&region=us"
+    },
+    "statistics": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/6\/statistics?lang=en&region=us"
+    },
+    "leaders": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/6\/leaders?lang=en&region=us"
+    },
+    "links": [
+        {
+            "language": "en-US",
+            "rel": [
+                "clubhouse",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/_\/name\/dal\/dallas-cowboys",
+            "text": "Clubhouse",
+            "shortText": "Clubhouse",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "roster",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/roster\/_\/name\/dal\/dallas-cowboys",
+            "text": "Roster",
+            "shortText": "Roster",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "stats",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/stats\/_\/name\/dal\/dallas-cowboys",
+            "text": "Statistics",
+            "shortText": "Statistics",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "schedule",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/schedule\/_\/name\/dal",
+            "text": "Schedule",
+            "shortText": "Schedule",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "photos",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/photos\/_\/name\/dal",
+            "text": "photos",
+            "shortText": "photos",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "tickets",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.vividseats.com\/dallas-cowboys-tickets--sports-nfl-football\/performer\/214?wsUser=717",
+            "text": "Tickets",
+            "shortText": "Tickets",
+            "isExternal": true,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "draftpicks",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/draft\/teams\/_\/name\/dal\/dallas-cowboys",
+            "text": "Draft Picks",
+            "shortText": "Draft Picks",
+            "isExternal": false,
+            "isPremium": true
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "transactions",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/transactions\/_\/name\/dal",
+            "text": "Transactions",
+            "shortText": "Transactions",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "injuries",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/injuries\/_\/name\/dal",
+            "text": "Injuries",
+            "shortText": "Injuries",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "depthchart",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/depth\/_\/name\/dal",
+            "text": "Depth Chart",
+            "shortText": "Depth Chart",
+            "isExternal": false,
+            "isPremium": false
+        }
+    ],
+    "injuries": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/6\/injuries?lang=en&region=us"
+    },
+    "notes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/6\/notes?lang=en&region=us"
+    },
+    "againstTheSpreadRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/6\/ats?lang=en&region=us"
+    },
+    "franchise": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/franchises\/6?lang=en&region=us"
+    },
+    "depthCharts": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/6\/depthcharts?lang=en&region=us"
+    },
+    "projection": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/6\/projection?lang=en&region=us"
+    },
+    "events": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/6\/events?lang=en&region=us"
+    },
+    "transactions": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/6\/transactions?lang=en&region=us"
+    },
+    "coaches": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/6\/coaches?lang=en&region=us"
+    }
+}

@@ -1,28 +1,43 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DraftController;
+use App\Http\Controllers\LeagueController;
+use App\Http\Controllers\DraftRankingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
+Route::get('/', fn () => Inertia::render('welcome'))->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // League management routes
-    Route::get('leagues', function () {
-        return Inertia::render('leagues/index');
-    })->name('leagues.index');
-    
-    Route::get('leagues/create', function () {
-        return Inertia::render('leagues/create');
-    })->name('leagues.create');
-    
-    Route::get('leagues/{id}', function ($id) {
-        return Inertia::render('leagues/show', ['id' => $id]);
-    })->name('leagues.show');
+
+    // League model
+    Route::prefix('leagues')->name('leagues.')->group(function () {
+        Route::get('/', [LeagueController::class, 'index'])->name('index');
+        Route::get('/create', [LeagueController::class, 'create'])->name('create');
+        Route::get('/{league}/edit', [LeagueController::class, 'edit'])->name('edit');
+        Route::get('/{league}', [LeagueController::class, 'show'])->name('show');
+    });
+
+    // Draft model
+    Route::prefix('drafts')->name('drafts.')->group(function () {
+        Route::get('/', [DraftController::class, 'index'])->name('index');
+        Route::get('/create', [DraftController::class, 'create'])->name('create');
+        Route::get('/{draft}', [DraftController::class, 'show'])->name('show');
+        Route::get('/{draft}/edit', [DraftController::class, 'edit'])->name('edit');
+        Route::get('/{draft}/board', [DraftController::class, 'board'])->name('board');
+        Route::get('/{draft}/results', [DraftController::class, 'results'])->name('results');
+        Route::get('/{draft}/draft-room', [DraftController::class, 'draftRoom'])->name('draft-room');
+    });
+
+    // DraftRanking model
+    Route::prefix('rankings')->name('rankings.')->group(function () {
+        Route::get('/', [DraftRankingController::class, 'index'])->name('index');
+        // Route::get('/create', [DraftRankingController::class, 'create'])->name('create');
+        // Route::get('/{draftRanking}/edit', [DraftRankingController::class, 'edit'])->name('edit');
+        // Route::get('/{draftRanking}', [DraftRankingController::class, 'show'])->name('show');
+    });
 });
 
 require __DIR__ . '/settings.php';

@@ -30,7 +30,7 @@ class GetTeam extends Command
 
         $data = Espn::getTeam($teamId);
 
-        $path = database_path('data/espn-team-' . $teamId . '.json');
+        $path = database_path('data/ESPN/teams/espn-team-' . $teamId . '.json');
 
         $bytes = file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
 

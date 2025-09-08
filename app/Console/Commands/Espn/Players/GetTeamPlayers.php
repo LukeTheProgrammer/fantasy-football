@@ -43,7 +43,8 @@ class GetTeamPlayers extends Command
 
     protected function getPlayers(int $teamId, int $pageIndex)
     {
-        $data = Espn::getTeamPlayers($teamId, $pageIndex);
+        $teams = Espn::teams($teamId);
+        $data = $teams->getPlayers($pageIndex);
 
         // $count = Arr::get($data, 'count', 0);
         // $pageIndex = Arr::get($data, 'pageIndex', 0);
@@ -59,8 +60,7 @@ class GetTeamPlayers extends Command
         foreach (Arr::get($data, 'items', []) as $playerRef) {
             $playerId = $this->getPlayerId(Arr::get($playerRef, '$ref'));
             $player = Espn::getPlayer($playerId);
-            unset($player['$ref']);
-            $this->players[] = $player;
+            $this->players[] = $this->filterPlayer($player);
             $bar->advance();
         }
 
@@ -70,6 +70,26 @@ class GetTeamPlayers extends Command
         if ($pageIndex < $pageCount) {
             $this->getPlayers($teamId, $pageIndex + 1);
         }
+    }
+
+    protected function filterPlayer(array $player)
+    {
+        return [
+            'id'          => Arr::get($player, 'id'),
+            'firstName'   => Arr::get($player, 'firstName'),
+            'lastName'    => Arr::get($player, 'lastName'),
+            'fullName'    => Arr::get($player, 'fullName'),
+            'position'    => Arr::get($player, 'position.abbreviation'),
+            'team_id'     => $this->getTeamId(Arr::get($player, 'team.$ref')),
+            'jersey'      => Arr::get($player, 'jersey'),
+            'height'      => Arr::get($player, 'height'),
+            'weight'      => Arr::get($player, 'weight'),
+            'draft_year'  => Arr::get($player, 'draft.year'),
+            'draft_round' => Arr::get($player, 'draft.round'),
+            'draft_pick'  => Arr::get($player, 'draft.selection'),
+            'birthDate'   => Arr::get($player, 'birthDate'),
+            'headshot'    => Arr::get($player, 'headshot.href'),
+        ];
     }
 
     protected function getPlayerId(string $ref)
@@ -83,7 +103,7 @@ class GetTeamPlayers extends Command
 
     protected function writeToFile()
     {
-        $path = database_path('data/espn-team-' . $this->argument('team_id') . '-players.json');
+        $path = database_path('data/ESPN/players/espn-team-' . $this->argument('team_id') . '-players.json');
 
         usort($this->players, function ($item1, $item2) {
             return $item1['id'] <=> $item2['id'];
@@ -96,5 +116,14 @@ class GetTeamPlayers extends Command
         $bytes = file_put_contents($path, $file);
 
         $this->info(PHP_EOL . "Player data saved to $path ($bytes bytes)" . PHP_EOL);
+    }
+
+    protected function getTeamId(string $ref)
+    {
+        $parts = collect(explode('/', $ref));
+
+        $id = strstr($parts->last(), '?', true);
+
+        return $id;
     }
 }

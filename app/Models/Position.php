@@ -48,4 +48,9 @@ class Position extends Model
     {
         return $this->hasMany(Player::class);
     }
+
+    public function scopeForAbbreviation(Builder $query, string $abbreviation): Builder
+    {
+        return $query->where('abbreviation', '=', $abbreviation);
+    }
 }

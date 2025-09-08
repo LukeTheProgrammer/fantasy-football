@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -91,13 +92,32 @@ class Player extends Model
     }
 
     /**
-     * Get the player's full name.
+     * Get the aliases for this player.
      */
-    public function fullName(): Attribute
+    public function aliases(): HasMany
     {
-        return Attribute::make(
-            get: fn () => "{$this->first_name} {$this->last_name}",
-        );
+        return $this->hasMany(PlayerAlias::class);
+    }
+
+    /**
+     * Get the draft picks for this player.
+     */
+    public function draftPicks(): HasMany
+    {
+        return $this->hasMany(DraftPick::class);
+    }
+
+    /**
+     * Get the draft rankings for this player.
+     */
+    public function draftRankings(): HasMany
+    {
+        return $this->hasMany(DraftRanking::class);
+    }
+
+    public function currentDraftRankings(): HasMany
+    {
+        return $this->draftRankings()->where('draft_year', Carbon::now()->year);
     }
 
     /**

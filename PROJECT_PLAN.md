@@ -30,21 +30,50 @@ This project aims to create a web application that assists users during their fa
 - [x] Create league member management interface
 - [x] Add validation for all forms
 
-#### Tests
-- [ ] Write unit tests for league models
-- [ ] Write feature tests for league creation and management
-- [ ] Test validation rules and error handling
-
-### 2. Historical League Auction Data
+### 2. Fantasy Draft Creation
 #### Database & Models
-- [ ] Create `HistoricalDraft` model to store past draft data
-- [ ] Create `DraftPick` model to store individual picks
-- [ ] Create migrations for historical data models
-- [ ] Define relationships between models
+- [x] Create `LeagueSeason` model with fields for year, league, and draft.
+- [x] Create `Draft` model with fields for league, datetime, type, etc.
+- [x] Create `DraftPick` model for draft picks that can either be an auction or snake draft pick. Add the ability to designate keepers from the previous season.
+- [x] Create migrations for all new models
+- [x] Define relationships between models (User, League, LeagueSettings, Player)
 
+#### API & Controllers
+- [x] Create `Api\LeagueSeasonController` with CRUD operations
+- [x] Create `Api\DraftController` with CRUD operations
+- [x] Create `DraftController` for web pages for draft management
+- [x] Create routes for the above controllers in the appropriate routes files (web.php and api.php)
+
+#### Frontend
+- [x] Create draft creation form with fields for draft details
+- [x] Build draft settings configuration interface (roster positions, scoring rules)
+- [x] Implement draft dashboard view
+- [x] Add validation for all forms
+
+### 3. Draft Rankings and Values
+#### Database & Models
+- [x] Create `DraftRanking` model for storing player rankings with fields for year, player, ranking, source, tier, average draft value (adv), etc.
+- [x] Create `PlayerAlias` model for storing player aliases.
+- [x] Create migration for new models
+- [x] Define relationships with models
+
+#### API & Controllers
+- [ ] Create `RankingsController` for managing rankings
+- [ ] Implement API endpoints for rankings and values
+
+#### Frontend
+- [x] Build rankings index
+- [ ] Add comparison views for different ranking sources
+- [ ] Create Player Rankings detail dialog
+
+#### Data Sources
+- [x] Implement FantasyPros rankings import Command
+- [x] Implement auction value calculations
+
+### 4. Historical League Auction Data
 #### Data Import
 - [ ] Create ESPN data import service
-- [ ] Create Yahoo data import service
+- [ ] Create CBS data import service
 - [ ] Implement file upload for CSV/JSON draft data
 - [ ] Add data normalization and validation
 
@@ -59,43 +88,7 @@ This project aims to create a web application that assists users during their fa
 - [ ] Implement data filtering and search UI
 - [ ] Add export functionality
 
-#### Tests
-- [ ] Test data import from various sources
-- [ ] Test data normalization and validation
-- [ ] Test API endpoints and controllers
-
-### 3. Draft Rankings and Values
-#### Database & Models
-- [ ] Create `DraftRanking` model for storing player rankings
-- [ ] Create `PlayerValue` model for storing auction values
-- [ ] Create migrations for ranking and value models
-- [ ] Define relationships with Player model
-
-#### Data Sources
-- [ ] Implement ESPN rankings import
-- [ ] Create custom ranking input interface
-- [ ] Add average draft position (ADP) data source
-- [ ] Implement auction value calculations
-
-#### API & Controllers
-- [ ] Create `RankingsController` for managing rankings
-- [ ] Create `PlayerValueController` for managing values
-- [ ] Implement API endpoints for rankings and values
-- [ ] Add personalized ranking capabilities
-
-#### Frontend
-- [ ] Build rankings management interface
-- [ ] Create drag-and-drop ranking editor
-- [ ] Implement value adjustment interface
-- [ ] Add comparison views for different ranking sources
-- [ ] Create visualization for player values
-
-#### Tests
-- [ ] Test ranking import functionality
-- [ ] Test value calculations
-- [ ] Test personalization features
-
-### 4. Real-Time Draft Suggestions
+### 5. Real-Time Draft Suggestions
 #### Core Logic
 - [ ] Implement draft strategy algorithm
 - [ ] Create player recommendation engine
@@ -126,36 +119,7 @@ This project aims to create a web application that assists users during their fa
 - [ ] Add collaborative draft session capabilities
 - [ ] Create notifications for picks and suggestions
 
-#### Tests
-- [ ] Test suggestion algorithm with various scenarios
-- [ ] Test real-time functionality
-- [ ] Test draft tracking accuracy
-
-## Timeline
-
-### Phase 1: Core Infrastructure (Weeks 1-2)
-- Set up remaining models and database structure
-- Implement league creation functionality
-- Create basic user dashboard
-
-### Phase 2: Data Management (Weeks 3-4)
-- Implement historical data import
-- Create rankings and values system
-- Build data visualization components
-
-### Phase 3: Draft Assistant (Weeks 5-6)
-- Develop draft tracking system
-- Implement suggestion engine
-- Create draft interface
-
-### Phase 4: Refinement (Weeks 7-8)
-- Optimize suggestion algorithms
-- Improve UI/UX
-- Add additional data sources
-- Comprehensive testing
-
 ## Collaboration Guidelines
-
 ### Git Workflow
 - Use feature branches for all new features
 - Create pull requests for code review
@@ -165,11 +129,6 @@ This project aims to create a web application that assists users during their fa
 - Follow Laravel and React best practices
 - Write tests for all new features
 - Document code thoroughly
-
-### Meetings
-- Weekly progress review
-- Feature planning sessions
-- Code review sessions
 
 ## Tech Stack
 - Backend: Laravel 12

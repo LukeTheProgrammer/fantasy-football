@@ -4,52 +4,42 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class League extends Model
 {
-    use HasFactory, SoftDeletes;
-    
+    use HasFactory;
+    use SoftDeletes;
+
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are not mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'slug',
-        'description',
-        'created_by',
-        'max_teams',
-        'is_public',
-        'join_code',
-        'draft_type',
-        'draft_date',
-        'is_active',
-    ];
-    
+    protected $guarded = [];
+
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        'is_public' => 'boolean',
-        'is_active' => 'boolean',
+        'is_public'  => 'boolean',
+        'is_active'  => 'boolean',
         'draft_date' => 'datetime',
     ];
-    
+
     /**
      * Get the user who created the league.
      */
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by_user_id');
     }
-    
+
     /**
      * Get the league settings.
      */
@@ -57,12 +47,56 @@ class League extends Model
     {
         return $this->hasOne(LeagueSettings::class);
     }
-    
+
     /**
      * Get the league members.
      */
     public function members(): HasMany
     {
         return $this->hasMany(LeagueMember::class);
+    }
+
+    /**
+     * Get the draft for the league.
+     */
+    public function draft(): HasOne
+    {
+        return $this->hasOne(Draft::class);
+    }
+
+    /**
+     * Checks if a user is the Creator of this league.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function userIsCreator(User $user): bool
+    {
+        return $this->creator_id === $user->id;
+    }
+
+    /**
+     * Checks if a user is an admin of this league.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function userIsAdmin(User $user): bool
+    {
+        return $this->members()->where('user_id', $user->id)->where('is_admin', true)->exists();
+    }
+
+    /**
+     * Checks if a user is a member of this league.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function userIsMember(User $user): bool
+    {
+        return $this->members()->where('user_id', $user->id)->exists();
     }
 }

@@ -1,0 +1,350 @@
+{
+    "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/24?lang=en&region=us",
+    "id": "24",
+    "guid": "84caf62b-c753-71ea-a787-44fd224a4294",
+    "uid": "s:20~l:28~t:24",
+    "alternateIds": {
+        "sdr": "8825"
+    },
+    "slug": "los-angeles-chargers",
+    "location": "Los Angeles",
+    "name": "Chargers",
+    "nickname": "Chargers",
+    "abbreviation": "LAC",
+    "displayName": "Los Angeles Chargers",
+    "shortDisplayName": "Chargers",
+    "color": "0080c6",
+    "alternateColor": "ffc20e",
+    "isActive": true,
+    "isAllStar": false,
+    "logos": [
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/lac.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "default"
+            ],
+            "lastUpdated": "2024-06-25T18:52Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/lac.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:52Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/scoreboard\/lac.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard"
+            ],
+            "lastUpdated": "2024-06-25T18:51Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/scoreboard\/lac.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:52Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/84caf62b-c753-71ea-a787-44fd224a4294\/logos\/primary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:48Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/84caf62b-c753-71ea-a787-44fd224a4294\/logos\/primary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:48Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/84caf62b-c753-71ea-a787-44fd224a4294\/logos\/primary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:48Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/84caf62b-c753-71ea-a787-44fd224a4294\/logos\/primary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:48Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/84caf62b-c753-71ea-a787-44fd224a4294\/logos\/secondary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:48Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/84caf62b-c753-71ea-a787-44fd224a4294\/logos\/secondary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:48Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/84caf62b-c753-71ea-a787-44fd224a4294\/logos\/secondary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:48Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/84caf62b-c753-71ea-a787-44fd224a4294\/logos\/secondary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:48Z"
+        }
+    ],
+    "record": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/24\/record?lang=en&region=us"
+    },
+    "oddsRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/0\/teams\/24\/odds-records?lang=en&region=us"
+    },
+    "athletes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/24\/athletes?lang=en&region=us"
+    },
+    "venue": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/venues\/538?lang=en&region=us",
+        "id": "538",
+        "guid": "ea9f87e7-4309-3a30-a860-bb40d8c20b4a",
+        "fullName": "Dignity Health Sports Park",
+        "address": {
+            "city": "Carson",
+            "state": "CA",
+            "zipCode": "90746",
+            "country": "USA"
+        },
+        "grass": true,
+        "indoor": false,
+        "images": []
+    },
+    "groups": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/groups\/6?lang=en&region=us"
+    },
+    "ranks": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/24\/ranks?lang=en&region=us"
+    },
+    "statistics": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/24\/statistics?lang=en&region=us"
+    },
+    "leaders": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/24\/leaders?lang=en&region=us"
+    },
+    "links": [
+        {
+            "language": "en-US",
+            "rel": [
+                "clubhouse",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/_\/name\/lac\/los-angeles-chargers",
+            "text": "Clubhouse",
+            "shortText": "Clubhouse",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "roster",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/roster\/_\/name\/lac\/los-angeles-chargers",
+            "text": "Roster",
+            "shortText": "Roster",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "stats",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/stats\/_\/name\/lac\/los-angeles-chargers",
+            "text": "Statistics",
+            "shortText": "Statistics",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "schedule",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/schedule\/_\/name\/lac",
+            "text": "Schedule",
+            "shortText": "Schedule",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "photos",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/photos\/_\/name\/lac",
+            "text": "photos",
+            "shortText": "photos",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "tickets",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.vividseats.com\/los-angeles-chargers-tickets--sports-nfl-football\/performer\/755?wsUser=717",
+            "text": "Tickets",
+            "shortText": "Tickets",
+            "isExternal": true,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "draftpicks",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/draft\/teams\/_\/name\/lac\/los-angeles-chargers",
+            "text": "Draft Picks",
+            "shortText": "Draft Picks",
+            "isExternal": false,
+            "isPremium": true
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "transactions",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/transactions\/_\/name\/lac",
+            "text": "Transactions",
+            "shortText": "Transactions",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "injuries",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/injuries\/_\/name\/lac",
+            "text": "Injuries",
+            "shortText": "Injuries",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "depthchart",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/depth\/_\/name\/lac",
+            "text": "Depth Chart",
+            "shortText": "Depth Chart",
+            "isExternal": false,
+            "isPremium": false
+        }
+    ],
+    "injuries": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/24\/injuries?lang=en&region=us"
+    },
+    "notes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/24\/notes?lang=en&region=us"
+    },
+    "againstTheSpreadRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/24\/ats?lang=en&region=us"
+    },
+    "franchise": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/franchises\/24?lang=en&region=us"
+    },
+    "depthCharts": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/24\/depthcharts?lang=en&region=us"
+    },
+    "projection": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/24\/projection?lang=en&region=us"
+    },
+    "events": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/24\/events?lang=en&region=us"
+    },
+    "transactions": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/24\/transactions?lang=en&region=us"
+    },
+    "coaches": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/24\/coaches?lang=en&region=us"
+    }
+}

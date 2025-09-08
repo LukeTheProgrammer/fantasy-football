@@ -1,0 +1,591 @@
+N,"Ja'Marr Chase",CIN,WR,1,WR1,1,WR1,"J'Marr Chase"
+N,"Justin Jefferson",MIN,WR,2,WR2,6,WR3,"J Jefferson"
+N,"CeeDee Lamb",DAL,WR,3,WR3,4,WR2,"C Lamb"
+N,"Bijan Robinson",ATL,RB,4,RB1,2,RB1,"W'Dale Robinson"
+N,"Malik Nabers",NYG,WR,5,WR4,7,WR4,"M Nabers"
+N,"Jahmyr Gibbs",DET,RB,6,RB2,3,RB2,"J Gibbs"
+Y,"Ashton Jeanty",LV,RB,7,RB3,13,RB6,
+N,"Brian Thomas Jr.",JAC,WR,8,WR5,14,WR8,"B Thomas Jr."
+N,"Puka Nacua",LAR,WR,9,WR6,12,WR7,"P Nacua"
+N,"Amon-Ra St. Brown",DET,WR,10,WR7,10,WR6,"A-Ra St. Brown"
+N,"Nico Collins",HOU,WR,11,WR8,8,WR5,"N Collins"
+N,"Drake London",ATL,WR,12,WR9,15,WR9,"D London"
+N,"Saquon Barkley",PHI,RB,13,RB4,5,RB3,"S Barkley"
+N,"Brock Bowers",LV,TE,14,TE1,18,TE1,"B Bowers"
+N,"Ladd McConkey",LAC,WR,15,WR10,24,WR11,"L McConkey"
+N,"De'Von Achane",MIA,RB,16,RB5,16,RB7,"D'Von Achane"
+N,"Jaxon Smith-Njigba",SEA,WR,17,WR11,28,WR12,"D Smith"
+N,"A.J. Brown",PHI,WR,18,WR12,17,WR10,"A.J. Brown"
+Y,"Omarion Hampton",LAC,RB,19,RB6,36,RB14,
+N,"Garrett Wilson",NYJ,WR,20,WR13,33,WR15,"G Wilson"
+Y,"Tetairoa McMillan",CAR,WR,21,WR14,51,WR23,
+N,"Marvin Harrison Jr.",ARI,WR,22,WR15,40,WR18,"M Harrison Jr."
+N,"Jonathan Taylor",IND,RB,23,RB7,19,RB8,"J Taylor"
+N,"Trey McBride",ARI,TE,24,TE2,23,TE2,"T McBride"
+N,"Josh Allen",BUF,QB,25,QB1,25,QB1,"J Allen"
+N,"Jayden Daniels",WAS,QB,26,QB2,31,QB3,"J Daniels"
+N,"Bucky Irving",TB,RB,27,RB8,21,RB10,"B Irving"
+N,"Tee Higgins",CIN,WR,28,WR16,29,WR13,"T Higgins"
+N,"Lamar Jackson",BAL,QB,29,QB3,26,QB2,"L Jackson"
+Y,"Travis Hunter",JAC,WR,30,WR17,67,WR31,
+N,"Breece Hall",NYJ,RB,31,RB9,43,RB17,"B Hall"
+N,"Rashee Rice",KC,WR,32,WR18,76,WR36,"R Rice"
+N,"Joe Burrow",CIN,QB,33,QB4,47,QB5,"J Burrow"
+Y,"DeVonta Smith",PHI,WR,34,WR19,52,WR24,
+Y,"TreVeyon Henderson",NE,RB,35,RB10,48,RB18,
+N,"Chase Brown",CIN,RB,36,RB11,22,RB11,"C Brown"
+N,"Kyren Williams",LAR,RB,37,RB12,27,RB12,"K Williams"
+N,"Josh Jacobs",GB,RB,38,RB13,20,RB9,"J Jacobs"
+N,"Sam LaPorta",DET,TE,39,TE3,64,TE4,"S LaPorta"
+Y,"Emeka Egbuka",TB,WR,40,WR20,77,WR37,
+N,"Jalen Hurts",PHI,QB,41,QB5,38,QB4,"J Hurts"
+N,"Zay Flowers",BAL,WR,42,WR21,58,WR29,"Z Flowers"
+N,"Rome Odunze",CHI,WR,43,WR22,71,WR33,"R Odunze"
+N,"James Cook",BUF,RB,44,RB14,35,RB13,"J Cook"
+N,"Patrick Mahomes II",KC,QB,45,QB6,66,QB6,"P Mahomes"
+N,"DK Metcalf",PIT,WR,46,WR23,45,WR21,"D Metcalf"
+N,"Xavier Worthy",KC,WR,47,WR24,54,WR26,"X Worthy"
+N,"Kenneth Walker III",SEA,RB,48,RB15,39,RB15,"K Walker III"
+N,"Jameson Williams",DET,WR,49,WR25,53,WR25,"J Williams"
+N,"Jordan Addison",MIN,WR,50,WR26,93,WR41,"J Addison"
+N,"Jaylen Waddle",MIA,WR,51,WR27,59,WR30,"J Waddle"
+Y,"Tyler Warren",IND,TE,52,TE4,99,TE11,
+N,"DJ Moore",CHI,WR,53,WR28,46,WR22,"D Moore"
+Y,"RJ Harvey",DEN,RB,54,RB16,61,RB23,
+N,"George Kittle",SF,TE,55,TE5,30,TE3,"G Kittle"
+N,"Christian McCaffrey",SF,RB,56,RB17,9,RB4,"C McCaffrey"
+N,"T.J. Hockenson",MIN,TE,57,TE6,68,TE5,"T.J. Hockenson"
+N,"George Pickens",DAL,WR,58,WR29,56,WR28,"G Pickens"
+N,"Derrick Henry",BAL,RB,59,RB18,11,RB5,"D Henry"
+N,"Terry McLaurin",WAS,WR,60,WR30,41,WR19,"T McLaurin"
+N,"Chris Olave",NO,WR,61,WR31,69,WR32,"C Olave"
+N,"Justin Herbert",LAC,QB,62,QB7,100,QB13,"J Herbert"
+Y,"Kaleb Johnson",PIT,RB,63,RB19,78,RB28,
+Y,"Colston Loveland",CHI,TE,64,TE7,126,TE15,
+N,"Jerry Jeudy",CLE,WR,65,WR32,75,WR35,"J Jeudy"
+N,"Bo Nix",DEN,QB,66,QB8,73,QB8,"B Nix"
+N,"Ricky Pearsall",SF,WR,67,WR33,74,WR34,"R Pearsall"
+N,"Drake Maye",NE,QB,68,QB9,101,QB14,"D Maye"
+N,"C.J. Stroud",HOU,QB,69,QB10,120,QB20,"C.J. Stroud"
+Y,"Matthew Golden",GB,WR,70,WR34,95,WR42,
+N,"Davante Adams",LAR,WR,71,WR35,37,WR17,"D Adams"
+Y,"Quinshon Judkins",CLE,RB,72,RB20,139,RB49,
+N,"Chuba Hubbard",CAR,RB,73,RB21,49,RB19,"C Hubbard"
+N,"Tucker Kraft",GB,TE,74,TE8,96,TE10,"T Kraft"
+N,"Caleb Williams",CHI,QB,75,QB11,104,QB15,"C Williams"
+N,"Mike Evans",TB,WR,76,WR36,32,WR14,"M Evans"
+Y,"David Njoku",CLE,TE,77,TE9,87,TE8,
+N,"Tyreek Hill",MIA,WR,78,WR37,34,WR16,"T Hill"
+N,"Mark Andrews",BAL,TE,79,TE10,81,TE7,"M Andrews"
+N,"David Montgomery",DET,RB,80,RB22,62,RB24,"D Montgomery"
+N,"Alvin Kamara",NO,RB,81,RB23,42,RB16,"A Kamara"
+Y,"Jayden Higgins",HOU,WR,82,WR38,153,WR59,
+N,"Courtland Sutton",DEN,WR,83,WR39,44,WR20,"C Sutton"
+N,"Tony Pollard",TEN,RB,84,RB24,57,RB21,"T Pollard"
+N,"Josh Downs",IND,WR,85,WR40,106,WR45,"J Downs"
+Y,"Dalton Kincaid",BUF,TE,86,TE11,122,TE13,
+N,"Kyler Murray",ARI,QB,87,QB12,82,QB9,"K Murray"
+N,"Jordan Love",GB,QB,88,QB13,115,QB17,"J Love"
+N,"Brandon Aiyuk",SF,WR,89,WR41,134,WR54,"B Aiyuk"
+N,"D'Andre Swift",CHI,RB,90,RB25,60,RB22,"D'Andre Swift"
+Y,"Luther Burden III",CHI,WR,91,WR42,150,WR58,
+N,"Brock Purdy",SF,QB,92,QB14,92,QB11,"B Purdy"
+N,"Isiah Pacheco",KC,RB,93,RB26,63,RB25,"I Pacheco"
+N,"Chris Godwin Jr.",TB,WR,94,WR43,112,WR48,"C Godwin"
+Y,"Jayden Reed",GB,WR,95,WR44,107,WR46,
+N,"Evan Engram",DEN,TE,96,TE12,90,TE9,"E Engram"
+N,"Calvin Ridley",TEN,WR,97,WR45,55,WR27,"C Ridley"
+Y,"Khalil Shakir",BUF,WR,98,WR46,103,WR44,
+N,"Michael Pittman Jr.",IND,WR,99,WR47,109,WR47,"M Pittman"
+N,"James Conner",ARI,RB,100,RB27,50,RB20,"J Conner"
+N,"Baker Mayfield",TB,QB,101,QB15,70,QB7,"B Mayfield"
+Y,"Trevor Lawrence",JAC,QB,102,QB16,116,QB18,
+Y,"Tre' Harris",LAC,WR,103,WR48,169,WR68,
+Y,"Tyrone Tracy Jr.",NYG,RB,104,RB28,72,RB27,
+Y,"Jakobi Meyers",LV,WR,105,WR49,85,WR39,
+N,"Keon Coleman",BUF,WR,106,WR50,121,WR50,"K Coleman"
+N,"Jauan Jennings",SF,WR,107,WR51,97,WR43,"J Jennings"
+N,"Aaron Jones Sr.",MIN,RB,108,RB29,65,RB26,"A Jones"
+Y,"Kyle Pitts Sr.",ATL,TE,109,TE13,138,TE16,
+Y,"Cam Skattebo",NYG,RB,110,RB30,117,RB39,
+N,"Travis Kelce",KC,TE,111,TE14,79,TE6,"T Kelce"
+Y,"J.J. McCarthy",MIN,QB,112,QB17,119,QB19,
+N,"Dak Prescott",DAL,QB,113,QB18,84,QB10,"D Prescott"
+Y,"Deebo Samuel Sr.",WAS,WR,114,WR52,89,WR40,
+N,"Trey Benson",ARI,RB,115,RB31,131,RB44,"T Benson"
+N,"Zach Charbonnet",SEA,RB,116,RB32,91,RB32,"Z Charbonnet"
+N,"Stefon Diggs",NE,WR,117,WR53,83,WR38,"S Diggs"
+Y,"Mason Taylor",NYJ,TE,118,TE15,199,TE26,
+N,"Jared Goff",DET,QB,119,QB19,108,QB16,"J Goff"
+N,"Isaiah Likely",BAL,TE,120,TE16,174,TE22,"I Likely"
+N,"Travis Etienne Jr.",JAC,RB,121,RB33,88,RB31,"T Etienne"
+Y,"Dallas Goedert",PHI,TE,122,TE17,125,TE14,
+N,"Darnell Mooney",ATL,WR,123,WR54,123,WR51,"D Mooney"
+Y,"Bhayshul Tuten",JAC,RB,124,RB34,143,RB51,
+Y,"Jake Ferguson",DAL,TE,125,TE18,118,TE12,
+Y,"Jacory Croskey-Merritt",WAS,RB,126,RB35,105,RB35,
+N,"Jaylen Warren",PIT,RB,127,RB36,80,RB29,"J Warren"
+Y,"Elijah Arroyo",SEA,TE,128,TE19,235,TE29,
+N,"Rashid Shaheed",NO,WR,129,WR55,127,WR52,"R Shaheed"
+Y,"Cam Ward",TEN,QB,130,QB20,168,QB26,
+Y,"Marvin Mims Jr.",DEN,WR,131,WR56,145,WR56,
+Y,"Jordan Mason",MIN,RB,132,RB37,86,RB30,
+Y,"Cedric Tillman",CLE,WR,133,WR57,147,WR57,
+N,"Michael Penix Jr.",ATL,QB,134,QB21,152,QB23,"M Penix Jr."
+N,"Joe Mixon",HOU,RB,135,RB38,135,RB46,"J Mixon"
+Y,"Jaylin Noel",HOU,WR,136,WR58,230,WR79,
+N,"Cooper Kupp",SEA,WR,137,WR59,114,WR49,"C Kupp"
+Y,"Jack Bech",LV,WR,138,WR60,233,WR80,
+Y,"Terrance Ferguson",LAR,TE,139,TE20,302,TE36,
+Y,"Kyle Williams",NE,WR,140,WR61,165,WR66,
+N,"Justin Fields",NYJ,QB,141,QB22,94,QB12,"J Fields"
+N,"Najee Harris",LAC,RB,142,RB39,128,RB41,"N Harris"
+Y,"Bryce Young",CAR,QB,143,QB23,149,QB22,
+Y,"Rashod Bateman",BAL,WR,144,WR62,140,WR55,
+Y,"Jalen McMillan",TB,WR,145,WR63,249,WR85,
+N,"Christian Kirk",HOU,WR,146,WR64,132,WR53,"C Kirk"
+N,"Braelon Allen",NYJ,RB,147,RB40,124,RB40,"B Allen"
+N,"Rhamondre Stevenson",NE,RB,148,RB41,111,RB37,"R Stevenson"
+N,"Tank Bigsby",JAC,RB,149,RB42,110,RB36,"T Bigsby"
+N,"Xavier Legette",CAR,WR,150,WR65,171,WR69,"X Legette"
+Y,"Javonte Williams",DAL,RB,151,RB43,98,RB33,
+Y,"Brenton Strange",JAC,TE,152,TE21,167,TE20,
+Y,"Tua Tagovailoa",MIA,QB,153,QB24,141,QB21,
+Y,"Jaxson Dart",NYG,QB,154,QB25,286,QB35,
+N,"Romeo Doubs",GB,WR,155,WR66,159,WR61,"R Doubs"
+Y,"Jalen Coker",CAR,WR,156,WR67,175,WR70,
+Y,"Elic Ayomanor",TEN,WR,157,WR68,217,WR76,
+Y,"Jonnu Smith",PIT,TE,158,TE22,158,TE19,
+N,"Rachaad White",TB,RB,159,RB44,129,RB42,"R White"
+Y,"Jaydon Blue",DAL,RB,160,RB45,137,RB48,
+Y,"Harold Fannin Jr.",CLE,TE,161,TE23,267,TE33,
+Y,"Dylan Sampson",CLE,RB,162,RB46,148,RB54,
+N,"Brian Robinson Jr.",SF,RB,163,RB47,130,RB43,"B Robinson Jr."
+N,"Wan'Dale Robinson",NYG,WR,164,WR69,162,WR63,"B Robinson"
+Y,"Marquise Brown",KC,WR,165,WR70,163,WR64,
+Y,"Sam Darnold",SEA,QB,166,QB26,172,QB27,
+Y,"Tyjae Spears",TEN,RB,167,RB48,146,RB53,
+Y,"Isaac TeSlaa",DET,WR,168,WR71,265,WR92,
+Y,"Tory Horton",SEA,WR,169,WR72,248,WR84,
+Y,"Hunter Henry",NE,TE,170,TE24,151,TE17,
+N,"J.K. Dobbins",DEN,RB,171,RB49,102,RB34,"J.K. Dobbins"
+Y,"Joshua Palmer",BUF,WR,172,WR73,166,WR67,
+Y,"Pat Freiermuth",PIT,TE,173,TE25,189,TE25,
+Y,"DeMario Douglas",NE,WR,174,WR74,164,WR65,
+Y,"Jalen Royals",KC,WR,175,WR75,253,WR88,
+N,"Ray Davis",BUF,RB,176,RB50,133,RB45,"R Davis"
+N,"Quentin Johnston",LAC,WR,177,WR76,176,WR71,"Q Johnston"
+N,"Cade Otton",TB,TE,178,TE26,184,TE23,"C Otton"
+Y,"Adonai Mitchell",IND,WR,179,WR77,224,WR78,
+Y,"Anthony Richardson Sr.",IND,QB,180,QB27,241,QB30,
+Y,"Pat Bryant",DEN,WR,181,WR78,221,WR77,
+Y,"Geno Smith",LV,QB,182,QB28,155,QB24,
+Y,"Christian Watson",GB,WR,183,WR79,301,WR105,
+Y,"Troy Franklin",DEN,WR,184,WR80,306,WR107,
+Y,"Matthew Stafford",LAR,QB,185,QB29,157,QB25,
+Y,"Ja'Tavion Sanders",CAR,TE,186,TE27,227,TE28,
+Y,"Chig Okonkwo",TEN,TE,187,TE28,173,TE21,
+Y,"Tank Dell",HOU,WR,188,WR81,385,WR137,
+Y,"Keenan Allen",LAC,WR,189,WR82,156,WR60,
+Y,"DJ Giddens",IND,RB,190,RB51,204,RB65,
+Y,"Jarquez Hunter",LAR,RB,191,RB52,244,RB74,
+N,"Tyler Allgeier",ATL,RB,192,RB53,144,RB52,"T Allgeier"
+Y,"Nick Chubb",HOU,RB,193,RB54,136,RB47,
+Y,"Theo Johnson",NYG,TE,194,TE29,266,TE32,
+Y,"Blake Corum",LAR,RB,195,RB55,181,RB60,
+Y,"Ollie Gordon II",MIA,RB,196,RB56,170,RB56,
+Y,"Roman Wilson",PIT,WR,197,WR83,256,WR89,
+Y,"DeAndre Hopkins",BAL,WR,198,WR84,190,WR72,
+Y,"Cole Kmet",CHI,TE,199,TE30,259,TE31,
+Y,"Mike Gesicki",CIN,TE,200,TE31,187,TE24,
+Y,"Rico Dowdle",CAR,RB,201,RB57,160,RB55,
+Y,"Jaylen Wright",MIA,RB,202,RB58,182,RB61,
+Y,"Dont'e Thornton Jr.",LV,WR,203,WR85,263,WR90,
+Y,"Michael Wilson",ARI,WR,204,WR86,214,WR74,
+Y,"Ben Sinnott",WAS,TE,205,TE32,325,TE41,
+Y,"Jerome Ford",CLE,RB,206,RB59,142,RB50,
+Y,"Isaac Guerendo",SF,RB,207,RB60,177,RB57,
+Y,"Dontayvion Wicks",GB,WR,208,WR87,250,WR86,
+Y,"Brashard Smith",KC,RB,209,RB61,245,RB75,
+Y,"Zach Ertz",WAS,TE,210,TE33,154,TE18,
+Y,"MarShawn Lloyd",GB,RB,211,RB62,222,RB70,
+Y,"Daniel Jones",IND,QB,212,QB30,213,QB29,
+Y,"Dalton Schultz",HOU,TE,213,TE34,219,TE27,
+N,"Alec Pierce",IND,WR,214,WR88,197,WR73,"A Pierce"
+Y,"Tahj Brooks",CIN,RB,215,RB63,240,RB73,
+Y,"Woody Marks",HOU,RB,216,RB64,179,RB58,
+Y,"Jonathon Brooks",CAR,RB,217,RB65,423,RB116,
+Y,"Adam Thielen",MIN,WR,218,WR89,161,WR62,
+Y,"Tyler Shough",NO,QB,219,QB31,262,QB34,
+Y,"Roschon Johnson",CHI,RB,220,RB66,180,RB59,
+Y,"Jalen Milroe",SEA,QB,221,QB32,340,QB37,
+Y,"Andrei Iosivas",CIN,WR,222,WR90,234,WR81,
+Y,"Malik Washington",MIA,WR,223,WR91,270,WR93,
+Y,"Oronde Gadsden II",LAC,TE,224,TE35,323,TE40,
+Y,"Kyle Monangai",CHI,RB,225,RB67,194,RB64,
+Y,"Kendre Miller",NO,RB,226,RB68,205,RB66,
+Y,"Austin Ekeler",WAS,RB,227,RB69,113,RB38,
+N,"Will Shipley",PHI,RB,228,RB70,191,RB62,"W Shipley"
+Y,"Darius Slayton",NYG,WR,229,WR92,216,WR75,
+Y,"Elijah Moore",BUF,WR,230,WR93,277,WR96,
+Y,"Kayshon Boutte",NE,WR,231,WR94,278,WR97,
+Y,"Devin Neal",NO,RB,232,RB71,246,RB76,
+Y,"Amari Cooper",LV,WR,233,WR95,287,WR100,
+Y,"Juwan Johnson",NO,TE,234,TE36,236,TE30,
+Y,"Keaton Mitchell",BAL,RB,235,RB72,226,RB71,
+Y,"Tyler Lockett",TEN,WR,236,WR96,239,WR83,
+Y,"Spencer Rattler",NO,QB,237,QB33,257,QB32,
+Y,"Russell Wilson",NYG,QB,238,QB34,243,QB31,
+Y,"Trevor Etienne",CAR,RB,239,RB73,268,RB80,
+Y,"Savion Williams",GB,WR,240,WR97,363,WR128,
+Y,"Jordan James",SF,RB,241,RB74,291,RB87,
+Y,"Michael Mayer",LV,TE,242,TE37,339,TE45,
+Y,"Jaleel McLaughlin",DEN,RB,243,RB75,261,RB79,
+Y,"Isaiah Bond",CLE,WR,244,WR98,351,WR123,
+Y,"Devaughn Vele",NO,WR,245,WR99,264,WR91,
+Y,"Tyler Conklin",LAC,TE,246,TE38,332,TE43,
+Y,"Jordan Whittington",LAR,WR,247,WR100,330,WR113,
+Y,"Aaron Rodgers",PIT,QB,248,QB35,202,QB28,
+Y,"Luke McCaffrey",WAS,WR,249,WR101,300,WR104,
+Y,"Shedeur Sanders",CLE,QB,250,QB36,327,QB36,
+Y,"Noah Fant",CIN,TE,251,TE39,310,TE37,
+Y,"Miles Sanders",DAL,RB,252,RB76,238,RB72,
+Y,"Calvin Austin III",PIT,WR,253,WR102,237,WR82,
+Y,"Nick Westbrook-Ikhine",MIA,WR,254,WR103,281,WR98,
+Y,"Tyler Higbee",LAR,TE,255,TE40,322,TE39,
+Y,"Brandon Aubrey",DAL,K,256,K1,196,K1,
+Y,"Diontae Johnson",FA,WR,257,WR104,311,WR109,
+Y,"Pittsburgh Steelers",PIT,DST,258,DST1,185,DST3,
+Y,"Tutu Atwell",LAR,WR,259,WR105,319,WR112,
+Y,"Dyami Brown",JAC,WR,260,WR106,251,WR87,
+Y,"Tai Felton",MIN,WR,261,WR107,352,WR124,
+N,"Philadelphia Eagles",PHI,DST,262,DST2,183,DST2,Eagles
+Y,"Isaiah Davis",NYJ,RB,263,RB77,285,RB86,
+Y,"Chris Rodriguez Jr.",WAS,RB,264,RB78,192,RB63,
+Y,"Gunnar Helm",TEN,TE,265,TE41,361,TE48,
+Y,"Noah Gray",KC,TE,266,TE42,280,TE34,
+Y,"Denver Broncos",DEN,DST,267,DST3,178,DST1,
+Y,"Jalen Tolbert",DAL,WR,268,WR108,274,WR95,
+Y,"Harrison Butker",KC,K,269,K2,225,K8,
+Y,"Tre Tucker",LV,WR,270,WR109,283,WR99,
+Y,"KeAndre Lambert-Smith",LAC,WR,271,WR110,348,WR120,
+Y,"Brandin Cooks",NO,WR,272,WR111,273,WR94,
+Y,"Parker Washington",JAC,WR,273,WR112,292,WR102,
+Y,"Los Angeles Rams",LAR,DST,274,DST4,208,DST11,
+N,"Antonio Gibson",NE,RB,275,RB79,282,RB85,"A Gibson"
+Y,"Houston Texans",HOU,DST,276,DST5,193,DST6,
+Y,"Dameon Pierce",HOU,RB,277,RB80,211,RB69,
+Y,"AJ Barner",SEA,TE,278,TE43,336,TE44,
+Y,"Ja'Lynn Polk",NE,WR,279,WR113,,,
+Y,"Minnesota Vikings",MIN,DST,280,DST6,188,DST5,
+Y,"Devin Singletary",NYG,RB,281,RB81,275,RB83,
+Y,"Kareem Hunt",KC,RB,282,RB82,207,RB67,
+Y,"Jermaine Burton",CIN,WR,283,WR114,309,WR108,
+Y,"Luke Musgrave",GB,TE,284,TE44,354,TE47,
+Y,"Jaylin Lane",WAS,WR,285,WR115,349,WR121,
+Y,"Will Reichard",MIN,K,286,K3,298,K17,
+Y,"Damien Martinez",SEA,RB,287,RB83,324,RB98,
+Y,"Jake Moody",SF,K,288,K4,358,K22,
+Y,"Jahan Dotson",PHI,WR,289,WR116,369,WR130,
+Y,"Audric Estime",PHI,RB,290,RB84,314,RB93,
+Y,"Javon Baker",PHI,WR,291,WR117,478,WR161,
+Y,"Cameron Dicker",LAC,K,292,K5,201,K2,
+Y,"Elijah Mitchell",KC,RB,293,RB85,271,RB81,
+Y,"Matt Gay",WAS,K,294,K6,252,K12,
+Y,"Justice Hill",BAL,RB,295,RB86,209,RB68,
+Y,"Younghoe Koo",ATL,K,296,K7,255,K13,
+Y,"Kenneth Gainwell",PIT,RB,297,RB87,272,RB82,
+Y,"Sean Tucker",TB,RB,298,RB88,247,RB77,
+Y,"Chimere Dike",TEN,WR,299,WR118,355,WR125,
+Y,"Chris Boswell",PIT,K,300,K8,218,K6,
+Y,"Joe Flacco",CLE,QB,301,QB37,260,QB33,
+Y,"Blake Grupe",NO,K,302,K9,433,K28,
+Y,"Joshua Karty",LAR,K,303,K10,279,K14,
+Y,"Buffalo Bills",BUF,DST,304,DST7,195,DST7,
+Y,"Jason Sanders",MIA,K,305,K11,284,K15,
+Y,"Dallas Cowboys",DAL,DST,306,DST8,269,DST17,
+Y,"Curtis Samuel",BUF,WR,307,WR119,360,WR127,
+Y,"Tyler Bass",BUF,K,308,K12,232,K10,
+Y,"Kirk Cousins",ATL,QB,309,QB38,356,QB38,
+Y,"Arizona Cardinals",ARI,DST,310,DST9,307,DST21,
+Y,"Taysom Hill",NO,TE,311,TE45,317,TE38,
+Y,"Miami Dolphins",MIA,DST,312,DST10,335,DST22,
+Y,"Green Bay Packers",GB,DST,313,DST11,212,DST12,
+Y,"Chicago Bears",CHI,DST,314,DST12,288,DST18,
+Y,"Los Angeles Chargers",LAC,DST,315,DST13,223,DST13,
+Y,"Cade Stover",HOU,TE,316,TE46,375,TE51,
+Y,"Brandon McManus",GB,K,317,K13,344,K21,
+Y,"Jake Elliott",PHI,K,318,K14,242,K11,
+Y,"Ka'imi Fairbairn",HOU,K,319,K15,215,K5,
+Y,"Evan McPherson",CIN,K,320,K16,228,K9,
+Y,"Justin Tucker",FA,K,321,K17,378,K23,
+Y,"Thomas Fidone II",NYG,TE,322,TE47,491,TE73,
+Y,"New England Patriots",NE,DST,323,DST14,304,DST20,
+Y,"Daniel Carlson",LV,K,324,K18,297,K16,
+Y,"Wil Lutz",DEN,K,325,K19,210,K4,
+Y,"Xavier Restrepo",TEN,WR,326,WR120,305,WR106,
+Y,"Washington Commanders",WAS,DST,327,DST15,359,DST24,
+Y,"Ty Johnson",BUF,RB,328,RB89,276,RB84,
+Y,"Kimani Vidal",LAC,RB,329,RB90,312,RB92,
+Y,"Raheem Mostert",LV,RB,330,RB91,254,RB78,
+Y,"Baltimore Ravens",BAL,DST,331,DST16,186,DST4,
+Y,"Jalin Hyatt",NYG,WR,332,WR121,420,WR148,
+Y,"Chris Brooks",GB,RB,333,RB92,296,RB89,
+Y,"Detroit Lions",DET,DST,334,DST17,200,DST9,
+Y,"Darren Waller",MIA,TE,335,TE48,290,TE35,
+Y,"Kansas City Chiefs",KC,DST,336,DST18,198,DST8,
+Y,"Malachi Corley",CLE,WR,337,WR122,450,WR156,
+Y,"Dillon Gabriel",CLE,QB,338,QB39,373,QB40,
+Y,"Cam Little",JAC,K,339,K20,341,K20,
+Y,"Jalen Nailor",MIN,WR,340,WR123,289,WR101,
+Y,"Seattle Seahawks",SEA,DST,341,DST19,206,DST10,
+Y,"Josh Reynolds",NYJ,WR,342,WR124,331,WR114,
+Y,"Jake Bates",DET,K,343,K21,203,K3,
+Y,"Gabe Davis",FA,WR,344,WR125,346,WR119,
+Y,"Will Howard",PIT,QB,345,QB40,503,QB67,
+Y,"New Orleans Saints",NO,DST,346,DST20,435,DST31,
+Y,"John Metchie III",PHI,WR,347,WR126,342,WR117,
+Y,"Atlanta Falcons",ATL,DST,348,DST21,390,DST26,
+Y,"LeQuint Allen Jr.",JAC,RB,349,RB93,364,RB103,
+Y,"Tez Johnson",TB,WR,350,WR127,315,WR111,
+Y,"Noah Brown",WAS,WR,351,WR128,333,WR115,
+Y,"A.J. Dillon",PHI,RB,352,RB94,329,RB100,
+Y,"Will Dissly",LAC,TE,353,TE49,328,TE42,
+Y,"Jameis Winston",NYG,QB,354,QB41,366,QB39,
+Y,"Zamir White",LV,RB,355,RB95,308,RB91,
+Y,"Chase McLaughlin",TB,K,356,K22,220,K7,
+Y,"Devontez Walker",BAL,WR,357,WR129,406,WR141,
+Y,"Dawson Knox",BUF,TE,358,TE50,347,TE46,
+Y,"Olamide Zaccheaus",CHI,WR,359,WR130,350,WR122,
+Y,"Darnell Washington",PIT,TE,360,TE51,419,TE60,
+Y,"Will Levis",TEN,QB,361,QB42,,,
+Y,"Erick All Jr.",CIN,TE,362,TE52,,,
+Y,"KaVontae Turpin",DAL,WR,363,WR131,337,WR116,
+Y,"Jordan Watkins",SF,WR,364,WR132,412,WR144,
+Y,"New York Jets",NYJ,DST,365,DST22,229,DST14,
+Y,"Ricky White III",SEA,WR,366,WR133,506,WR167,
+Y,"Zack Moss",FA,RB,367,RB96,345,RB101,
+Y,"Cam Akers",FA,RB,368,RB97,377,RB106,
+Y,"Khalil Herbert",FA,RB,369,RB98,318,RB95,
+Y,"Arian Smith",NYJ,WR,370,WR134,402,WR139,
+Y,"Ray-Ray McCloud III",ATL,WR,371,WR135,313,WR110,
+Y,"Raheim Sanders",CLE,RB,372,RB99,326,RB99,
+Y,"Alexander Mattison",MIA,RB,373,RB100,,,
+Y,"Demarcus Robinson",SF,WR,374,WR136,343,WR118,
+Y,"Sincere McCormick",SF,RB,375,RB101,321,RB97,
+Y,"Rasheen Ali",BAL,RB,376,RB102,486,RB129,
+Y,"Kalel Mullings",TEN,RB,377,RB103,353,RB102,
+Y,"Efton Chism III",NE,WR,378,WR137,405,WR140,
+Y,"Ty Chandler",MIN,RB,379,RB104,303,RB90,
+Y,"Austin Hooper",NE,TE,380,TE53,362,TE49,
+Y,"Jamari Thrash",CLE,WR,381,WR138,379,WR134,
+Y,"Mason Rudolph",PIT,QB,382,QB43,411,QB45,
+Y,"Kenny Pickett",LV,QB,383,QB44,395,QB44,
+Y,"Aidan O'Connell",LV,QB,384,QB45,448,QB50,
+Y,"Jacob Cowing",SF,WR,385,WR139,392,WR138,
+Y,"Van Jefferson",TEN,WR,386,WR140,371,WR132,
+Y,"Deshaun Watson",CLE,QB,387,QB46,458,QB53,
+Y,"Greg Zuerlein",FA,K,388,K23,,,
+Y,"Mac Jones",SF,QB,389,QB47,490,QB61,
+Y,"Dustin Hopkins",FA,K,390,K24,,,
+Y,"Emanuel Wilson",GB,RB,391,RB105,293,RB88,
+Y,"Sam Howell",PHI,QB,392,QB48,443,QB48,
+Y,"San Francisco 49ers",SF,DST,393,DST23,231,DST15,
+Y,"Gardner Minshew II",KC,QB,394,QB49,455,QB52,
+Y,"Joe Milton III",DAL,QB,395,QB50,393,QB43,
+Y,"Quinn Ewers",MIA,QB,396,QB51,502,QB66,
+Y,"Zay Jones",ARI,WR,397,WR141,372,WR133,
+Y,"Marcus Mariota",WAS,QB,398,QB52,444,QB49,
+Y,"Kendrick Bourne",FA,WR,399,WR142,442,WR154,
+Y,"Samaje Perine",CIN,RB,400,RB106,320,RB96,
+Y,"Luke Schoonmaker",DAL,TE,401,TE54,381,TE52,
+Y,"Mack Hollins",NE,WR,402,WR143,367,WR129,
+Y,"Gavin Bartholomew",MIN,TE,403,TE55,,,
+Y,"Chad Ryland",ARI,K,404,K25,399,K24,
+Y,"Elijah Higgins",ARI,TE,405,TE56,415,TE59,
+Y,"Cleveland Browns",CLE,DST,406,DST24,295,DST19,
+Y,"Cairo Santos",CHI,K,407,K26,400,K25,
+Y,"Phil Mafah",DAL,RB,408,RB107,316,RB94,
+Y,"Jake Bobo",SEA,WR,409,WR144,461,WR158,
+Y,"Allen Lazard",NYJ,WR,410,WR145,370,WR131,
+Y,"Tyrod Taylor",NYJ,QB,411,QB53,391,QB42,
+Y,"Jason Myers",SEA,K,412,K27,334,K19,
+Y,"Jimmy Garoppolo",LAR,QB,413,QB54,376,QB41,
+Y,"Cincinnati Bengals",CIN,DST,414,DST25,404,DST27,
+Y,"Donovan Edwards",WAS,RB,415,RB108,394,RB109,
+Y,"Dylan Laube",LV,RB,416,RB109,523,RB137,
+Y,"Tyquan Thornton",KC,WR,417,WR146,429,WR149,
+Y,"Tim Patrick",JAC,WR,418,WR147,294,WR103,
+Y,"Daniel Bellinger",NYG,TE,419,TE57,464,TE64,
+Y,"Las Vegas Raiders",LV,DST,420,DST26,431,DST29,
+Y,"Trey Sermon",PIT,RB,421,RB110,397,RB110,
+Y,"New York Giants",NYG,DST,422,DST27,338,DST23,
+Y,"Gus Edwards",FA,RB,423,RB111,365,RB104,
+Y,"Jonathan Mingo",DAL,WR,424,WR148,466,WR159,
+Y,"Mitchell Evans",CAR,TE,425,TE58,407,TE58,
+Y,"Tommy Tremble",CAR,TE,426,TE59,374,TE50,
+Y,"Indianapolis Colts",IND,DST,427,DST28,387,DST25,
+Y,"Tyler Loop",BAL,K,428,K28,299,K18,
+Y,"Treylon Burks",TEN,WR,429,WR149,,,
+Y,"George Holani",SEA,RB,430,RB112,427,RB118,
+Y,"Michael Carter",ARI,RB,431,RB113,473,RB125,
+Y,"Jake Browning",CIN,QB,432,QB55,440,QB47,
+Y,"Kalif Raymond",DET,WR,433,WR150,414,WR145,
+Y,"Mitchell Trubisky",BUF,QB,434,QB56,530,QB69,
+Y,"Emari Demercado",ARI,RB,435,RB114,368,RB105,
+Y,"Tampa Bay Buccaneers",TB,DST,436,DST29,258,DST16,
+Y,"Cooper Rush",BAL,QB,437,QB57,454,QB51,
+Y,"Jacksonville Jaguars",JAC,DST,438,DST30,425,DST28,
+Y,"Tennessee Titans",TEN,DST,439,DST31,432,DST30,
+Y,"Grant Calcaterra",PHI,TE,440,TE60,396,TE56,
+Y,"Greg Dortch",ARI,WR,441,WR151,380,WR135,
+Y,"Tyler Badie",DEN,RB,442,RB115,436,RB120,
+Y,"Zach Wilson",MIA,QB,443,QB58,459,QB54,
+Y,"Israel Abanikanda",GB,RB,444,RB116,577,RB147,
+Y,"Carson Wentz",MIN,QB,445,QB59,534,QB70,
+Y,"Malik Willis",GB,QB,446,QB60,424,QB46,
+Y,"Jarrett Stidham",DEN,QB,447,QB61,494,QB62,
+Y,"Foster Moreau",NO,TE,448,TE61,382,TE53,
+Y,"Adam Trautman",DEN,TE,449,TE62,462,TE63,
+Y,"Marquez Valdes-Scantling",SF,WR,450,WR152,357,WR126,
+Y,"Dare Ogunbowale",HOU,RB,451,RB117,417,RB114,
+Y,"Drew Lock",SEA,QB,452,QB62,472,QB58,
+Y,"Colby Parkinson",LAR,TE,453,TE63,476,TE68,
+Y,"Trey Lance",LAC,QB,454,QB63,508,QB68,
+Y,"Joshua Dobbs",NE,QB,455,QB64,537,QB72,
+Y,"JuJu Smith-Schuster",KC,WR,,,383,WR136,
+Y,"Josh Oliver",MIN,TE,,,384,TE54,
+Y,"Kyle Juszczyk",SF,RB,,,386,RB107,
+Y,"Jeremy Ruckert",NYJ,TE,,,388,TE55,
+Y,"Craig Reynolds",DET,RB,,,389,RB108,
+Y,"Jeremy McNichols",WAS,RB,,,398,RB111,
+Y,"Julius Chestnut",TEN,RB,,,401,RB112,
+Y,"Stone Smartt",NYJ,TE,,,403,TE57,
+Y,"Tyler Goodson",IND,RB,,,408,RB113,
+Y,"Antwane Wells Jr.",FA,WR,,,409,WR142,
+Y,"Hunter Renfrow",FA,WR,,,410,WR143,
+Y,"Eddy Pineiro",FA,K,,,413,K26,
+Y,"Xavier Hutchinson",HOU,WR,,,416,WR146,
+Y,"Theo Wease Jr.",MIA,WR,,,418,WR147,
+Y,"Matt Prater",FA,K,,,421,K27,
+Y,"Clyde Edwards-Helaire",KC,RB,,,422,RB115,
+Y,"Ja'Quinden Jackson",JAC,RB,,,426,RB117,
+Y,"Hassan Haskins",LAC,RB,,,428,RB119,
+Y,"Robert Woods",PIT,WR,,,430,WR150,
+Y,"Jimmy Horn Jr.",CAR,WR,,,434,WR151,
+Y,"KhaDarel Hodge",ATL,WR,,,437,WR152,
+Y,"Greg Dulcich",MIA,TE,,,438,TE61,
+Y,"Skyy Moore",SF,WR,,,439,WR153,
+Y,"Carolina Panthers",CAR,DST,,,441,DST32,
+Y,"D'Ernest Johnson",FA,RB,,,445,RB121,
+Y,"Graham Gano",NYG,K,,,446,K29,
+Y,"Sterling Shepard",TB,WR,,,447,WR155,
+Y,"Alec Ingold",MIA,RB,,,449,RB122,
+Y,"Pierre Strong Jr.",FA,RB,,,451,RB123,
+Y,"Casey Washington",ATL,WR,,,452,WR157,
+Y,"Spencer Shrader",IND,K,,,453,K30,
+Y,"Andy Borregales",NE,K,,,456,K31,
+Y,"John Bates",WAS,TE,,,457,TE62,
+Y,"Jacoby Brissett",ARI,QB,,,460,QB55,
+Y,"Tanner McKee",PHI,QB,,,463,QB56,
+Y,"Luke Farrell",SF,TE,,,465,TE65,
+Y,"Tanner Hudson",CIN,TE,,,467,TE66,
+Y,"Julian Hill",MIA,TE,,,468,TE67,
+Y,"Tyson Bagent",CHI,QB,,,469,QB57,
+Y,"Tyler Johnson",NYJ,WR,,,470,WR160,
+Y,"Carson Steele",KC,RB,,,471,RB124,
+Y,"Cordarrelle Patterson",FA,RB,,,474,RB126,
+Y,"Sione Vaki",DET,RB,,,475,RB127,
+Y,"Andy Dalton",CAR,QB,,,477,QB59,
+Y,"Payne Durham",TB,TE,,,479,TE69,
+Y,"Jeff Wilson Jr.",MIA,RB,,,480,RB128,
+Y,"Kyle Trask",FA,QB,,,481,QB60,
+Y,"Charlie Kolar",BAL,TE,,,482,TE70,
+Y,"Matthew Wright",FA,K,,,483,K32,
+Y,"Harrison Bryant",HOU,TE,,,484,TE71,
+Y,"Mitchell Tinsley",CIN,WR,,,485,WR162,
+Y,"Chris Tyree",NO,RB,,,487,RB130,
+Y,"Charlie Woerner",ATL,TE,,,488,TE72,
+Y,"Derius Davis",LAC,WR,,,489,WR163,
+Y,"Brock Wright",DET,TE,,,492,TE74,
+Y,"Joey Slye",TEN,K,,,493,K33,
+Y,"Johnny Mundt",JAC,TE,,,495,TE75,
+Y,"Hendon Hooker",CAR,QB,,,496,QB63,
+Y,"Jake Haener",NO,QB,,,497,QB64,
+Y,"Robert Tonyan",KC,TE,,,498,TE76,
+Y,"Zavier Scott",MIN,WR,,,499,WR164,
+Y,"Nick Mullens",JAC,QB,,,500,QB65,
+Y,"Marcus Yarns",FA,RB,,,501,RB131,
+Y,"David Moore",CAR,WR,,,504,WR165,
+Y,"Xavier Gipson",NYJ,WR,,,505,WR166,
+Y,"Trent Sherfield Sr.",DEN,WR,,,507,WR168,
+Y,"Tyrell Shavers",BUF,WR,,,509,WR169,
+Y,"Scotty Miller",PIT,WR,,,510,WR170,
+Y,"Drew Sample",CIN,TE,,,511,TE77,
+Y,"Andrew Beck",NYJ,TE,,,512,TE78,
+Y,"Ian Thomas",LV,TE,,,513,TE79,
+Y,"C.J. Ham",MIN,RB,,,514,RB132,
+Y,"Michael Burton",DEN,RB,,,515,RB133,
+Y,"Josh Whyle",GB,TE,,,516,TE80,
+Y,"DeeJay Dallas",CAR,RB,,,517,RB134,
+Y,"Hunter Luepke",DAL,RB,,,518,RB135,
+Y,"Eric Gray",NYG,RB,,,519,RB136,
+Y,"Nick Nash",ATL,WR,,,520,WR171,
+Y,"Bub Means",NO,WR,,,521,WR172,
+Y,"David Bell",CLE,WR,,,522,WR173,
+Y,"Konata Mumpfield",LAR,WR,,,524,WR174,
+Y,"Tommy Mellott",FA,WR,,,525,WR175,
+Y,"Ashton Dulin",IND,WR,,,526,WR176,
+Y,"Russell Gage Jr.",SF,WR,,,527,WR177,
+Y,"Ainias Smith",CAR,WR,,,528,WR178,
+Y,"Carlos Washington Jr.",ATL,RB,,,529,RB138,
+Y,"Patrick Ricard",BAL,RB,,,531,RB139,
+Y,"DJ Chark Jr.",FA,WR,,,532,WR179,
+Y,"Michael Gallup",FA,WR,,,533,WR180,
+Y,"Kyle Allen",DET,QB,,,535,QB71,
+Y,"Beaux Collins",NYG,WR,,,536,WR181,
+Y,"Kene Nwangwu",NYJ,RB,,,538,RB140,
+Y,"Tylan Wallace",BAL,WR,,,539,WR182,
+Y,"Mo Alie-Cox",IND,TE,,,540,TE81,
+Y,"Davis Mills",HOU,QB,,,541,QB73,
+Y,"Robbie Ouzts",SEA,TE,,,542,TE82,
+Y,"Charlie Jones",CIN,WR,,,543,WR183,
+Y,"Simi Fehoko",ARI,WR,,,544,WR184,
+Y,"Lucky Jackson",MIN,WR,,,545,WR185,
+Y,"Mecole Hardman Jr.",GB,WR,,,546,WR186,
+Y,"Hunter Long",JAC,TE,,,547,TE83,
+Y,"K.J. Osborn",FA,WR,,,548,WR187,
+Y,"John Stephens Jr.",DAL,WR,,,549,WR188,
+Y,"Ben Skowronek",PIT,WR,,,550,WR189,
+Y,"Taylor Heinicke",FA,QB,,,551,QB74,
+Y,"Jalen Brooks",DAL,WR,,,552,WR190,
+Y,"Ross Dwelley",FA,TE,,,553,TE84,
+Y,"Travis Homer",CHI,RB,,,554,RB141,
+Y,"Corey Kiner",SF,RB,,,555,RB142,
+Y,"Lucas Krull",DEN,TE,,,556,TE85,
+Y,"Michael Bennett",FA,WR,,,557,WR191,
+Y,"Brevyn Spann-Ford",DAL,TE,,,558,TE86,
+Y,"Durham Smythe",CHI,TE,,,559,TE87,
+Y,"Terrace Marshall Jr.",FA,WR,,,560,WR192,
+Y,"Jackson Hawes",BUF,TE,,,561,TE88,
+Y,"Frank Gore Jr.",BUF,RB,,,562,RB143,
+Y,"Jelani Woods",NYJ,TE,,,563,TE89,
+Y,"Jared Wiley",KC,TE,,,564,TE90,
+Y,"Luke Lachey",HOU,TE,,,565,TE91,
+Y,"Cole Turner",FA,TE,,,566,TE92,
+Y,"Michael Woods II",FA,WR,,,567,WR193,
+Y,"Troy Hairston II",FA,RB,,,568,RB144,
+Y,"Eric Saubert",SEA,TE,,,569,TE93,
+Y,"Teagan Quitoriano",ATL,TE,,,570,TE94,
+Y,"Keaontay Ingram",KC,RB,,,571,RB145,
+Y,"Deuce Vaughn",FA,RB,,,572,RB146,
+Y,"Kylen Granson",PHI,TE,,,573,TE95,
+Y,"Velus Jones Jr.",NO,WR,,,574,WR194,
+Y,"Pharaoh Brown",FA,TE,,,575,TE96,
+Y,"DeAndre Carter",CLE,WR,,,576,WR195,
+Y,"Jawhar Jordan",HOU,RB,,,578,RB148,
+Y,"Ronnie Rivers",LAR,RB,,,579,RB149,
+Y,"Tim Jones",MIN,WR,,,580,WR196,
+Y,"Jakob Johnson",HOU,RB,,,581,RB150,
+Y,"Bo Melton",GB,WR,,,582,WR197,
+N,"J Smith-Njigba"

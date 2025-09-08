@@ -28,13 +28,11 @@ class SyncTeamData extends Command
      */
     public function handle()
     {
-        $teams = Team::all();
-
-        $rows = [];
+        $teams = Team::whereNotNull('espn_id')->get();
 
         $bar = $this->output->createProgressBar($teams->count());
 
-        $teams->each(function ($team) use (&$rows, $bar) {
+        $teams->each(function (Team $team) use ($bar) {
             $bar->advance();
 
             $data = Espn::getTeam($team->espn_id);

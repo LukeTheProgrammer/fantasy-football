@@ -60,6 +60,11 @@ class Team extends Model
         return $this->hasMany(Player::class);
     }
 
+    public function scopeForAbbreviation(Builder $query, string $abbreviation): Builder
+    {
+        return $query->where('abbreviation', '=', $abbreviation);
+    }
+
     /**
      * Get the full team name (location + name).
      */

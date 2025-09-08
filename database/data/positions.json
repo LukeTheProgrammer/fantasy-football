@@ -1,0 +1,74 @@
+[
+  {
+    "abbreviation": "QB",
+    "name": "Quarterback"
+  },
+  {
+    "abbreviation": "WR",
+    "name": "Wide Receiver"
+  },
+  {
+    "abbreviation": "RB",
+    "name": "Running Back"
+  },
+  {
+    "abbreviation": "TE",
+    "name": "Tight End"
+  },
+  {
+    "abbreviation": "K",
+    "name": "Kicker"
+  },
+  {
+    "abbreviation": "DST",
+    "name": "Defense"
+  },
+  {
+    "abbreviation": "C",
+    "name": "Center"
+  },
+  {
+    "abbreviation": "OT",
+    "name": "Offensive Tackle"
+  },
+  {
+    "abbreviation": "G",
+    "name": "Guard"
+  },
+  {
+    "abbreviation": "LB",
+    "name": "Linebacker"
+  },
+  {
+    "abbreviation": "DE",
+    "name": "Defensive End"
+  },
+  {
+    "abbreviation": "S",
+    "name": "Safety"
+  },
+  {
+    "abbreviation": "DT",
+    "name": "Defensive Tackle"
+  },
+  {
+    "abbreviation": "CB",
+    "name": "Cornerback"
+  },
+  {
+    "abbreviation": "LS",
+    "name": "Long Snapper"
+  },
+  {
+    "abbreviation": "PK",
+    "name": "Place kicker"
+  },
+  {
+    "abbreviation": "P",
+    "name": "Punter"
+  },
+  {
+    "abbreviation": "FB",
+    "name": "Fullback"
+  }
+]

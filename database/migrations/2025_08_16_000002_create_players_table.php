@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->integer('espn_id')->nullable();
             $table->foreignId('position_id')->constrained('positions')->cascadeOnDelete();
+            $table->foreignId('team_id')->constrained('teams')->cascadeOnDelete();
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('full_name')->nullable();
+            $table->smallInteger('jersey_number')->nullable();
             $table->string('height')->nullable();
             $table->string('weight')->nullable();
             $table->string('college')->nullable();
@@ -28,6 +31,8 @@ return new class extends Migration
             $table->string('headshot')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique('espn_id');
         });
     }
 

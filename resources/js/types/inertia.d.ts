@@ -1,6 +1,5 @@
 // Type declarations for @inertiajs/react
-import { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { Auth, SharedData } from './index';
+import { Auth } from './index';
 
 declare module '@inertiajs/react' {
   export interface PageProps {
@@ -41,21 +40,25 @@ declare module '@inertiajs/react' {
     reset: (...fields: Array<keyof TForm>) => void;
     clearErrors: (...fields: Array<keyof TForm>) => void;
     isDirty: boolean;
-    submit: (method: 'get' | 'post' | 'put' | 'patch' | 'delete', url: string, options?: {
-      headers?: Record<string, string>;
-      onBefore?: () => boolean | void;
-      onCancelToken?: (cancelToken: any) => void;
-      onCancel?: () => void;
-      onStart?: () => void;
-      onProgress?: (progress: FormProps<TForm>['progress']) => void;
-      onSuccess?: (page: Page) => void | boolean;
-      onError?: (errors: InertiaFormErrors<TForm>) => void;
-      onFinish?: () => void;
-      preserveScroll?: boolean | ((props: Page['props']) => boolean);
-      preserveState?: boolean | ((props: Page['props']) => boolean) | null;
-      resetOnSuccess?: boolean;
-      only?: string[];
-    }) => void;
+    submit: (
+      method: 'get' | 'post' | 'put' | 'patch' | 'delete',
+      url: string,
+      options?: {
+        headers?: Record<string, string>;
+        onBefore?: () => boolean | void;
+        onCancelToken?: (cancelToken: any) => void;
+        onCancel?: () => void;
+        onStart?: () => void;
+        onProgress?: (progress: FormProps<TForm>['progress']) => void;
+        onSuccess?: (page: Page) => void | boolean;
+        onError?: (errors: InertiaFormErrors<TForm>) => void;
+        onFinish?: () => void;
+        preserveScroll?: boolean | ((props: Page['props']) => boolean);
+        preserveState?: boolean | ((props: Page['props']) => boolean) | null;
+        resetOnSuccess?: boolean;
+        only?: string[];
+      },
+    ) => void;
     get: (url: string, options?: Parameters<FormProps<TForm>['submit']>[2]) => void;
     post: (url: string, options?: Parameters<FormProps<TForm>['submit']>[2]) => void;
     put: (url: string, options?: Parameters<FormProps<TForm>['submit']>[2]) => void;
@@ -110,7 +113,7 @@ declare module '@inertiajs/react' {
         onError?: (errors: Record<string, string>) => void;
         onCancel?: () => void;
         onFinish?: () => void;
-      }
+      },
     ) => void;
     reload: (options?: { only?: string[]; data?: Record<string, any>; [key: string]: any }) => void;
     get: (url: string, data?: Record<string, any>, options?: Record<string, any>) => void;

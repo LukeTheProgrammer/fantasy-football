@@ -1,0 +1,362 @@
+{
+    "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/16?lang=en&region=us",
+    "id": "16",
+    "guid": "3db556c9-ed76-a7a5-4ccb-a92fc6db4334",
+    "uid": "s:20~l:28~t:16",
+    "alternateIds": {
+        "sdr": "8817"
+    },
+    "slug": "minnesota-vikings",
+    "location": "Minnesota",
+    "name": "Vikings",
+    "nickname": "Vikings",
+    "abbreviation": "MIN",
+    "displayName": "Minnesota Vikings",
+    "shortDisplayName": "Vikings",
+    "color": "4f2683",
+    "alternateColor": "ffc62f",
+    "isActive": true,
+    "isAllStar": false,
+    "logos": [
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/min.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "default"
+            ],
+            "lastUpdated": "2023-08-24T19:26Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/min.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:53Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/scoreboard\/min.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard"
+            ],
+            "lastUpdated": "2023-08-24T19:27Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500-dark\/scoreboard\/min.png",
+            "width": 500,
+            "height": 500,
+            "alt": "",
+            "rel": [
+                "full",
+                "scoreboard",
+                "dark"
+            ],
+            "lastUpdated": "2024-06-25T18:53Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/3db556c9-ed76-a7a5-4ccb-a92fc6db4334\/logos\/primary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:47Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/3db556c9-ed76-a7a5-4ccb-a92fc6db4334\/logos\/primary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:47Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/3db556c9-ed76-a7a5-4ccb-a92fc6db4334\/logos\/primary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:47Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/3db556c9-ed76-a7a5-4ccb-a92fc6db4334\/logos\/primary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "primary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:47Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/3db556c9-ed76-a7a5-4ccb-a92fc6db4334\/logos\/secondary_logo_on_white_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_white_color"
+            ],
+            "lastUpdated": "2024-12-03T20:47Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/3db556c9-ed76-a7a5-4ccb-a92fc6db4334\/logos\/secondary_logo_on_black_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_black_color"
+            ],
+            "lastUpdated": "2024-12-03T20:47Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/3db556c9-ed76-a7a5-4ccb-a92fc6db4334\/logos\/secondary_logo_on_primary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_primary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:47Z"
+        },
+        {
+            "href": "https:\/\/a.espncdn.com\/guid\/3db556c9-ed76-a7a5-4ccb-a92fc6db4334\/logos\/secondary_logo_on_secondary_color.png",
+            "width": 4096,
+            "height": 4096,
+            "alt": "",
+            "rel": [
+                "full",
+                "secondary_logo_on_secondary_color"
+            ],
+            "lastUpdated": "2024-12-03T20:47Z"
+        }
+    ],
+    "record": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/16\/record?lang=en&region=us"
+    },
+    "oddsRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/0\/teams\/16\/odds-records?lang=en&region=us"
+    },
+    "athletes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/16\/athletes?lang=en&region=us"
+    },
+    "venue": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/venues\/5239?lang=en&region=us",
+        "id": "5239",
+        "guid": "d0b85a2a-5b22-356b-aebc-6aeec6d097c3",
+        "fullName": "U.S. Bank Stadium",
+        "address": {
+            "city": "Minneapolis",
+            "state": "MN",
+            "zipCode": "55415",
+            "country": "USA"
+        },
+        "grass": false,
+        "indoor": true,
+        "images": [
+            {
+                "href": "https:\/\/a.espncdn.com\/i\/venues\/nfl\/day\/interior\/5239.jpg",
+                "width": 2000,
+                "height": 1125,
+                "alt": "",
+                "rel": [
+                    "full",
+                    "day",
+                    "interior"
+                ]
+            }
+        ]
+    },
+    "groups": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/groups\/10?lang=en&region=us"
+    },
+    "ranks": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/16\/ranks?lang=en&region=us"
+    },
+    "statistics": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/16\/statistics?lang=en&region=us"
+    },
+    "leaders": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/16\/leaders?lang=en&region=us"
+    },
+    "links": [
+        {
+            "language": "en-US",
+            "rel": [
+                "clubhouse",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/_\/name\/min\/minnesota-vikings",
+            "text": "Clubhouse",
+            "shortText": "Clubhouse",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "roster",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/roster\/_\/name\/min\/minnesota-vikings",
+            "text": "Roster",
+            "shortText": "Roster",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "stats",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/stats\/_\/name\/min\/minnesota-vikings",
+            "text": "Statistics",
+            "shortText": "Statistics",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "schedule",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/schedule\/_\/name\/min",
+            "text": "Schedule",
+            "shortText": "Schedule",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "photos",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/photos\/_\/name\/min",
+            "text": "photos",
+            "shortText": "photos",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "tickets",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.vividseats.com\/minnesota-vikings-tickets--sports-nfl-football\/performer\/555?wsUser=717",
+            "text": "Tickets",
+            "shortText": "Tickets",
+            "isExternal": true,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "draftpicks",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/draft\/teams\/_\/name\/min\/minnesota-vikings",
+            "text": "Draft Picks",
+            "shortText": "Draft Picks",
+            "isExternal": false,
+            "isPremium": true
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "transactions",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/transactions\/_\/name\/min",
+            "text": "Transactions",
+            "shortText": "Transactions",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "injuries",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/injuries\/_\/name\/min",
+            "text": "Injuries",
+            "shortText": "Injuries",
+            "isExternal": false,
+            "isPremium": false
+        },
+        {
+            "language": "en-US",
+            "rel": [
+                "depthchart",
+                "desktop",
+                "team"
+            ],
+            "href": "https:\/\/www.espn.com\/nfl\/team\/depth\/_\/name\/min",
+            "text": "Depth Chart",
+            "shortText": "Depth Chart",
+            "isExternal": false,
+            "isPremium": false
+        }
+    ],
+    "injuries": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/16\/injuries?lang=en&region=us"
+    },
+    "notes": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/teams\/16\/notes?lang=en&region=us"
+    },
+    "againstTheSpreadRecords": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/types\/1\/teams\/16\/ats?lang=en&region=us"
+    },
+    "franchise": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/franchises\/16?lang=en&region=us"
+    },
+    "depthCharts": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/16\/depthcharts?lang=en&region=us"
+    },
+    "projection": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/16\/projection?lang=en&region=us"
+    },
+    "events": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/16\/events?lang=en&region=us"
+    },
+    "transactions": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/16\/transactions?lang=en&region=us"
+    },
+    "coaches": {
+        "$ref": "http:\/\/sports.core.api.espn.com\/v2\/sports\/football\/leagues\/nfl\/seasons\/2025\/teams\/16\/coaches?lang=en&region=us"
+    }
+}

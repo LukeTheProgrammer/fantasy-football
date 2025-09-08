@@ -33,9 +33,12 @@ class GetAllTeamPlayers extends Command
      */
     public function handle()
     {
-        $teams = Team::all();
+        $teams = Team::whereNotNull('espn_id')->get();
 
-        $teams->each(function ($team) {
+        $c = $teams->count();
+
+        $teams->each(function ($team, $i) use ($c) {
+            $this->info('Pulling ' . $team->name . ' (' . $i . ' of ' . $c . ')');
             $this->call('espn:team-players:get', ['team_id' => $team->espn_id]);
         });
     }

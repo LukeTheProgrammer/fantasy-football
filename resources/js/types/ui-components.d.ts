@@ -22,15 +22,15 @@ declare module '@/components/ui/tabs' {
     children: React.ReactNode;
   }
   export const Tabs: React.ForwardRefExoticComponent<TabsProps>;
-  
+
   export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {}
   export const TabsList: React.ForwardRefExoticComponent<TabsListProps>;
-  
+
   export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     value: string;
   }
   export const TabsTrigger: React.ForwardRefExoticComponent<TabsTriggerProps>;
-  
+
   export interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
     value: string;
   }
@@ -44,27 +44,27 @@ declare module '@/components/ui/use-toast' {
     action?: React.ReactNode;
     variant?: 'default' | 'destructive';
   }
-  
+
   export interface ToastActionElement {
     altText: string;
     action: React.ReactNode;
   }
-  
+
   export interface Toast extends ToastProps {
     id: string;
     open: boolean;
     onOpenChange: (open: boolean) => void;
   }
-  
+
   export interface ToastOptions extends ToastProps {
     duration?: number;
   }
-  
+
   export interface ToastContextValue {
     toast: (props: ToastOptions) => void;
     dismiss: (toastId?: string) => void;
   }
-  
+
   export const useToast: () => {
     toast: (props: ToastOptions) => void;
     dismiss: (toastId?: string) => void;

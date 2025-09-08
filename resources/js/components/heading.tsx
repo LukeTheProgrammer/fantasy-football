@@ -1,8 +1,19 @@
-export default function Heading({ title, description }: { title: string; description?: string }) {
-    return (
-        <div className="mb-8 space-y-0.5">
-            <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
-            {description && <p className="text-sm text-muted-foreground">{description}</p>}
+type HeadingProps = {
+  title: string;
+  description?: string;
+  rightContent?: React.ReactNode;
+};
+
+export default function Heading({ title, description, rightContent }: HeadingProps) {
+  return (
+    <div className="mb-8">
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="mb-2 text-3xl">{title}</h1>
+          <p className="">{description || ''}</p>
         </div>
-    );
+        {rightContent}
+      </div>
+    </div>
+  );
 }
