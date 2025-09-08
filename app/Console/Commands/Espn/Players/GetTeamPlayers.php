@@ -43,7 +43,8 @@ class GetTeamPlayers extends Command
 
     protected function getPlayers(int $teamId, int $pageIndex)
     {
-        $data = Espn::getTeamPlayers($teamId, $pageIndex);
+        $teams = Espn::teams($teamId);
+        $data = $teams->getPlayers($pageIndex);
 
         // $count = Arr::get($data, 'count', 0);
         // $pageIndex = Arr::get($data, 'pageIndex', 0);
