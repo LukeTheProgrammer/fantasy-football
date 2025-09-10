@@ -14,8 +14,8 @@ class TeamRosterEntryData extends BaseData
         public ?int $lineupSlotId = null,
         public ?string $acquisitionType = null,
         public ?string $injuryStatus = null,
-        public ?string $pendingTransactionIds = null,
         public ?string $status = null,
+        public ?array $pendingTransactionIds = null,
 
         #[WithCast(PlayerPoolEntryData::class)]
         public array|PlayerPoolEntryData $playerPoolEntry = [],

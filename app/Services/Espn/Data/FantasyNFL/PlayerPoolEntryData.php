@@ -2,7 +2,8 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
-use App\Services\Espn\Data\FantasyNFL\PlayerData;
+use App\Data\Casts\CollectionCast;
+use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 
 class PlayerPoolEntryData extends BaseData
@@ -12,12 +13,15 @@ class PlayerPoolEntryData extends BaseData
         public ?bool $lineupLocked = null,
         public ?bool $rosterLocked = null,
         public ?bool $tradeLocked = null,
-        public ?int $appliedStatTotal = null,
-        public ?int $keeperValue = null,
-        public ?int $keeperValueFuture = null,
+        public ?float $appliedStatTotal = null,
+        public ?float $draftAuctionValue = null,
+        public ?float $keeperValue = null,
+        public ?float $keeperValueFuture = null,
         public ?int $onTeamId = null,
         public ?string $status = null,
-        public array $ratings = [],
+
+        #[WithCast(CollectionCast::class)]
+        public array|Collection $ratings = [],
 
         #[WithCast(PlayerData::class)]
         public array|PlayerData $player = [],

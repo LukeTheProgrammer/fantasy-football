@@ -2,7 +2,7 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
-use App\Services\Espn\Data\Casts\CollectionCast;
+use App\Data\Casts\CollectionCast;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 
@@ -46,6 +46,9 @@ class ResourceTeamsData extends BaseData
 
         #[WithCast(CollectionCast::class)]
         public array|Collection $record = [],
+
+        #[WithCast(TeamRosterData::class)]
+        public array|TeamRosterData $roster = [],
 
         #[WithCast(StatusData::class)]
         public array|StatusData $status = [],

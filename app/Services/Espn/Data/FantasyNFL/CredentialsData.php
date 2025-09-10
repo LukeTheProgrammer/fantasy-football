@@ -2,7 +2,7 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
-class FantasyNFLCredentialsData extends BaseData
+class CredentialsData extends BaseData
 {
     public function __construct(
         public int $leagueId,

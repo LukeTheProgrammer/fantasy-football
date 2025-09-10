@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Espn\Data\Casts;
+namespace App\Data\Casts;
 
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Casts\Cast;

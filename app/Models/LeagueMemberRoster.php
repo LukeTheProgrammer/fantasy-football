@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class LeagueMemberCredentials extends Model
+class LeagueMemberRoster extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -25,15 +26,23 @@ class LeagueMemberCredentials extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'espn_s2'  => 'encrypted',
-        'espn_swid' => 'encrypted',
+        'added_at'   => 'datetime',
+        'dropped_at' => 'datetime',
     ];
 
     /**
-     * Get the league member that the credentials belong to.
+     * Get the league that the member belongs to.
      */
     public function leagueMember(): BelongsTo
     {
         return $this->belongsTo(LeagueMember::class);
+    }
+
+    /**
+     * Get the user that the member represents.
+     */
+    public function player(): BelongsTo
+    {
+        return $this->belongsTo(Player::class);
     }
 }

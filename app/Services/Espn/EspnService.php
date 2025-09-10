@@ -5,7 +5,7 @@ namespace App\Services\Espn;
 use App\Services\Espn\Resources\NFL;
 use App\Services\Espn\Resources\NflTeam;
 use App\Services\Espn\Resources\FantasyNFL;
-use App\Services\Espn\Data\FantasyNFL\FantasyNFLCredentialsData;
+use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 
 /**
  * @see https://github.com/pseudo-r/Public-ESPN-API
@@ -23,7 +23,7 @@ class EspnService
         return new NflTeam($teamId);
     }
 
-    public function fantasyNFL(array|FantasyNFLCredentialsData $credentials): FantasyNFL
+    public function fantasyNFL(array|CredentialsData $credentials): FantasyNFL
     {
         return new FantasyNFL($credentials);
     }

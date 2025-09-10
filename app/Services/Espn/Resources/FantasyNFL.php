@@ -2,7 +2,7 @@
 
 namespace App\Services\Espn\Resources;
 
-use App\Services\Espn\Data\FantasyNFL\FantasyNFLCredentialsData;
+use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use App\Services\Espn\Enums\Apis;
 use App\Services\Espn\Enums\ApiVersions;
 use App\Services\Espn\Enums\ApiYears;
@@ -15,6 +15,7 @@ use App\Services\Espn\Data\FantasyNFL\ResourceRosterData;
 use App\Services\Espn\Data\FantasyNFL\ResourceSettingsData;
 use App\Services\Espn\Data\FantasyNFL\ResourceStandingsData;
 use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
+use Illuminate\Support\Arr;
 
 class FantasyNFL extends BaseResource
 {
@@ -27,30 +28,34 @@ class FantasyNFL extends BaseResource
 
     public array $cookies = [];
 
+    public bool $returnRaw = false;
+
     public array $views = [
-        'matchup'   => 'mMatchup',
-        'roster'    => 'mRoster',
-        'settings'  => 'mSettings',
-        'standings' => 'mStandings',
-        'teams'     => 'mTeam',
-        // kona_player_info,
-        // mDraftDetail,
-        // mLiveScoring,
-        // mNav,
-        // mPendingTransactions,
-        // mPositionalRatings,
-        // modular,
-        // player_wl
-        // players_wl,
-        // proTeamSchedules_wl,
+        'draft'               => 'mDraftDetail',
+        'kona'                => 'kona_player_info',
+        'liveScore'           => 'mLiveScoring',
+        'matchup'             => 'mMatchup',
+        'matchupScore'        => 'mMatchupScore',
+        'modular'             => 'modular',
+        'nav'                 => 'mNav',
+        'pendingTransactions' => 'mPendingTransactions',
+        'playerWL'            => 'player_wl',
+        'playersWL'           => 'players_wl',
+        'positionalRatings'   => 'mPositionalRatings',
+        'proTeamSchedulesWL'  => 'proTeamSchedules_wl',
+        'roster'              => 'mRoster',
+        'settings'            => 'mSettings',
+        'standings'           => 'mStandings',
+        'status'              => 'mStatus',
+        'teams'               => 'mTeam',
     ];
 
     public int $leagueId;
 
-    public function __construct(public array|FantasyNFLCredentialsData $credentials)
+    public function __construct(public array|CredentialsData $credentials)
     {
-        if (! $credentials instanceof FantasyNFLCredentialsData) {
-            $this->credentials = FantasyNFLCredentialsData::from($credentials);
+        if (! $credentials instanceof CredentialsData) {
+            $this->credentials = CredentialsData::from($credentials);
         }
 
         $this->leagueId = $this->credentials->leagueId;
@@ -61,104 +66,116 @@ class FantasyNFL extends BaseResource
         ];
     }
 
+    public function getData(array $views = [])
+    {
+        $url = $this->buildUrl($views);
+
+        $response = $this->get($url, null, $this->cookies);
+
+        return $response->json();
+    }
+
     public function getLeague()
     {
-        $url = $this->buildUrl() . '?' . implode('&', [
-            'view=mLiveScoring',
-            'view=mMatchupScore',
-            'view=mRoster',
-            'view=mSettings',
-            'view=mStandings',
-            'view=mStatus',
-            'view=mTeam',
-            'view=modular',
-            'view=mNav',
-        ]);
+        $url = $this->buildUrl();
 
-        $response = $this->get(
-            url: $url,
-            query: null,
-            cookies: $this->cookies,
-        );
+        $response = $this->get($url, null, $this->cookies);
 
-        return ResourceLeagueData::from($response->json());
-        // return $response->json();
+        return $this->returnRaw
+            ? $response->json()
+            : ResourceLeagueData::from($response->json());
     }
 
     public function getMatchup()
     {
-        $url = $this->buildUrl();
+        $url = $this->buildUrl(['matchup', 'matchupScore', 'team', 'modular', 'nav']);
 
-        $response = $this->get(
-            url: $url,
-            query: $this->query(['view' => $this->views['matchup']]),
-            cookies: $this->cookies,
-        );
+        $response = $this->get($url, null, $this->cookies);
 
-        return ResourceMatchupData::from($response->json());
+        return $this->returnRaw
+            ? $response->json()
+            : ResourceMatchupData::from($response->json());
     }
 
     public function getRoster()
     {
-        $url = $this->buildUrl();
+        $url = $this->buildUrl(['roster', 'team', 'modular', 'nav']);
 
-        $response = $this->get(
-            url: $url,
-            query: $this->query(['view' => $this->views['roster']]),
-            cookies: $this->cookies,
-        );
+        $response = $this->get($url, null, $this->cookies);
 
-        return ResourceRosterData::from($response->json());
+        return $this->returnRaw
+            ? $response->json()
+            : ResourceRosterData::from($response->json());
     }
 
     public function getSettings()
     {
-        $url = $this->buildUrl();
+        $url = $this->buildUrl(['settings', 'team', 'modular', 'nav']);
 
-        $response = $this->get(
-            url: $url,
-            query: $this->query(['view' => $this->views['settings']]),
-            cookies: $this->cookies,
-        );
+        $response = $this->get($url, null, $this->cookies);
 
-        return ResourceSettingsData::from($response->json());
+        return $this->returnRaw
+            ? $response->json()
+            : ResourceSettingsData::from($response->json());
     }
 
     public function getStandings()
     {
-        $url = $this->buildUrl();
+        $url = $this->buildUrl(['standings', 'team', 'modular', 'nav']);
 
-        $response = $this->get(
-            url: $url,
-            query: $this->query(['view' => $this->views['standings']]),
-            cookies: $this->cookies,
-        );
+        $response = $this->get($url, null, $this->cookies);
 
-        return ResourceStandingsData::from($response->json());
+        return $this->returnRaw
+            ? $response->json()
+            : ResourceStandingsData::from($response->json());
     }
 
     public function getTeams()
     {
-        $url = $this->buildUrl();
+        $url = $this->buildUrl(['teams', 'team', 'modular', 'nav']);
 
-        $response = $this->get(
-            url: $url,
-            query: $this->query(['view' => $this->views['teams']]),
-            cookies: $this->cookies,
-        );
+        $response = $this->get($url, null, $this->cookies);
 
-        return ResourceTeamsData::from($response->json());
+        return $this->returnRaw
+            ? $response->json()
+            : ResourceTeamsData::from($response->json());
     }
 
-    private function buildUrl()
+    public function getDraftRecap()
+    {
+        // ?view=mDraftDetail&view=mSettings&view=mTeam&view=modular&view=mNav
+        $url = $this->buildUrl(['draft', 'settings', 'team', 'modular', 'nav']);
+
+        $response = $this->get($url, null, $this->cookies);
+
+        return $response->json();
+    }
+
+    private function buildUrl(array $views = []): string
     {
         // https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2025/segments/0/leagues/691509
-        return $this->assembleUrl([
+        $url = $this->assembleUrl([
             'https://' . $this->api->value,
             'apis/' . $this->apiVersion->value,
             'games/' . $this->game->value,
             'seasons/' . $this->apiYear->value,
             'segments/0/leagues/' . $this->leagueId,
         ]);
+
+        $query = $this->buildViewsQuery($views);
+
+        return $url . $query;
+    }
+
+    private function buildViewsQuery(array $views = [])
+    {
+        $views = (empty($views)) ? array_keys($this->views) : $views;
+
+        $mapped = array_map(function ($view) {
+            $key = Arr::get($this->views, $view);
+            return ($key) ? 'view=' . $key : null;
+        }, $views);
+
+        return '?' . implode('&', array_filter($mapped));
     }
 }
