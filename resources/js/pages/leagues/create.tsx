@@ -3,7 +3,7 @@ import Heading from '@/components/heading';
 import LeagueForm from './form';
 import { Head } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
-
+import { router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -24,7 +24,7 @@ export default function CreateLeague() {
 
       <div className="flex-1 p-8">
         <Heading title="Create a New Fantasy League" description="Set up your new fantasy football league with custom settings" />
-        
+
         <LeagueForm
           submitEndpoint="/api/leagues"
           submitMethod="post"
@@ -32,6 +32,9 @@ export default function CreateLeague() {
           processingButtonText="Creating..."
           successMessage="Your fantasy league has been created successfully!"
           redirectPath="/dashboard"
+          onSuccess={(league) => {
+            router.visit(route('leagues.show', league.id));
+          }}
         />
       </div>
     </AppLayout>

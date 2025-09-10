@@ -27,9 +27,10 @@ class League extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_public'  => 'boolean',
-        'is_active'  => 'boolean',
-        'draft_date' => 'datetime',
+        'is_public'   => 'boolean',
+        'is_active'   => 'boolean',
+        'draft_date'  => 'datetime',
+        'credentials' => 'array',
     ];
 
     /**

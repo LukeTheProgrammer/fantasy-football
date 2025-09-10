@@ -18,21 +18,6 @@ interface LeagueMemberManagerProps {
   onMembersChange: (members: LeagueMember[]) => void;
 }
 
-function getTeamColumns(teamCount: number) {
-  if (teamCount % 5 === 0) {
-    console.log('getTeamColumns', teamCount, '5');
-    return 5;
-  }
-
-  if (teamCount % 4 === 0) {
-    console.log('getTeamColumns', teamCount, '4');
-    return 4;
-  }
-
-  console.log('getTeamColumns', teamCount, '3');
-  return 3;
-}
-
 export default function LeagueMemberManager({ members, maxTeams, onMembersChange }: LeagueMemberManagerProps) {
   // Only keeping the state variables needed for the visible UI
   const [draftPositionDialogOpen, setDraftPositionDialogOpen] = useState(false);
@@ -47,7 +32,6 @@ export default function LeagueMemberManager({ members, maxTeams, onMembersChange
   const teamCount = members?.length || 0;
   const teamColumns = teamCount % 5 === 0 ? '5' : teamCount % 4 === 0 ? '4' : '3';
   const teamGridCols = `grid gap-4 grid-cols-${teamColumns}`;
-  console.log(teamGridCols);
 
   // Validate draft position
   const validateDraftPosition = useCallback(() => {

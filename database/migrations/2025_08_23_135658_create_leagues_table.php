@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('leagues');
+        Schema::enableForeignKeyConstraints();
+
         Schema::create('leagues', function (Blueprint $table) {
             $table->id();
             $table->foreignId('created_by_user_id')->constrained('users')->cascadeOnDelete();
@@ -18,10 +22,12 @@ return new class extends Migration
             $table->integer('year');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
+            $table->string('platform')->default('ESPN');
             $table->integer('team_count')->default(12);
             $table->boolean('is_public')->default(true);
             $table->string('join_code')->nullable()->unique();
             $table->boolean('is_active')->default(true);
+            $table->json('credentials')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

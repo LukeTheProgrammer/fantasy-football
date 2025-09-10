@@ -12,7 +12,7 @@ class GetScoreboard extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:scoreboard';
+    protected $signature = 'espn:nfl:get:scoreboard';
 
     /**
      * The console command description.

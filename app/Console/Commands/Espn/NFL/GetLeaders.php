@@ -12,7 +12,7 @@ class GetLeaders extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:leaders';
+    protected $signature = 'espn:nfl:get:leaders';
 
     /**
      * The console command description.

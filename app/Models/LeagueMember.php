@@ -53,4 +53,12 @@ class LeagueMember extends Model
     {
         return $this->hasMany(DraftPick::class);
     }
+
+    /**
+     * Get the draft picks for the league member.
+     */
+    public function rosters(): HasMany
+    {
+        return $this->hasMany(LeagueMemberRoster::class);
+    }
 }

@@ -12,7 +12,7 @@ class GetEvents extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl-team:events {team_id}';
+    protected $signature = 'espn:nfl-team:get:events {team_id}';
 
     /**
      * The console command description.

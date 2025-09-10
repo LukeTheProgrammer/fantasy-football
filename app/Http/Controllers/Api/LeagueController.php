@@ -28,7 +28,9 @@ class LeagueController extends Controller
     public function index()
     {
         // Get leagues the user is a member of
-        $leagues = Auth::user()->leagues()->with('settings')->get();
+        // $leagues = Auth::user()->leagues()->with('settings')->get();
+
+        $leagues = League::with(['settings', 'members.user'])->get();
 
         return response()->json($leagues);
     }

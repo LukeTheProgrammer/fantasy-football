@@ -12,7 +12,7 @@ class GetTeamSchedule extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:team-schedule {team_id}';
+    protected $signature = 'espn:nfl:get:team-schedule {team_id}';
 
     /**
      * The console command description.

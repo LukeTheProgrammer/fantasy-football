@@ -11,15 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('league_member_rosters', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->foreignId('league_member_id')->constrained()->onDelete('cascade');
-        //     $table->timestamps();
-        //     $table->softDeletes();
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('league_member_rosters');
+        Schema::enableForeignKeyConstraints();
 
-        //     // Ensure a user can only join a league once
-        //     $table->unique(['league_id', 'user_id']);
-        // });
+        Schema::create('league_member_rosters', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('league_member_id')->constrained('league_members')->onDelete('cascade');
+            $table->foreignId('player_id')->constrained('players')->onDelete('cascade');
+            $table->dateTime('added_at')->default(now());
+            $table->dateTime('dropped_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->unique(['league_member_id', 'player_id']);
+        });
     }
 
     /**
@@ -27,6 +33,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::dropIfExists('league_member_rosters');
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('league_member_rosters');
+        Schema::enableForeignKeyConstraints();
     }
 };
