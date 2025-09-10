@@ -1,42 +1,20 @@
-import RosterPositionsEditor from '@/components/form/roster-positions';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
 import { router } from '@inertiajs/react';
 import { toast } from 'sonner';
-import { useCallback, useEffect, useState } from 'react';
-
-// Helper function to safely access nested error properties
-const getNestedError = (errors: Record<string, unknown> | null | undefined, key: string): string | undefined => {
-  return errors && typeof errors === 'object' ? (errors[key] as string | undefined) : undefined;
-};
+import { useCallback, useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 interface LeagueFormData {
-  name: string;
-  description: string;
-  team_count: number;
-  is_public: boolean;
-  settings: {
-    roster_positions: string[];
-    roster_size: number;
-    starters_count: number;
-    bench_count: number;
-    ir_spots: number;
-    passing_points_per_yard: number;
-    passing_td_points: number;
-    interception_points: number;
-    rushing_points_per_yard: number;
-    rushing_td_points: number;
-    receiving_points_per_yard: number;
-    receiving_td_points: number;
-    reception_points: number;
-    fumble_lost_points: number;
-    two_point_conversion_points: number;
-  };
+  platform: string;
+  espn_league_id: string|number;
+  espn_s2: string;
+  espn_swid: string;
 }
 
 interface LeagueFormProps {
@@ -51,27 +29,10 @@ interface LeagueFormProps {
 }
 
 const defaultFormData: LeagueFormData = {
-  name: '',
-  description: '',
-  team_count: 10,
-  is_public: false,
-  settings: {
-    roster_positions: ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'K', 'DEF'],
-    roster_size: 16,
-    starters_count: 9,
-    bench_count: 7,
-    ir_spots: 1,
-    passing_points_per_yard: 0.04,
-    passing_td_points: 4,
-    interception_points: -2,
-    rushing_points_per_yard: 0.1,
-    rushing_td_points: 6,
-    receiving_points_per_yard: 0.1,
-    receiving_td_points: 6,
-    reception_points: 0,
-    fumble_lost_points: -2,
-    two_point_conversion_points: 2,
-  },
+  platform: 'espn',
+  espn_league_id: '',
+  espn_s2: '',
+  espn_swid: '',
 };
 
 export default function LeagueForm({
@@ -88,30 +49,6 @@ export default function LeagueForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState(false);
-
-  // Update starters_count based on roster_positions
-  useEffect(() => {
-    const startersCount = data.settings.roster_positions.length;
-    setData(prev => ({
-      ...prev,
-      settings: {
-        ...prev.settings,
-        starters_count: startersCount,
-      }
-    }));
-  }, [data.settings.roster_positions]);
-
-  // Update roster_size based on starters_count, bench_count, and ir_spots
-  useEffect(() => {
-    const rosterSize = data.settings.starters_count + data.settings.bench_count + data.settings.ir_spots;
-    setData(prev => ({
-      ...prev,
-      settings: {
-        ...prev.settings,
-        roster_size: rosterSize,
-      }
-    }));
-  }, [data.settings.starters_count, data.settings.bench_count, data.settings.ir_spots]);
 
   // Handle form submission
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -148,8 +85,8 @@ export default function LeagueForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-3 gap-6">
-        <Card>
+      <div className="grid grid-cols-4 gap-6">
+        <Card className="col-span-2 col-start-2">
           <CardContent>
             <div className="mb-6">
               <h2 className="text-lg font-medium">League Details</h2>
@@ -158,377 +95,75 @@ export default function LeagueForm({
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name">League Name</Label>
-                <Input
-                  id="name"
-                  value={data.name}
-                  onChange={(e) => setData(prev => ({ ...prev, name: e.target.value }))}
-                  className="mt-1"
-                />
-                {(errors.name || validationErrors.name) && (
-                  <p className="text-sm text-red-500 mt-1">{errors.name || validationErrors.name}</p>
-                )}
+                <Label htmlFor="platform" className="pb-4">League Platform</Label>
+                <div className="mt-2">
+                  <Select
+                    value={data.platform}
+                    onValueChange={(value) => setData(prev => ({ ...prev, platform: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a platform" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="espn">ESPN</SelectItem>
+                      <SelectItem value="cbs" disabled>CBS</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {(errors.platform || validationErrors.platform) && (
+                    <p className="text-sm text-red-500 mt-1">{errors.platform || validationErrors.platform}</p>
+                  )}
+                </div>
+                <Separator />
               </div>
 
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={data.description}
-                  onChange={(e) => setData(prev => ({ ...prev, description: e.target.value }))}
-                  className="mt-1"
-                />
-                {(errors.description || validationErrors.description) && (
-                  <p className="text-sm text-red-500 mt-1">{errors.description || validationErrors.description}</p>
-                )}
-              </div>
+              {data.platform === 'espn' && (
+                <div className="space-y-4 mt-6">
+                  <div>
+                    <Label htmlFor="espn-league-id">ESPN League ID</Label>
+                    <div className="mt-2">
+                      <Input
+                        id="espn-league-id"
+                        value={data.espn_league_id}
+                        onChange={(e) => setData(prev => ({ ...prev, espn_league_id: e.target.value }))}
+                        className="mt-1"
+                      />
+                      {(errors.espn_league_id || validationErrors.espn_league_id) && (
+                        <p className="text-sm text-red-500 mt-1">{errors.espn_league_id || validationErrors.espn_league_id}</p>
+                      )}
+                    </div>
+                  </div>
 
-              <div>
-                <Label htmlFor="team_count">Number of Teams</Label>
-                <Input
-                  id="team_count"
-                  type="number"
-                  min={2}
-                  max={32}
-                  value={data.team_count}
-                  onChange={(e) => setData(prev => ({ ...prev, team_count: parseInt(e.target.value) || 0 }))}
-                  className="mt-1"
-                />
-                {(errors.team_count || validationErrors.team_count) && (
-                  <p className="text-sm text-red-500 mt-1">{errors.team_count || validationErrors.team_count}</p>
-                )}
-              </div>
+                  <div>
+                    <Label htmlFor="espn-swid">ESPN SWID Cookie</Label>
+                    <div className="mt-2">
+                      <Input
+                        id="espn-swid"
+                        value={data.espn_swid}
+                        onChange={(e) => setData(prev => ({ ...prev, espn_swid: e.target.value }))}
+                        className="mt-1"
+                      />
+                      {(errors.espn_swid || validationErrors.espn_swid) && (
+                        <p className="text-sm text-red-500 mt-1">{errors.espn_swid || validationErrors.espn_swid}</p>
+                      )}
+                    </div>
+                  </div>
 
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <div className="mb-6">
-              <h2 className="text-lg font-medium">Roster Settings</h2>
-              <p className="text-sm text-muted-foreground">Configure your league's roster positions and size.</p>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-              <div>
-                <Label htmlFor="roster_size">Total</Label>
-                <Input
-                  id="roster_size"
-                  type="number"
-                  disabled
-                  min={1}
-                  value={data.settings.roster_size}
-                />
-              </div>
-              <div>
-                <Label htmlFor="starters_count">Starters</Label>
-                <Input
-                  id="starters_count"
-                  type="number"
-                  min={1}
-                  disabled
-                  value={data.settings.starters_count}
-                />
-              </div>
-              <div>
-                <Label htmlFor="bench_count">Bench</Label>
-                <Input
-                  id="bench_count"
-                  type="number"
-                  min={0}
-                  value={data.settings.bench_count}
-                  onChange={(e) =>
-                    setData(prev => ({
-                      ...prev,
-                      settings: {
-                        ...prev.settings,
-                        bench_count: parseInt(e.target.value) || 0,
-                      }
-                    }))
-                  }
-                />
-                {(getNestedError(errors, 'settings.bench_count') || validationErrors['settings.bench_count']) && (
-                  <p className="text-sm text-red-500 mt-1">{getNestedError(errors, 'settings.bench_count') || validationErrors['settings.bench_count']}</p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="ir_spots">IR</Label>
-                <Input
-                  id="ir_spots"
-                  type="number"
-                  min={0}
-                  value={data.settings.ir_spots}
-                  onChange={(e) =>
-                    setData(prev => ({
-                      ...prev,
-                      settings: {
-                        ...prev.settings,
-                        ir_spots: parseInt(e.target.value) || 0,
-                      }
-                    }))
-                  }
-                />
-                {(getNestedError(errors, 'settings.ir_spots') || validationErrors['settings.ir_spots']) && (
-                  <p className="text-sm text-red-500 mt-1">{getNestedError(errors, 'settings.ir_spots') || validationErrors['settings.ir_spots']}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <Label htmlFor="roster_positions">Roster Positions</Label>
-              <RosterPositionsEditor
-                positions={data.settings.roster_positions}
-                onChange={(positions) =>
-                  setData(prev => ({
-                    ...prev,
-                    settings: {
-                      ...prev.settings,
-                      roster_positions: positions,
-                    }
-                  }))
-                }
-              />
-              {(getNestedError(errors, 'settings.roster_positions') || validationErrors['settings.roster_positions']) && (
-                <p className="text-sm text-red-500 mt-1">{getNestedError(errors, 'settings.roster_positions') || validationErrors['settings.roster_positions']}</p>
+                  <div>
+                    <Label htmlFor="espn-s2">ESPN S2 Cookie</Label>
+                    <div className="mt-2">
+                      <Textarea
+                        id="espn-s2"
+                        value={data.espn_s2}
+                        onChange={(e) => setData(prev => ({ ...prev, espn_s2: e.target.value }))}
+                        className="mt-1"
+                      />
+                      {(errors.espn_s2 || validationErrors.espn_s2) && (
+                        <p className="text-sm text-red-500 mt-1">{errors.espn_s2 || validationErrors.espn_s2}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <div className="mb-6">
-              <h2 className="text-lg font-medium">Scoring Settings</h2>
-              <p className="text-sm text-muted-foreground">Configure your league's scoring rules.</p>
-            </div>
-
-            <div className="mt-2 grid w-full grid-cols-1 gap-4">
-              <div>
-                <h3 className="text-md font-medium">Passing</h3>
-                <Separator className="my-2" />
-                <div className="mt-2 grid w-full grid-cols-4 gap-1">
-                  <div className="col-span-3">
-                    <Label className="text-xs">per Yard</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      className="text-xs py-1 px-2"
-                      step="0.01"
-                      value={data.settings.passing_points_per_yard}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            passing_points_per_yard: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <Label className="text-xs">TD Pass</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      className="text-xs py-1 px-2"
-                      step="0.5"
-                      value={data.settings.passing_td_points}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            passing_td_points: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <Label className="text-xs">INT</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      className="text-xs py-1 px-2"
-                      step="0.5"
-                      value={data.settings.interception_points}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            interception_points: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-md font-medium">Receiving</h3>
-                <Separator className="my-2" />
-                <div className="mt-2 grid grid-cols-4 gap-1">
-                  <div className="col-span-3">
-                    <Label className="text-xs">per Yard</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      className="text-xs py-1 px-2"
-                      step="0.01"
-                      value={data.settings.receiving_points_per_yard}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            receiving_points_per_yard: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <Label className="text-xs">TD Rec</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      className="text-xs py-1 px-2"
-                      step="0.5"
-                      value={data.settings.receiving_td_points}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            receiving_td_points: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <Label className="text-xs">Reception</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      className="text-xs py-1 px-2"
-                      step="0.01"
-                      value={data.settings.reception_points}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            reception_points: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-2 grid w-full grid-cols-1 gap-4">
-              <div className="mt-2">
-                <h3 className="text-md font-medium">Rushing</h3>
-                <Separator className="my-2" />
-                <div className="mt-2 grid grid-cols-4 gap-1">
-                  <div className="col-span-3">
-                    <Label className="text-xs">per Yard</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={data.settings.rushing_points_per_yard}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            rushing_points_per_yard: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <Label className="text-xs">TD Rush</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      step="0.5"
-                      value={data.settings.rushing_td_points}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            rushing_td_points: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-2">
-                <h3 className="text-md font-medium">Misc</h3>
-                <Separator className="my-2" />
-                <div className="mt-2 grid grid-cols-4 gap-1">
-                  <div className="col-span-3">
-                    <Label className="text-xs">Fumbles</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      step="0.5"
-                      value={data.settings.fumble_lost_points}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            fumble_lost_points: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <Label className="text-xs">2-Pt Conv</Label>
-                  </div>
-                  <div className="col-span-1">
-                    <Input
-                      type="number"
-                      className="text-xs py-1 px-2"
-                      step="0.5"
-                      value={data.settings.two_point_conversion_points}
-                      onChange={(e) =>
-                        setData(prev => ({
-                          ...prev,
-                          settings: {
-                            ...prev.settings,
-                            two_point_conversion_points: parseFloat(e.target.value) || 0,
-                          }
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
             </div>
           </CardContent>
         </Card>

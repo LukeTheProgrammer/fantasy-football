@@ -56,6 +56,9 @@ export default function ShowLeague({ league: initialLeague }: PageProps & { leag
     return new Date(dateString).toLocaleString();
   };
 
+  const playersDrafted = league.draft?.picks.filter(p => p.player_id !== null).length || 0;
+  const totalPlayers = league.draft?.picks.length || 0;
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={league.name} />
@@ -87,14 +90,20 @@ export default function ShowLeague({ league: initialLeague }: PageProps & { leag
               <p>{league.name} {league.year} Draft</p>
             </div>
             <div className="flex items-center justify-center">
-              {league.draft.picks.filter(p => p.player_id !== null).length} / {league.draft.picks.length} Players Drafted
+              {playersDrafted > 0 && totalPlayers > 0 ? (
+                <p>{playersDrafted} / {totalPlayers} Players Drafted</p>
+              ) : (
+                <span></span>
+              )}
             </div>
             <div className="flex items-center justify-end">
-              <Link href={route('drafts.draft-room', league.draft.id)}>
-                <Button variant="outline" className="text-right">
-                  Enter Draft Room
-                </Button>
-              </Link>
+              {league?.draft?.id && (
+                <Link href={route('drafts.draft-room', league.draft.id)}>
+                  <Button variant="outline" className="text-right">
+                    Enter Draft Room
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

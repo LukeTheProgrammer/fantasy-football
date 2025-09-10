@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('league_settings');
+        Schema::enableForeignKeyConstraints();
+
         Schema::create('league_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('league_id')->constrained()->onDelete('cascade');
@@ -46,7 +50,6 @@ return new class extends Migration
             $table->decimal('defense_fumble_recovery_points', 8, 2)->default(2.0);
             $table->decimal('defense_td_points', 8, 2)->default(6.0);
             $table->decimal('defense_safety_points', 8, 2)->default(2.0);
-            $table->json('defense_points_allowed_tiers')->nullable();
 
             $table->timestamps();
         });
@@ -57,6 +60,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('league_settings');
+        Schema::enableForeignKeyConstraints();
     }
 };

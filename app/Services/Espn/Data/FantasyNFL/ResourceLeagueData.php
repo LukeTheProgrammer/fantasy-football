@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Services\Espn\Data\FantasyNFL;
+
+use App\Services\Espn\Data\Casts\CollectionCast;
+use Illuminate\Support\Collection;
+use Spatie\LaravelData\Attributes\WithCast;
+
+class ResourceLeagueData extends BaseData
+{
+    public function __construct(
+        public ?int $id = null,
+        public ?int $gameId = null,
+        public ?int $scoringPeriodId = null,
+        public ?int $seasonId = null,
+        public ?int $segmentId = null,
+
+        #[WithCast(LeagueMemberData::class)]
+        public array|Collection $members = [],
+
+        #[WithCast(SettingsSettingsData::class)]
+        public array|SettingsSettingsData $settings = [],
+
+        #[WithCast(ScheduleData::class)]
+        public array|Collection $schedule = [],
+
+        #[WithCast(CollectionCast::class)]
+        public array|Collection $status = [],
+
+        #[WithCast(ResourceTeamsData::class)]
+        public array|Collection $teams = [],
+    ) {
+        //
+    }
+}

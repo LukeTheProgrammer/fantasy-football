@@ -94,8 +94,8 @@ class ImportFantasyProsRankingsCommand extends Command
 
         $file = select('Select a file to import', $files);
 
-        $this->import = Import::draftRankingsImport(
-            RankingSourcesEnum::FANTASY_PROS->value,
+        $this->import = Import::draftRankings(
+            RankingSourcesEnum::FANTASY_PROS,
             $file,
             'csv',
         );

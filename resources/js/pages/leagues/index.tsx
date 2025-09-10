@@ -1,16 +1,14 @@
 import AppLayout from '@/layouts/app-layout';
 import Heading from '@/components/heading';
-import axios from '@/lib/axios';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { PageProps } from '@inertiajs/core';
 import { Plus } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { type BreadcrumbItem, type SharedData } from '@/types';
-import { useEffect, useState } from 'react';
-import { type League } from '@/types/models';
 import { getLeagueUserMember, isUserLeagueAdmin } from '@/lib/utils';
+import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type League } from '@/types/models';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -19,42 +17,13 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function Leagues() {
+interface LeagueIndexProps extends PageProps {
+  leagues: League[];
+}
+
+export default function Leagues({ leagues }: LeagueIndexProps) {
   const { auth } = usePage<SharedData>().props;
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const userId = auth.user.id;
-
-  useEffect(() => {
-    const fetchLeagues = async () => {
-      try {
-        setLoading(true);
-        // Get CSRF cookie first
-        // await getCsrfToken();
-        // Then make the API request
-        const response = await axios.get<League[]>('/api/leagues');
-        setLeagues(response.data);
-        setError(null);
-      } catch (err) {
-        // Check if this is an authentication error
-        const error = err as { response?: { status: number; data?: { message?: string } } };
-        if (error.response && error.response.status === 401) {
-          setError('You need to be logged in to view your leagues.');
-          // Login link is already provided in the UI
-        } else {
-          const errorMessage = error.response?.data?.message || 'Failed to load leagues. Please try again later.';
-          setError(errorMessage);
-        }
-        console.error('Error fetching leagues:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLeagues();
-  }, []);
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -76,25 +45,7 @@ export default function Leagues() {
           )}
         />
 
-        {loading ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
-              <Card key={i} className="overflow-hidden">
-                <CardHeader className="pb-3">
-                  <Skeleton className="mb-2 h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="mb-2 h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-                </CardContent>
-                <CardFooter>
-                  <Skeleton className="h-9 w-full" />
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        ) : leagues.length === 0 ? (
+        {leagues.length === 0 ? (
           <div className="mb-8 rounded-lg border bg-card">
             <div className="border-b p-6 py-12 text-center">
               <h3 className="mb-2 text-lg font-medium">You haven't joined any leagues yet</h3>
@@ -116,7 +67,7 @@ export default function Leagues() {
                         Admin
                       </Badge>
                     )}
-                    {league.draft_type === 'snake' ? 'Snake Draft' : 'Auction Draft'}
+                    {league?.draft?.draft_type === 'auction' ? 'Auction Draft' : 'Snake Draft'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

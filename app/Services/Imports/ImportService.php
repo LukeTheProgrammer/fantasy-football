@@ -3,24 +3,41 @@
 namespace App\Services\Imports;
 
 use App\Enums\RankingSourcesEnum;
+use App\Enums\FantasyPlatformsEnum;
 use App\Services\Imports\Drivers\Rankings\FantasyProsDriver;
-use App\Services\Imports\Models\DraftRankingsImport;
+use App\Services\Imports\Drivers\Leagues\EspnDriver;
+use App\Services\Imports\Importers\DraftRankingsImporter;
+use App\Services\Imports\Importers\FantasyNFLImporter;
 use Exception;
 use Illuminate\Support\Arr;
 
 class ImportService
 {
+    public function importDrivers(string $type)
+    {
+        $drivers = [
+            'draft_rankings' => [
+                RankingSourcesEnum::FANTASY_PROS->value => FantasyProsDriver::class,
+            ],
+            'fantasy_nfl' => [
+                FantasyPlatformsEnum::ESPN->value => EspnDriver::class,
+            ],
+        ];
+
+        return Arr::get($drivers, $type, []);
+    }
+
     /**
      * Draft Rankings Import
      *
      * @param string $driver
      * @param mixed ...$args
      *
-     * @return DraftRankingsImport
+     * @return DraftRankingsImporter
      */
-    public function draftRankingsImport(string $driver, ...$args)
+    public function draftRankings(string $driver, ...$args)
     {
-        $driverClass = Arr::get($this->importDrivers(), $driver, false);
+        $driverClass = Arr::get($this->importDrivers('draft_rankings'), $driver, false);
 
         if (! $driverClass) {
             throw new Exception('Invalid driver: ' . $driver);
@@ -28,13 +45,29 @@ class ImportService
 
         $driver = new $driverClass(...$args);
 
-        return new DraftRankingsImport($driver);
+        return new DraftRankingsImporter($driver);
     }
 
-    public function importDrivers()
+    /**
+     * Fantasy NFL Import
+     *
+     * @param string $driver
+     * @param mixed ...$args
+     *
+     * @return DraftRankingsImporter
+     */
+    public function fantasyNFL(string|FantasyPlatformsEnum $driver, ...$args)
     {
-        return [
-            RankingSourcesEnum::FANTASY_PROS->value => FantasyProsDriver::class,
-        ];
+        $driver = (! $driver instanceof FantasyPlatformsEnum) ? FantasyPlatformsEnum::from($driver) : $driver;
+
+        $driverClass = Arr::get($this->importDrivers('fantasy_nfl'), $driver->value, false);
+
+        if (! $driverClass) {
+            throw new Exception('Invalid driver: ' . $driver);
+        }
+
+        $driver = new $driverClass(...$args);
+
+        return new FantasyNFLImporter($driver);
     }
 }
