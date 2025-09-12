@@ -9,8 +9,8 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 5173,
         hmr: {
-            host: 'fantasy.local',
-            // host: 'localhost',
+            // host: 'fantasy.local',
+            host: 'localhost',
             port: 5173,
         },
     },

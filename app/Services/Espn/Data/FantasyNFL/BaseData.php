@@ -24,7 +24,6 @@ class BaseData extends Data implements Cast
      */
     public function cast(DataProperty $property, mixed $value, array $properties, CreationContext $context): mixed
     {
-        Log::info($value);
         return $this->isCollectionCast
             ? collect($value)->map(fn ($v) => static::from($v))
             : static::from($value);

@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Console\Commands\Imports\FantasyNFL;
+
+use App\Enums\FantasyPlatformsEnum;
+use App\Facades\Action;
+use App\Facades\Import;
+use App\Models\Player;
+use App\Models\Position;
+use App\Models\Team;
+use App\Models\User;
+use App\Console\Commands\Traits\DisambiguatesPlayers;
+use App\Services\Imports\Models\DraftRankingsImport;
+use App\Services\Imports\Importers\FantasyNFLImporter;
+use App\Enums\RankingSourcesEnum;
+use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
+
+class ImportFantasyNFLCommand extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'import:fantasy-nfl:league
+        { platform? : Platform where league is played }
+    ';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Import Fantasy NFL League';
+
+    protected FantasyNFLImporter $importer;
+
+    protected array $credentials = [];
+
+    protected User $creator;
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        $this->setUp();
+
+        $this->info('Importing league...');
+
+        $league = $this->importer->import();
+
+        $this->info('League imported successfully: ' . $league->name);
+    }
+
+    public function setUp()
+    {
+        $creatorId = select('Creator', User::all()->pluck('name', 'id')->toArray());
+
+        $this->creator = User::findOrFail($creatorId);
+
+        $platform = FantasyPlatformsEnum::from(Str::upper($this->argument('platform')));
+
+        $platform = (! $platform instanceof FantasyPlatformsEnum)
+            ? FantasyPlatformsEnum::from(select('Platform', FantasyPlatformsEnum::cases()))
+            : $platform;
+
+        if ($platform->value === FantasyPlatformsEnum::ESPN->value) {
+            return $this->setUpEspnImporter();
+        }
+    }
+
+    public function setUpEspnImporter()
+    {
+        $this->importer = Import::fantasyNFL(FantasyPlatformsEnum::ESPN);
+
+        $this->credentials = [
+            'leagueId' => intval(text(
+                label: 'League ID',
+                default: config('services.espn.default_league_id'),
+            )),
+            's2' => text(
+                label: 'S2',
+                default: config('services.espn.default_s2'),
+            ),
+            'swid' => text(
+                label: 'SWID',
+                default: config('services.espn.default_swid'),
+            ),
+        ];
+
+        $this->importer->setCredentials($this->credentials);
+
+        $this->importer->setCreator($this->creator);
+    }
+}

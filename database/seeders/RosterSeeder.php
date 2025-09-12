@@ -9,6 +9,6 @@ class RosterSeeder extends Seeder
 {
     public function run(): void
     {
-        Artisan::call('espn:roster:load-all');
+        Artisan::call('espn:nfl:load:team-rosters', ['--all' => true]);
     }
 }

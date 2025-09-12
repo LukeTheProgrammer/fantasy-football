@@ -36,7 +36,6 @@ class ResourceTeamsData extends BaseData
         public array $currentSimulationResults = [],
         public array $draftStrategy = [],
         public array $owners = [],
-        public array $transactionCounter = [],
 
         #[WithCast(DraftDetailData::class)]
         public array|DraftDetailData $draftDetail = [],
@@ -44,7 +43,7 @@ class ResourceTeamsData extends BaseData
         #[WithCast(MemberData::class)]
         public array|Collection $members = [],
 
-        #[WithCast(CollectionCast::class)]
+        #[WithCast(TeamRecordData::class)]
         public array|Collection $record = [],
 
         #[WithCast(TeamRosterData::class)]
@@ -58,6 +57,9 @@ class ResourceTeamsData extends BaseData
 
         #[WithCast(CollectionCast::class)]
         public array|Collection $tradeBlock = [],
+
+        #[WithCast(TeamTransactionData::class)]
+        public array|TeamTransactionData $transactionCounter = [],
 
         #[WithCast(CollectionCast::class)]
         public array|Collection $valuesByStat = [],

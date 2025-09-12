@@ -42,19 +42,10 @@ class GetSettings extends Command
 
         $settings = $fantasyNFL->getSettings();
 
-        // $this->logSettings($settings);
-
         $path = storage_path('data/espn/ffl/' . $leagueId . '-settings.json');
 
         $bytes = file_put_contents($path, json_encode($settings, JSON_PRETTY_PRINT));
 
         $this->info(PHP_EOL . "NFL Fantasy League Settings saved to $path ($bytes bytes)" . PHP_EOL);
-    }
-
-    protected function logSettings(ResourceSettingsData $settings): void
-    {
-        $settings->settings->scoringSettings->scoringItems->each(function ($item) {
-            Log::info('Da FUCK?', $item->toArray());
-        });
     }
 }

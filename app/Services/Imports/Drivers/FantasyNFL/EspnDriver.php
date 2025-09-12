@@ -20,6 +20,7 @@ use App\Services\Espn\Resources\FantasyNFL;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 
 class EspnDriver extends BaseFantasyNFLDriver
@@ -31,6 +32,8 @@ class EspnDriver extends BaseFantasyNFLDriver
     private User $creator;
 
     private array $draftData = [];
+
+    private array $draftPickData = [];
 
     private array $leagueData = [];
 
@@ -69,29 +72,19 @@ class EspnDriver extends BaseFantasyNFLDriver
 
     private function mapData()
     {
-        /** @var Collection $members */
-        $members = $this->apiLeague->members;
+        $this->mapLeagueData();
 
+        $this->mapSettingsData();
+
+        $this->mapDraftData();
+
+        $this->mapMembersData();
+    }
+
+    private function mapLeagueData()
+    {
         /** @var SettingsSettingsData $settings */
         $settings = $this->apiLeague->settings;
-
-        /** @var RosterSettingsData $roster */
-        $roster = $settings->rosterSettings;
-
-        /** @var LineupSlotCountsData $lineup */
-        $lineup = $roster->lineupSlotCounts;
-
-        /** @var ScoringSettingsData $scoring */
-        $scoring = $settings->scoringSettings;
-
-        /** @var DraftSettingsData $draftSettings */
-        $draftSettings = $settings->draftSettings;
-
-        /** @var DraftDetailData $draftDetail */
-        $draftDetail = $this->apiLeague->draftDetail;
-
-        /** @var Collection $teams */
-        $teams = $this->apiLeague->teams;
 
         $this->leagueData = [
             'created_by_user_id' => $this->creator->id,
@@ -107,6 +100,18 @@ class EspnDriver extends BaseFantasyNFLDriver
             'is_active'          => true,
             'credentials'        => $this->credentials->toArray(),
         ];
+    }
+
+    private function mapSettingsData()
+    {
+        /** @var ScoringSettingsData $scoring */
+        $scoring = $this->apiLeague->settings->scoringSettings;
+
+        /** @var RosterSettingsData $roster */
+        $roster = $this->apiLeague->settings->rosterSettings;
+
+        /** @var LineupSlotCountsData $lineup */
+        $lineup = $roster->lineupSlotCounts;
 
         $this->settingsData = [
             'roster_positions' => $this->getRosterPositions($lineup),
@@ -116,6 +121,15 @@ class EspnDriver extends BaseFantasyNFLDriver
             'ir_spots'         => $lineup->IR,
             ...$this->mapScoring($scoring->scoringItems),
         ];
+    }
+
+    private function mapDraftData()
+    {
+        /** @var DraftSettingsData $draftSettings */
+        $draftSettings = $this->apiLeague->settings->draftSettings;
+
+        /** @var DraftDetailData $draftDetail */
+        $draftDetail = $this->apiLeague->draftDetail;
 
         $this->draftData = [
             'draft_date'     => $this->getDate($draftSettings->date)?->toDateTimeString(),
@@ -126,12 +140,36 @@ class EspnDriver extends BaseFantasyNFLDriver
             'is_active'      => false,
         ];
 
-        $teams->each(function (ResourceTeamsData $team) use ($members) {
+        $draftDetail->picks->each(function ($pick) {
+            $this->draftPickData[] = [
+                'league_member_id'    => $pick->teamId,
+                'player_id'           => $pick->playerId,
+                'round'               => $pick->roundId,
+                'pick_number'         => $pick->roundPickNumber,
+                'overall_pick_number' => $pick->overallPickNumber,
+                'amount'              => $pick->bidAmount,
+                'is_keeper'           => $pick->keeper,
+            ];
+        });
+    }
+
+    private function mapMembersData()
+    {
+        /** @var Collection $members */
+        $members = $this->apiLeague->members;
+
+        $this->apiLeague->teams->each(function (ResourceTeamsData $team) use ($members) {
             $this->membersData[] = [
-                'external_id'  => $team->id,
-                'team_name'    => $team->name,
-                'owner_name'   => $this->findOwnerName($team, $members),
-                'team_logo'    => $team->logo,
+                'external_id'    => $team->id,
+                'team_name'      => $team->name,
+                'owner_name'     => $this->findOwnerName($team, $members),
+                'team_logo'      => $team->logo,
+                'wins'           => $team->record->get('overall.wins', 0),
+                'losses'         => $team->record->get('overall.losses', 0),
+                'ties'           => $team->record->get('overall.ties', 0),
+                'points_for'     => $team->record->get('overall.pointsFor', 0),
+                'points_against' => $team->record->get('overall.pointsAgainst', 0),
+                'faab_balance'   => 200 - intval($team->transactionCounter->acquisitionBudgetSpent),
             ];
 
             $this->rosterData[] = [
@@ -155,14 +193,37 @@ class EspnDriver extends BaseFantasyNFLDriver
             $this->leagueData,
         );
 
-        $league->settings()->updateOrCreate(['league_id' => $league->id], $this->settingsData);
+        $this->createSettings($league);
 
-        $league->draft()->updateOrCreate(['league_id' => $league->id], $this->draftData);
+        $this->createMembers($league);
 
-        foreach ($this->membersData as $m) {
-            $league->members()->updateOrCreate(['external_id' => $m['external_id']], $m);
+        $this->createRosters($league);
+
+        $this->createDraft($league);
+
+        return $league;
+    }
+
+    private function createSettings(League $league)
+    {
+        $league->settings()->updateOrCreate(
+            ['league_id' => $league->id],
+            $this->settingsData,
+        );
+    }
+
+    private function createMembers(League $league)
+    {
+        foreach ($this->membersData as $member) {
+            $league->members()->updateOrCreate(
+                ['external_id' => $member['external_id']],
+                $member,
+            );
         }
+    }
 
+    private function createRosters(League $league)
+    {
         $members = LeagueMember::forLeague($league)->get()->keyBy('external_id');
 
         foreach ($this->rosterData as $roster) {
@@ -175,19 +236,51 @@ class EspnDriver extends BaseFantasyNFLDriver
             $member->rosters()->delete();
 
             foreach ($roster['players'] as $player) {
-                $player = $player['position_id'] === 16
+                $playerModel = $player['position_id'] === 16
                     ? Player::nameLike($player['first_name'])->first()
                     : Player::where('espn_id', $player['player_id'])->first();
 
-                if ($player instanceof Player) {
+                if ($playerModel instanceof Player) {
                     $member->rosters()->withTrashed()->updateOrCreate([
-                        'player_id' => $player->id,
+                        'player_id' => $playerModel->id,
                     ]);
                 }
             }
         }
+    }
 
-        return $league;
+    private function createDraft(League $league)
+    {
+        $draft = $league->draft()->updateOrCreate(
+            ['league_id' => $league->id],
+            $this->draftData,
+        );
+
+        $draft->picks()->delete();
+
+        foreach ($this->draftPickData as $pick) {
+            $member = LeagueMember::forExtId($pick['league_member_id'])->first();
+
+            if (! $member instanceof LeagueMember) {
+                Log::error('Member not found for draft pick', $pick);
+                continue;
+            }
+
+            $player = Player::espnId($pick['player_id'])->first();
+
+            if (! $player instanceof Player) {
+                Log::error('Player not found for draft pick', $pick);
+                continue;
+            }
+
+            $pick['league_member_id'] = $member->id;
+            $pick['player_id'] = $player->id;
+
+            $draft->picks()->updateOrCreate(
+                ['league_member_id' => $member->id, 'player_id' => $player->id],
+                $pick,
+            );
+        }
     }
 
     private function getRosterPositions(LineupSlotCountsData $lineup): array

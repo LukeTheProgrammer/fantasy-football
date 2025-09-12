@@ -73,8 +73,19 @@ class LeagueMember extends Model
      */
     public function scopeForLeague(Builder $query, int|string|League $league): Builder
     {
-        return ($league instanceof League)
-            ? $query->where('league_id', $league->id)
-            : $query->where('league_id', $league);
+        return $query->where('league_id', $league instanceof League ? $league->id : $league);
+    }
+
+    /**
+     * Local scope method for filtering by external id.
+     *
+     * @param Builder $query
+     * @param integer|string $extId
+     *
+     * @return Builder
+     */
+    public function scopeForExtId(Builder $query, int|string $extId): Builder
+    {
+        return $query->where('external_id', $extId);
     }
 }
