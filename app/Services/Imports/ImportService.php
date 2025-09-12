@@ -5,7 +5,7 @@ namespace App\Services\Imports;
 use App\Enums\RankingSourcesEnum;
 use App\Enums\FantasyPlatformsEnum;
 use App\Services\Imports\Drivers\Rankings\FantasyProsDriver;
-use App\Services\Imports\Drivers\Leagues\EspnDriver;
+use App\Services\Imports\Drivers\FantasyNFL\EspnDriver;
 use App\Services\Imports\Importers\DraftRankingsImporter;
 use App\Services\Imports\Importers\FantasyNFLImporter;
 use Exception;

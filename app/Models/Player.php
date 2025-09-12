@@ -149,4 +149,28 @@ class Player extends Model
             get: fn () => (string) $this->draft_round === '1',
         );
     }
+
+    /**
+     * Scope a query to only include players with the given ESPN ID.
+     *
+     * @param Builder $query
+     * @param integer|string $espnId
+     *
+     * @return Builder
+     */
+    public function scopeEspnId(Builder $query, int|string $espnId): Builder
+    {
+        return $query->where('espn_id', $espnId);
+    }
+
+    public function scopeNameLike(Builder $query, string $name): Builder
+    {
+        return $query->where(function ($q) use ($name) {
+            $name = '%' . $name . '%';
+
+            return $q->orWhere('first_name', 'like', $name)
+                ->orWhere('last_name', 'like', $name)
+                ->orWhere('full_name', 'like', $name);
+        });
+    }
 }

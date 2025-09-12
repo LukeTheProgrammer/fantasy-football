@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->string('platform')->default('ESPN');
+            $table->string('platform_id')->nullable();
             $table->integer('team_count')->default(12);
             $table->boolean('is_public')->default(true);
             $table->string('join_code')->nullable()->unique();

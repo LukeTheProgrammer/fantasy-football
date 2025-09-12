@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\Imports\Drivers\Leagues;
+namespace App\Services\Imports\Drivers\FantasyNFL;
 
+use App\Enums\FantasyPlatformsEnum;
 use App\Facades\Espn;
 use App\Models\League;
 use App\Models\LeagueMember;
@@ -21,7 +22,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 
-class EspnDriver extends BaseLeagueDriver
+class EspnDriver extends BaseFantasyNFLDriver
 {
     private FantasyNFL $espn;
 
@@ -98,6 +99,8 @@ class EspnDriver extends BaseLeagueDriver
             'year'               => date('Y'),
             'slug'               => 'espn-' . Str::slug($settings->name),
             'description'        => null,
+            'platform'           => FantasyPlatformsEnum::ESPN->value,
+            'platform_id'        => $this->credentials->leagueId,
             'team_count'         => $settings->size,
             'is_public'          => $settings->isPublic,
             'join_code'          => Str::upper(Str::random(8)),
@@ -133,35 +136,51 @@ class EspnDriver extends BaseLeagueDriver
 
             $this->rosterData[] = [
                 'team_id' => $team->id,
-                'players' => $team->roster->entries->map(function (TeamRosterEntryData $entry) {
-                    return $entry->playerId;
-                }),
+                'players' => $team->roster->entries->map(fn (TeamRosterEntryData $entry) => [
+                    'player_id'   => $entry->playerId,
+                    'position_id' => $entry->lineupSlotId,
+                    'first_name'  => $entry->playerPoolEntry->player->firstName,
+                ]),
             ];
         });
     }
 
     private function createLeague(): League
     {
-        $league = League::create($this->leagueData);
+        $league = League::updateOrCreate(
+            [
+                'platform' => $this->leagueData['platform'],
+                'platform_id' => $this->leagueData['platform_id'],
+            ],
+            $this->leagueData,
+        );
 
-        $league->settings()->create($this->settingsData);
+        $league->settings()->updateOrCreate(['league_id' => $league->id], $this->settingsData);
 
-        $league->members()->createMany($this->membersData);
+        $league->draft()->updateOrCreate(['league_id' => $league->id], $this->draftData);
 
-        $league->draft()->create($this->draftData);
+        foreach ($this->membersData as $m) {
+            $league->members()->updateOrCreate(['external_id' => $m['external_id']], $m);
+        }
+
+        $members = LeagueMember::forLeague($league)->get()->keyBy('external_id');
 
         foreach ($this->rosterData as $roster) {
-            $member = $league->members()->where('external_id', $roster['team_id'])->first();
+            $member = $members->get($roster['team_id']);
 
             if (! $member instanceof LeagueMember) {
                 continue;
             }
 
-            foreach ($roster['players'] as $playerId) {
-                $player = Player::where('espn_id', $playerId)->first();
+            $member->rosters()->delete();
+
+            foreach ($roster['players'] as $player) {
+                $player = $player['position_id'] === 16
+                    ? Player::nameLike($player['first_name'])->first()
+                    : Player::where('espn_id', $player['player_id'])->first();
 
                 if ($player instanceof Player) {
-                    $member->rosters()->create([
+                    $member->rosters()->withTrashed()->updateOrCreate([
                         'player_id' => $player->id,
                     ]);
                 }
