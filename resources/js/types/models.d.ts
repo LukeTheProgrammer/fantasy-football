@@ -45,6 +45,15 @@ export interface DraftRanking {
   player: Player;
 }
 
+export interface FantasyPointsWeek {
+  id: number;
+  league_id: number;
+  player_id: number;
+  year: number;
+  week_number: number;
+  espn_projected_points: number;
+}
+
 export interface League {
   id: number;
   created_by_user_id: number;
@@ -59,6 +68,7 @@ export interface League {
   is_public: boolean;
   is_active: boolean;
   draft: Draft;
+  fantasy_points_weeks: FantasyPointsWeek[];
   members: LeagueMember[];
   rosters: LeagueMemberRoster[];
   settings: LeagueSettings;
@@ -128,6 +138,7 @@ export interface Player {
   deleted_at: string | null;
   position: Position;
   team: Team;
+  projected_points?: number;
 }
 
 export interface PlayerAlias {

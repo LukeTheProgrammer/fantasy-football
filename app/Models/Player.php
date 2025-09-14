@@ -75,21 +75,7 @@ class Player extends Model
         'draft_year' => 'datetime:Y',
     ];
 
-    /**
-     * Get the position for this player.
-     */
-    public function position(): BelongsTo
-    {
-        return $this->belongsTo(Position::class);
-    }
-
-    /**
-     * Get the team for this player.
-     */
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(Team::class);
-    }
+    /* ===[ Relationships ]=== */
 
     /**
      * Get the aliases for this player.
@@ -115,10 +101,81 @@ class Player extends Model
         return $this->hasMany(DraftRanking::class);
     }
 
+    /**
+     * Get the seasonal fantasy points for this player.
+     */
+    public function fantasyPointsSeasons(): HasMany
+    {
+        return $this->hasMany(FantasyPointsSeason::class);
+    }
+
+    /**
+     * Get the weekly fantasy points for this player.
+     */
+    public function fantasyPointsWeeks(): HasMany
+    {
+        return $this->hasMany(FantasyPointsWeek::class);
+    }
+
+    /**
+     * Get the position for this player.
+     */
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class);
+    }
+
+    /**
+     * Get the team for this player.
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    /**
+     * Get the player's current draft rankings.
+     */
     public function currentDraftRankings(): HasMany
     {
         return $this->draftRankings()->where('draft_year', Carbon::now()->year);
     }
+
+    /* ===[ Scopes ]=== */
+
+    /**
+     * Scope a query to only include players with the given ESPN ID.
+     *
+     * @param Builder $query
+     * @param integer|string $espnId
+     *
+     * @return Builder
+     */
+    public function scopeEspnId(Builder $query, int|string $espnId): Builder
+    {
+        return $query->where('espn_id', $espnId);
+    }
+
+    /**
+     * Queries players by name.
+     *
+     * @param Builder $query
+     * @param string $name
+     *
+     * @return Builder
+     */
+    public function scopeNameLike(Builder $query, string $name): Builder
+    {
+        return $query->where(function ($q) use ($name) {
+            $name = '%' . $name . '%';
+
+            return $q->orWhere('first_name', 'like', $name)
+                ->orWhere('last_name', 'like', $name)
+                ->orWhere('full_name', 'like', $name);
+        });
+    }
+
+    /* ===[ Attributes ]=== */
 
     /**
      * Get the player's age.
@@ -148,29 +205,5 @@ class Player extends Model
         return Attribute::make(
             get: fn () => (string) $this->draft_round === '1',
         );
-    }
-
-    /**
-     * Scope a query to only include players with the given ESPN ID.
-     *
-     * @param Builder $query
-     * @param integer|string $espnId
-     *
-     * @return Builder
-     */
-    public function scopeEspnId(Builder $query, int|string $espnId): Builder
-    {
-        return $query->where('espn_id', $espnId);
-    }
-
-    public function scopeNameLike(Builder $query, string $name): Builder
-    {
-        return $query->where(function ($q) use ($name) {
-            $name = '%' . $name . '%';
-
-            return $q->orWhere('first_name', 'like', $name)
-                ->orWhere('last_name', 'like', $name)
-                ->orWhere('full_name', 'like', $name);
-        });
     }
 }

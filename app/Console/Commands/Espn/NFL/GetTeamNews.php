@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Espn\NFL;
 
 use App\Facades\Espn;
+use App\Models\Team;
 use Illuminate\Console\Command;
 
 class GetTeamNews extends Command
@@ -12,7 +13,10 @@ class GetTeamNews extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:get:team-news {team_id}';
+    protected $signature = 'espn:nfl:get:team-news
+        { --a|all : Get all NFL teams }
+        { espn_team_id? : The ESPN NFL team ID }
+    ';
 
     /**
      * The console command description.
@@ -26,13 +30,30 @@ class GetTeamNews extends Command
      */
     public function handle()
     {
-        $teamId = $this->argument('team_id');
+        if ($this->option('all')) {
+            Team::all()->each(function ($team) {
+                $this->getTeamNews($team->espn_id);
+            });
 
+            return Command::SUCCESS;
+        }
+
+        $teamId = $this->argument('espn_team_id');
+
+        if ($teamId) {
+            $this->getTeamNews($teamId);
+
+            return Command::SUCCESS;
+        }
+    }
+
+    public function getTeamNews(int $teamId)
+    {
         $nfl = Espn::nfl();
 
         $news = $nfl->getTeamNews($teamId);
 
-        $path = storage_path('data/espn/nfl/team-news.json');
+        $path = storage_path('data/espn/nfl/team-news/team-news-' . $teamId . '.json');
 
         $bytes = file_put_contents($path, json_encode($news, JSON_PRETTY_PRINT));
 

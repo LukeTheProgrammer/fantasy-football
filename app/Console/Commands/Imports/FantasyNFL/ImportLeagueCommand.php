@@ -25,7 +25,7 @@ use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-class ImportFantasyNFLCommand extends Command
+class ImportLeagueCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -69,13 +69,15 @@ class ImportFantasyNFLCommand extends Command
 
         $this->creator = User::findOrFail($creatorId);
 
-        $platform = FantasyPlatformsEnum::from(Str::upper($this->argument('platform')));
+        $platformArg = $this->argument('platform') ?? select(
+            label: 'Platform',
+            options: FantasyPlatformsEnum::options()->toArray(),
+            default: FantasyPlatformsEnum::ESPN->value
+        );
 
-        $platform = (! $platform instanceof FantasyPlatformsEnum)
-            ? FantasyPlatformsEnum::from(select('Platform', FantasyPlatformsEnum::cases()))
-            : $platform;
+        $platform = FantasyPlatformsEnum::from(Str::upper($platformArg));
 
-        if ($platform->value === FantasyPlatformsEnum::ESPN->value) {
+        if ($platform === FantasyPlatformsEnum::ESPN) {
             return $this->setUpEspnImporter();
         }
     }

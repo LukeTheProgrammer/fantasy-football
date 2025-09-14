@@ -13,7 +13,10 @@ class GetTeam extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:get:team {espn_team_id?} {--A|all}';
+    protected $signature = 'espn:nfl:get:team
+        { --a|all : Get all NFL teams }
+        { espn_team_id? : The ESPN NFL team ID }
+    ';
 
     /**
      * The console command description.
@@ -26,16 +29,22 @@ class GetTeam extends Command
      * Execute the console command.
      */
     public function handle()
-    {
-        $teamId = $this->argument('espn_team_id');
-        $getAll = $this->option('all');
 
-        if ($teamId) {
-            return $this->getTeam($teamId);
+    {
+        if ($this->option('all')) {
+            Team::all()->each(function ($team) {
+                $this->getTeam($team->espn_id);
+            });
+
+            return Command::SUCCESS;
         }
 
-        if ($getAll) {
-            return $this->getAllTeams();
+        $teamId = $this->argument('espn_team_id');
+
+        if ($teamId) {
+            $this->getTeam($teamId);
+
+            return Command::SUCCESS;
         }
     }
 
@@ -43,21 +52,10 @@ class GetTeam extends Command
     {
         $team = Espn::nfl()->getTeam($teamId);
 
-        $path = storage_path('data/espn/nfl/team-' . $teamId . '.json');
+        $path = storage_path('data/espn/nfl/teams/team-' . $teamId . '.json');
 
         $bytes = file_put_contents($path, json_encode($team, JSON_PRETTY_PRINT));
 
         $this->info(PHP_EOL . "NFL Team saved to $path ($bytes bytes)" . PHP_EOL);
-    }
-
-    protected function getAllTeams()
-    {
-        $teamList = Espn::nfl()->getTeams();
-
-        $teams = Arr::get($teamList, 'sports.0.leagues.0.teams', []);
-
-        foreach ($teams as $team) {
-            $this->getTeam(Arr::get($team, 'team.id'));
-        }
     }
 }

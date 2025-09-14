@@ -241,9 +241,10 @@ class EspnDriver extends BaseFantasyNFLDriver
                     : Player::where('espn_id', $player['player_id'])->first();
 
                 if ($playerModel instanceof Player) {
-                    $member->rosters()->withTrashed()->updateOrCreate([
-                        'player_id' => $playerModel->id,
-                    ]);
+                    $member->rosters()->withTrashed()->updateOrCreate(
+                        ['player_id' => $playerModel->id],
+                        ['deleted_at' => null],
+                    );
                 }
             }
         }

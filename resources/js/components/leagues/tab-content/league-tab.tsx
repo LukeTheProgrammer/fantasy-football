@@ -1,12 +1,9 @@
 import MemberBadge from '@/components/leagues/member-badge';
-import { Player, type League, type LeagueMember, type LeagueMemberRoster } from '@/types/models';
+import { Player, type League, type LeagueMember, type LeagueMemberRoster, type FantasyPointsWeek } from '@/types/models';
 import { useState, useEffect } from 'react';
-import { PositionBadge } from '@/components/position-badge';
-import { TeamBadge } from '@/components/team-badge';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -23,6 +20,8 @@ export default function ShowLeague({ league }: LeagueTabProps) {
   // const userIsAdmin = isUserLeagueAdmin(league, userId);
 
   const [selectedMember, setSelectedMember] = useState<LeagueMember | null>(null);
+
+  const fantasyPointsWeeks = league.fantasy_points_weeks || [];
 
   // Select the first member by default when the component mounts
   useEffect(() => {
@@ -55,7 +54,14 @@ export default function ShowLeague({ league }: LeagueTabProps) {
       const abb = roster.player.position.abbreviation;
 
       if (abb in positions) {
-        positions[abb].push(roster.player);
+        const proj = fantasyPointsWeeks.find(fpw => fpw.player_id === roster.player.id);
+        const ptVal = new Number(proj?.espn_projected_points || 0);
+        const pts = ptVal.toFixed(1) || 0;
+
+        positions[abb].push({
+          ...roster.player,
+          projected_points: pts || 0,
+        });
       }
     });
 
@@ -91,26 +97,30 @@ export default function ShowLeague({ league }: LeagueTabProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>POS</TableHead>
+                  <TableHead className='text-center'>POS</TableHead>
                   <TableHead>Player</TableHead>
-                  <TableHead>&nbsp;</TableHead>
-                  <TableHead>Team</TableHead>
+                  <TableHead>Proj.</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {getPlayers(selectedMember?.rosters || []).map((player) => (
                   <TableRow key={player.id}>
-                    <TableCell>
-                      <PositionBadge position={player.position} />
+                    <TableCell className="text-center">
+                      {player.position.abbreviation}
                     </TableCell>
-                    <TableCell>
-                      {player.headshot && (
-                        <img src={player.headshot} alt={player.full_name} className="h-14" />
-                      )}
+                    <TableCell className="pl-0 flex items-center justify-start">
+                      <div className="w-[4em]">
+                        {player.headshot && (
+                          <img src={player.headshot} alt={player.full_name} className="h-10" />
+                        )}
+                      </div>
+                      <div className="pl-2">
+                        <p>{player.full_name}</p>
+                        <p className="text-xs text-muted-foreground">{player.team.abbreviation}</p>
+                      </div>
                     </TableCell>
-                    <TableCell>{player.full_name}</TableCell>
-                    <TableCell>
-                      <TeamBadge team={player.team} />
+                    <TableCell className="text-center">
+                      {player?.projected_points}
                     </TableCell>
                   </TableRow>
                 ))}

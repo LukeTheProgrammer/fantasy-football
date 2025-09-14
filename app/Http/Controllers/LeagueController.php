@@ -33,8 +33,12 @@ class LeagueController extends Controller
         $league->load([
             'creator',
             'draft.picks',
+            'fantasyPointsWeeks',
             'members' => [
-                'rosters.player' => ['team', 'position'],
+                'rosters.player' => [
+                    'team',
+                    'position',
+                ],
                 'user',
             ],
             'settings',

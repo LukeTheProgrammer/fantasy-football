@@ -56,7 +56,7 @@ class LeagueMember extends Model
     }
 
     /**
-     * Get the draft picks for the league member.
+     * Get the rosters for the league member.
      */
     public function rosters(): HasMany
     {
