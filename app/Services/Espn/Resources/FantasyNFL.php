@@ -216,6 +216,8 @@ class FantasyNFL extends BaseResource
 
     private function buildViewsQuery(array $views = [])
     {
+        $views = empty($views) ? FantasyNFLViews::cases() : $views;
+
         $mapped = array_map(function ($view) {
             $viewName = ($view instanceof FantasyNFLViews)
                 ? $view
