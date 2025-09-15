@@ -49,15 +49,8 @@ class PlayerData extends BaseData
         //
     }
 
-    public function getStat(string $key): ?PlayerStatsData
+    public function getStatsForGame(string $id): Collection
     {
-        $statId = Arr::get(EspnConstants::PLAYER_STAT_IDS, $key);
-
-        return $this->stats->firstWhere('id', $statId);
-    }
-
-    public function getProjectedWeekPoints(): ?PlayerStatsData
-    {
-        return $this->getStat('projected_week_points');
+        return $this->stats->where('externalId', $id);
     }
 }

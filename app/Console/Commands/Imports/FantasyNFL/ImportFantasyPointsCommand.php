@@ -7,7 +7,7 @@ use App\Facades\Espn;
 use App\Models\Player;
 use App\Models\FantasyPointsWeek;
 use App\Models\League;
-use App\Models\User;
+use App\Models\NflGame;
 use App\Services\Espn\Data\FantasyNFL\PlayerData;
 use App\Services\Espn\Data\FantasyNFL\PlayerStatsData;
 use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
@@ -18,27 +18,29 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use function Laravel\Prompts\select;
 
-class ImportProjectionsCommand extends Command
+class ImportFantasyPointsCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'import:fantasy-nfl:projections';
+    protected $signature = 'import:fantasy-nfl:points
+        { year? : Year for which to import points }
+    ';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Import Fantasy NFL Projections';
+    protected $description = 'Import Fantasy NFL Points';
 
     protected FantasyNFL $api;
 
-    protected User $user;
-
     protected League $league;
+
+    protected Collection $games;
 
     /**
      * Execute the console command.
@@ -47,18 +49,18 @@ class ImportProjectionsCommand extends Command
     {
         $this->setUp();
 
-        $this->info('Importing Fantasy Projections');
+        $this->info('Importing Fantasy Points');
 
         $this->import();
 
-        $this->info('Fantasy Projections imported successfully: ' . $this->league->name);
+        $this->info('Fantasy Points imported successfully: ' . $this->league->name);
     }
 
     protected function setUp()
     {
-        $userId = select('User', User::all()->pluck('name', 'id')->toArray());
+        $year = $this->argument('year') ?? date('Y');
 
-        $this->user = User::findOrFail($userId);
+        $this->games = NflGame::forYear($year)->get()->keyBy('espn_id');
 
         $leagueId = select(
             label: 'League',
@@ -90,7 +92,7 @@ class ImportProjectionsCommand extends Command
 
     protected function processTeam(ResourceTeamsData $team)
     {
-        $this->info('Importing Projections for ' . $team->name);
+        $this->info('Importing Points for ' . $team->name);
 
         /** @var TeamRosterData $roster */
         $roster = $team->roster;
@@ -112,21 +114,28 @@ class ImportProjectionsCommand extends Command
             return true;
         }
 
-        /** @var PlayerStatsData $projectionStat */
-        $projectionStat = $player->getProjectedWeekPoints();
+        $player->stats->each(fn ($stat) => $this->processStat($playerModel, $stat));
+    }
 
-        if (! $projectionStat instanceof PlayerStatsData) {
+    protected function processStat(Player $player, PlayerStatsData $stat)
+    {
+        $game = $this->games->get($stat->externalId);
+
+        if (! $game instanceof NflGame) {
             return true;
         }
 
+        $data = ($stat->isActual)
+            ? [ 'points' => $stat->appliedTotal ]
+            : [ 'espn_projected_points' => $stat->appliedTotal ];
+
         FantasyPointsWeek::updateOrCreate(
             [
-                'league_id' => $this->league->id,
-                'player_id' => $playerModel->id,
-                'year' => $projectionStat->seasonId,
-                'week_number' => $projectionStat->scoringPeriodId,
+                'nfl_game_id' => $game->id,
+                'league_id'   => $this->league->id,
+                'player_id'   => $player->id,
             ],
-            ['espn_projected_points' => $projectionStat->appliedTotal],
+            $data,
         );
     }
 }

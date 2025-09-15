@@ -17,16 +17,11 @@ return new class extends Migration
 
         Schema::create('fantasy_points_weeks', function (Blueprint $table) {
             $table->id();
-            $table->year('year')->default(now()->year);
-            $table->integer('week_number');
-
             $table->foreignId('nfl_game_id')->constrained('nfl_games')->cascadeOnDelete();
             $table->foreignId('league_id')->constrained('leagues')->cascadeOnDelete();
             $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
-
             $table->decimal('espn_projected_points', 10, 2)->default(0);
             $table->decimal('points', 10, 2)->default(0);
-
             $table->timestamps();
             $table->softDeletes();
         });
