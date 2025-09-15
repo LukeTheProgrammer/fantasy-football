@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,10 +56,36 @@ class LeagueMember extends Model
     }
 
     /**
-     * Get the draft picks for the league member.
+     * Get the rosters for the league member.
      */
     public function rosters(): HasMany
     {
         return $this->hasMany(LeagueMemberRoster::class);
+    }
+
+    /**
+     * Local scope method for filtering by league.
+     *
+     * @param Builder $query
+     * @param integer|string|League $league
+     *
+     * @return Builder
+     */
+    public function scopeForLeague(Builder $query, int|string|League $league): Builder
+    {
+        return $query->where('league_id', $league instanceof League ? $league->id : $league);
+    }
+
+    /**
+     * Local scope method for filtering by external id.
+     *
+     * @param Builder $query
+     * @param integer|string $extId
+     *
+     * @return Builder
+     */
+    public function scopeForExtId(Builder $query, int|string $extId): Builder
+    {
+        return $query->where('external_id', $extId);
     }
 }

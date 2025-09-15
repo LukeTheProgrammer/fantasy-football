@@ -32,9 +32,16 @@ class LeagueController extends Controller
     {
         $league->load([
             'creator',
-            'settings',
-            'members.user',
             'draft.picks',
+            'fantasyPointsWeeks',
+            'members' => [
+                'rosters.player' => [
+                    'team',
+                    'position',
+                ],
+                'user',
+            ],
+            'settings',
         ]);
 
         return Inertia::render('leagues/show', [

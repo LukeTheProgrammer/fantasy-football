@@ -3,6 +3,7 @@
 namespace App\Services\Espn;
 
 use App\Enums\PositionEnum;
+use Illuminate\Support\Arr;
 
 class EspnConstants
 {
@@ -275,4 +276,23 @@ class EspnConstants
         205 => 'defensive2PtReturns', // 2PTRET
         206 => 'defensive2PtReturns', // 2PTRET - TODO: figure out what the difference is between 206 and 205
     ];
+
+    public const PLAYER_STAT_IDS = [
+        'projected_week_points' => 1120252,
+    ];
+
+    public static function mapPlayerStats(array $stats): array
+    {
+        $mappedStats = [];
+
+        foreach ($stats as $statId => $statValue) {
+            $stat = Arr::get(static::PLAYER_STATS_MAP, $statId, false);
+
+            if ($stat) {
+                $mappedStats[$stat] = $statValue;
+            }
+        }
+
+        return $mappedStats;
+    }
 }

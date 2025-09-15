@@ -25,6 +25,12 @@ return new class extends Migration
             $table->string('team_logo')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_active')->default(true);
+            $table->integer('wins')->default(0);
+            $table->integer('losses')->default(0);
+            $table->integer('ties')->default(0);
+            $table->decimal('points_for', 10, 2)->default(0);
+            $table->decimal('points_against', 10, 2)->default(0);
+            $table->integer('faab_balance')->default(0);
             $table->timestamps();
             $table->softDeletes();
 

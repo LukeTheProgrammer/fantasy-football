@@ -18,7 +18,10 @@ class LoadTeamRosters extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:load:team-rosters {espn_team_id?} {--A|all}';
+    protected $signature = 'espn:nfl:load:team-rosters
+        { --a|all : Load all rosters }
+        { espn_team_id? : The ESPN Team ID }
+    ';
 
     /**
      * The console command description.
@@ -46,17 +49,16 @@ class LoadTeamRosters extends Command
      */
     public function handle()
     {
-        $teamId = $this->argument('espn_team_id');
-        $getAll = $this->option('all');
-
         $this->setUp();
+
+        if ($this->option('all')) {
+            return $this->loadAllRosters();
+        }
+
+        $teamId = $this->argument('espn_team_id');
 
         if ($teamId) {
             return $this->loadTeamRoster($teamId);
-        }
-
-        if ($getAll) {
-            return $this->loadAllRosters();
         }
     }
 
@@ -80,7 +82,7 @@ class LoadTeamRosters extends Command
 
         $this->info('Loading players for ' . $this->team->abbreviation . ' [' . $teamId . ']' . PHP_EOL);
 
-        $path = storage_path('data/espn/nfl/team-roster-' . $teamId . '.json');
+        $path = storage_path('data/espn/nfl/team-rosters/team-roster-' . $teamId . '.json');
 
         if (! file_exists($path)) {
             $this->error('Roster file does not exist: ' . $path);

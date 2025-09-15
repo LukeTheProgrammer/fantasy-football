@@ -10,36 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
-/**
- * @property int $id
- * @property string $abbreviation
- * @property string $location
- * @property string $name
- * @property string|null $logo
- * @property string $conference
- * @property string $division
- * @property int|null $espn_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property string|null $deleted_at
- *
- * @method static Builder<static>|Team newModelQuery()
- * @method static Builder<static>|Team newQuery()
- * @method static Builder<static>|Team query()
- * @method static Builder<static>|Team whereAbbreviation($value)
- * @method static Builder<static>|Team whereConference($value)
- * @method static Builder<static>|Team whereCreatedAt($value)
- * @method static Builder<static>|Team whereDeletedAt($value)
- * @method static Builder<static>|Team whereDivision($value)
- * @method static Builder<static>|Team whereEspnId($value)
- * @method static Builder<static>|Team whereId($value)
- * @method static Builder<static>|Team whereLocation($value)
- * @method static Builder<static>|Team whereLogo($value)
- * @method static Builder<static>|Team whereName($value)
- * @method static Builder<static>|Team whereUpdatedAt($value)
- *
- * @mixin \Eloquent
- */
 class Team extends Model
 {
     use HasFactory;
@@ -63,6 +33,11 @@ class Team extends Model
     public function scopeForAbbreviation(Builder $query, string $abbreviation): Builder
     {
         return $query->where('abbreviation', '=', $abbreviation);
+    }
+
+    public function scopeForEspnId(Builder $query, int $espnId): Builder
+    {
+        return $query->where('espn_id', '=', $espnId);
     }
 
     /**

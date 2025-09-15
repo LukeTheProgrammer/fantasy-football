@@ -33,6 +33,8 @@ class League extends Model
         'credentials' => 'array',
     ];
 
+    /* ===[ Relationships ]=== */
+
     /**
      * Get the user who created the league.
      */
@@ -42,11 +44,27 @@ class League extends Model
     }
 
     /**
-     * Get the league settings.
+     * Get the draft for the league.
      */
-    public function settings(): HasOne
+    public function draft(): HasOne
     {
-        return $this->hasOne(LeagueSettings::class);
+        return $this->hasOne(Draft::class);
+    }
+
+    /**
+     * Get the seasonal fantasy points for this player.
+     */
+    public function fantasyPointsSeasons(): HasMany
+    {
+        return $this->hasMany(FantasyPointsSeason::class);
+    }
+
+    /**
+     * Get the weekly fantasy points for this player.
+     */
+    public function fantasyPointsWeeks(): HasMany
+    {
+        return $this->hasMany(FantasyPointsWeek::class);
     }
 
     /**
@@ -58,12 +76,14 @@ class League extends Model
     }
 
     /**
-     * Get the draft for the league.
+     * Get the league settings.
      */
-    public function draft(): HasOne
+    public function settings(): HasOne
     {
-        return $this->hasOne(Draft::class);
+        return $this->hasOne(LeagueSettings::class);
     }
+
+    /* ===[ Helpers ]=== */
 
     /**
      * Checks if a user is the Creator of this league.

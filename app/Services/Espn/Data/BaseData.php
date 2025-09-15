@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Services\Espn\Data\FantasyNFL;
+namespace App\Services\Espn\Data;
 
-use Illuminate\Support\Facades\Log;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Casts\Cast;
 use Spatie\LaravelData\Support\Creation\CreationContext;
@@ -24,7 +23,6 @@ class BaseData extends Data implements Cast
      */
     public function cast(DataProperty $property, mixed $value, array $properties, CreationContext $context): mixed
     {
-        Log::info($value);
         return $this->isCollectionCast
             ? collect($value)->map(fn ($v) => static::from($v))
             : static::from($value);

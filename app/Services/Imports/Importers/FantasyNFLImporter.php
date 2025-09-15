@@ -4,11 +4,11 @@ namespace App\Services\Imports\Importers;
 
 use App\Models\League;
 use App\Models\User;
-use App\Services\Imports\Drivers\Leagues\BaseLeagueDriver;
+use App\Services\Imports\Drivers\FantasyNFL\BaseFantasyNFLDriver;
 
 class FantasyNFLImporter
 {
-    public function __construct(public ?BaseLeagueDriver $driver = null)
+    public function __construct(public ?BaseFantasyNFLDriver $driver = null)
     {
         //
     }

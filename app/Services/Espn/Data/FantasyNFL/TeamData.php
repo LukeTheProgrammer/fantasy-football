@@ -2,6 +2,7 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
+use App\Services\Espn\Data\BaseData;
 use Spatie\LaravelData\Attributes\WithCast;
 
 class TeamData extends BaseData

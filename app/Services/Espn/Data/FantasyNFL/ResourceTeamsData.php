@@ -2,6 +2,7 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
+use App\Services\Espn\Data\BaseData;
 use App\Data\Casts\CollectionCast;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -36,7 +37,6 @@ class ResourceTeamsData extends BaseData
         public array $currentSimulationResults = [],
         public array $draftStrategy = [],
         public array $owners = [],
-        public array $transactionCounter = [],
 
         #[WithCast(DraftDetailData::class)]
         public array|DraftDetailData $draftDetail = [],
@@ -44,7 +44,7 @@ class ResourceTeamsData extends BaseData
         #[WithCast(MemberData::class)]
         public array|Collection $members = [],
 
-        #[WithCast(CollectionCast::class)]
+        #[WithCast(TeamRecordData::class)]
         public array|Collection $record = [],
 
         #[WithCast(TeamRosterData::class)]
@@ -58,6 +58,9 @@ class ResourceTeamsData extends BaseData
 
         #[WithCast(CollectionCast::class)]
         public array|Collection $tradeBlock = [],
+
+        #[WithCast(TeamTransactionData::class)]
+        public array|TeamTransactionData $transactionCounter = [],
 
         #[WithCast(CollectionCast::class)]
         public array|Collection $valuesByStat = [],

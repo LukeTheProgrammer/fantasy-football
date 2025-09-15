@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Imports\Drivers\Leagues;
+namespace App\Services\Imports\Drivers\FantasyNFL;
 
 use App\Models\League;
 use App\Models\User;
 
-abstract class BaseLeagueDriver
+abstract class BaseFantasyNFLDriver
 {
     public mixed $credentials;
 

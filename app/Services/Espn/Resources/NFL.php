@@ -6,6 +6,7 @@ use App\Services\Espn\Enums\Apis;
 use App\Services\Espn\Enums\ApiVersions;
 use App\Services\Espn\Enums\Leagues;
 use App\Services\Espn\Enums\Sports;
+use App\Services\Espn\Data\NFL\ResourceTeamScheduleData;
 
 /**
  * News (Team Specific)	    site.api.espn.com/apis/site/v2/sports/football/nfl/news
@@ -28,19 +29,6 @@ class NFL extends BaseResource
     public function __construct()
     {
         //
-    }
-
-    public function buildUrl(?string $path = null, ?string $version = null)
-    {
-        $v = $version ?? $this->apiVersion->value;
-
-        return $this->assembleUrl([
-            'http://' . $this->api->value,
-            'apis/site/' . $v,
-            'sports/' . $this->sport->value,
-            $this->league->value,
-            $path,
-        ]);
     }
 
     /**
@@ -156,7 +144,9 @@ class NFL extends BaseResource
 
         $response = $this->get($url, $this->query());
 
-        return $response->json();
+        return $this->returnRaw
+            ? $response->json()
+            : ResourceTeamScheduleData::from($response->json());
     }
 
     /**
@@ -173,5 +163,27 @@ class NFL extends BaseResource
         $response = $this->get($url, $this->query());
 
         return $response->json();
+    }
+
+
+    /**
+     * Constructs URL string.
+     *
+     * @param string|null $path
+     * @param string|null $version
+     *
+     * @return string
+     */
+    private function buildUrl(?string $path = null, ?string $version = null): string
+    {
+        $v = $version ?? $this->apiVersion->value;
+
+        return $this->assembleUrl([
+            'http://' . $this->api->value,
+            'apis/site/' . $v,
+            'sports/' . $this->sport->value,
+            $this->league->value,
+            $path,
+        ]);
     }
 }

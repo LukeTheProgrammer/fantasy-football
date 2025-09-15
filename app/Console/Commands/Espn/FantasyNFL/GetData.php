@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Espn\FantasyNFL;
 
 use App\Facades\Espn;
+use App\Services\Espn\Enums\FantasyNFLViews;
 use Illuminate\Console\Command;
 
 class GetData extends Command
@@ -17,6 +18,7 @@ class GetData extends Command
         { --s2=      : ESPN S2 token }
         { --swid=    : ESPN SWID token }
         { --raw      : Save raw data }
+        { --custom   : Save custom data }
     ';
 
     /**
@@ -28,11 +30,15 @@ class GetData extends Command
 
     protected int|string $leagueId;
 
+    protected string $outputPath;
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
+        $this->setOutputPath();
+
         $this->leagueId = $this->argument('league_id') ?? config('services.espn.default_league_id');
 
         $fantasyNFL = Espn::fantasyNFL([
@@ -45,7 +51,37 @@ class GetData extends Command
             $fantasyNFL->returnRaw = true;
         }
 
-        $data = $fantasyNFL->getData();
+        // rosterForTeamId=1
+        // &view=mDraftDetail
+        // &view=mLiveScoring
+        // &view=mMatchupScore
+        // &view=mPendingTransactions
+        // &view=mPositionalRatings
+        // &view=mRoster
+        // &view=mSettings
+        // &view=mTeam
+        // &view=modular
+        // &view=mNav
+
+        $data = $fantasyNFL->getData([
+            FantasyNFLViews::DRAFT,
+            FantasyNFLViews::KONA,
+            FantasyNFLViews::LIVE_SCORE,
+            FantasyNFLViews::MATCHUP,
+            FantasyNFLViews::MATCHUP_SCORE,
+            FantasyNFLViews::MODULAR,
+            FantasyNFLViews::NAV,
+            FantasyNFLViews::PENDING_TRANSACTIONS,
+            FantasyNFLViews::PLAYERS_WL,
+            FantasyNFLViews::PLAYER_WL,
+            FantasyNFLViews::POSITIONAL_RATINGS,
+            FantasyNFLViews::PRO_TEAM_SCHEDULES_WL,
+            FantasyNFLViews::ROSTER,
+            FantasyNFLViews::SETTINGS,
+            FantasyNFLViews::STANDINGS,
+            FantasyNFLViews::STATUS,
+            FantasyNFLViews::TEAM,
+        ]);
 
         $this->saveData('keys', array_keys($data));
 
@@ -62,7 +98,7 @@ class GetData extends Command
         $this->saveData('league', $league);
     }
 
-    protected function filePath(string $key): string
+    protected function setOutputPath()
     {
         $parts = ['data','espn','ffl'];
 
@@ -70,17 +106,33 @@ class GetData extends Command
             $parts[] = 'raw';
         }
 
-        $parts[] = $this->leagueId . '-getData-' . $key . '.json';
+        if ($this->option('custom')) {
+            $parts[] = 'custom-' . date('Y-m-d-H-i');
+        }
 
-        return storage_path(implode(DIRECTORY_SEPARATOR, $parts));
+        $this->outputPath = storage_path(implode(DIRECTORY_SEPARATOR, $parts));
+    }
+
+    protected function filePath(string $key): string
+    {
+        $parts = [
+            $this->outputPath,
+            $this->leagueId . '-getData-' . $key . '.json',
+        ];
+
+        return implode(DIRECTORY_SEPARATOR, $parts);
     }
 
     protected function saveData(string $key, array $value)
     {
         $path = $this->filePath($key);
 
+        if ($this->option('custom') && ! is_dir(dirname($path))) {
+            mkdir(dirname($path), 0775, true);
+        }
+
         $bytes = file_put_contents($path, json_encode($value, JSON_PRETTY_PRINT));
 
-        $this->info(PHP_EOL . "NFL Fantasy League $key saved to $path ($bytes bytes)" . PHP_EOL);
+        $this->info("NFL Fantasy League $key saved to $path ($bytes bytes)");
     }
 }

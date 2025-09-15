@@ -2,6 +2,7 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
+use App\Services\Espn\Data\BaseData;
 use App\Services\Espn\EspnConstants;
 use Illuminate\Support\Arr;
 use Spatie\LaravelData\Attributes\Computed;

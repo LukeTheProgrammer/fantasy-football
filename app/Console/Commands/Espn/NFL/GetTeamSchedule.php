@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Espn\NFL;
 
 use App\Facades\Espn;
+use App\Models\Team;
 use Illuminate\Console\Command;
 
 class GetTeamSchedule extends Command
@@ -12,7 +13,11 @@ class GetTeamSchedule extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl:get:team-schedule {team_id}';
+    protected $signature = 'espn:nfl:get:team-schedule
+        { --a|all : Get all NFL teams }
+        { --r|raw : Return raw response }
+        { espn_team_id? : The ESPN NFL team ID }
+    ';
 
     /**
      * The console command description.
@@ -26,16 +31,38 @@ class GetTeamSchedule extends Command
      */
     public function handle()
     {
-        $teamId = $this->argument('team_id');
+        if ($this->option('all')) {
+            Team::all()->each(function ($team) {
+                $this->getSchedule($team->espn_id);
+            });
+            return;
+        }
 
+        $teamId = $this->argument('espn_team_id');
+
+        if ($teamId) {
+            $this->getSchedule($teamId);
+            return;
+        }
+    }
+
+    public function getSchedule(int $teamId)
+    {
         $nfl = Espn::nfl();
+
+        $basePath = storage_path('data/espn/nfl/team-schedules');
+
+        if ($this->option('raw')) {
+            $nfl->returnRaw = true;
+            $basePath .= '/raw';
+        }
 
         $schedule = $nfl->getTeamSchedule($teamId);
 
-        $path = storage_path('data/espn/nfl/team-schedule-' . $teamId . '.json');
+        $path = $basePath . '/team-schedule-' . $teamId . '.json';
 
         $bytes = file_put_contents($path, json_encode($schedule, JSON_PRETTY_PRINT));
 
-        $this->info(PHP_EOL . "NFL Team Schedule saved to $path ($bytes bytes)" . PHP_EOL);
+        $this->info("NFL Team Schedule saved to $path ($bytes bytes)");
     }
 }

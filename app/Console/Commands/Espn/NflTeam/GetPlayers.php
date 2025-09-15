@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Espn\NflTeam;
 
 use App\Facades\Espn;
+use App\Models\Team;
 use App\Services\Espn\Resources\NflTeam;
 use Illuminate\Console\Command;
 
@@ -13,7 +14,10 @@ class GetPlayers extends Command
      *
      * @var string
      */
-    protected $signature = 'espn:nfl-team:get:players {team_id}';
+    protected $signature = 'espn:nfl-team:get:players
+        { --a|all : Get all players for all teams }
+        { espn_team_id? : The ESPN NFL team ID }
+    ';
 
     /**
      * The console command description.
@@ -29,25 +33,40 @@ class GetPlayers extends Command
      */
     public function handle()
     {
-        $teamId = $this->argument('team_id');
+        if ($this->option('all')) {
+            Team::all()->each(function ($team) {
+                $this->info("Getting NFL Team Players for team $team->espn_id");
+                $this->getPlayers($team->espn_id);
+            });
 
-        $this->nfl = Espn::nflTeam($teamId);
+            return Command::SUCCESS;
+        }
 
-        $this->getPlayers();
+        $teamId = $this->argument('espn_team_id');
+
+        if ($teamId) {
+            $this->info("Getting NFL Team Players for team $teamId");
+            $this->getPlayers($teamId);
+
+            return Command::SUCCESS;
+        }
+
     }
 
-    protected function getPlayers(int $page = 1)
+    protected function getPlayers(int $teamId, int $page = 1)
     {
+        $this->nfl = Espn::nflTeam($teamId);
+
         $players = $this->nfl->getPlayers($page);
 
-        $path = storage_path('data/espn/nfl-team/' . $this->nfl->teamId . '-players-' . $page . '.json');
+        $path = storage_path('data/espn/nfl-teams/players/' . $this->nfl->teamId . '-page-' . $page . '.json');
 
         $bytes = file_put_contents($path, json_encode($players, JSON_PRETTY_PRINT));
 
-        $this->info(PHP_EOL . "NFL Team Players saved to $path ($bytes bytes)" . PHP_EOL);
+        $this->info("NFL Team Players saved to $path ($bytes bytes)");
 
         if ($players['pageCount'] > $page) {
-            $this->getPlayers($page + 1);
+            $this->getPlayers($teamId, $page + 1);
         }
     }
 }

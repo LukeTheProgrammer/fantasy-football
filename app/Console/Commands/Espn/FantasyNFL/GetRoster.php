@@ -38,7 +38,7 @@ class GetRoster extends Command
             'swid' => $this->option('swid') ?? config('services.espn.default_swid'),
         ]);
 
-        $roster = $fantasyNFL->getRoster();
+        $roster = $fantasyNFL->getRosters();
 
         $path = storage_path('data/espn/ffl/' . $leagueId . '-roster.json');
 

@@ -11,48 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
-/**
- * @property int $id
- * @property int|null $espn_id
- * @property int $position_id
- * @property string $first_name
- * @property string $last_name
- * @property string|null $height
- * @property string|null $weight
- * @property string|null $college
- * @property string|null $draft_year
- * @property string|null $draft_round
- * @property string|null $draft_pick
- * @property string|null $draft_team
- * @property string|null $birth_date
- * @property string|null $headshot
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property string|null $deleted_at
- *
- * @method static Builder<static>|Player newModelQuery()
- * @method static Builder<static>|Player newQuery()
- * @method static Builder<static>|Player query()
- * @method static Builder<static>|Player whereBirthDate($value)
- * @method static Builder<static>|Player whereCollege($value)
- * @method static Builder<static>|Player whereCreatedAt($value)
- * @method static Builder<static>|Player whereDeletedAt($value)
- * @method static Builder<static>|Player whereDraftPick($value)
- * @method static Builder<static>|Player whereDraftRound($value)
- * @method static Builder<static>|Player whereDraftTeam($value)
- * @method static Builder<static>|Player whereDraftYear($value)
- * @method static Builder<static>|Player whereEspnId($value)
- * @method static Builder<static>|Player whereFirstName($value)
- * @method static Builder<static>|Player whereHeadshot($value)
- * @method static Builder<static>|Player whereHeight($value)
- * @method static Builder<static>|Player whereId($value)
- * @method static Builder<static>|Player whereLastName($value)
- * @method static Builder<static>|Player wherePositionId($value)
- * @method static Builder<static>|Player whereUpdatedAt($value)
- * @method static Builder<static>|Player whereWeight($value)
- *
- * @mixin \Eloquent
- */
 class Player extends Model
 {
     use HasFactory;
@@ -75,21 +33,7 @@ class Player extends Model
         'draft_year' => 'datetime:Y',
     ];
 
-    /**
-     * Get the position for this player.
-     */
-    public function position(): BelongsTo
-    {
-        return $this->belongsTo(Position::class);
-    }
-
-    /**
-     * Get the team for this player.
-     */
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(Team::class);
-    }
+    /* ===[ Relationships ]=== */
 
     /**
      * Get the aliases for this player.
@@ -115,10 +59,81 @@ class Player extends Model
         return $this->hasMany(DraftRanking::class);
     }
 
+    /**
+     * Get the seasonal fantasy points for this player.
+     */
+    public function fantasyPointsSeasons(): HasMany
+    {
+        return $this->hasMany(FantasyPointsSeason::class);
+    }
+
+    /**
+     * Get the weekly fantasy points for this player.
+     */
+    public function fantasyPointsWeeks(): HasMany
+    {
+        return $this->hasMany(FantasyPointsWeek::class);
+    }
+
+    /**
+     * Get the position for this player.
+     */
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class);
+    }
+
+    /**
+     * Get the team for this player.
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    /**
+     * Get the player's current draft rankings.
+     */
     public function currentDraftRankings(): HasMany
     {
         return $this->draftRankings()->where('draft_year', Carbon::now()->year);
     }
+
+    /* ===[ Scopes ]=== */
+
+    /**
+     * Scope a query to only include players with the given ESPN ID.
+     *
+     * @param Builder $query
+     * @param integer|string $espnId
+     *
+     * @return Builder
+     */
+    public function scopeEspnId(Builder $query, int|string $espnId): Builder
+    {
+        return $query->where('espn_id', $espnId);
+    }
+
+    /**
+     * Queries players by name.
+     *
+     * @param Builder $query
+     * @param string $name
+     *
+     * @return Builder
+     */
+    public function scopeNameLike(Builder $query, string $name): Builder
+    {
+        return $query->where(function ($q) use ($name) {
+            $name = '%' . $name . '%';
+
+            return $q->orWhere('first_name', 'like', $name)
+                ->orWhere('last_name', 'like', $name)
+                ->orWhere('full_name', 'like', $name);
+        });
+    }
+
+    /* ===[ Attributes ]=== */
 
     /**
      * Get the player's age.

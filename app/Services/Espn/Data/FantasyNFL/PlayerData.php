@@ -2,7 +2,10 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
+use App\Services\Espn\Data\BaseData;
 use App\Data\Casts\CollectionCast;
+use App\Services\Espn\EspnConstants;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 
@@ -40,9 +43,21 @@ class PlayerData extends BaseData
         #[WithCast(CollectionCast::class)]
         public array|Collection $seasonOutlook = [],
 
-        #[WithCast(CollectionCast::class)]
+        #[WithCast(PlayerStatsData::class)]
         public array|Collection $stats = [],
     ) {
         //
+    }
+
+    public function getStat(string $key): ?PlayerStatsData
+    {
+        $statId = Arr::get(EspnConstants::PLAYER_STAT_IDS, $key);
+
+        return $this->stats->firstWhere('id', $statId);
+    }
+
+    public function getProjectedWeekPoints(): ?PlayerStatsData
+    {
+        return $this->getStat('projected_week_points');
     }
 }
