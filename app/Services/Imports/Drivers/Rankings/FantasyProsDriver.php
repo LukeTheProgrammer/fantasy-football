@@ -5,12 +5,11 @@ namespace App\Services\Imports\Drivers\Rankings;
 use App\Enums\RankingSourcesEnum;
 use App\Models\DraftRanking;
 use App\Models\Player;
-use App\Services\Imports\Drivers\BaseImportDriver;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 
-class FantasyProsDriver extends BaseImportDriver
+class FantasyProsDriver extends BaseRankingsDriver
 {
     // File pointer
     public $fp;

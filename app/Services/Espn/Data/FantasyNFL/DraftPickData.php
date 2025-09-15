@@ -2,6 +2,8 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
+use App\Services\Espn\Data\BaseData;
+
 class DraftPickData extends BaseData
 {
     protected bool $isCollectionCast = true;

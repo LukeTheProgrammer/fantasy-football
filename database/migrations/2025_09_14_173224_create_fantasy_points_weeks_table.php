@@ -20,6 +20,7 @@ return new class extends Migration
             $table->year('year')->default(now()->year);
             $table->integer('week_number');
 
+            $table->foreignId('nfl_game_id')->constrained('nfl_games')->cascadeOnDelete();
             $table->foreignId('league_id')->constrained('leagues')->cascadeOnDelete();
             $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
 

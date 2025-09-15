@@ -2,6 +2,7 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
+use App\Services\Espn\Data\BaseData;
 use App\Data\Casts\CollectionCast;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -12,6 +13,8 @@ class PlayerStatsData extends BaseData
 
     public function __construct(
         public ?int $id = null,
+        public ?bool $isActual = null,
+        public ?bool $isProjected = null,
         public ?int $externalId = null,
         public ?int $proTeamId = null,
         public ?int $scoringPeriodId = null,
@@ -29,6 +32,7 @@ class PlayerStatsData extends BaseData
         #[WithCast(CollectionCast::class)]
         public array|Collection $variance = [],
     ) {
-        //
+        $this->isActual = $this->statSourceId === 0;
+        $this->isProjected = $this->statSourceId === 1;
     }
 }

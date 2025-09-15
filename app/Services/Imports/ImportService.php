@@ -54,7 +54,7 @@ class ImportService
      * @param string $driver
      * @param mixed ...$args
      *
-     * @return DraftRankingsImporter
+     * @return FantasyNFLImporter
      */
     public function fantasyNFL(string|FantasyPlatformsEnum $driver, ...$args)
     {

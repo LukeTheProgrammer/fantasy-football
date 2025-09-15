@@ -2,6 +2,8 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
+use App\Services\Espn\Data\BaseData;
+
 class ScheduleSettingsData extends BaseData
 {
     public function __construct(

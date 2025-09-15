@@ -2,7 +2,7 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
-use Illuminate\Support\Collection;
+use App\Services\Espn\Data\BaseData;
 use Spatie\LaravelData\Attributes\WithCast;
 
 class ScheduleData extends BaseData

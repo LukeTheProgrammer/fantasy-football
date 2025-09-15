@@ -11,12 +11,6 @@ use App\Services\Espn\Enums\Games;
 use App\Services\Espn\Enums\Leagues;
 use App\Services\Espn\Enums\Sports;
 use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
-use App\Services\Espn\Data\FantasyNFL\ResourceMatchupData;
-use App\Services\Espn\Data\FantasyNFL\ResourceRosterData;
-use App\Services\Espn\Data\FantasyNFL\ResourceSettingsData;
-use App\Services\Espn\Data\FantasyNFL\ResourceStandingsData;
-use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
-use Illuminate\Support\Arr;
 
 class FantasyNFL extends BaseResource
 {
@@ -26,30 +20,6 @@ class FantasyNFL extends BaseResource
     public ?Games $game = Games::FANTASY_FOOTBALL;
     public ?Leagues $league = Leagues::NFL;
     public ?Sports $sport = Sports::FOOTBALL;
-
-    public array $cookies = [];
-
-    public bool $returnRaw = false;
-
-    // public array $views = [
-    //     'draft'               => 'mDraftDetail',
-    //     'kona'                => 'kona_player_info',
-    //     'liveScore'           => 'mLiveScoring',
-    //     'matchup'             => 'mMatchup',
-    //     'matchupScore'        => 'mMatchupScore',
-    //     'modular'             => 'modular',
-    //     'nav'                 => 'mNav',
-    //     'pendingTransactions' => 'mPendingTransactions',
-    //     'playerWL'            => 'player_wl',
-    //     'playersWL'           => 'players_wl',
-    //     'positionalRatings'   => 'mPositionalRatings',
-    //     'proTeamSchedulesWL'  => 'proTeamSchedules_wl',
-    //     'roster'              => 'mRoster',
-    //     'settings'            => 'mSettings',
-    //     'standings'           => 'mStandings',
-    //     'status'              => 'mStatus',
-    //     'teams'               => 'mTeam',
-    // ];
 
     public int $leagueId;
 

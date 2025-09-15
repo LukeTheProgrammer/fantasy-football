@@ -2,7 +2,7 @@
 
 namespace App\Services\Espn\Data\FantasyNFL;
 
-use App\Data\Casts\CollectionCast;
+use App\Services\Espn\Data\BaseData;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 

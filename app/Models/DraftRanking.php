@@ -8,38 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
-/**
- * @property int $id
- * @property int $player_id
- * @property int $year
- * @property string $source
- * @property int $ranking
- * @property int|null $tier
- * @property float|null $adp
- * @property float|null $value
- * @property string|null $notes
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- *
- * @property-read Player $player
- *
- * @method static Builder<static>|DraftRanking newModelQuery()
- * @method static Builder<static>|DraftRanking newQuery()
- * @method static Builder<static>|DraftRanking query()
- * @method static Builder<static>|DraftRanking whereId($value)
- * @method static Builder<static>|DraftRanking wherePlayerId($value)
- * @method static Builder<static>|DraftRanking whereYear($value)
- * @method static Builder<static>|DraftRanking whereSource($value)
- * @method static Builder<static>|DraftRanking whereRanking($value)
- * @method static Builder<static>|DraftRanking whereTier($value)
- * @method static Builder<static>|DraftRanking whereAdp($value)
- * @method static Builder<static>|DraftRanking whereValue($value)
- * @method static Builder<static>|DraftRanking whereNotes($value)
- * @method static Builder<static>|DraftRanking whereCreatedAt($value)
- * @method static Builder<static>|DraftRanking whereUpdatedAt($value)
- *
- * @mixin \Eloquent
- */
 class DraftRanking extends Model
 {
     use HasFactory;

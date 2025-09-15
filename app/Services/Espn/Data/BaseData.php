@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Services\Espn\Data\FantasyNFL;
+namespace App\Services\Espn\Data;
 
-use Illuminate\Support\Facades\Log;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Casts\Cast;
 use Spatie\LaravelData\Support\Creation\CreationContext;

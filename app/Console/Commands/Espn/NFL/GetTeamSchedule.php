@@ -15,6 +15,7 @@ class GetTeamSchedule extends Command
      */
     protected $signature = 'espn:nfl:get:team-schedule
         { --a|all : Get all NFL teams }
+        { --r|raw : Return raw response }
         { espn_team_id? : The ESPN NFL team ID }
     ';
 
@@ -49,9 +50,16 @@ class GetTeamSchedule extends Command
     {
         $nfl = Espn::nfl();
 
+        $basePath = storage_path('data/espn/nfl/team-schedules');
+
+        if ($this->option('raw')) {
+            $nfl->returnRaw = true;
+            $basePath .= '/raw';
+        }
+
         $schedule = $nfl->getTeamSchedule($teamId);
 
-        $path = storage_path('data/espn/nfl/team-schedules/team-schedule-' . $teamId . '.json');
+        $path = $basePath . '/team-schedule-' . $teamId . '.json';
 
         $bytes = file_put_contents($path, json_encode($schedule, JSON_PRETTY_PRINT));
 
