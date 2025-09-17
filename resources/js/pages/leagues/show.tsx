@@ -10,7 +10,7 @@ import { PageProps } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { isUserLeagueAdmin } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { type League } from '@/types/models';
+import { type League, type NflGame } from '@/types/models';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -27,7 +27,12 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function ShowLeague({ league }: PageProps & { league: League }) {
+interface LeagueShowProps extends PageProps {
+  league: League;
+  nfl_games: NflGame[];
+}
+
+export default function ShowLeague({ league, nfl_games }: LeagueShowProps) {
   const { auth } = usePage<SharedData>().props;
 
   const userId = auth.user.id;
@@ -67,7 +72,7 @@ export default function ShowLeague({ league }: PageProps & { league: League }) {
               <TabsTrigger className="w-[7rem]" value="settings">Settings</TabsTrigger>
             </TabsList>
             <TabsContent value="league">
-              <LeagueTab league={league} />
+              <LeagueTab league={league} nfl_games={nfl_games} />
             </TabsContent>
             <TabsContent value="draft">
               <DraftTab league={league} />

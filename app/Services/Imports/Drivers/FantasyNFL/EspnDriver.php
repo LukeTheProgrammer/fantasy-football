@@ -15,9 +15,9 @@ use App\Services\Espn\Data\FantasyNFL\TeamRosterEntryData;
 use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
 use App\Services\Espn\Data\FantasyNFL\RosterSettingsData;
 use App\Services\Espn\Data\FantasyNFL\SettingsSettingsData;
+use App\Services\Espn\Data\FantasyNFL\ScheduleData;
 use App\Services\Espn\EspnConstants;
 use App\Services\Espn\Resources\FantasyNFL;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -42,6 +42,8 @@ class EspnDriver extends BaseFantasyNFLDriver
     private array $rosterData = [];
 
     private array $settingsData = [];
+
+    private array $schedulesData = [];
 
     public function setCredentials(array $credentials)
     {
@@ -79,6 +81,8 @@ class EspnDriver extends BaseFantasyNFLDriver
         $this->mapDraftData();
 
         $this->mapMembersData();
+
+        $this->mapScheduleData();
     }
 
     private function mapLeagueData()
@@ -183,6 +187,20 @@ class EspnDriver extends BaseFantasyNFLDriver
         });
     }
 
+    private function mapScheduleData()
+    {
+        $this->apiLeague->schedule->each(function (ScheduleData $schedule) {
+            $this->schedulesData[] = [
+                'home_member_id' => $schedule->home->teamId,
+                'away_member_id' => $schedule->away->teamId,
+                'year' => 2025,
+                'week' => $schedule->matchupPeriodId,
+                'home_score' => $schedule->home->totalPoints,
+                'away_score' => $schedule->away->totalPoints,
+            ];
+        });
+    }
+
     private function createLeague(): League
     {
         $league = League::updateOrCreate(
@@ -200,6 +218,8 @@ class EspnDriver extends BaseFantasyNFLDriver
         $this->createRosters($league);
 
         $this->createDraft($league);
+
+        $this->createMatchups($league);
 
         return $league;
     }
@@ -280,6 +300,29 @@ class EspnDriver extends BaseFantasyNFLDriver
             $draft->picks()->updateOrCreate(
                 ['league_member_id' => $member->id, 'player_id' => $player->id],
                 $pick,
+            );
+        }
+    }
+
+    private function createMatchups(League $league)
+    {
+        foreach ($this->schedulesData as $matchup) {
+            $homeMember = LeagueMember::forExtId($matchup['home_member_id'])->first();
+            $awayMember = LeagueMember::forExtId($matchup['away_member_id'])->first();
+
+            if (! $homeMember instanceof LeagueMember) {
+                Log::error('Member not found for home team id', $matchup);
+                continue;
+            }
+
+            if (! $awayMember instanceof LeagueMember) {
+                Log::error('Member not found for away team id', $matchup);
+                continue;
+            }
+
+            $league->matchups()->updateOrCreate(
+                ['home_member_id' => $homeMember->id, 'away_member_id' => $awayMember->id],
+                $matchup,
             );
         }
     }

@@ -56,6 +56,22 @@ class LeagueMember extends Model
     }
 
     /**
+     * Get the home matchups for the league member.
+     */
+    public function homeMatchups(): HasMany
+    {
+        return $this->hasMany(LeagueMatchup::class, 'home_member_id', 'id');
+    }
+
+    /**
+     * Get the away matchups for the league member.
+     */
+    public function awayMatchups(): HasMany
+    {
+        return $this->hasMany(LeagueMatchup::class, 'away_member_id', 'id');
+    }
+
+    /**
      * Get the rosters for the league member.
      */
     public function rosters(): HasMany

@@ -3,25 +3,11 @@
 namespace App\Console\Commands\Imports\FantasyNFL;
 
 use App\Enums\FantasyPlatformsEnum;
-use App\Facades\Action;
 use App\Facades\Import;
-use App\Models\Player;
-use App\Models\Position;
-use App\Models\Team;
 use App\Models\User;
-use App\Console\Commands\Traits\DisambiguatesPlayers;
-use App\Services\Imports\Models\DraftRankingsImport;
 use App\Services\Imports\Importers\FantasyNFLImporter;
-use App\Enums\RankingSourcesEnum;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 

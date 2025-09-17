@@ -76,6 +76,14 @@ class League extends Model
     }
 
     /**
+     * Get the league matchups.
+     */
+    public function matchups(): HasMany
+    {
+        return $this->hasMany(LeagueMatchup::class);
+    }
+
+    /**
      * Get the league settings.
      */
     public function settings(): HasOne

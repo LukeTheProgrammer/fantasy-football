@@ -47,11 +47,16 @@ export interface DraftRanking {
 
 export interface FantasyPointsWeek {
   id: number;
+  nfl_game_id: number;
   league_id: number;
   player_id: number;
   year: number;
   week_number: number;
   espn_projected_points: number;
+  points: number;
+  nfl_game: NflGame;
+  league: League;
+  player: Player;
 }
 
 export interface League {
@@ -69,6 +74,7 @@ export interface League {
   is_active: boolean;
   draft: Draft;
   fantasy_points_weeks: FantasyPointsWeek[];
+  matchups: LeagueMatchup[];
   members: LeagueMember[];
   rosters: LeagueMemberRoster[];
   settings: LeagueSettings;
@@ -77,15 +83,16 @@ export interface League {
 export interface LeagueMember {
   id: number;
   league_id: number;
-  league: League;
   user_id: number;
-  user: User;
   team_name: string;
   owner_name: string | null;
   team_logo: string | null;
   draft_position: number | null;
   is_admin: boolean;
   is_active: boolean;
+  user: User;
+  league: League;
+  matchups?: LeagueMatchup[];
   rosters?: LeagueMemberRoster[];
 }
 
@@ -97,6 +104,22 @@ export interface LeagueMemberRoster {
   player: Player;
   added_at: string;
   dropped_at: string | null;
+}
+
+export interface LeagueMatchup {
+  id: number;
+  league_id: number;
+  home_member_id: number;
+  away_member_id: number;
+  year: number;
+  week: number;
+  home_score: number | null;
+  away_score: number | null;
+  home_projected_score: number | null;
+  away_projected_score: number | null;
+  league: League;
+  home_team: LeagueMember;
+  away_team: LeagueMember;
 }
 
 export interface LeagueSettings {
@@ -119,9 +142,26 @@ export interface LeagueSettings {
   two_point_conversion_points: number;
 }
 
+export interface NflGame {
+  id: number;
+  espn_id: number;
+  home_team_id: number;
+  away_team_id: number;
+  year: number;
+  week: number;
+  start_time: string;
+  home_score: number;
+  away_score: number;
+  is_completed: boolean;
+  is_playoff: boolean;
+  home_team: Team;
+  away_team: Team;
+}
+
 export interface Player {
   id: number;
   espn_id: number | null;
+  team_id: number;
   position_id: number;
   first_name: string;
   last_name: string;
@@ -139,6 +179,8 @@ export interface Player {
   position: Position;
   team: Team;
   projected_points?: number;
+  actual_points?: number;
+  game?: NflGame;
 }
 
 export interface PlayerAlias {

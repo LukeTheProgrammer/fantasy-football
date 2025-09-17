@@ -27,6 +27,14 @@ class FantasyPointsWeek extends Model
     ];
 
     /**
+     * Relationship to NflGame.
+     */
+    public function nflGame(): BelongsTo
+    {
+        return $this->belongsTo(NflGame::class);
+    }
+
+    /**
      * Relationship to League.
      */
     public function league(): BelongsTo

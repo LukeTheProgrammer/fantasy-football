@@ -3,7 +3,9 @@
 namespace App\Console\Commands\Espn\FantasyNFL;
 
 use App\Facades\Espn;
+use App\Models\League;
 use Illuminate\Console\Command;
+use function Laravel\Prompts\select;
 
 class GetMatchup extends Command
 {
@@ -14,8 +16,7 @@ class GetMatchup extends Command
      */
     protected $signature = 'espn:ffl:get:matchup
         {league_id? : ESPN League ID}
-        {--s2=      : ESPN S2 token}
-        {--swid=    : ESPN SWID token}
+        {--raw      : Return raw data instead of parsed objects}
     ';
 
     /**
@@ -30,17 +31,33 @@ class GetMatchup extends Command
      */
     public function handle()
     {
-        $leagueId = $this->argument('league_id') ?? config('services.espn.default_league_id');
+        $leagueId = $this->argument('league_id');
 
-        $fantasyNFL = Espn::fantasyNFL([
-            'leagueId' => $leagueId,
-            's2' => $this->option('s2') ?? config('services.espn.default_s2'),
-            'swid' => $this->option('swid') ?? config('services.espn.default_swid'),
-        ]);
+        if (! $leagueId) {
+            $leagueId = select('League ID', League::all()->pluck('name', 'id')->toArray());
+        }
 
-        $matchup = $fantasyNFL->getMatchup();
+        $league = League::findOrFail($leagueId);
 
-        $path = storage_path('data/espn/ffl/' . $leagueId . '-matchup.json');
+        $fantasyNFL = Espn::fantasyNFL($league->credentials);
+
+        if ($this->option('raw')) {
+            $fantasyNFL->returnRaw = true;
+        }
+
+        $matchup = $fantasyNFL->getMatchup($league->platform_id);
+
+        $parts = [
+            'data',
+            'espn',
+            'ffl',
+        ];
+
+        if ($this->option('raw')) {
+            $parts[] = 'raw';
+        }
+
+        $path = storage_path(implode('/', $parts) . '/' . $league->platform_id . '-matchup.json');
 
         $bytes = file_put_contents($path, json_encode($matchup, JSON_PRETTY_PRINT));
 
