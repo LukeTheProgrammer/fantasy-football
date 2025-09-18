@@ -21,11 +21,20 @@ docker compose up -d
 ### Install dependencies
 
 ```bash
-docker compose exec app composer install
-docker compose exec app npm install
+docker compose exec laravel.test composer install
+docker compose exec laravel.test npm install
 ```
 
-Optionally, you can spin down the containers and begin using [Laravel Sail](https://laravel.com/docs/12.x/sail) from this point.
+### Laravel Sail
+
+Optionally, but recommended, you can begin using [Laravel Sail](https://laravel.com/docs/12.x/sail) from this point. To do so, you will need to spin down the containers and use sail instead of docker compose.
+
+```bash
+docker compose down --rmi=all -v
+sail up -d
+```
+
+As of now, there is a bug with either docker or sail that causes mysql containers to not start. To resolve this, go to the "Volumes" tab in your Docker Desktop app. Find the file `mysql.sock.lock` and delete it. Then restart the containers.
 
 ### Create database
 
