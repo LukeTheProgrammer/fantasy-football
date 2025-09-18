@@ -82,6 +82,8 @@ class LoadTeamSchedule extends Command
         if (! $this->option('quiet')) {
             $bar = $this->output->createProgressBar($schedule->events->count());
             $bar->start();
+        } else {
+            $bar = null;
         }
 
         $schedule->events->each(function (EventData $event) use ($bar, $schedule) {
