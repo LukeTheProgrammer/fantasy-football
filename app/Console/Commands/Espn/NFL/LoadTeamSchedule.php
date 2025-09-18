@@ -66,7 +66,7 @@ class LoadTeamSchedule extends Command
 
         if (! file_exists($path)) {
             $this->error('Schedule file does not exist: ' . $path);
-            $this->call('espn:nfl:get:team-schedule', ['espn_team_id' => $teamId]);
+            $this->call('espn:nfl:get:team-schedule', ['espn_team_id' => $teamId, '--raw' => true]);
         }
 
         $this->loadSchedule($team, $path);
