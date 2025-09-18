@@ -78,7 +78,7 @@ class ImportLeagueCommand extends Command
 
         $this->creator = User::findOrFail($creatorId);
 
-        $platformArg = $this->argument('platform') ?? select(
+        $platformArg = select(
             label: 'Platform',
             options: FantasyPlatformsEnum::options()->toArray(),
             default: FantasyPlatformsEnum::ESPN->value

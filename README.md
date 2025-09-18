@@ -50,7 +50,7 @@ The database seeder will create a default User, load player positions, NFL teams
 Your app is now ready to import it's first league!
 
 ```bash
-sail artisan league:import
+sail artisan import:fantasy-nfl:league
 ```
 
 For ESPN leagues, you will need three items: 
