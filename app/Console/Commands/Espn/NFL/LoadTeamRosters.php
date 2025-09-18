@@ -19,8 +19,9 @@ class LoadTeamRosters extends Command
      * @var string
      */
     protected $signature = 'espn:nfl:load:team-rosters
-        { --a|all : Load all rosters }
-        { espn_team_id? : The ESPN Team ID }
+        { --a|all       : Load all rosters   }
+        { --q|quiet     : Do not show output }
+        { espn_team_id? : The ESPN Team ID   }
     ';
 
     /**
@@ -80,7 +81,9 @@ class LoadTeamRosters extends Command
 
         $teamId = $this->team->espn_id;
 
-        $this->info('Loading players for ' . $this->team->abbreviation . ' [' . $teamId . ']' . PHP_EOL);
+        if (! $this->option('quiet')) {
+            $this->info('Loading players for ' . $this->team->abbreviation . ' [' . $teamId . ']' . PHP_EOL);
+        }
 
         $path = storage_path('data/espn/nfl/team-rosters/team-roster-' . $teamId . '.json');
 
@@ -98,8 +101,10 @@ class LoadTeamRosters extends Command
 
         $roster = json_decode($data, true);
 
-        $bar = $this->output->createProgressBar(1);
-        $bar->start();
+        if (! $this->option('quiet')) {
+            $bar = $this->output->createProgressBar(1);
+            $bar->start();
+        }
 
         foreach (Arr::get($roster, 'athletes', []) as $i => $positions) {
             foreach (Arr::get($positions, 'items', []) as $ii => $player) {
@@ -110,12 +115,16 @@ class LoadTeamRosters extends Command
                 }
 
                 $this->upsert($player, $pos);
-                $bar->advance();
+                if (! $this->option('quiet')) {
+                    $bar->advance();
+                }
             }
         }
 
-        $bar->finish();
-        echo PHP_EOL . PHP_EOL;
+        if (! $this->option('quiet')) {
+            $bar->finish();
+            echo PHP_EOL . PHP_EOL;
+        }
     }
 
     protected function upsert(array $data, Position $position): Player

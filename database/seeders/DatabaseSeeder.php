@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PositionSeeder::class,
             TeamSeeder::class,
             RosterSeeder::class,
+            ScheduleSeeder::class,
         ]);
     }
 }

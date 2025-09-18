@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 
-class RosterSeeder extends Seeder
+class ScheduleSeeder extends Seeder
 {
     public function run(): void
     {

@@ -17,8 +17,9 @@ class LoadTeamSchedule extends Command
      * @var string
      */
     protected $signature = 'espn:nfl:load:team-schedules
-        { --a|all : Load all schedules }
-        { espn_team_id? : The ESPN Team ID }
+        { --a|all       : Load all rosters   }
+        { --q|quiet     : Do not show output }
+        { espn_team_id? : The ESPN Team ID   }
     ';
 
     /**
@@ -57,7 +58,9 @@ class LoadTeamSchedule extends Command
 
         $teamId = $team->espn_id;
 
-        $this->info('Loading Schedule for ' . $team->abbreviation . ' [' . $teamId . ']' . PHP_EOL);
+        if (! $this->option('quiet')) {
+            $this->info('Loading Schedule for ' . $team->abbreviation . ' [' . $teamId . ']' . PHP_EOL);
+        }
 
         $path = storage_path('data/espn/nfl/team-schedules/raw/team-schedule-' . $teamId . '.json');
 
@@ -76,11 +79,15 @@ class LoadTeamSchedule extends Command
 
         $schedule = ResourceTeamScheduleData::from($scheduleData);
 
-        $bar = $this->output->createProgressBar($schedule->events->count());
-        $bar->start();
+        if (! $this->option('quiet')) {
+            $bar = $this->output->createProgressBar($schedule->events->count());
+            $bar->start();
+        }
 
         $schedule->events->each(function (EventData $event) use ($bar, $schedule) {
-            $bar->advance();
+            if (! $this->option('quiet')) {
+                $bar->advance();
+            }
 
             /** @var CompetitionData $competition */
             $competition = $event->competitions->first();
@@ -105,8 +112,10 @@ class LoadTeamSchedule extends Command
             ]);
         });
 
-        $bar->finish();
-        echo PHP_EOL . PHP_EOL;
+        if (! $this->option('quiet')) {
+            $bar->finish();
+            echo PHP_EOL . PHP_EOL;
+        }
     }
 
     protected function upsert(array $data): NflGame
