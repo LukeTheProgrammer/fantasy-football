@@ -41,9 +41,9 @@ class EspnDriver extends BaseFantasyNFLDriver
 
     private array $rosterData = [];
 
-    private array $settingsData = [];
-
     private array $schedulesData = [];
+
+    private array $settingsData = [];
 
     public function setCredentials(array $credentials)
     {
@@ -163,16 +163,20 @@ class EspnDriver extends BaseFantasyNFLDriver
         $members = $this->apiLeague->members;
 
         $this->apiLeague->teams->each(function (ResourceTeamsData $team) use ($members) {
+
+            /** @var ?TeamRecordData $record */
+            $record = $team->record->get('overall', []);
+
             $this->membersData[] = [
                 'external_id'    => $team->id,
                 'team_name'      => $team->name,
                 'owner_name'     => $this->findOwnerName($team, $members),
                 'team_logo'      => $team->logo,
-                'wins'           => $team->record->get('overall.wins', 0),
-                'losses'         => $team->record->get('overall.losses', 0),
-                'ties'           => $team->record->get('overall.ties', 0),
-                'points_for'     => $team->record->get('overall.pointsFor', 0),
-                'points_against' => $team->record->get('overall.pointsAgainst', 0),
+                'wins'           => $record?->wins,
+                'losses'         => $record?->losses,
+                'ties'           => $record?->ties,
+                'points_for'     => $record?->pointsFor,
+                'points_against' => $record?->pointsAgainst,
                 'faab_balance'   => 200 - intval($team->transactionCounter->acquisitionBudgetSpent),
             ];
 
@@ -182,6 +186,12 @@ class EspnDriver extends BaseFantasyNFLDriver
                     'player_id'   => $entry->playerId,
                     'position_id' => $entry->lineupSlotId,
                     'first_name'  => $entry->playerPoolEntry->player->firstName,
+                    'roster_data' => [
+                        'position_rank'  => $entry->playerPoolEntry->ratings->first()?->positionalRanking ?? 0,
+                        'overall_rank'   => $entry->playerPoolEntry->ratings->first()?->totalRanking ?? 0,
+                        'fantasy_points' => 0,
+                        'deleted_at'     => null,
+                    ],
                 ]),
             ];
         });
@@ -263,7 +273,7 @@ class EspnDriver extends BaseFantasyNFLDriver
                 if ($playerModel instanceof Player) {
                     $member->rosters()->withTrashed()->updateOrCreate(
                         ['player_id' => $playerModel->id],
-                        ['deleted_at' => null],
+                        $player['roster_data'],
                     );
                 }
             }

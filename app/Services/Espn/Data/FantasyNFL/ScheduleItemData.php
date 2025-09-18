@@ -11,7 +11,7 @@ class ScheduleItemData extends BaseData
         public ?int $gamesPlayed = null,
         public ?int $teamId = null,
         public ?int $tiebreak = null,
-        public ?int $totalPoints = null,
+        public ?float $totalPoints = null,
     ) {
         //
     }

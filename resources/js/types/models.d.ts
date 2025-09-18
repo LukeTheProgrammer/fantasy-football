@@ -90,6 +90,12 @@ export interface LeagueMember {
   draft_position: number | null;
   is_admin: boolean;
   is_active: boolean;
+  wins: number,
+  losses: number,
+  ties: number,
+  points_for: number,
+  points_against: number,
+  faab_balance: number,
   user: User;
   league: League;
   matchups?: LeagueMatchup[];
@@ -101,6 +107,9 @@ export interface LeagueMemberRoster {
   league_member_id: number;
   league_member: LeagueMember;
   player_id: number;
+  position_rank: number;
+  overall_rank: number;
+  fantasy_points: number;
   player: Player;
   added_at: string;
   dropped_at: string | null;
@@ -178,8 +187,8 @@ export interface Player {
   deleted_at: string | null;
   position: Position;
   team: Team;
-  projected_points?: number;
-  actual_points?: number;
+  projected_points?: number | string;
+  actual_points?: number | string;
   game?: NflGame;
 }
 

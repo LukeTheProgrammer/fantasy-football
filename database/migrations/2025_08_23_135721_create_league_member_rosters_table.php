@@ -19,6 +19,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('league_member_id')->constrained('league_members')->onDelete('cascade');
             $table->foreignId('player_id')->constrained('players')->onDelete('cascade');
+            $table->integer('position_rank')->default(0);
+            $table->integer('overall_rank')->default(0);
+            $table->decimal('fantasy_points', 10, 2)->default(0);
             $table->dateTime('added_at')->default(now());
             $table->dateTime('dropped_at')->nullable();
             $table->timestamps();

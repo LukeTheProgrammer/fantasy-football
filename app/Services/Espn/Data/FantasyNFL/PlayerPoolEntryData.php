@@ -3,7 +3,6 @@
 namespace App\Services\Espn\Data\FantasyNFL;
 
 use App\Services\Espn\Data\BaseData;
-use App\Data\Casts\CollectionCast;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 
@@ -21,7 +20,7 @@ class PlayerPoolEntryData extends BaseData
         public ?int $onTeamId = null,
         public ?string $status = null,
 
-        #[WithCast(CollectionCast::class)]
+        #[WithCast(PlayerPoolRatingsData::class)]
         public array|Collection $ratings = [],
 
         #[WithCast(PlayerData::class)]
