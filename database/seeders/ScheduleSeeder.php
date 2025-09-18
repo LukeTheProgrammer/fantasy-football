@@ -9,7 +9,7 @@ class ScheduleSeeder extends Seeder
 {
     public function run(): void
     {
-        Artisan::call('espn:nfl:load:team-rosters', [
+        Artisan::call('espn:nfl:load:team-schedules', [
             '--all' => true,
             '--quiet' => true,
         ]);
