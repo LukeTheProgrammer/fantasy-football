@@ -2,6 +2,10 @@
 
 ## Infrastructure Setup 
 
+First and foremmost, you will need to install PHP and composer on the computer you plan to use to run this application. This project requires PHP 8.3 or higher, and PHP 8.4 is recommended. 
+
+[Composer](https://getcomposer.org/)
+
 ### Setup environment
 
 ```bash
@@ -10,36 +14,42 @@ cp .env.example .env
 
 Update .env file with your database credentials and any other environment variables.
 
+### Install composer packages
+
+```bash
+composer install
+```
+
 ### Build docker containers
 
-Use docker to build the containers and install dependencies so you don't have to worry about your local versions of php, node, etc.
+[Laravel Sail](https://laravel.com/docs/12.x/sail)
 
 ```bash
-docker compose up -d
-```
-
-### Install dependencies
-
-```bash
-docker compose exec laravel.test composer install
-docker compose exec laravel.test npm install
-```
-
-### Laravel Sail
-
-Optionally, but recommended, you can begin using [Laravel Sail](https://laravel.com/docs/12.x/sail) from this point. To do so, you will need to spin down the containers and use sail instead of docker compose.
-
-```bash
-docker compose down --rmi=all -v
 sail up -d
 ```
 
+### Generate application key
+
+```bash
+sail artisan key:generate
+```
+
+### Install npm packages
+
+```bash
+sail npm install
+```
+
+### MySQL
+
 As of now, there is a bug with either docker or sail that causes mysql containers to not start. To resolve this, go to the "Volumes" tab in your Docker Desktop app. Find the file `mysql.sock.lock` and delete it. Then restart the containers.
+
+You may also need to edit the `.env` to update the `DB_HOST` value to be the name of the mysql container. This is usually `fantasy-football_sail-mysql`, but you can check by using `sail ps`. 
+
 
 ### Create database
 
 ```bash
-sail artisan key:generate
 sail artisan migrate --seed
 ```
 
