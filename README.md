@@ -62,3 +62,10 @@ For ESPN leagues, you will need three items:
 
 3. SWID - This is a cookie and will need to be extracted from your browser's console. 
 
+## Final step
+
+```bash
+sail npm run dev
+```
+
+Your app is now ready to use!
