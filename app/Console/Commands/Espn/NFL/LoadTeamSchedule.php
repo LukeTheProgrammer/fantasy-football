@@ -7,7 +7,9 @@ use App\Models\Team;
 use App\Services\Espn\Data\NFL\EventData;
 use App\Services\Espn\Data\NFL\ResourceTeamScheduleData;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\select;
 
 class LoadTeamSchedule extends Command
 {
@@ -17,9 +19,11 @@ class LoadTeamSchedule extends Command
      * @var string
      */
     protected $signature = 'espn:nfl:load:team-schedules
-        { --a|all       : Load all rosters   }
-        { --q|quiet     : Do not show output }
-        { espn_team_id? : The ESPN Team ID   }
+        { --a|all       : Load all rosters    }
+        { --r|raw       : Return raw response }
+        { --q|quiet     : Do not show output  }
+        { espn_team_id? : The ESPN Team ID    }
+        { year?         : Which year to pull  }
     ';
 
     /**
@@ -29,50 +33,71 @@ class LoadTeamSchedule extends Command
      */
     protected $description = 'Loads team schedules from a file.';
 
+    protected ?int $year = null;
+
+    protected int|string|null $teamId = null;
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
+        $this->year = $this->argument('year') ?? select('Which year to pull', [2025, 2024]);
+
         if ($this->option('all')) {
             return $this->loadAllRosters();
         }
 
-        $teamId = $this->argument('espn_team_id');
+        $this->teamId = $this->argument('espn_team_id');
 
-        if ($teamId) {
-            return $this->loadTeamRoster($teamId);
+        if ($this->teamId) {
+            return $this->loadTeamRoster();
+        } else {
+            $this->teamId = select('Which team to pull', Team::all()->pluck('name', 'espn_id')->toArray());
+            $this->loadTeamRoster();
         }
     }
 
     protected function loadAllRosters()
     {
         Team::all()->each(function (Team $team) {
-            $this->loadTeamRoster($team);
+            $this->teamId = $team->espn_id;
+            $this->loadTeamRoster();
         });
     }
 
-    protected function loadTeamRoster(int|string|Team $teamArg)
+    protected function loadTeamRoster()
     {
-        $team = ($teamArg instanceof Team) ? $teamArg : Team::where('espn_id', '=', $teamArg)->first();
-
-        $teamId = $team->espn_id;
+        $team = Team::where('espn_id', '=', $this->teamId)->first();
+        $path = $this->getFilePath();
 
         if (! $this->option('quiet')) {
-            $this->info('Loading Schedule for ' . $team->abbreviation . ' [' . $teamId . ']' . PHP_EOL);
+            $this->info('Loading Schedule for ' . $team->abbreviation . ' [' . $this->teamId . '] ' . $path . PHP_EOL);
         }
-
-        $path = storage_path('data/espn/nfl/team-schedules/raw/team-schedule-' . $teamId . '.json');
 
         if (! file_exists($path)) {
             $this->error('Schedule file does not exist: ' . $path);
-            $this->call('espn:nfl:get:team-schedule', ['espn_team_id' => $teamId, '--raw' => true]);
+            $this->call('espn:nfl:get:team-schedule', ['espn_team_id' => $this->teamId, '--raw' => true]);
         }
 
-        $this->loadSchedule($team, $path);
+        $this->loadSchedule($path);
     }
 
-    protected function loadSchedule(Team $team, string $path)
+    protected function getFilePath()
+    {
+        $parts = [
+            'data',
+            'espn',
+            'nfl',
+            'team-schedules',
+            $this->option('raw') ? 'raw' : 'formatted',
+            'team-schedule-' . $this->teamId . '-' . $this->year . '.json'
+        ];
+
+        return storage_path(implode('/', $parts));
+    }
+
+    protected function loadSchedule(string $path)
     {
         $data = file_get_contents($path);
         $scheduleData = json_decode($data, true);
@@ -104,7 +129,7 @@ class LoadTeamSchedule extends Command
                 'espn_id'      => $event->id,
                 'home_team_id' => Team::forEspnId($homeTeam->team->id)->first()->id,
                 'away_team_id' => Team::forEspnId($awayTeam->team->id)->first()->id,
-                'year'         => $schedule->season->year,
+                'year'         => $event->season->year,
                 'week'         => $event->week->number,
                 'start_time'   => $event->date,
                 'home_score'   => $homeTeam->score->value,
@@ -122,6 +147,8 @@ class LoadTeamSchedule extends Command
 
     protected function upsert(array $data): NflGame
     {
+        Log::info('Load Game', $data);
+
         return NflGame::updateOrCreate(
             ['espn_id' => $data['espn_id']],
             $data

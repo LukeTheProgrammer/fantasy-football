@@ -76,7 +76,7 @@ class FantasyNFL extends BaseResource
             : ResourceLeagueData::from($response->json());
     }
 
-    public function getRosters(?int $teamId = null)
+    public function getRosters(?int $teamId = null, ?int $week = null, ?int $year = null)
     {
         $views = [
             FantasyNFLViews::ROSTER,
@@ -86,6 +86,27 @@ class FantasyNFL extends BaseResource
         ];
 
         $url = $this->buildUrl($views, $teamId);
+
+        $response = $this->get($url, null, $this->cookies);
+
+        return $this->returnRaw
+            ? $response->json()
+            : ResourceLeagueData::from($response->json());
+    }
+
+    /**
+     * Slightly more specific than getRosters to target better scoring data.
+     */
+    public function getRostersForTeam(int $teamId, ?int $week = null, ?int $year = null)
+    {
+        $views = [
+            FantasyNFLViews::ROSTER,
+        ];
+
+        $url = $this->buildUrl($views, null, $year);
+
+        $url .= '&forTeamId=' . $teamId;
+        $url .= '&scoringPeriodId=' . $week;
 
         $response = $this->get($url, null, $this->cookies);
 
@@ -164,14 +185,16 @@ class FantasyNFL extends BaseResource
         return $response->json();
     }
 
-    private function buildUrl(array $views = [], ?int $teamId = null): string
+    private function buildUrl(array $views = [], ?int $teamId = null, ?int $year = null): string
     {
+        $season = $year ?? $this->apiYear->value;
+
         // https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2025/segments/0/leagues/691509
         $url = $this->assembleUrl([
             'https://' . $this->api->value,
             'apis/' . $this->apiVersion->value,
             'games/' . $this->game->value,
-            'seasons/' . $this->apiYear->value,
+            'seasons/' . $season,
             'segments/0/leagues/' . $this->leagueId,
         ]);
 

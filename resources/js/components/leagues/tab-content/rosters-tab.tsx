@@ -27,6 +27,7 @@ interface RostersTabPlayer {
   position_rank: number;
   total_points: string;
   espn_projection: string;
+  espn_projection_diff: string;
   actual_points: string;
   game: NflGame | undefined;
 };
@@ -89,19 +90,21 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
 
       if (abb in positions) {
         const fps = fantasyPointsWeeks.find(fpw => fpw.nfl_game_id === game?.id);
+        const espnProjectionDiff = c(fps?.espn_projected_points).toFloat() - c(fps?.points).toFloat();
 
         const player: RostersTabPlayer = {
-          id:              roster.player.id.toString(),
-          name:            roster.player.full_name,
-          position:        roster.player.position.abbreviation,
-          team:            roster.player.team.abbreviation,
-          game:            game,
-          headshot:        roster.player.headshot,
-          overall_rank:    c(roster.overall_rank).toNumber(),
-          position_rank:   c(roster.position_rank).toNumber(),
-          total_points:    c(roster.fantasy_points).toString(),
-          espn_projection: c(fps?.espn_projected_points).toString(),
-          actual_points:   c(fps?.points).toString(),
+          id:                   roster.player.id.toString(),
+          name:                 roster.player.full_name,
+          position:             roster.player.position.abbreviation,
+          team:                 roster.player.team.abbreviation,
+          game:                 game,
+          headshot:             roster.player.headshot,
+          overall_rank:         c(roster.overall_rank).toNumber(),
+          position_rank:        c(roster.position_rank).toNumber(),
+          total_points:         c(roster.fantasy_points).toString(),
+          espn_projection:      c(fps?.espn_projected_points).toString(),
+          espn_projection_diff: espnProjectionDiff.toFixed(2),
+          actual_points:        c(fps?.points).toString(),
         };
 
         positions[abb].push(player);
@@ -179,10 +182,13 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
                 <p>{player.game && gameDate(player.game)}</p>
               </TableCell>
               <TableCell className="text-center">
-                {['', '0', '0.00'].includes(player.espn_projection) ? '--' : player.espn_projection}
+                <p className="text-base">{['', '0', '0.00'].includes(player.espn_projection) ? '--' : player.espn_projection}</p>
+                <p className="pl-2 text-xs text-muted-foreground">
+                  {['', '0', '0.00'].includes(player.espn_projection_diff) ? '' : `(${player.espn_projection_diff})`}
+                </p>
               </TableCell>
               <TableCell className="text-center">
-                {['', '0', '0.00'].includes(player.actual_points) ? '--' : player.actual_points}
+                <p className="font-extrabold text-lg">{['', '0', '0.00'].includes(player.actual_points) ? '--' : player.actual_points}</p>
               </TableCell>
             </TableRow>
           ))}

@@ -1,6 +1,7 @@
 import { type League, type LeagueMember } from '@/types/models';
 import TeamAvatar from '@/components/leagues/team-avatar';
 import { c } from '@/lib/conv';
+import { rankName } from '@/lib/utils';
 import { useMemo } from 'react';
 
 interface StandingsTabProps {
@@ -8,18 +9,6 @@ interface StandingsTabProps {
 }
 
 export default function StandingsTab({ league }: StandingsTabProps) {
-
-  const rankName = (rank: number) => {
-    if (rank === 1) {
-      return '1st';
-    } else if (rank === 2) {
-      return '2nd';
-    } else if (rank === 3) {
-      return '3rd';
-    } else {
-      return `${rank}th`;
-    }
-  };
 
   const { standings } = useMemo(() => {
     const pfRanks: { member: LeagueMember; pf: number }[] = [];
@@ -81,23 +70,23 @@ export default function StandingsTab({ league }: StandingsTabProps) {
             </div>
           </div>
           <div className="flex align-center justify-end space-x-8">
-            <div className="pr-6">
+            <div className="min-w-[8em] pr-6">
               <p className="text-xs text-muted-foreground">Points For</p>
               <p>
-                {standings.pointsFor.toFixed(2)}
-                <span className="text-xs text-muted-foreground"> ({standings.pfRank})</span>
+                <span className="text-lg font-extrabold">{standings.pointsFor.toFixed(2)}</span>
+                <span className="text-xs text-muted-foreground pl-2"> ({standings.pfRank})</span>
               </p>
             </div>
-            <div className="pr-6">
+            <div className="min-w-[8em] pr-6">
               <p className="text-xs text-muted-foreground">Points Against</p>
               <p>
-                {standings.pointsAgainst.toFixed(2)}
-                <span className="text-xs text-muted-foreground"> ({standings.paRank})</span>
+                <span className="text-lg font-extrabold">{standings.pointsAgainst.toFixed(2)}</span>
+                <span className="text-xs text-muted-foreground pl-2"> ({standings.paRank})</span>
               </p>
             </div>
-            <div className="">
+            <div className="min-w-[8em]">
               <p className="text-xs text-muted-foreground">Record</p>
-              <p>
+              <p className="text-lg font-extrabold">
                 {standings.member.wins} &nbsp; - &nbsp;
                 {standings.member.losses}
                 <>{standings.member.ties > 0 ? ` &nbsp; - &nbsp;${standings.member.ties}` : ''}</>

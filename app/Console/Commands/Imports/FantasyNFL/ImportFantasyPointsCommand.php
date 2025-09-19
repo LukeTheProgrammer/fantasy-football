@@ -42,6 +42,8 @@ class ImportFantasyPointsCommand extends Command
 
     protected Collection $games;
 
+    protected ?int $year = null;
+
     /**
      * Execute the console command.
      */
@@ -58,9 +60,9 @@ class ImportFantasyPointsCommand extends Command
 
     protected function setUp()
     {
-        $year = $this->argument('year') ?? date('Y');
+        $this->year = $this->argument('year') ?? select('Select a year', [2025, 2024], 2025);
 
-        $this->games = NflGame::forYear($year)->get()->keyBy('espn_id');
+        $this->games = NflGame::forYear($this->year)->get()->keyBy('espn_id');
 
         $leagueId = select(
             label: 'League',
@@ -85,7 +87,7 @@ class ImportFantasyPointsCommand extends Command
     protected function import()
     {
         /** @var ResourceLeagueData $data */
-        $data = $this->api->getRosters();
+        $data = $this->api->getRosters(year: $this->year);
 
         $data->teams->each(fn (ResourceTeamsData $team) => $this->processTeam($team));
     }

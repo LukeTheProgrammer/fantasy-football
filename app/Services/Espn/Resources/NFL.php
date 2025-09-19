@@ -138,11 +138,16 @@ class NFL extends BaseResource
      *
      * @return mixed
      */
-    public function getTeamSchedule(int $teamId)
+    public function getTeamSchedule(int $teamId, ?int $year = null)
     {
         $url = $this->buildUrl('teams/' . $teamId . '/schedule');
 
-        $response = $this->get($url, $this->query());
+        $q = array_filter([
+            'season' => $year,
+            'seasonType' => ($year) ? '2' : null,
+        ]);
+
+        $response = $this->get($url, $this->query($q));
 
         return $this->returnRaw
             ? $response->json()
