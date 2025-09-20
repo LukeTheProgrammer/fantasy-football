@@ -12,7 +12,7 @@ use Spatie\LaravelData\Attributes\WithCast;
 class PlayerData extends BaseData
 {
     public function __construct(
-        public ?int $id = null,
+        public int|string|null $id = null,
         public ?bool $active = null,
         public ?bool $droppable = null,
         public ?bool $injured = null,
@@ -34,8 +34,8 @@ class PlayerData extends BaseData
         #[WithCast(CollectionCast::class)]
         public array|Collection $outlooks = [],
 
-        #[WithCast(CollectionCast::class)]
-        public array|Collection $ownership = [],
+        #[WithCast(PlayerOwnershipData::class)]
+        public array|PlayerOwnershipData $ownership = [],
 
         #[WithCast(CollectionCast::class)]
         public array|Collection $rankings = [],

@@ -89,6 +89,7 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
       const game = nfl_games.find(g => g.week === weekNum && (g.away_team_id === tid || g.home_team_id === tid));
 
       if (abb in positions) {
+        const gc = c(game?.is_completed).toBoolean();
         const fps = fantasyPointsWeeks.find(fpw => fpw.nfl_game_id === game?.id);
         const espnProjectionDiff = c(fps?.espn_projected_points).toFloat() - c(fps?.points).toFloat();
 
@@ -99,13 +100,15 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
           team:                 roster.player.team.abbreviation,
           game:                 game,
           headshot:             roster.player.headshot,
-          overall_rank:         c(roster.overall_rank).toNumber(),
-          position_rank:        c(roster.position_rank).toNumber(),
-          total_points:         c(roster.fantasy_points).toString(),
+          overall_rank:         c(fps?.overall_rank).toNumber(),
+          position_rank:        c(fps?.position_rank).toNumber(),
+          total_points:         '',
+          actual_points:        gc ? c(fps?.points).toString() : '',
           espn_projection:      c(fps?.espn_projected_points).toString(),
-          espn_projection_diff: espnProjectionDiff.toFixed(2),
-          actual_points:        c(fps?.points).toString(),
+          espn_projection_diff: gc ? espnProjectionDiff.toFixed(2) : '',
         };
+
+        console.log(player);
 
         positions[abb].push(player);
       }
@@ -142,9 +145,9 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
           <TableRow>
             <TableHead className='text-center'>POS</TableHead>
             <TableHead>Player</TableHead>
-            <TableHead className='text-center'>Pos Rank</TableHead>
-            <TableHead className='text-center'>Overall Rank</TableHead>
             <TableHead className='text-center'>Game</TableHead>
+            {/* <TableHead className='text-center'>Pos Rank</TableHead> */}
+            {/* <TableHead className='text-center'>Overall Rank</TableHead> */}
             <TableHead className='text-center'>ESPN Proj</TableHead>
             <TableHead className='text-center'>Points</TableHead>
           </TableRow>
@@ -155,40 +158,55 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
               <TableCell className="text-center border-s-4" style={{ borderLeftColor: posBorderColor(player.position) }}>
                 {player.position}
               </TableCell>
-              <TableCell className="pl-0 flex items-center justify-start">
+              <TableCell className="flex items-center justify-start">
                 <div className="w-[4em] flex items-center justify-center">
                   {player.headshot && (
                     <img src={player.headshot} alt={player.name} className="h-10" />
                   )}
                 </div>
                 <div className="pl-2">
-                  <p>{player.name}</p>
-                  <p className="text-xs text-muted-foreground">{player.team}</p>
+                  <p className="font-bold">{player.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {/* {player.team} */}
+                    {player.team} &nbsp; • &nbsp; {player.position} {player.position_rank}
+                  </p>
                 </div>
               </TableCell>
               <TableCell className="text-center text-xs">
+                <p className="font-extrabold text-lg">
+                  {! player.game ? ('Bye') : (
+                    (player.team === player.game.away_team.abbreviation
+                      ? <span>@ {player.game.home_team.abbreviation}</span>
+                      : <span> {player.game.away_team.abbreviation}</span>
+                    )
+                  )}
+                </p>
+                <p className="pl-2 text-xs text-muted-foreground">
+                  {player.game && gameDate(player.game)}
+                </p>
+              </TableCell>
+              {/*
+              <TableCell className="text-center font-extrabold text-lg">
                 {player.position_rank < 1 ? '--' : `${player.position} ${player.position_rank}`}
               </TableCell>
-              <TableCell className="text-center text-xs">
+              */}
+              {/*
+              <TableCell className="text-center font-extrabold text-lg">
                 {player.overall_rank < 1 ? '--' : player.overall_rank}
               </TableCell>
-              <TableCell className="text-center text-xs">
-                <p>{! player.game ? ('Bye') : (
-                  (player.team === player.game.away_team.abbreviation
-                    ? <span className="pr-2">@ {player.game.home_team.abbreviation}</span>
-                    : <span className="pr-2"> {player.game.away_team.abbreviation}</span>
-                  )
-                )}</p>
-                <p>{player.game && gameDate(player.game)}</p>
-              </TableCell>
+              */}
               <TableCell className="text-center">
-                <p className="text-base">{['', '0', '0.00'].includes(player.espn_projection) ? '--' : player.espn_projection}</p>
+                <p className="font-extrabold text-lg">
+                  {['', '0', '0.00'].includes(player.espn_projection) ? '--' : player.espn_projection}
+                </p>
                 <p className="pl-2 text-xs text-muted-foreground">
                   {['', '0', '0.00'].includes(player.espn_projection_diff) ? '' : `(${player.espn_projection_diff})`}
                 </p>
               </TableCell>
               <TableCell className="text-center">
-                <p className="font-extrabold text-lg">{['', '0', '0.00'].includes(player.actual_points) ? '--' : player.actual_points}</p>
+                <p className="font-extrabold text-lg">
+                  {['', '0', '0.00'].includes(player.actual_points) ? '--' : player.actual_points}
+                </p>
               </TableCell>
             </TableRow>
           ))}

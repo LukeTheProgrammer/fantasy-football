@@ -9,7 +9,7 @@ use Spatie\LaravelData\Attributes\WithCast;
 class PlayerPoolEntryData extends BaseData
 {
     public function __construct(
-        public ?int $id = null,
+        public int|string|null $id = null,
         public ?bool $lineupLocked = null,
         public ?bool $rosterLocked = null,
         public ?bool $tradeLocked = null,

@@ -12,15 +12,15 @@ class PlayerStatsData extends BaseData
     protected bool $isCollectionCast = true;
 
     public function __construct(
-        public ?int $id = null,
+        public int|string|null $id = null,
+        public int|string|null $externalId = null,
+        public int|string|null $proTeamId = null,
+        public int|string|null $scoringPeriodId = null,
+        public int|string|null $seasonId = null,
+        public int|string|null $statSourceId = null,
+        public int|string|null $statSplitTypeId = null,
         public ?bool $isActual = null,
         public ?bool $isProjected = null,
-        public ?int $externalId = null,
-        public ?int $proTeamId = null,
-        public ?int $scoringPeriodId = null,
-        public ?int $seasonId = null,
-        public ?int $statSourceId = null,
-        public ?int $statSplitTypeId = null,
         public ?float $appliedTotal = null,
 
         #[WithCast(CollectionCast::class)]

@@ -9,7 +9,7 @@ use Spatie\LaravelData\Attributes\WithCast;
 class ResourceMatchupData extends BaseData
 {
     public function __construct(
-        public ?int $id = null,
+        public int|string|null $id = null,
         public ?int $gameId = null,
         public ?int $scoringPeriodId = null,
         public ?int $seasonId = null,

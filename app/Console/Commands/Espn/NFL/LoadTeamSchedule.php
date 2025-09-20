@@ -147,8 +147,6 @@ class LoadTeamSchedule extends Command
 
     protected function upsert(array $data): NflGame
     {
-        Log::info('Load Game', $data);
-
         return NflGame::updateOrCreate(
             ['espn_id' => $data['espn_id']],
             $data

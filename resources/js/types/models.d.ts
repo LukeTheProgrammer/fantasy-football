@@ -50,10 +50,14 @@ export interface FantasyPointsWeek {
   nfl_game_id: number;
   league_id: number;
   player_id: number;
-  year: number;
-  week_number: number;
+  lineup_slot_id: number;
   espn_projected_points: number;
   points: number;
+  position_rank: number;
+  overall_rank: number;
+  percent_owned: number;
+  percent_started: number;
+  percent_changed: number;
   nfl_game: NflGame;
   league: League;
   player: Player;

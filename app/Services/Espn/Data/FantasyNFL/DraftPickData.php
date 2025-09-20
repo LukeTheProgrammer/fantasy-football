@@ -9,7 +9,7 @@ class DraftPickData extends BaseData
     protected bool $isCollectionCast = true;
 
     public function __construct(
-        public ?int $id = null,
+        public int|string|null $id = null,
         public ?bool $keeper = null,
         public ?bool $reservedForKeeper = null,
         public ?bool $tradeLocked = null,

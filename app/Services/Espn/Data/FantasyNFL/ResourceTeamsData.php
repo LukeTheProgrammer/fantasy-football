@@ -12,7 +12,7 @@ class ResourceTeamsData extends BaseData
     protected bool $isCollectionCast = true;
 
     public function __construct(
-        public ?int $id = null,
+        public int|string|null $id = null,
         public ?bool $isActive = null,
         public ?float $points = null,
         public ?float $pointsAdjusted = null,

@@ -9,7 +9,7 @@ class LeagueMemberData extends BaseData
     protected bool $isCollectionCast = true;
 
     public function __construct(
-        public ?string $id = null,
+        public int|string|null $id = null,
         public ?bool $isLeagueCreator = null,
         public ?bool $isLeagueManager = null,
         public ?string $displayName = null,
