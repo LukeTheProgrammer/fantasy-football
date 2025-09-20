@@ -6,7 +6,6 @@ use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use App\Services\Espn\Resources\FantasyNFL;
 use App\Services\Espn\Resources\NFL;
 use App\Services\Espn\Resources\NflTeam;
-use App\Services\Espn\Resources\Scrapers;
 
 /**
  * @see https://github.com/pseudo-r/Public-ESPN-API
@@ -27,10 +26,5 @@ class EspnService
     public function fantasyNFL(array|CredentialsData $credentials): FantasyNFL
     {
         return new FantasyNFL($credentials);
-    }
-
-    public function scrapers(): Scrapers
-    {
-        return new Scrapers();
     }
 }

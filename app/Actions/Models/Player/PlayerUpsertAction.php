@@ -4,15 +4,24 @@ namespace App\Actions\Models\Player;
 
 use App\Models\Player;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class PlayerUpsertAction
 {
     public function run(array $data = []): Player
     {
-        return Player::updateOrCreate(
-            ['espn_id' => Arr::get($data, 'espn_id')],
-            $this->getData($data)
-        );
+        try {
+            $player = Player::updateOrCreate(
+                ['espn_id' => Arr::get($data, 'espn_id')],
+                $this->getData($data)
+            );
+        } catch (Exception $e) {
+            Log::error($e, $data);
+            throw $e;
+        }
+
+        return $player;
     }
 
     private function getData(array $data = []): array

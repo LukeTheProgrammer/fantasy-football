@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\Espn\Scrapers;
+namespace App\Console\Commands\Scrapers;
 
 use App\Facades\Action;
 use App\Facades\Espn;
@@ -10,18 +10,21 @@ use App\Services\Espn\Resources\Scrapers\NflTeamRoster;
 use App\Services\Espn\EspnConstants;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 use function Laravel\Prompts\select;
 
-class GetTeamRoster extends Command
+class GetEspnRoster extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'espn:scrape:nfl-roster
-        { team? : Team name }
+    protected $signature = 'scrapers:espn:get-roster
+        { --a|all   : Scrapes all teams }
+        { --q|quiet : No output         }
+        { team?     : Team name         }
     ';
 
     /**
@@ -31,18 +34,37 @@ class GetTeamRoster extends Command
      */
     protected $description = 'Loads NFL team from the ESPN API.';
 
+    protected ?Collection $positions = null;
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $teamName = $this->argument('team') ?? select(
-            label: 'Team',
-            options: array_keys(NflTeamRoster::TEAMS),
-            default: null,
-        );
+        $this->positions = Position::all()->keyBy('abbreviation');
 
-        $positions = Position::all()->keyBy('abbreviation');
+        if ($this->option('all')) {
+            foreach (NflTeamRoster::TEAMS as $teamName => $team) {
+                $this->getRoster($teamName);
+            }
+        } else {
+            $teamName = $this->argument('team') ?? select(
+                label: 'Team',
+                options: array_keys(NflTeamRoster::TEAMS),
+                default: null,
+            );
+
+            $this->getRoster($teamName);
+        }
+
+        return Command::SUCCESS;
+    }
+
+    private function getRoster(string $teamName)
+    {
+        if (! $this->option('quiet')) {
+            $this->info("Loading rosters for {$teamName}");
+        }
 
         $data = Espn::scrapers()->getRoster($teamName);
 
@@ -64,7 +86,7 @@ class GetTeamRoster extends Command
                 continue;
             }
 
-            $pos = $positions->get($ffPos->value);
+            $pos = $this->positions->get($ffPos->value);
 
             if (! $pos instanceof Position) {
                 $this->error('Position not found.');
@@ -84,7 +106,5 @@ class GetTeamRoster extends Command
                 'headshot'      => Arr::get($player, 'headshot'),
             ]);
         }
-
-        return Command::SUCCESS;
     }
 }

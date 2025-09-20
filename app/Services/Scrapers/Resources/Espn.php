@@ -1,148 +1,52 @@
 <?php
 
-namespace App\Services\Espn\Resources\Scrapers;
+namespace App\Services\Scrapers\Resources;
 
-use Exception;
 use App\Models\Team;
+use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
-class NflTeamRoster
+class Espn extends BaseScraperResource
 {
     public const TEAMS = [
-        'arizona-cardinals'     => [
-            'abb' => 'ARI',
-            'url' => 'ari/arizona-cardinals',
-        ],
-        'atlanta-falcons'       => [
-            'abb' => 'ATL',
-            'url' => 'atl/atlanta-falcons',
-        ],
-        'baltimore-ravens'      => [
-            'abb' => 'BAL',
-            'url' => 'bal/baltimore-ravens',
-        ],
-        'buffalo-bills'         => [
-            'abb' => 'BUF',
-            'url' => 'buf/buffalo-bills',
-        ],
-        'carolina-panthers'     => [
-            'abb' => 'CAR',
-            'url' => 'car/carolina-panthers',
-        ],
-        'chicago-bears'         => [
-            'abb' => 'CHI',
-            'url' => 'chi/chicago-bears',
-        ],
-        'cincinnati-bengals'    => [
-            'abb' => 'CIN',
-            'url' => 'cin/cincinnati-bengals',
-        ],
-        'cleveland-browns'      => [
-            'abb' => 'CLE',
-            'url' => 'cle/cleveland-browns',
-        ],
-        'dallas-cowboys'        => [
-            'abb' => 'DAL',
-            'url' => 'dal/dallas-cowboys',
-        ],
-        'denver-broncos'        => [
-            'abb' => 'DEN',
-            'url' => 'den/denver-broncos',
-        ],
-        'detroit-lions'         => [
-            'abb' => 'DET',
-            'url' => 'det/detroit-lions',
-        ],
-        'green-bay-packers'     => [
-            'abb' => 'GB',
-            'url' => 'gb/green-bay-packers',
-        ],
-        'houston-texans'        => [
-            'abb' => 'HOU',
-            'url' => 'hou/houston-texans',
-        ],
-        'indianapolis-colts'    => [
-            'abb' => 'IND',
-            'url' => 'ind/indianapolis-colts',
-        ],
-        'jacksonville-jaguars'  => [
-            'abb' => 'JAX',
-            'url' => 'jax/jacksonville-jaguars',
-        ],
-        'kansas-city-chiefs'    => [
-            'abb' => 'KC',
-            'url' => 'kc/kansas-city-chiefs',
-        ],
-        'las-vegas-raiders'     => [
-            'abb' => 'LV',
-            'url' => 'lv/las-vegas-raiders',
-        ],
-        'los-angeles-chargers'  => [
-            'abb' => 'LAC',
-            'url' => 'lac/los-angeles-chargers',
-        ],
-        'los-angeles-rams'      => [
-            'abb' => 'LAR',
-            'url' => 'lar/los-angeles-rams',
-        ],
-        'miami-dolphins'        => [
-            'abb' => 'MIA',
-            'url' => 'mia/miami-dolphins',
-        ],
-        'minnesota-vikings'     => [
-            'abb' => 'MIN',
-            'url' => 'min/minnesota-vikings',
-        ],
-        'new-england-patriots'  => [
-            'abb' => 'NE',
-            'url' => 'ne/new-england-patriots',
-        ],
-        'new-orleans-saints'    => [
-            'abb' => 'NO',
-            'url' => 'no/new-orleans-saints',
-        ],
-        'new-york-giants'       => [
-            'abb' => 'NYG',
-            'url' => 'nyg/new-york-giants',
-        ],
-        'new-york-jets'         => [
-            'abb' => 'NYJ',
-            'url' => 'nyj/new-york-jets',
-        ],
-        'philadelphia-eagles'   => [
-            'abb' => 'PHI',
-            'url' => 'phi/philadelphia-eagles',
-        ],
-        'pittsburgh-steelers'   => [
-            'abb' => 'PIT',
-            'url' => 'pit/pittsburgh-steelers',
-        ],
-        'san-francisco-49ers'   => [
-            'abb' => 'SF',
-            'url' => 'sf/san-francisco-49ers',
-        ],
-        'seattle-seahawks'      => [
-            'abb' => 'SEA',
-            'url' => 'sea/seattle-seahawks',
-        ],
-        'tampa-bay-buccaneers'  => [
-            'abb' => 'TB',
-            'url' => 'tb/tampa-bay-buccaneers',
-        ],
-        'tennessee-titans'      => [
-            'abb' => 'TEN',
-            'url' => 'ten/tennessee-titans',
-        ],
-        'washington-commanders' => [
-            'abb' => 'WSH',
-            'url' => 'wsh/washington-commanders',
-        ],
+        'ARI' => 'ari/arizona-cardinals',
+        'ATL' => 'atl/atlanta-falcons',
+        'BAL' => 'bal/baltimore-ravens',
+        'BUF' => 'buf/buffalo-bills',
+        'CAR' => 'car/carolina-panthers',
+        'CHI' => 'chi/chicago-bears',
+        'CIN' => 'cin/cincinnati-bengals',
+        'CLE' => 'cle/cleveland-browns',
+        'DAL' => 'dal/dallas-cowboys',
+        'DEN' => 'den/denver-broncos',
+        'DET' => 'det/detroit-lions',
+        'GB'  => 'gnb/green-bay-packers',
+        'HOU' => 'htx/houston-texans',
+        'IND' => 'clt/indianapolis-colts',
+        'JAX' => 'jax/jacksonville-jaguars',
+        'KC'  => 'kan/kansas-city-chiefs',
+        'LV'  => 'rai/las-vegas-raiders',
+        'LAR' => 'ram/los-angeles-rams',
+        'MIA' => 'mia/miami-dolphins',
+        'MIN' => 'min/minnesota-vikings',
+        'NE'  => 'nwe/new-england-patriots',
+        'NO'  => 'nor/new-orleans-saints',
+        'NYG' => 'nyg/new-york-giants',
+        'NYJ' => 'nyj/new-york-jets',
+        'PHI' => 'phi/philadelphia-eagles',
+        'PIT' => 'pit/pittsburgh-steelers',
+        'SEA' => 'sea/seattle-seahawks',
+        'SF'  => 'sfo/san-francisco-49ers',
+        'TB'  => 'tam/tampa-bay-buccaneers',
+        'TEN' => 'oti/tennessee-titans',
+        'LAC' => 'sdg/los-angeles-chargers',
+        'WSH' => 'was/washington-commanders',
     ];
 
-    public function get(string $teamName)
+    public function getTeamRoster(string $teamAbb)
     {
-        $team = Arr::get(static::TEAMS, $teamName);
+        $team = Arr::get(static::TEAMS, $teamAbb);
         $url = 'https://www.espn.com/nfl/team/roster/_/name/' . Arr::get($team, 'url');
 
         $response = Http::withHeaders([
@@ -182,7 +86,7 @@ class NflTeamRoster
      * We locate the first '[' after the "groups" key and then
      * scan forward tracking bracket depth until the matching ']'.
      */
-    protected function extractGroupsJson(string $html): ?string
+    private function extractGroupsJson(string $html): ?string
     {
         $keyPos = strpos($html, '"groups"');
         if ($keyPos === false) {
@@ -238,7 +142,7 @@ class NflTeamRoster
      * @param array $groups
      * @return array<int, array<string, mixed>>
      */
-    protected function collectPlayersFromGroups(array $groups): array
+    private function collectPlayersFromGroups(array $groups): array
     {
         $players = [];
         foreach ($groups as $group) {
