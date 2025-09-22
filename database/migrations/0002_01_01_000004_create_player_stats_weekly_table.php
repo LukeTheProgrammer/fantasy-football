@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('player_stats_weekly');
+        Schema::enableForeignKeyConstraints();
+
         Schema::create('player_stats_weekly', function (Blueprint $table) {
             $table->id();
             $table->integer('week_number');
@@ -57,6 +61,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('player_stats_weekly');
+        Schema::enableForeignKeyConstraints();
     }
 };

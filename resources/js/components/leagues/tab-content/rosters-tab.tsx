@@ -25,10 +25,9 @@ interface RostersTabPlayer {
   headshot: string | null;
   overall_rank: number;
   position_rank: number;
-  total_points: string;
   espn_projection: string;
-  espn_projection_diff: string;
-  actual_points: string;
+  espn_diff: string;
+  fantasy_points: string;
   game: NflGame | undefined;
 };
 
@@ -81,38 +80,39 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
       K: [],
     };
 
-    rosters.forEach(roster => {
-      const fantasyPointsWeeks = league.fantasy_points_weeks || [];
-      const abb = roster.player.position.abbreviation;
-      const tid = roster.player.team_id;
-      const weekNum = Number(selectedWeek.replace('Week ', ''));
-      const game = nfl_games.find(g => g.week === weekNum && (g.away_team_id === tid || g.home_team_id === tid));
+    const weekNum = Number(selectedWeek.replace('Week ', ''));
 
-      if (abb in positions) {
-        const gc = c(game?.is_completed).toBoolean();
-        const fps = fantasyPointsWeeks.find(fpw => fpw.nfl_game_id === game?.id);
-        const espnProjectionDiff = c(fps?.espn_projected_points).toFloat() - c(fps?.points).toFloat();
+    rosters
+      .filter(roster => roster.week === weekNum)
+      .forEach(roster => {
+        const abb = roster.player.position.abbreviation;
+        const tid = roster.player.team_id;
+        const game = roster.nfl_game ?? nfl_games.find(
+          g => g.week === weekNum && (g.away_team_id === tid || g.home_team_id === tid)
+        );
 
-        const player: RostersTabPlayer = {
-          id:                   roster.player.id.toString(),
-          name:                 roster.player.full_name,
-          position:             roster.player.position.abbreviation,
-          team:                 roster.player.team.abbreviation,
-          game:                 game,
-          headshot:             roster.player.headshot,
-          overall_rank:         c(fps?.overall_rank).toNumber(),
-          position_rank:        c(fps?.position_rank).toNumber(),
-          total_points:         '',
-          actual_points:        gc ? c(fps?.points).toString() : '',
-          espn_projection:      c(fps?.espn_projected_points).toString(),
-          espn_projection_diff: gc ? espnProjectionDiff.toFixed(2) : '',
-        };
+        if (abb in positions) {
+          const points = c(roster.fantasy_points).toFloat();
+          const espn = c(roster.espn_projected_points).toFloat();
+          const espnDiff = (points > 0 && espn > 0) ? espn - points : 0;
 
-        console.log(player);
+          const player: RostersTabPlayer = {
+            id:              roster.player.id.toString(),
+            name:            roster.player.full_name,
+            position:        roster.player.position.abbreviation,
+            team:            roster.player.team.abbreviation,
+            game:            game,
+            headshot:        roster.player.headshot,
+            overall_rank:    c(roster.overall_rank).toNumber(),
+            position_rank:   c(roster.position_rank).toNumber(),
+            fantasy_points:  points > 0 ? c(points).toString() : '--',
+            espn_projection: espn > 0 ? c(espn).toString() : '--',
+            espn_diff:       espnDiff != 0 ? espnDiff.toFixed(2) : '',
+          };
 
-        positions[abb].push(player);
-      }
-    });
+          positions[abb].push(player);
+        }
+      });
 
     const players: RostersTabPlayer[] = [];
 
@@ -146,8 +146,6 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
             <TableHead className='text-center'>POS</TableHead>
             <TableHead>Player</TableHead>
             <TableHead className='text-center'>Game</TableHead>
-            {/* <TableHead className='text-center'>Pos Rank</TableHead> */}
-            {/* <TableHead className='text-center'>Overall Rank</TableHead> */}
             <TableHead className='text-center'>ESPN Proj</TableHead>
             <TableHead className='text-center'>Points</TableHead>
           </TableRow>
@@ -167,7 +165,6 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
                 <div className="pl-2">
                   <p className="font-bold">{player.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {/* {player.team} */}
                     {player.team} &nbsp; • &nbsp; {player.position} {player.position_rank}
                   </p>
                 </div>
@@ -185,27 +182,17 @@ export default function ShowLeague({ league, selectedMember, selectedWeek, nfl_g
                   {player.game && gameDate(player.game)}
                 </p>
               </TableCell>
-              {/*
-              <TableCell className="text-center font-extrabold text-lg">
-                {player.position_rank < 1 ? '--' : `${player.position} ${player.position_rank}`}
-              </TableCell>
-              */}
-              {/*
-              <TableCell className="text-center font-extrabold text-lg">
-                {player.overall_rank < 1 ? '--' : player.overall_rank}
-              </TableCell>
-              */}
               <TableCell className="text-center">
                 <p className="font-extrabold text-lg">
-                  {['', '0', '0.00'].includes(player.espn_projection) ? '--' : player.espn_projection}
+                  {player.espn_projection}
                 </p>
                 <p className="pl-2 text-xs text-muted-foreground">
-                  {['', '0', '0.00'].includes(player.espn_projection_diff) ? '' : `(${player.espn_projection_diff})`}
+                  {player.espn_diff}
                 </p>
               </TableCell>
               <TableCell className="text-center">
                 <p className="font-extrabold text-lg">
-                  {['', '0', '0.00'].includes(player.actual_points) ? '--' : player.actual_points}
+                  {player.fantasy_points}
                 </p>
               </TableCell>
             </TableRow>

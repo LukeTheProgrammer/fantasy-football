@@ -52,22 +52,6 @@ class League extends Model
     }
 
     /**
-     * Get the seasonal fantasy points for this player.
-     */
-    public function fantasyPointsSeasons(): HasMany
-    {
-        return $this->hasMany(FantasyPointsSeason::class);
-    }
-
-    /**
-     * Get the weekly fantasy points for this player.
-     */
-    public function fantasyPointsWeeks(): HasMany
-    {
-        return $this->hasMany(FantasyPointsWeek::class);
-    }
-
-    /**
      * Get the league members.
      */
     public function members(): HasMany

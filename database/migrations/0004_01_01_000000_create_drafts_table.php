@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('drafts');
+        Schema::enableForeignKeyConstraints();
+
         Schema::create('drafts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('league_id')->constrained('leagues')->cascadeOnDelete();
@@ -31,6 +35,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('drafts');
+        Schema::enableForeignKeyConstraints();
     }
 };

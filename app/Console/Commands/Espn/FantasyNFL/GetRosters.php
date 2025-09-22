@@ -83,7 +83,7 @@ class GetRosters extends Command
 
             $roster = $this->api->getRostersForTeam($member->external_id, $this->week, $this->year);
 
-            $this->saveRoster($roster, true);
+            // $this->saveRoster($roster, true);
 
             $this->saveFormattedRoster($this->formatRoster($roster, $member));
         });
@@ -126,11 +126,6 @@ class GetRosters extends Command
                 }
 
                 foreach ($stats as $stat) {
-                    $statWeek = Arr::get($stat, 'scoringPeriodId', -1);
-                    if ($statWeek != $this->week) {
-                        continue;
-                    }
-
                     if (! isset($data[$playerId])) {
                         $data[$playerId] = [
                             'league_member_id'      => $member->id,
@@ -164,15 +159,18 @@ class GetRosters extends Command
         $week    = intval(Arr::get($stat, 'scoringPeriodId', false));
         $points  = floatVal(Arr::get($stat, 'appliedTotal', 0));
 
+        $isWeek = $week == $this->week;
         $isProjection = Arr::get($stat, 'statSourceId', false) === 1;
 
-        if ($gameId == $year . $week && $isProjection) {
+        $projectionKey = $year . $week;
+
+        if ($isWeek && $gameId == $projectionKey && $isProjection) {
             $data['espn_projected_points'] = $points;
         }
 
-        if (isset($this->nflGameIds[$gameId])) {
+        if ($isWeek && isset($this->nflGameIds[$gameId])) {
             $data['nfl_game_id'] = $this->nflGameIds[$gameId];
-            $data['points'] = $points;
+            $data['fantasy_points'] = $points;
         }
 
         return $data;

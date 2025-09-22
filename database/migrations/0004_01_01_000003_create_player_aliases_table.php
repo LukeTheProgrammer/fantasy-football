@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('player_aliases');
+        Schema::enableForeignKeyConstraints();
+
         /**
          * Team and Position IDs are intended to provide the ability
          * to disambiguate players with the same name but different
@@ -34,6 +38,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('player_aliases');
+        Schema::enableForeignKeyConstraints();
     }
 };

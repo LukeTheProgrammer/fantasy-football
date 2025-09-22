@@ -9,7 +9,7 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 
-class FantasyProsDriver extends BaseRankingsDriver
+class FantasyProsRankingsDriver extends BaseRankingsDriver
 {
     // File pointer
     public $fp;

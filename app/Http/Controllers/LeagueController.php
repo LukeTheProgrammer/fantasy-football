@@ -35,7 +35,6 @@ class LeagueController extends Controller
         $league->load([
             'creator',
             'draft.picks',
-            'fantasyPointsWeeks',
             'matchups' => ['homeTeam', 'awayTeam'],
             'members' => [
                 'rosters.player' => [

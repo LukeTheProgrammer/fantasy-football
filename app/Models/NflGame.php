@@ -48,14 +48,25 @@ class NflGame extends Model
     }
 
     /**
-     * Relation to fantasy points weeks.
+     * Get the player projections for this player.
      */
-    public function fantasyPointsWeeks(): HasMany
+    public function playerProjections(): HasMany
     {
-        return $this->hasMany(FantasyPointsWeek::class);
+        return $this->hasMany(PlayerProjection::class);
     }
 
     /* ===[ Scopes ]=== */
+
+    /**
+     * Scope for year.
+     */
+    public function scopeForTeam(Builder $query, int|string|Team $team): Builder
+    {
+        return $query->where(function ($q) use ($team) {
+            $q->orWhere('home_team_id', $team)
+                ->orWhere('away_team_id', $team);
+        });
+    }
 
     /**
      * Scope for year.

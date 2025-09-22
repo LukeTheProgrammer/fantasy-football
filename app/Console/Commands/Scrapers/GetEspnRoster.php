@@ -2,12 +2,13 @@
 
 namespace App\Console\Commands\Scrapers;
 
+use App\Enums\DataSourceEnum;
 use App\Facades\Action;
-use App\Facades\Espn;
+use App\Facades\Scraper;
 use App\Models\Position;
 use App\Models\Player;
-use App\Services\Espn\Resources\Scrapers\NflTeamRoster;
 use App\Services\Espn\EspnConstants;
+use App\Services\Scrapers\Resources\Espn;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -44,13 +45,13 @@ class GetEspnRoster extends Command
         $this->positions = Position::all()->keyBy('abbreviation');
 
         if ($this->option('all')) {
-            foreach (NflTeamRoster::TEAMS as $teamName => $team) {
+            foreach (Espn::TEAMS as $teamName => $team) {
                 $this->getRoster($teamName);
             }
         } else {
             $teamName = $this->argument('team') ?? select(
                 label: 'Team',
-                options: array_keys(NflTeamRoster::TEAMS),
+                options: array_keys(Espn::TEAMS),
                 default: null,
             );
 
@@ -66,7 +67,8 @@ class GetEspnRoster extends Command
             $this->info("Loading rosters for {$teamName}");
         }
 
-        $data = Espn::scrapers()->getRoster($teamName);
+        $scraper = Scraper::scraper(DataSourceEnum::ESPN->value);
+        $data = $scraper->getTeamRoster($teamName);
 
         $teamId = $data['team']->id;
 

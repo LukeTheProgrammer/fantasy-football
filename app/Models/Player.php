@@ -60,19 +60,11 @@ class Player extends Model
     }
 
     /**
-     * Get the seasonal fantasy points for this player.
+     * Get the player projections for this player.
      */
-    public function fantasyPointsSeasons(): HasMany
+    public function playerProjections(): HasMany
     {
-        return $this->hasMany(FantasyPointsSeason::class);
-    }
-
-    /**
-     * Get the weekly fantasy points for this player.
-     */
-    public function fantasyPointsWeeks(): HasMany
-    {
-        return $this->hasMany(FantasyPointsWeek::class);
+        return $this->hasMany(PlayerProjection::class);
     }
 
     /**
@@ -91,15 +83,34 @@ class Player extends Model
         return $this->belongsTo(Team::class);
     }
 
+    /* ===[ Scopes ]=== */
+
     /**
-     * Get the player's current draft rankings.
+     * Scope a query by position_id.
+     *
+     * @param Builder $query
+     * @param integer|string|Position $position
+     *
+     * @return Builder
      */
-    public function currentDraftRankings(): HasMany
+    public function scopeForPosition(Builder $query, int|string|Position $position): Builder
     {
-        return $this->draftRankings()->where('draft_year', Carbon::now()->year);
+        return $query->where('position_id', ($position instanceof Position) ? $position->id : $position);
     }
 
-    /* ===[ Scopes ]=== */
+    /**
+     * Scope a query by team_id.
+     *
+     * @param Builder $query
+     * @param integer|string|Team $team
+     *
+     * @return Builder
+     */
+    public function scopeForTeam(Builder $query, int|string|Team $team): Builder
+    {
+        return $query->where('team_id', ($team instanceof Team) ? $team->id : $team);
+    }
+
 
     /**
      * Scope a query to only include players with the given ESPN ID.

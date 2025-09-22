@@ -109,14 +109,24 @@ export interface LeagueMember {
 export interface LeagueMemberRoster {
   id: number;
   league_member_id: number;
-  league_member: LeagueMember;
   player_id: number;
+  nfl_game_id?: number;
+
+  season: number;
+  week: number;
+  lineup_slot_id: number;
   position_rank: number;
   overall_rank: number;
+  percent_owned: number;
+  percent_started: number;
+  percent_changed: number;
+
   fantasy_points: number;
+  espn_projected_points: number;
+
+  league_member: LeagueMember;
   player: Player;
-  added_at: string;
-  dropped_at: string | null;
+  nfl_game?: NflGame;
 }
 
 export interface LeagueMatchup {

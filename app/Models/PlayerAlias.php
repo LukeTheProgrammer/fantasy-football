@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,8 @@ class PlayerAlias extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+
+    /* ===[ Relationships ]=== */
 
     /**
      * Get the player that this alias belongs to.
@@ -33,5 +36,12 @@ class PlayerAlias extends Model
     public function position(): BelongsTo
     {
         return $this->belongsTo(Position::class);
+    }
+
+    /* ===[ Scopes ]=== */
+
+    public function scopeForName(Builder $query, string $name): Builder
+    {
+        return $query->where('name', $name);
     }
 }

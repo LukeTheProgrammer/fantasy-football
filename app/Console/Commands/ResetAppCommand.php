@@ -31,7 +31,7 @@ class ResetAppCommand extends Command
         $this->call('db:seed');
         $this->call('import:fantasy-nfl:league');
         $this->call('espn:ffl:get:rosters', ['leagueId' => 1, 'year' => 2025]);
-        $this->call('import:fantasy-nfl:points', ['leagueId' => 1, 'year' => 2025]);
+        $this->call('import:fantasy-nfl:points', ['--quiet' => true, 'leagueId' => 1, 'year' => 2025]);
 
         return Command::SUCCESS;
     }

@@ -8,7 +8,7 @@ use App\Models\Player;
 use App\Models\Position;
 use App\Models\Team;
 use App\Console\Commands\Traits\DisambiguatesPlayers;
-use App\Services\Imports\Models\DraftRankingsImport;
+use App\Services\Imports\Importers\DraftRankingsImporter;
 use App\Enums\RankingSourcesEnum;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
@@ -36,7 +36,7 @@ class ImportFantasyProsRankingsCommand extends Command
      */
     protected $description = 'Import Fantasy Pros Rankings';
 
-    protected ?DraftRankingsImport $import = null;
+    protected ?DraftRankingsImporter $import = null;
 
     protected array $fileHeaders = [];
 

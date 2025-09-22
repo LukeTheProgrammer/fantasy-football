@@ -40,24 +40,11 @@ export default class Conv {
     if (val === null) return '';
     if (val === undefined) return '';
     if (val instanceof Date) return val.toISOString();
+    if (typeof val === 'number') return val.toString();
     if (typeof val === 'symbol') return val.toString();
     if (typeof val === 'object') return JSON.stringify(val);
     if (typeof val === 'string') return val;
     return '';
-  }
-
-  public toNumber(): number {
-    const val = this.original;
-    if (typeof val === 'number') return val;
-    if (typeof val === 'boolean') return val ? 1 : 0;
-    if (typeof val === 'bigint') return Number(val);
-    if (val instanceof Date) return val.getTime();
-    if (typeof val === 'string') {
-      const n = Number(val.trim());
-      if (Number.isNaN(n)) throw new Error(`Cannot convert string '${val}' to number`);
-      return n;
-    }
-    throw new Error(`Cannot convert type '${this.detectType(val)}' to number`);
   }
 
   public toBoolean(): boolean {
@@ -105,6 +92,22 @@ export default class Conv {
     if (typeof val === 'object' && !(val instanceof Date)) return { ...(val as Record<string, unknown>) };
     if (val instanceof Date) return { date: val.toISOString() };
     return { value: val };
+  }
+
+  public toNumber(): number {
+    const val = this.original;
+    if (val === null) return 0;
+    if (val === undefined) return 0;
+    if (typeof val === 'number') return val;
+    if (typeof val === 'boolean') return val ? 1 : 0;
+    if (typeof val === 'bigint') return Number(val);
+    if (val instanceof Date) return val.getTime();
+    if (typeof val === 'string') {
+      const n = Number(val.trim());
+      if (Number.isNaN(n)) throw new Error(`Cannot convert string '${val}' to number`);
+      return n;
+    }
+    throw new Error(`Cannot convert type '${this.detectType(val)}' to number`);
   }
 
   public toInt(): number {

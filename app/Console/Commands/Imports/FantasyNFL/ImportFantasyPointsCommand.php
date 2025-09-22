@@ -11,6 +11,7 @@ use App\Models\Player;
 use App\Services\Espn\Resources\FantasyNFL;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use function Laravel\Prompts\select;
 
@@ -22,6 +23,7 @@ class ImportFantasyPointsCommand extends Command
      * @var string
      */
     protected $signature = 'import:fantasy-nfl:points
+        { --q|quiet : No output        }
         { leagueId? : League to import }
         { year?     : Year to import   }
     ';
@@ -46,11 +48,15 @@ class ImportFantasyPointsCommand extends Command
     {
         $this->setUp();
 
-        $this->info('Importing Fantasy Points');
+        if (! $this->option('quiet')) {
+            $this->info('Importing Fantasy Points');
+        }
 
         $this->import();
 
-        $this->info('Fantasy Points imported successfully: ' . $this->league->name);
+        if (! $this->option('quiet')) {
+            $this->info('Fantasy Points imported successfully: ' . $this->league->name);
+        }
     }
 
     protected function setUp()
@@ -94,23 +100,37 @@ class ImportFantasyPointsCommand extends Command
             dd('JSON Error: ' . json_last_error_msg(), $fp);
         }
 
+        $this->info('Processing ' . $member->name);
+
+        $bar = $this->output->createProgressBar(count($data));
+        $bar->start();
+
         foreach ($data as $week => $roster) {
+            $bar->advance();
             foreach ($roster as $player) {
-                $playerModel = Player::espnId(Arr::get($player, 'player_id', null))->first();
+                $playerId = Arr::get($player, 'player_id', null);
+
+                if ($playerId < 0) {
+                    // ESPN uses negative numbers for DSTs.
+                    $playerId += ($playerId + 16000) * -1;
+                }
+
+                $playerModel = Player::espnId($playerId)->first();
 
                 if (! $playerModel instanceof Player) {
-                    dd('Player not found: ' . json_encode($player));
+                    Log::error('[ImportFantasyPointsCommand] Player not found', $player);
+                    continue;
                 }
 
                 LeagueMemberRoster::updateOrCreate(
                     [
-                        'league_member_id'   => $member->id,
-                        'nfl_game_id' => Arr::get($player, 'nfl_game_id', null),
-                        'player_id'   => $playerModel->id,
+                        'league_member_id' => $member->id,
+                        'nfl_game_id'      => Arr::get($player, 'nfl_game_id', null),
+                        'player_id'        => $playerModel->id,
+                        'season'           => Arr::get($player, 'season', null),
+                        'week'             => Arr::get($player, 'week', null),
                     ],
                     Arr::only($player, [
-                        'season',
-                        'week',
                         'lineup_slot_id',
                         'position_rank',
                         'overall_rank',
@@ -123,6 +143,9 @@ class ImportFantasyPointsCommand extends Command
                 );
             }
         }
+
+        $bar->finish();
+        echo PHP_EOL . PHP_EOL;
     }
 
     private function datafilePath(LeagueMember $member): string

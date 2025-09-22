@@ -2,6 +2,7 @@
 
 namespace App\Services\Scrapers\Resources;
 
+use App\Enums\TeamAbb;
 use App\Models\Team;
 use Exception;
 use Illuminate\Support\Arr;
@@ -21,33 +22,34 @@ class Espn extends BaseScraperResource
         'DAL' => 'dal/dallas-cowboys',
         'DEN' => 'den/denver-broncos',
         'DET' => 'det/detroit-lions',
-        'GB'  => 'gnb/green-bay-packers',
-        'HOU' => 'htx/houston-texans',
-        'IND' => 'clt/indianapolis-colts',
+        'GB'  => 'gb/green-bay-packers',
+        'HOU' => 'hou/houston-texans',
+        'IND' => 'ind/indianapolis-colts',
         'JAX' => 'jax/jacksonville-jaguars',
-        'KC'  => 'kan/kansas-city-chiefs',
-        'LV'  => 'rai/las-vegas-raiders',
-        'LAR' => 'ram/los-angeles-rams',
+        'KC'  => 'kc/kansas-city-chiefs',
+        'LAC' => 'lac/los-angeles-chargers',
+        'LAR' => 'lar/los-angeles-rams',
+        'LV'  => 'lv/las-vegas-raiders',
         'MIA' => 'mia/miami-dolphins',
         'MIN' => 'min/minnesota-vikings',
-        'NE'  => 'nwe/new-england-patriots',
-        'NO'  => 'nor/new-orleans-saints',
+        'NE'  => 'ne/new-england-patriots',
+        'NO'  => 'no/new-orleans-saints',
         'NYG' => 'nyg/new-york-giants',
         'NYJ' => 'nyj/new-york-jets',
         'PHI' => 'phi/philadelphia-eagles',
         'PIT' => 'pit/pittsburgh-steelers',
         'SEA' => 'sea/seattle-seahawks',
-        'SF'  => 'sfo/san-francisco-49ers',
-        'TB'  => 'tam/tampa-bay-buccaneers',
-        'TEN' => 'oti/tennessee-titans',
-        'LAC' => 'sdg/los-angeles-chargers',
-        'WSH' => 'was/washington-commanders',
+        'SF'  => 'sf/san-francisco-49ers',
+        'TB'  => 'tb/tampa-bay-buccaneers',
+        'TEN' => 'ten/tennessee-titans',
+        'WSH' => 'wsh/washington-commanders',
     ];
 
-    public function getTeamRoster(string $teamAbb)
+    public function getTeamRoster(string|TeamAbb $teamAbb)
     {
-        $team = Arr::get(static::TEAMS, $teamAbb);
-        $url = 'https://www.espn.com/nfl/team/roster/_/name/' . Arr::get($team, 'url');
+        $teamAbb = ($teamAbb instanceof TeamAbb) ? $teamAbb : TeamAbb::from($teamAbb);
+        $team = Arr::get(static::TEAMS, $teamAbb->value);
+        $url = 'https://www.espn.com/nfl/team/roster/_/name/' . $team;
 
         $response = Http::withHeaders([
             'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
@@ -73,7 +75,7 @@ class Espn extends BaseScraperResource
             throw new Exception('Failed to decode roster groups JSON.');
         }
 
-        $teamModel = Team::forAbbreviation(Arr::get($team, 'abb'))->first();
+        $teamModel = Team::forAbbreviation($teamAbb)->first();
 
         return [
             'team'   => $teamModel,

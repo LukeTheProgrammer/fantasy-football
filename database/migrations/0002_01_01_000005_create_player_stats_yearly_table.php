@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('player_stats_yearly');
+        Schema::enableForeignKeyConstraints();
+
         Schema::create('player_stats_yearly', function (Blueprint $table) {
             $table->id();
             $table->year('year');
@@ -61,6 +65,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('player_stats_yearly');
+        Schema::enableForeignKeyConstraints();
     }
 };

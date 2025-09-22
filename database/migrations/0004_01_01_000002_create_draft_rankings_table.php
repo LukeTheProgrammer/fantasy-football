@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('draft_rankings');
+        Schema::enableForeignKeyConstraints();
 
         Schema::create('draft_rankings', function (Blueprint $table) {
             $table->id();
@@ -38,6 +40,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('draft_rankings');
+        Schema::enableForeignKeyConstraints();
     }
 };
