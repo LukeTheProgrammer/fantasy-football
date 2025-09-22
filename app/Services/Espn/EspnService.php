@@ -2,10 +2,10 @@
 
 namespace App\Services\Espn;
 
+use App\Services\Espn\Data\FantasyNFL\CredentialsData;
+use App\Services\Espn\Resources\FantasyNFL;
 use App\Services\Espn\Resources\NFL;
 use App\Services\Espn\Resources\NflTeam;
-use App\Services\Espn\Resources\FantasyNFL;
-use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 
 /**
  * @see https://github.com/pseudo-r/Public-ESPN-API

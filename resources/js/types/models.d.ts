@@ -50,10 +50,14 @@ export interface FantasyPointsWeek {
   nfl_game_id: number;
   league_id: number;
   player_id: number;
-  year: number;
-  week_number: number;
+  lineup_slot_id: number;
   espn_projected_points: number;
   points: number;
+  position_rank: number;
+  overall_rank: number;
+  percent_owned: number;
+  percent_started: number;
+  percent_changed: number;
   nfl_game: NflGame;
   league: League;
   player: Player;
@@ -90,6 +94,12 @@ export interface LeagueMember {
   draft_position: number | null;
   is_admin: boolean;
   is_active: boolean;
+  wins: number,
+  losses: number,
+  ties: number,
+  points_for: number,
+  points_against: number,
+  faab_balance: number,
   user: User;
   league: League;
   matchups?: LeagueMatchup[];
@@ -99,11 +109,24 @@ export interface LeagueMember {
 export interface LeagueMemberRoster {
   id: number;
   league_member_id: number;
-  league_member: LeagueMember;
   player_id: number;
+  nfl_game_id?: number;
+
+  season: number;
+  week: number;
+  lineup_slot_id: number;
+  position_rank: number;
+  overall_rank: number;
+  percent_owned: number;
+  percent_started: number;
+  percent_changed: number;
+
+  fantasy_points: number;
+  espn_projected_points: number;
+
+  league_member: LeagueMember;
   player: Player;
-  added_at: string;
-  dropped_at: string | null;
+  nfl_game?: NflGame;
 }
 
 export interface LeagueMatchup {
@@ -178,8 +201,8 @@ export interface Player {
   deleted_at: string | null;
   position: Position;
   team: Team;
-  projected_points?: number;
-  actual_points?: number;
+  projected_points?: number | string;
+  actual_points?: number | string;
   game?: NflGame;
 }
 

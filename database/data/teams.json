@@ -1,258 +1,290 @@
 [
     {
-        "abbreviation": "ARZ",
+        "espn_id": 22,
+        "abbreviation": "ARI",
         "location": "Arizona",
         "name": "Cardinals",
         "conference": "NFC",
         "division": "NFC West",
-        "espn_id": 22
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/ari.png"
     },
     {
+        "espn_id": 1,
         "abbreviation": "ATL",
         "location": "Atlanta",
         "name": "Falcons",
         "conference": "NFC",
         "division": "NFC South",
-        "espn_id": 1
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/atl.png"
     },
     {
+        "espn_id": 33,
         "abbreviation": "BAL",
         "location": "Baltimore",
         "name": "Ravens",
         "conference": "AFC",
         "division": "AFC North",
-        "espn_id": 33
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/bal.png"
     },
     {
+        "espn_id": 2,
         "abbreviation": "BUF",
         "location": "Buffalo",
         "name": "Bills",
         "conference": "AFC",
         "division": "AFC East",
-        "espn_id": 2
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/buf.png"
     },
     {
+        "espn_id": 29,
         "abbreviation": "CAR",
         "location": "Carolina",
         "name": "Panthers",
         "conference": "NFC",
         "division": "NFC South",
-        "espn_id": 29
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/car.png"
     },
     {
+        "espn_id": 3,
         "abbreviation": "CHI",
         "location": "Chicago",
         "name": "Bears",
         "conference": "NFC",
         "division": "NFC North",
-        "espn_id": 3
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/chi.png"
     },
     {
+        "espn_id": 4,
         "abbreviation": "CIN",
         "location": "Cincinnati",
         "name": "Bengals",
         "conference": "AFC",
         "division": "AFC North",
-        "espn_id": 4
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/cin.png"
     },
     {
+        "espn_id": 5,
         "abbreviation": "CLE",
         "location": "Cleveland",
         "name": "Browns",
         "conference": "AFC",
         "division": "AFC North",
-        "espn_id": 5
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/cle.png"
     },
     {
+        "espn_id": 6,
         "abbreviation": "DAL",
         "location": "Dallas",
         "name": "Cowboys",
         "conference": "NFC",
         "division": "NFC East",
-        "espn_id": 6
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/dal.png"
     },
     {
+        "espn_id": 7,
         "abbreviation": "DEN",
         "location": "Denver",
         "name": "Broncos",
         "conference": "AFC",
         "division": "AFC West",
-        "espn_id": 7
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/den.png"
     },
     {
+        "espn_id": 8,
         "abbreviation": "DET",
         "location": "Detroit",
         "name": "Lions",
         "conference": "NFC",
         "division": "NFC North",
-        "espn_id": 8
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/det.png"
     },
     {
+        "espn_id": 9,
         "abbreviation": "GB",
         "location": "Green Bay",
         "name": "Packers",
         "conference": "NFC",
         "division": "NFC North",
-        "espn_id": 9
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/gb.png"
     },
     {
+        "espn_id": 34,
         "abbreviation": "HOU",
         "location": "Houston",
         "name": "Texans",
         "conference": "AFC",
         "division": "AFC South",
-        "espn_id": 34
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/hou.png"
     },
     {
+        "espn_id": 11,
         "abbreviation": "IND",
         "location": "Indianapolis",
         "name": "Colts",
         "conference": "AFC",
         "division": "AFC South",
-        "espn_id": 11
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/ind.png"
     },
     {
+        "espn_id": 30,
         "abbreviation": "JAX",
         "location": "Jacksonville",
         "name": "Jaguars",
         "conference": "AFC",
         "division": "AFC South",
-        "espn_id": 30
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/jax.png"
     },
     {
+        "espn_id": 12,
         "abbreviation": "KC",
         "location": "Kansas City",
         "name": "Chiefs",
         "conference": "AFC",
         "division": "AFC West",
-        "espn_id": 12
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/kc.png"
     },
     {
+        "espn_id": 13,
         "abbreviation": "LV",
         "location": "Las Vegas",
         "name": "Raiders",
         "conference": "AFC",
         "division": "AFC West",
-        "espn_id": 13
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/lv.png"
     },
     {
+        "espn_id": 14,
         "abbreviation": "LAR",
         "location": "Los Angeles",
         "name": "Rams",
         "conference": "NFC",
         "division": "NFC West",
-        "espn_id": 14
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/lar.png"
     },
     {
+        "espn_id": 15,
         "abbreviation": "MIA",
         "location": "Miami",
         "name": "Dolphins",
         "conference": "AFC",
         "division": "AFC East",
-        "espn_id": 15
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/mia.png"
     },
     {
+        "espn_id": 16,
         "abbreviation": "MIN",
         "location": "Minnesota",
         "name": "Vikings",
         "conference": "NFC",
         "division": "NFC North",
-        "espn_id": 16
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/min.png"
     },
     {
+        "espn_id": 17,
         "abbreviation": "NE",
         "location": "New England",
         "name": "Patriots",
         "conference": "AFC",
         "division": "AFC East",
-        "espn_id": 17
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/ne.png"
     },
     {
+        "espn_id": 18,
         "abbreviation": "NO",
         "location": "New Orleans",
         "name": "Saints",
         "conference": "NFC",
         "division": "NFC South",
-        "espn_id": 18
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/no.png"
     },
     {
+        "espn_id": 19,
         "abbreviation": "NYG",
         "location": "New York",
         "name": "Giants",
         "conference": "NFC",
         "division": "NFC East",
-        "espn_id": 19
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/nyg.png"
     },
     {
+        "espn_id": 20,
         "abbreviation": "NYJ",
         "location": "New York",
         "name": "Jets",
         "conference": "AFC",
         "division": "AFC East",
-        "espn_id": 20
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/nyj.png"
     },
     {
+        "espn_id": 21,
         "abbreviation": "PHI",
         "location": "Philadelphia",
         "name": "Eagles",
         "conference": "NFC",
         "division": "NFC East",
-        "espn_id": 21
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/phi.png"
     },
     {
+        "espn_id": 23,
         "abbreviation": "PIT",
         "location": "Pittsburgh",
         "name": "Steelers",
         "conference": "AFC",
         "division": "AFC North",
-        "espn_id": 23
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/pit.png"
     },
     {
+        "espn_id": 26,
         "abbreviation": "SEA",
         "location": "Seattle",
         "name": "Seahawks",
         "conference": "NFC",
         "division": "NFC West",
-        "espn_id": 26
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/sea.png"
     },
     {
+        "espn_id": 25,
         "abbreviation": "SF",
         "location": "San Francisco",
         "name": "49ers",
         "conference": "NFC",
         "division": "NFC West",
-        "espn_id": 25
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/sf.png"
     },
     {
+        "espn_id": 27,
         "abbreviation": "TB",
         "location": "Tampa Bay",
         "name": "Buccaneers",
         "conference": "NFC",
         "division": "NFC South",
-        "espn_id": 27
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/tb.png"
     },
     {
+        "espn_id": 10,
         "abbreviation": "TEN",
         "location": "Tennessee",
         "name": "Titans",
         "conference": "AFC",
         "division": "AFC South",
-        "espn_id": 10
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/ten.png"
     },
     {
+        "espn_id": 24,
         "abbreviation": "LAC",
         "location": "Los Angeles",
         "name": "Chargers",
         "conference": "AFC",
         "division": "AFC West",
-        "espn_id": 24
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/lac.png"
     },
     {
-        "abbreviation": "WAS",
+        "espn_id": 28,
+        "abbreviation": "WSH",
         "location": "Washington",
         "name": "Commanders",
         "conference": "NFC",
         "division": "NFC East",
-        "espn_id": 28
+        "logo": "https:\/\/a.espncdn.com\/i\/teamlogos\/nfl\/500\/wsh.png"
     }
 ]

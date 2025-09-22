@@ -4,17 +4,14 @@ namespace App\Console\Commands\Imports\FantasyNFL;
 
 use App\Enums\FantasyPlatformsEnum;
 use App\Facades\Espn;
-use App\Models\Player;
-use App\Models\FantasyPointsWeek;
 use App\Models\League;
-use App\Models\NflGame;
-use App\Services\Espn\Data\FantasyNFL\PlayerData;
-use App\Services\Espn\Data\FantasyNFL\PlayerStatsData;
-use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
-use App\Services\Espn\Data\FantasyNFL\TeamRosterEntryData;
+use App\Models\LeagueMember;
+use App\Models\LeagueMemberRoster;
+use App\Models\Player;
 use App\Services\Espn\Resources\FantasyNFL;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use function Laravel\Prompts\select;
 
@@ -26,7 +23,9 @@ class ImportFantasyPointsCommand extends Command
      * @var string
      */
     protected $signature = 'import:fantasy-nfl:points
-        { year? : Year for which to import points }
+        { --q|quiet : No output        }
+        { leagueId? : League to import }
+        { year?     : Year to import   }
     ';
 
     /**
@@ -40,7 +39,7 @@ class ImportFantasyPointsCommand extends Command
 
     protected League $league;
 
-    protected Collection $games;
+    protected ?int $year = null;
 
     /**
      * Execute the console command.
@@ -49,24 +48,26 @@ class ImportFantasyPointsCommand extends Command
     {
         $this->setUp();
 
-        $this->info('Importing Fantasy Points');
+        if (! $this->option('quiet')) {
+            $this->info('Importing Fantasy Points');
+        }
 
         $this->import();
 
-        $this->info('Fantasy Points imported successfully: ' . $this->league->name);
+        if (! $this->option('quiet')) {
+            $this->info('Fantasy Points imported successfully: ' . $this->league->name);
+        }
     }
 
     protected function setUp()
     {
-        $year = $this->argument('year') ?? date('Y');
-
-        $this->games = NflGame::forYear($year)->get()->keyBy('espn_id');
-
-        $leagueId = select(
+        $leagueId = $this->argument('leagueId') ?? select(
             label: 'League',
             options: League::all()->pluck('name', 'id')->toArray(),
             default: null,
         );
+
+        $this->year = $this->argument('year') ?? select('Select a year', [2025, 2024], 2025);
 
         $this->league = League::findOrFail($leagueId);
 
@@ -84,58 +85,80 @@ class ImportFantasyPointsCommand extends Command
 
     protected function import()
     {
-        /** @var ResourceLeagueData $data */
-        $data = $this->api->getRosters();
-
-        $data->teams->each(fn (ResourceTeamsData $team) => $this->processTeam($team));
-    }
-
-    protected function processTeam(ResourceTeamsData $team)
-    {
-        $this->info('Importing Points for ' . $team->name);
-
-        /** @var TeamRosterData $roster */
-        $roster = $team->roster;
-
-        $roster->entries->each(fn (TeamRosterEntryData $entry) => $this->processEntry($entry));
-    }
-
-    protected function processEntry(TeamRosterEntryData $entry)
-    {
-        /** @var PlayerPoolEntryData $pool */
-        $pool = $entry->playerPoolEntry;
-
-        /** @var PlayerData $player */
-        $player = $pool->player;
-
-        $playerModel = Player::espnId($player->id)->first();
-
-        if (! $playerModel instanceof Player) {
-            return true;
-        }
-
-        $player->stats->each(fn ($stat) => $this->processStat($playerModel, $stat));
-    }
-
-    protected function processStat(Player $player, PlayerStatsData $stat)
-    {
-        $game = $this->games->get($stat->externalId);
-
-        if (! $game instanceof NflGame) {
-            return true;
-        }
-
-        $data = ($stat->isActual)
-            ? [ 'points' => $stat->appliedTotal ]
-            : [ 'espn_projected_points' => $stat->appliedTotal ];
-
-        FantasyPointsWeek::updateOrCreate(
-            [
-                'nfl_game_id' => $game->id,
-                'league_id'   => $this->league->id,
-                'player_id'   => $player->id,
-            ],
-            $data,
+        $this->league->members->each(
+            fn (LeagueMember $member) => $this->processLeagueMember($member)
         );
+    }
+
+    protected function processLeagueMember(LeagueMember $member)
+    {
+        $fp = $this->datafilePath($member);
+        $fd = file_get_contents($fp);
+        $data = json_decode($fd, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            dd('JSON Error: ' . json_last_error_msg(), $fp);
+        }
+
+        $this->info('Processing ' . $member->name);
+
+        $bar = $this->output->createProgressBar(count($data));
+        $bar->start();
+
+        foreach ($data as $week => $roster) {
+            $bar->advance();
+            foreach ($roster as $player) {
+                $playerId = Arr::get($player, 'player_id', null);
+
+                if ($playerId < 0) {
+                    // ESPN uses negative numbers for DSTs.
+                    $playerId += ($playerId + 16000) * -1;
+                }
+
+                $playerModel = Player::espnId($playerId)->first();
+
+                if (! $playerModel instanceof Player) {
+                    Log::error('[ImportFantasyPointsCommand] Player not found', $player);
+                    continue;
+                }
+
+                LeagueMemberRoster::updateOrCreate(
+                    [
+                        'league_member_id' => $member->id,
+                        'nfl_game_id'      => Arr::get($player, 'nfl_game_id', null),
+                        'player_id'        => $playerModel->id,
+                        'season'           => Arr::get($player, 'season', null),
+                        'week'             => Arr::get($player, 'week', null),
+                    ],
+                    Arr::only($player, [
+                        'lineup_slot_id',
+                        'position_rank',
+                        'overall_rank',
+                        'fantasy_points',
+                        'espn_projected_points',
+                        'percent_owned',
+                        'percent_started',
+                        'percent_changed',
+                    ]),
+                );
+            }
+        }
+
+        $bar->finish();
+        echo PHP_EOL . PHP_EOL;
+    }
+
+    private function datafilePath(LeagueMember $member): string
+    {
+        // storage/data/espn/ffl/rosters/formatted/691509-team-4-year-2024.json
+        $fn = implode('-', [
+            $member->league->platform_id,
+            'team',
+            $member->external_id,
+            'year',
+            $this->year,
+        ]);
+
+        return storage_path('data/espn/ffl/rosters/formatted/' . $fn . '.json');
     }
 }

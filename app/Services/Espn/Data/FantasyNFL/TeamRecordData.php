@@ -12,11 +12,11 @@ class TeamRecordData extends BaseData
         public ?float $percentage = null,
         public ?int $gamesBack = null,
         public ?int $losses = null,
-        public ?int $pointsAgainst = null,
-        public ?int $pointsFor = null,
         public ?int $streakLength = null,
         public ?int $ties = null,
         public ?int $wins = null,
+        public ?float $pointsAgainst = null,
+        public ?float $pointsFor = null,
         public ?string $streakType = null,
     ) {
         //

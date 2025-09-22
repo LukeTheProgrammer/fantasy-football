@@ -1,16 +1,25 @@
 import AppLayout from '@/layouts/app-layout';
 import DraftTab from '@/components/leagues/tab-content/draft-tab';
 import Heading from '@/components/heading';
-import LeagueTab from '@/components/leagues/tab-content/league-tab';
+import RostersTab from '@/components/leagues/tab-content/rosters-tab';
 import SettingsTab from '@/components/leagues/tab-content/settings-tab';
-import TeamsTab from '@/components/leagues/tab-content/teams-tab';
+import StandingsTab from '@/components/leagues/tab-content/standings-tab';
+import MatchupsTab from '@/components/leagues/tab-content/matchups-tab';
 import { Button } from '@/components/ui/button';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { isUserLeagueAdmin } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { type League, type NflGame } from '@/types/models';
+import { type League, type NflGame, type LeagueMember } from '@/types/models';
+import { useState, useEffect } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -34,9 +43,45 @@ interface LeagueShowProps extends PageProps {
 
 export default function ShowLeague({ league, nfl_games }: LeagueShowProps) {
   const { auth } = usePage<SharedData>().props;
+  const [selectedMemberId, setSelectedMemberId] = useState<string>('');
+  const [selectedMember, setSelectedMember] = useState<LeagueMember | null>(null);
+  const [selectedWeek, setSelectedWeek] = useState<string>('Week 1');
 
   const userId = auth.user.id;
   const userIsAdmin = isUserLeagueAdmin(league, userId);
+
+  // Select the first member by default when the component mounts
+  useEffect(() => {
+    if (league.members.length > 0 && !selectedMemberId) {
+      setSelectedMemberId(league.members[0].id.toString());
+    }
+  }, [league.members, selectedMemberId]);
+
+  useEffect(() => {
+    if (league.members.length > 0 && selectedMemberId) {
+      const lm = league.members.find(m => m.id.toString() === selectedMemberId) || league.members[0];
+      setSelectedMember(lm);
+    }
+  }, [league.members, selectedMemberId]);
+
+  useEffect(() => {
+    if (!selectedWeek) {
+      setSelectedWeek('Week 1');
+    }
+  }, [selectedWeek]);
+
+  const handleMemberIdChange = (memberId: string) => {
+    setSelectedMemberId(memberId);
+  };
+
+  const handleWeekChange = (week: string) => {
+    setSelectedWeek(week);
+  };
+
+  const getWeeks = (member: LeagueMember): string[] => {
+    return league.matchups.filter(m => m.home_member_id === member.id || m.away_member_id === member.id)
+      .map(m => `Week ${m.week}`);
+  }
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -63,26 +108,66 @@ export default function ShowLeague({ league, nfl_games }: LeagueShowProps) {
         </div>
 
         <div className="mb-8">
-          <Tabs defaultValue="league">
-            <TabsList className="mb-6">
-              <TabsTrigger className="w-[7rem]" value="league">League</TabsTrigger>
-              <TabsTrigger className="w-[7rem]" value="draft">Draft</TabsTrigger>
-              <TabsTrigger className="w-[7rem]" value="teams">Teams</TabsTrigger>
-              <TabsTrigger className="w-[7rem]" value="standings">Standings</TabsTrigger>
-              <TabsTrigger className="w-[7rem]" value="settings">Settings</TabsTrigger>
-            </TabsList>
-            <TabsContent value="league">
-              <LeagueTab league={league} nfl_games={nfl_games} />
+          <Tabs defaultValue="rosters">
+            <div className="flex items-center justify-between">
+              <div>
+                <TabsList className="mb-6">
+                  <TabsTrigger className="w-[7rem]" value="rosters">Rosters</TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="matchups">Matchups</TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="standings">Standings</TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="settings">Settings</TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="draft">Draft</TabsTrigger>
+                </TabsList>
+              </div>
+              <div>
+                <div className="flex items-center justify-end space-x-2">
+                  <Select value={selectedMemberId} onValueChange={(value) => handleMemberIdChange(value)}>
+                    <SelectTrigger className="w-[16em]">
+                      <SelectValue placeholder={`Week ${selectedWeek}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {league.members.map((member) => (
+                        <SelectItem key={member.id} value={member.id.toString()}>
+                          {member.team_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={selectedWeek} onValueChange={(value) => handleWeekChange(value)}>
+                    <SelectTrigger className="w-[16em]">
+                      <SelectValue placeholder={`Week ${selectedWeek}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {selectedMember && getWeeks(selectedMember).map((week) => (
+                        <SelectItem key={week} value={week}>
+                          {week}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <TabsContent value="rosters">
+              <RostersTab
+                league={league}
+                selectedMember={selectedMember}
+                selectedWeek={selectedWeek}
+                nfl_games={nfl_games}
+              />
+            </TabsContent>
+            <TabsContent value="matchups">
+              <MatchupsTab league={league} selectedMember={selectedMember} />
+            </TabsContent>
+            <TabsContent value="standings">
+              <StandingsTab league={league} />
+            </TabsContent>
+            <TabsContent value="settings">
+              <SettingsTab league={league} />
             </TabsContent>
             <TabsContent value="draft">
               <DraftTab league={league} />
-            </TabsContent>
-            <TabsContent value="teams">
-              <TeamsTab league={league} />
-            </TabsContent>
-            <TabsContent value="standings">Standings Overview</TabsContent>
-            <TabsContent value="settings">
-              <SettingsTab league={league} />
             </TabsContent>
           </Tabs>
         </div>

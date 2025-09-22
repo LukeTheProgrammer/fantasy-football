@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\TeamAbb;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 
 class Team extends Model
 {
@@ -22,6 +22,8 @@ class Team extends Model
      */
     protected $guarded = [];
 
+    /* ===[ Relationships ]=== */
+
     /**
      * Get the players for this team.
      */
@@ -30,15 +32,25 @@ class Team extends Model
         return $this->hasMany(Player::class);
     }
 
-    public function scopeForAbbreviation(Builder $query, string $abbreviation): Builder
+    /* ===[ Scopes ]=== */
+
+    /**
+     * Scope query by abbreviation.
+     */
+    public function scopeForAbbreviation(Builder $query, string|TeamAbb $abbreviation): Builder
     {
-        return $query->where('abbreviation', '=', $abbreviation);
+        return $query->where('abbreviation', '=', ($abbreviation instanceof TeamAbb) ? $abbreviation->value : $abbreviation);
     }
 
+    /**
+     * Scope query by ESPN ID.
+     */
     public function scopeForEspnId(Builder $query, int $espnId): Builder
     {
         return $query->where('espn_id', '=', $espnId);
     }
+
+    /* ===[ Attributes ]=== */
 
     /**
      * Get the full team name (location + name).

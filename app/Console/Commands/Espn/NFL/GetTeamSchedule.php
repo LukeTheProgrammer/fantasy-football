@@ -5,6 +5,7 @@ namespace App\Console\Commands\Espn\NFL;
 use App\Facades\Espn;
 use App\Models\Team;
 use Illuminate\Console\Command;
+use function Laravel\Prompts\select;
 
 class GetTeamSchedule extends Command
 {
@@ -14,9 +15,10 @@ class GetTeamSchedule extends Command
      * @var string
      */
     protected $signature = 'espn:nfl:get:team-schedule
-        { --a|all : Get all NFL teams }
-        { --r|raw : Return raw response }
+        { --a|all       : Get all NFL teams    }
+        { --r|raw       : Return raw response  }
         { espn_team_id? : The ESPN NFL team ID }
+        { year?         : Which year to pull   }
     ';
 
     /**
@@ -31,9 +33,11 @@ class GetTeamSchedule extends Command
      */
     public function handle()
     {
+        $year = $this->argument('year') ?? select('Which year to pull', [2025, 2024]);
+
         if ($this->option('all')) {
-            Team::all()->each(function ($team) {
-                $this->getSchedule($team->espn_id);
+            Team::all()->each(function ($team) use ($year) {
+                $this->getSchedule($team->espn_id, $year);
             });
             return;
         }
@@ -41,12 +45,16 @@ class GetTeamSchedule extends Command
         $teamId = $this->argument('espn_team_id');
 
         if ($teamId) {
-            $this->getSchedule($teamId);
-            return;
+            $this->getSchedule($teamId, $year);
+        } else {
+            $teamId = select('Which team to pull', Team::all()->pluck('name', 'espn_id')->toArray());
+            $this->getSchedule($teamId, $year);
         }
+
+        return Command::SUCCESS;
     }
 
-    public function getSchedule(int $teamId)
+    public function getSchedule(int $teamId, int $year)
     {
         $nfl = Espn::nfl();
 
@@ -55,11 +63,13 @@ class GetTeamSchedule extends Command
         if ($this->option('raw')) {
             $nfl->returnRaw = true;
             $basePath .= '/raw';
+        } else {
+            $basePath .= '/formatted';
         }
 
-        $schedule = $nfl->getTeamSchedule($teamId);
+        $schedule = $nfl->getTeamSchedule($teamId, $year);
 
-        $path = $basePath . '/team-schedule-' . $teamId . '.json';
+        $path = $basePath . '/team-schedule-' . $teamId . '-' . $year . '.json';
 
         $bytes = file_put_contents($path, json_encode($schedule, JSON_PRETTY_PRINT));
 

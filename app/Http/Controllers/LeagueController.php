@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\League;
 use App\Models\NflGame;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class LeagueController extends Controller
@@ -29,12 +30,11 @@ class LeagueController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(League $league)
+    public function show(League $league, Request $request)
     {
         $league->load([
             'creator',
             'draft.picks',
-            'fantasyPointsWeeks',
             'matchups' => ['homeTeam', 'awayTeam'],
             'members' => [
                 'rosters.player' => [

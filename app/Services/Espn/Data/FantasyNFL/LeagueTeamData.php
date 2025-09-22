@@ -12,7 +12,7 @@ class LeagueTeamData extends BaseData
     protected bool $isCollectionCast = true;
 
     public function __construct(
-        public ?int $id = null,
+        public int|string|null $id = null,
         public ?string $abbrev,
 
         #[WithCast(CollectionCast::class)]

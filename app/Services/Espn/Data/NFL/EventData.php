@@ -37,8 +37,6 @@ class EventData extends BaseData
         #[WithCast(EventWeekData::class)]
         public array|EventWeekData $week = [],
     ) {
-        $this->date = (is_string($this->date))
-            ? Carbon::parse($this->date)
-            : $this->date;
+        //
     }
 }

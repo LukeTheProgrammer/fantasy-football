@@ -35,10 +35,11 @@ class TeamSeeder extends Seeder
                 ['espn_id' => Arr::get($team, 'espn_id')],
                 [
                     'position_id' => $dst->id,
-                    'team_id' => $team->id,
-                    'first_name' => Arr::get($team, 'location'),
-                    'last_name' => Arr::get($team, 'name'),
-                    'full_name' => Arr::get($team, 'location') . ' ' . Arr::get($team, 'name'),
+                    'team_id'     => $team->id,
+                    'first_name'  => Arr::get($team, 'location'),
+                    'last_name'   => Arr::get($team, 'name'),
+                    'full_name'   => Arr::get($team, 'location') . ' ' . Arr::get($team, 'name'),
+                    'headshot'    => Arr::get($team, 'logo'),
                 ]
             );
         }
