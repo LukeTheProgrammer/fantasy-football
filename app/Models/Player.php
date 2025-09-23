@@ -111,7 +111,6 @@ class Player extends Model
         return $query->where('team_id', ($team instanceof Team) ? $team->id : $team);
     }
 
-
     /**
      * Scope a query to only include players with the given ESPN ID.
      *
@@ -123,6 +122,19 @@ class Player extends Model
     public function scopeEspnId(Builder $query, int|string $espnId): Builder
     {
         return $query->where('espn_id', $espnId);
+    }
+
+    /**
+     * Scope a query to only include players with the given Pro-Football-Reference ID.
+     *
+     * @param Builder $query
+     * @param integer|string $pfrId
+     *
+     * @return Builder
+     */
+    public function scopePfrId(Builder $query, int|string $pfrId): Builder
+    {
+        return $query->where('pfr_id', $pfrId);
     }
 
     /**

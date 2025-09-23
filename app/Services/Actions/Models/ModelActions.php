@@ -10,6 +10,7 @@ use App\Actions\Models\LeagueSettings\LeagueSettingsUpdateAction;
 use App\Actions\Models\Leagues\LeagueCreateAction;
 use App\Actions\Models\Leagues\LeagueUpdateAction;
 use App\Actions\Models\Player\PlayerCreateAction;
+use App\Actions\Models\Player\PlayerUpdateAction;
 use App\Actions\Models\Player\PlayerUpsertAction;
 use App\Models\Draft;
 use App\Models\League;
@@ -39,6 +40,7 @@ class ModelActions
         ],
         Player::class => [
             'create' => PlayerCreateAction::class,
+            'update' => PlayerUpdateAction::class,
             'upsert' => PlayerUpsertAction::class,
         ],
     ];

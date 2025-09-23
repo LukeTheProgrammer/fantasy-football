@@ -5,21 +5,27 @@ namespace App\Actions\Models\Player;
 use App\Models\Player;
 use Illuminate\Support\Arr;
 
-class PlayerCreateAction
+class PlayerUpdateAction
 {
-    public function run(array $data = []): Player
+    public function run(Player $player, array $playerData = []): Player
     {
-        $fullName = Arr::get($data, 'full_name')
-            ?? Arr::get($data, 'first_name') . ' ' . Arr::get($data, 'last_name');
+        $data = $this->formatData($playerData);
 
-        $player = Player::create([
+        $player->update($data);
+
+        return $player;
+    }
+
+    private function formatData(array $data = []): array
+    {
+        return array_filter([
             'espn_id'       => Arr::get($data, 'espn_id'),
             'pfr_id'        => Arr::get($data, 'pfr_id'),
             'position_id'   => Arr::get($data, 'position_id'),
             'team_id'       => Arr::get($data, 'team_id'),
             'first_name'    => Arr::get($data, 'first_name'),
             'last_name'     => Arr::get($data, 'last_name'),
-            'full_name'     => $fullName,
+            'full_name'     => Arr::get($data, 'full_name'),
             'jersey_number' => Arr::get($data, 'jersey_number'),
             'draft_year'    => Arr::get($data, 'draft_year'),
             'draft_round'   => Arr::get($data, 'draft_round'),
@@ -31,7 +37,5 @@ class PlayerCreateAction
             'weight'        => Arr::get($data, 'weight'),
             'college'       => Arr::get($data, 'college'),
         ]);
-
-        return $player;
     }
 }
