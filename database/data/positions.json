@@ -1,70 +1,19 @@
 [
-  {
-    "abbreviation": "QB",
-    "name": "Quarterback"
-  },
-  {
-    "abbreviation": "WR",
-    "name": "Wide Receiver"
-  },
-  {
-    "abbreviation": "RB",
-    "name": "Running Back"
-  },
-  {
-    "abbreviation": "TE",
-    "name": "Tight End"
-  },
-  {
-    "abbreviation": "K",
-    "name": "Kicker"
-  },
-  {
-    "abbreviation": "DST",
-    "name": "Defense"
-  },
-  {
-    "abbreviation": "C",
-    "name": "Center"
-  },
-  {
-    "abbreviation": "OT",
-    "name": "Offensive Tackle"
-  },
-  {
-    "abbreviation": "G",
-    "name": "Guard"
-  },
-  {
-    "abbreviation": "LB",
-    "name": "Linebacker"
-  },
-  {
-    "abbreviation": "DE",
-    "name": "Defensive End"
-  },
-  {
-    "abbreviation": "S",
-    "name": "Safety"
-  },
-  {
-    "abbreviation": "DT",
-    "name": "Defensive Tackle"
-  },
-  {
-    "abbreviation": "CB",
-    "name": "Cornerback"
-  },
-  {
-    "abbreviation": "LS",
-    "name": "Long Snapper"
-  },
-  {
-    "abbreviation": "P",
-    "name": "Punter"
-  },
-  {
-    "abbreviation": "FB",
-    "name": "Fullback"
-  }
+{"id":"QB","abbreviation":"QB","name":"Quarterback"},
+{"id":"WR","abbreviation":"WR","name":"Wide Receiver"},
+{"id":"RB","abbreviation":"RB","name":"Running Back"},
+{"id":"TE","abbreviation":"TE","name":"Tight End"},
+{"id":"K","abbreviation":"K","name":"Kicker"},
+{"id":"DST","abbreviation":"DST","name":"Defense"},
+{"id":"C","abbreviation":"C","name":"Center"},
+{"id":"OT","abbreviation":"OT","name":"Offensive Tackle"},
+{"id":"G","abbreviation":"G","name":"Guard"},
+{"id":"LB","abbreviation":"LB","name":"Linebacker"},
+{"id":"DE","abbreviation":"DE","name":"Defensive End"},
+{"id":"S","abbreviation":"S","name":"Safety"},
+{"id":"DT","abbreviation":"DT","name":"Defensive Tackle"},
+{"id":"CB","abbreviation":"CB","name":"Cornerback"},
+{"id":"LS","abbreviation":"LS","name":"Long Snapper"},
+{"id":"P","abbreviation":"P","name":"Punter"},
+{"id":"FB","abbreviation":"FB","name":"Fullback"}
 ]

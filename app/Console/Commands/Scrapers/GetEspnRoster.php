@@ -2,11 +2,12 @@
 
 namespace App\Console\Commands\Scrapers;
 
-use App\Enums\DataSourceEnum;
+use App\Enums\DataSources;
 use App\Facades\Action;
 use App\Facades\Scraper;
 use App\Models\Position;
 use App\Models\Player;
+use App\Models\PlayerTeam;
 use App\Services\Espn\EspnConstants;
 use App\Services\Scrapers\Resources\Espn;
 use Illuminate\Console\Command;
@@ -67,7 +68,7 @@ class GetEspnRoster extends Command
             $this->info("Loading rosters for {$teamName}");
         }
 
-        $scraper = Scraper::scraper(DataSourceEnum::ESPN->value);
+        $scraper = Scraper::scraper(DataSources::ESPN->value);
         $data = $scraper->getTeamRoster($teamName);
 
         $teamId = $data['team']->id;
@@ -95,10 +96,9 @@ class GetEspnRoster extends Command
                 dd($player);
             }
 
-            Action::model(Player::class)->upsert([
+            $playerModel = Action::model(Player::class)->upsert([
                 'espn_id'       => $player['id'],
                 'position_id'   => $pos->id,
-                'team_id'       => $teamId,
                 'first_name'    => $firstName,
                 'last_name'     => $lastName,
                 'full_name'     => $fullName,
@@ -107,6 +107,11 @@ class GetEspnRoster extends Command
                 'weight'        => Arr::get($player, 'weight'),
                 'headshot'      => Arr::get($player, 'headshot'),
             ]);
+
+            PlayerTeam::updateOrCreate(
+                ['player_id' => $playerModel->id, 'team_id' => $teamId],
+                ['is_current_team' => true]
+            );
         }
     }
 }

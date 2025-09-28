@@ -1,21 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { isUserLeagueAdmin } from '@/lib/utils';
-import { type League } from '@/types/models';
-import { type SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { type LeagueResource } from '@/types/resources';
 
 interface SettingsTabProps {
-  league: League;
+  league: LeagueResource;
 }
 
 export default function SettingsTab({ league }: SettingsTabProps) {
-  const { auth } = usePage<SharedData>().props;
-
-  const userId = auth.user.id;
-  const userIsAdmin = isUserLeagueAdmin(league, userId);
-
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'Not scheduled';
     return new Date(dateString).toLocaleString();
@@ -49,18 +41,6 @@ export default function SettingsTab({ league }: SettingsTabProps) {
               <dd className="mt-1">{league.is_public ? 'Public' : 'Private'}</dd>
             </div>
           </dl>
-
-          <div className="mt-6">
-            <h3 className="text-md mb-2 font-medium">Join Code</h3>
-            {userIsAdmin && (
-              <div className="flex items-center space-x-2">
-                <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">{league.join_code}</code>
-                <Button variant="outline" size="sm">
-                  Copy
-                </Button>
-              </div>
-            )}
-          </div>
 
           <div className="mt-6">
             <h3 className="text-md mb-2 font-medium">Draft Status</h3>

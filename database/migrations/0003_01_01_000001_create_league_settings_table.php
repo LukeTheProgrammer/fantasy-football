@@ -19,6 +19,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('league_id')->constrained()->onDelete('cascade');
 
+            $table->enum('ppr', ['standard', 'half-ppr', 'ppr'])->default('standard');
+            $table->boolean('two_qb')->default(false);
+
             // Roster settings
             $table->json('roster_positions'); // JSON array of required positions
             $table->integer('roster_size')->default(16);

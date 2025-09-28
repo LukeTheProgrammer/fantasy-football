@@ -63,8 +63,8 @@ class NflGame extends Model
     public function scopeForTeam(Builder $query, int|string|Team $team): Builder
     {
         return $query->where(function ($q) use ($team) {
-            $q->orWhere('home_team_id', $team)
-                ->orWhere('away_team_id', $team);
+            $q->orWhere('home_team_id', ($team instanceof Team) ? $team->id : $team)
+                ->orWhere('away_team_id', ($team instanceof Team) ? $team->id : $team);
         });
     }
 

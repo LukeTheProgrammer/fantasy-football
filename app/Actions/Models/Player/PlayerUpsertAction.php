@@ -2,32 +2,79 @@
 
 namespace App\Actions\Models\Player;
 
+use App\Exceptions\AmbiguousPlayerException;
+use App\Facades\Action;
 use App\Models\Player;
+use App\Models\PlayerTeam;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
-use Exception;
 
 class PlayerUpsertAction
 {
-    public function run(array $data = []): Player
+    public function run(array $playerData = []): Player
     {
-        try {
-            $player = Player::updateOrCreate(
-                ['espn_id' => Arr::get($data, 'espn_id')],
-                $this->getData($data)
-            );
-        } catch (Exception $e) {
-            Log::error($e, $data);
-            throw $e;
+        $data = $this->formatData($playerData);
+
+        $player = $this->findPlayer($data);
+
+        if ($player instanceof Player) {
+            $player->update($data);
+        } else{
+            $player = Player::create($data);
+        }
+
+        if ($teamId = Arr::get($playerData, 'team_id', false)) {
+            $this->upsertPlayerTeam($player, $teamId);
         }
 
         return $player;
     }
 
-    private function getData(array $data = []): array
+    private function findPlayer(array $data = []): ?Player
+    {
+        $espnId = Arr::get($data, 'espn_id');
+
+        if (! empty($espnId)) {
+            $espnQuery = Player::espnId($espnId);
+
+            if ($espnQuery->count() === 1) {
+                return $espnQuery->first();
+            }
+        }
+
+        $pfrId = Arr::get($data, 'pfr_id');
+
+        if (! empty($pfrId)) {
+            $pfrQuery = Player::pfrId($pfrId);
+
+            if ($pfrQuery->count() === 1) {
+                return $pfrQuery->first();
+            }
+        }
+
+        $fullName = Arr::get($data, 'full_name');
+        $fullNameQuery = Player::where('full_name', '=', $fullName);
+
+        if ($fullNameQuery->count() === 1) {
+            return $fullNameQuery->first();
+        }
+
+        if ($fullNameQuery->count() > 1) {
+            $fn = $fullNameQuery->get()->pluck('id')->toArray();
+
+            throw new AmbiguousPlayerException(
+                'Multiple players found for ' . Arr::get($data, 'full_name') . ' ' . json_encode($fn)
+            );
+        }
+
+        return null;
+    }
+
+    private function formatData(array $data = []): array
     {
         return array_filter([
             'espn_id'       => Arr::get($data, 'espn_id'),
+            'pfr_id'        => Arr::get($data, 'pfr_id'),
+            'fp_id'         => Arr::get($data, 'fp_id'),
             'position_id'   => Arr::get($data, 'position_id'),
             'team_id'       => Arr::get($data, 'team_id'),
             'first_name'    => Arr::get($data, 'first_name'),
@@ -44,5 +91,10 @@ class PlayerUpsertAction
             'weight'        => Arr::get($data, 'weight'),
             'college'       => Arr::get($data, 'college'),
         ]);
+    }
+
+    private function upsertPlayerTeam(Player $player, int|string $teamId): PlayerTeam
+    {
+        return Action::model(PlayerTeam::class)->upsert($player, $teamId);
     }
 }

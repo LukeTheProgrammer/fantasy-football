@@ -53,6 +53,17 @@ class LeagueMemberRoster extends Model
     }
 
     /**
+     * Get the player projection for this player.
+     */
+    public function playerProjection(): BelongsTo
+    {
+        return $this->belongsTo(PlayerProjection::class)
+            ->where('season', $this->season)
+            ->where('week', $this->week)
+            ->where('player_id', $this->player_id);
+    }
+
+    /**
      * Get the NFL game that the member represents.
      */
     public function nflGame(): BelongsTo

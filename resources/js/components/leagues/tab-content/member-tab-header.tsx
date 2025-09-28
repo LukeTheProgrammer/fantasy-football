@@ -1,11 +1,12 @@
+
 import TeamAvatar from '@/components/leagues/team-avatar';
 import { c } from '@/lib/conv';
-import { type League, type LeagueMember } from '@/types/models';
 import { useMemo } from 'react';
+import { type LeagueResource, type LeagueMemberResource } from '@/types/resources';
 
 interface MemberTabHeaderProps {
-  league: League;
-  selectedMember: LeagueMember | null;
+  league: LeagueResource;
+  selectedMember: LeagueMemberResource | null;
 };
 
 export default function MemberTabHeader({ league, selectedMember }: MemberTabHeaderProps) {
@@ -17,10 +18,9 @@ export default function MemberTabHeader({ league, selectedMember }: MemberTabHea
     let pf = 0;
     let pa = 0;
 
-    league.matchups
-      .filter(m => m.home_member_id === selectedMember.id || m.away_member_id === selectedMember.id)
-      .map(m => {
-        const homeTeam = m.home_member_id === selectedMember.id ? 'teamA' : 'teamB';
+    Object.entries(league.matchups).forEach(([, matchups]) => {
+      matchups.forEach(m => {
+        const homeTeam = m.home_team.id === selectedMember.id ? 'teamA' : 'teamB';
 
         const teamAPoints = homeTeam === 'teamA' ? m.home_score : m.away_score;
         const teamBPoints = homeTeam === 'teamB' ? m.home_score : m.away_score;
@@ -28,6 +28,7 @@ export default function MemberTabHeader({ league, selectedMember }: MemberTabHea
         pf += c(teamAPoints).toFloat();
         pa += c(teamBPoints).toFloat();
       });
+    });
 
     return { pointsFor: pf, pointsAgainst: pa };
   }, [league.matchups, selectedMember]);

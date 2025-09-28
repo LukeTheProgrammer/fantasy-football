@@ -2,7 +2,7 @@
 
 namespace App\Actions\Models\Leagues;
 
-use App\Enums\FantasyPlatformsEnum;
+use App\Enums\FantasyPlatforms;
 use App\Facades\Action;
 use App\Facades\Import;
 use App\Models\League;
@@ -17,7 +17,7 @@ class LeagueCreateAction
 {
     public function run(User $creator, array $data): League
     {
-        if (Str::upper(Arr::get($data, 'platform')) === FantasyPlatformsEnum::ESPN->value) {
+        if (Str::upper(Arr::get($data, 'platform')) === FantasyPlatforms::ESPN->value) {
             return $this->createEspnLeague($creator, $data);
         }
 
@@ -44,7 +44,7 @@ class LeagueCreateAction
 
     private function createEspnLeague(User $creator, array $data): League
     {
-        $importer = Import::fantasyNFL(FantasyPlatformsEnum::ESPN);
+        $importer = Import::fantasyNFL(FantasyPlatforms::ESPN);
 
         $importer->setCredentials([
             'leagueId' => Arr::get($data, 'espn_league_id'),

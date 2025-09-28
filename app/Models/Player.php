@@ -83,6 +83,14 @@ class Player extends Model
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * Get the player teams for this player.
+     */
+    public function playerTeams(): HasMany
+    {
+        return $this->hasMany(PlayerTeam::class);
+    }
+
     /* ===[ Scopes ]=== */
 
     /**
@@ -108,9 +116,10 @@ class Player extends Model
      */
     public function scopeForTeam(Builder $query, int|string|Team $team): Builder
     {
-        return $query->where('team_id', ($team instanceof Team) ? $team->id : $team);
+        return $query->whereHas('playerTeams', function ($q) use ($team) {
+            $q->where('team_id', ($team instanceof Team) ? $team->id : $team);
+        });
     }
-
 
     /**
      * Scope a query to only include players with the given ESPN ID.
@@ -123,6 +132,32 @@ class Player extends Model
     public function scopeEspnId(Builder $query, int|string $espnId): Builder
     {
         return $query->where('espn_id', $espnId);
+    }
+
+    /**
+     * Scope a query to only include players with the given Pro-Football-Reference ID.
+     *
+     * @param Builder $query
+     * @param integer|string $pfrId
+     *
+     * @return Builder
+     */
+    public function scopePfrId(Builder $query, int|string $pfrId): Builder
+    {
+        return $query->where('pfr_id', $pfrId);
+    }
+
+    /**
+     * Scope a query to only include players with the given FantasyPros ID.
+     *
+     * @param Builder $query
+     * @param integer|string $fpId
+     *
+     * @return Builder
+     */
+    public function scopeFpId(Builder $query, int|string $fpId): Builder
+    {
+        return $query->where('fp_id', $fpId);
     }
 
     /**

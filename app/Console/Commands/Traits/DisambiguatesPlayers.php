@@ -57,9 +57,7 @@ trait DisambiguatesPlayers
 
     public function findPlayerByAlias(string $alias, ?Position $position = null, ?Team $team = null): Player|bool
     {
-        $aliasQuery = PlayerAlias::where('name', '=', $alias)
-            ->when($position !== null, fn($q) => $q->where('position_id', '=', $position->id))
-            ->when($team !== null, fn($q) => $q->where('team_id', '=', $team->id));
+        $aliasQuery = PlayerAlias::where('name', '=', $alias);
 
         $queryCount = $aliasQuery->count();
 
@@ -105,6 +103,10 @@ trait DisambiguatesPlayers
 
     public function selectPlayerFromList(string $playerName, Collection $players): Player|bool
     {
+        if (! $this->input->isInteractive()) {
+            return false;
+        }
+
         $options = $players->mapWithKeys(function ($player) {
             $label = implode (' ', [
                 $player->full_name,
@@ -159,10 +161,8 @@ trait DisambiguatesPlayers
     {
         if (confirm('Player match found! Would you like to save an Alias?')) {
             PlayerAlias::create([
-                'player_id'   => $player->id,
-                'team_id'     => $player->team_id,
-                'position_id' => $player->position_id,
-                'name'        => $alias,
+                'player_id' => $player->id,
+                'name'      => $alias,
             ]);
         }
     }

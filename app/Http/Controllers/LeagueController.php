@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\League;
 use App\Models\NflGame;
 use Illuminate\Http\Request;
+use App\Http\Resources\LeagueShowResource;
 use Inertia\Inertia;
 
 class LeagueController extends Controller
@@ -37,9 +38,10 @@ class LeagueController extends Controller
             'draft.picks',
             'matchups' => ['homeTeam', 'awayTeam'],
             'members' => [
-                'rosters.player' => [
-                    'position',
-                    'team',
+                'rosters' => [
+                    'nflGame',
+                    'player',
+                    'playerProjection',
                 ],
                 'user',
             ],
@@ -47,10 +49,7 @@ class LeagueController extends Controller
         ]);
 
         return Inertia::render('leagues/show', [
-            'league' => $league,
-            'nfl_games' => NflGame::forYear(2025)
-                ->with(['awayTeam', 'homeTeam'])
-                ->get(),
+            'league' => new LeagueShowResource($league),
         ]);
     }
 

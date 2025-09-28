@@ -12,6 +12,7 @@ abstract class BaseProjectionsDriver
 
     public array $dataProps = [
         'player_name',
+        'team',
         'points',
         'rank',
     ];

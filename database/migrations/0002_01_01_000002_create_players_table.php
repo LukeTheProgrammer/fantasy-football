@@ -19,8 +19,9 @@ return new class extends Migration
             $table->id();
             $table->integer('espn_id')->nullable();
             $table->string('pfr_id')->nullable();
-            $table->foreignId('position_id')->constrained('positions')->cascadeOnDelete();
-            $table->foreignId('team_id')->constrained('teams')->cascadeOnDelete();
+            $table->string('fp_id')->nullable();
+            $table->string('position_id', 10);
+            $table->string('team_id', 10)->nullable();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('full_name')->nullable();
@@ -38,6 +39,11 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->unique('espn_id');
+            $table->unique('pfr_id');
+            $table->unique('fp_id');
+
+            $table->foreign('position_id')->references('id')->on('positions')->cascadeOnDelete();
+            $table->foreign('team_id')->references('id')->on('teams')->cascadeOnDelete();
         });
     }
 

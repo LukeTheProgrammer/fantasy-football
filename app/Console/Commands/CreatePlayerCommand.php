@@ -2,15 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Facades\Action;
 use App\Models\Player;
 use App\Models\Position;
 use App\Models\Team;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -35,8 +31,8 @@ class CreatePlayerCommand extends Command
      */
     public function handle()
     {
-        $positions = Position::all()->pluck('abbreviation', 'id');
-        $teams = Team::all()->pluck('abbreviation', 'id');
+        $positions = Position::all()->pluck('id', 'id');
+        $teams = Team::all()->pluck('id', 'id');
 
         $data = [
             'position_id' => select('Position', $positions),
@@ -48,12 +44,7 @@ class CreatePlayerCommand extends Command
 
         $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
 
-        $player = Player::updateOrCreate([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'position_id' => $data['position_id'],
-            'team_id' => $data['team_id'],
-        ], $data);
+        $player = Action::model(Player::class)->upsert($data);
 
         $this->info('Player created successfully! ' . $player->id);
     }

@@ -99,6 +99,18 @@ class FantasyNFL extends BaseResource
      */
     public function getRostersForTeam(int $teamId, ?int $week = null, ?int $year = null)
     {
+        $fp = $this->getCahceFilePath('ffl', 'getRostersForTeam', [
+            $this->leagueId,
+            $teamId,
+            $year,
+            $week,
+            $this->returnRaw ? 'raw' : 'formatted',
+        ]);
+
+        if ($cache = $this->getCache($fp)) {
+            return $this->returnRaw ? $cache : ResourceLeagueData::from($cache);
+        }
+
         $views = [
             FantasyNFLViews::ROSTER,
         ];
@@ -110,9 +122,13 @@ class FantasyNFL extends BaseResource
 
         $response = $this->get($url, null, $this->cookies);
 
-        return $this->returnRaw
+        $data = $this->returnRaw
             ? $response->json()
             : ResourceLeagueData::from($response->json());
+
+        $this->setCache($fp, $this->returnRaw ? $data : $data->toArray());
+
+        return $data;
     }
 
     public function getSettings(?int $teamId = null)

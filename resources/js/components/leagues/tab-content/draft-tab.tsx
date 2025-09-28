@@ -1,9 +1,9 @@
-import { type League } from '@/types/models';
+import { type LeagueResource } from '@/types/resources';
 import { Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 
 interface DraftTabProps {
-  league: League;
+  league: LeagueResource;
 }
 
 export default function DraftTab({ league }: DraftTabProps) {

@@ -29,9 +29,6 @@ return new class extends Migration
             $table->decimal('percent_started', 10, 2)->default(0);
             $table->decimal('percent_changed', 10, 2)->default(0);
             $table->decimal('fantasy_points', 10, 2)->default(0);
-            $table->decimal('espn_projected_points', 10, 2)->default(0);
-            $table->decimal('fp_projected_points', 10, 2)->default(0);
-            $table->unsignedInteger('fp_position_rank')->default(999999);
             $table->timestamps();
             $table->softDeletes();
 

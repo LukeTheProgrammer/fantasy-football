@@ -4,11 +4,13 @@ export interface Draft {
   draft_date: string;
   draft_type: string;
   is_completed: boolean;
-  auction_budget: number|null;
-  current_pick: number|null;
-  current_round: number|null;
+  auction_budget: number | null;
+  current_pick: number | null;
+  current_round: number | null;
   time_per_pick: number;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
   league: League;
   picks: DraftPick[];
 }
@@ -16,57 +18,56 @@ export interface Draft {
 export interface DraftPick {
   id: number;
   draft_id: number;
-  draft: Draft;
   league_member_id: number;
-  leagueMember: LeagueMember;
   player_id: number;
-  player: Player;
   pick_number: number;
   round: number;
-  amount: number;
+  amount: string;
   is_keeper: boolean;
-  previous_year_cost: number;
+  previous_year_cost: string;
   pick_time: string;
+  created_at: string;
+  updated_at: string;
+  draft: Draft;
+  leagueMember: LeagueMember;
+  player: Player;
 }
 
 export interface DraftRanking {
   id: number;
   player_id: number;
   year: number;
-  ranked_at: string;
   type: string;
   source: string | null;
-  ppr: number;
-  rank: number | null;
+  ranking: number | null;
   tier: number | null;
-  adp: number | null;
-  adv: number | null;
+  adp: string | null;
+  value: string | null;
   notes: string | null;
+  created_at: string;
+  updated_at: string;
   player: Player;
 }
 
-export interface FantasyPointsWeek {
+export interface PlayerProjection {
   id: number;
-  nfl_game_id: number;
-  league_id: number;
   player_id: number;
-  lineup_slot_id: number;
-  espn_projected_points: number;
-  points: number;
-  position_rank: number;
-  overall_rank: number;
-  percent_owned: number;
-  percent_started: number;
-  percent_changed: number;
-  nfl_game: NflGame;
-  league: League;
+  nfl_game_id: number;
+  season: number;
+  week: number;
+  fantasy_points: string;
+  espn_projected_points: string;
+  fp_projected_points: string;
+  fp_position_rank: number;
+  created_at: string;
+  updated_at: string;
   player: Player;
+  nflGame: NflGame;
 }
 
 export interface League {
   id: number;
   created_by_user_id: number;
-  creator: User;
   name: string;
   year: number;
   slug: string;
@@ -76,11 +77,15 @@ export interface League {
   join_code: string;
   is_public: boolean;
   is_active: boolean;
+  draft_date: string | null;
+  credentials: any[] | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  creator: User;
   draft: Draft;
-  fantasy_points_weeks: FantasyPointsWeek[];
-  matchups: LeagueMatchup[];
   members: LeagueMember[];
-  rosters: LeagueMemberRoster[];
+  matchups: LeagueMatchup[];
   settings: LeagueSettings;
 }
 
@@ -94,24 +99,29 @@ export interface LeagueMember {
   draft_position: number | null;
   is_admin: boolean;
   is_active: boolean;
-  wins: number,
-  losses: number,
-  ties: number,
-  points_for: number,
-  points_against: number,
-  faab_balance: number,
-  user: User;
+  wins: number;
+  losses: number;
+  ties: number;
+  points_for: number;
+  points_against: number;
+  faab_balance: number;
+  external_id: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
   league: League;
-  matchups?: LeagueMatchup[];
-  rosters?: LeagueMemberRoster[];
+  user: User;
+  draftPicks: DraftPick[];
+  homeMatchups: LeagueMatchup[];
+  awayMatchups: LeagueMatchup[];
+  rosters: LeagueMemberRoster[];
 }
 
 export interface LeagueMemberRoster {
   id: number;
   league_member_id: number;
   player_id: number;
-  nfl_game_id?: number;
-
+  nfl_game_id: number | null;
   season: number;
   week: number;
   lineup_slot_id: number;
@@ -120,13 +130,14 @@ export interface LeagueMemberRoster {
   percent_owned: number;
   percent_started: number;
   percent_changed: number;
-
-  fantasy_points: number;
-  espn_projected_points: number;
-
-  league_member: LeagueMember;
+  fantasy_points: string;
+  espn_projected_points: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  leagueMember: LeagueMember;
   player: Player;
-  nfl_game?: NflGame;
+  nflGame: NflGame | null;
 }
 
 export interface LeagueMatchup {
@@ -140,9 +151,12 @@ export interface LeagueMatchup {
   away_score: number | null;
   home_projected_score: number | null;
   away_projected_score: number | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
   league: League;
-  home_team: LeagueMember;
-  away_team: LeagueMember;
+  homeTeam: LeagueMember;
+  awayTeam: LeagueMember;
 }
 
 export interface LeagueSettings {
@@ -153,23 +167,36 @@ export interface LeagueSettings {
   starters_count: number;
   bench_count: number;
   ir_spots: number;
-  passing_points_per_yard: number;
-  passing_td_points: number;
-  interception_points: number;
-  rushing_points_per_yard: number;
-  rushing_td_points: number;
-  receiving_points_per_yard: number;
-  receiving_td_points: number;
-  reception_points: number;
-  fumble_lost_points: number;
-  two_point_conversion_points: number;
+  defense_points_allowed_tiers: any[] | null;
+  passing_points_per_yard: string;
+  passing_td_points: string;
+  interception_points: string;
+  rushing_points_per_yard: string;
+  rushing_td_points: string;
+  receiving_points_per_yard: string;
+  receiving_td_points: string;
+  reception_points: string;
+  fumble_lost_points: string;
+  two_point_conversion_points: string;
+  field_goal_0_39_points: string;
+  field_goal_40_49_points: string;
+  field_goal_50_plus_points: string;
+  extra_point_points: string;
+  defense_sack_points: string;
+  defense_interception_points: string;
+  defense_fumble_recovery_points: string;
+  defense_td_points: string;
+  defense_safety_points: string;
+  created_at: string;
+  updated_at: string;
+  league: League;
 }
 
 export interface NflGame {
   id: number;
   espn_id: number;
-  home_team_id: number;
-  away_team_id: number;
+  home_team_id: string;
+  away_team_id: string;
   year: number;
   week: number;
   start_time: string;
@@ -177,15 +204,19 @@ export interface NflGame {
   away_score: number;
   is_completed: boolean;
   is_playoff: boolean;
-  home_team: Team;
-  away_team: Team;
+  created_at: string;
+  updated_at: string;
+  homeTeam: Team;
+  awayTeam: Team;
+  playerProjections: PlayerProjection[];
 }
 
 export interface Player {
   id: number;
   espn_id: number | null;
-  team_id: number;
-  position_id: number;
+  pfr_id: string | null;
+  fp_id: string | null;
+  position_id: string;
   first_name: string;
   last_name: string;
   full_name: string;
@@ -198,9 +229,19 @@ export interface Player {
   draft_team: string | null;
   birth_date: string | null;
   headshot: string | null;
+  created_at: string;
+  updated_at: string;
   deleted_at: string | null;
   position: Position;
-  team: Team;
+  team?: Team;
+  age?: number;
+  isRookie?: boolean;
+  isFirstRoundPick?: boolean;
+  aliases: PlayerAlias[];
+  draftPicks: DraftPick[];
+  draftRankings: DraftRanking[];
+  playerProjections: PlayerProjection[];
+  playerTeams: PlayerTeam[];
   projected_points?: number | string;
   actual_points?: number | string;
   game?: NflGame;
@@ -209,21 +250,39 @@ export interface Player {
 export interface PlayerAlias {
   id: number;
   player_id: number;
+  team_id: number;
+  position_id: number;
+  name: string;
   alias: string;
+  created_at: string;
+  updated_at: string;
   deleted_at: string | null;
   player: Player;
+  team: Team;
+  position: Position;
 }
 
 export interface Position {
-  id: number;
+  id: string;
   name: string;
   abbreviation: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  players: Player[];
 }
 
 export interface Team {
-  id: number;
+  id: string;
   name: string;
+  location: string;
   abbreviation: string;
+  espn_id: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  fullName?: string;
+  playerTeams: PlayerTeam[];
 }
 
 export interface User {
@@ -232,5 +291,22 @@ export interface User {
   email: string;
   avatar?: string;
   email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
   deleted_at: string | null;
+  createdLeagues: League[];
+  leagueMemberships: LeagueMember[];
+  leagues: League[];
+  drafts: Draft[];
+}
+
+export interface PlayerTeam {
+  id: number;
+  player_id: number;
+  team_id: string;
+  is_current_team: boolean;
+  created_at: string;
+  updated_at: string;
+  player: Player;
+  team: Team;
 }

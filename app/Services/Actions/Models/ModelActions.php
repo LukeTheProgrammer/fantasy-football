@@ -10,12 +10,15 @@ use App\Actions\Models\LeagueSettings\LeagueSettingsUpdateAction;
 use App\Actions\Models\Leagues\LeagueCreateAction;
 use App\Actions\Models\Leagues\LeagueUpdateAction;
 use App\Actions\Models\Player\PlayerCreateAction;
+use App\Actions\Models\Player\PlayerUpdateAction;
 use App\Actions\Models\Player\PlayerUpsertAction;
+use App\Actions\Models\PlayerTeam\PlayerTeamUpsertAction;
 use App\Models\Draft;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
 use App\Models\Player;
+use App\Models\PlayerTeam;
 use Exception;
 use Illuminate\Support\Arr;
 
@@ -39,7 +42,11 @@ class ModelActions
         ],
         Player::class => [
             'create' => PlayerCreateAction::class,
+            'update' => PlayerUpdateAction::class,
             'upsert' => PlayerUpsertAction::class,
+        ],
+        PlayerTeam::class => [
+            'upsert' => PlayerTeamUpsertAction::class,
         ],
     ];
 

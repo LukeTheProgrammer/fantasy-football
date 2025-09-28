@@ -2,7 +2,7 @@
 
 namespace App\Services\Scrapers\Resources;
 
-use App\Enums\TeamAbb;
+use App\Enums\NFLTeams;
 use App\Models\Position;
 use App\Models\Team;
 use Exception;
@@ -51,7 +51,7 @@ class ProFootballReference extends BaseScraperResource
 
     private ?Collection $positions = null;
 
-    public function getTeamRoster(TeamAbb $teamAbb, int $year)
+    public function getTeamRoster(NFLTeams $teamAbb, int $year)
     {
         $this->team = Team::forAbbreviation($teamAbb)->first();
 
@@ -63,16 +63,28 @@ class ProFootballReference extends BaseScraperResource
             throw new Exception('Invalid team abbreviation: ' . $teamAbb);
         }
 
-        $url = "https://www.pro-football-reference.com/teams/{$teamKey}/{$year}_roster.htm#roster";
+        $url = "https://www.pro-football-reference.com/teams/{$teamKey}/{$year}_roster.htm"; //#roster
 
         $response = Http::get($url);
 
+        if ($response->status() === 429) {
+            throw new Exception('Too many requests');
+        }
+
         $html = $response->body();
-        dump($url, $response->status());
 
         $data = $this->parseRosterFromHtml($html);
 
         return $this->formatData($data);
+    }
+
+    private function cleanNames(array $data)
+    {
+        $data['first_name'] = preg_replace('/\s\(.{1,}\)/', '', $data['first_name']);
+        $data['last_name'] = preg_replace('/\s\(.{1,}\)/', '', $data['last_name']);
+        $data['full_name'] = preg_replace('/\s\(.{1,}\)/', '', $data['full_name']);
+
+        return $data;
     }
 
     /**
@@ -209,7 +221,7 @@ class ProFootballReference extends BaseScraperResource
             }
 
             $fullName = Arr::get($player, 'name');
-            $fullName = preg_replace('/\s\(.{,2}\)$/', '', $fullName);
+            $fullName = preg_replace('/\s\(.{1,}\)$/', '', $fullName);
             $nameIndex = strpos($fullName, ' ');
 
             $height = Arr::get($player, 'height');

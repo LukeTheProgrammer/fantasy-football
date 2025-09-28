@@ -2,25 +2,25 @@
 
 namespace App\Services\Espn;
 
-use App\Enums\PositionEnum;
+use App\Enums\NFLPositions;
 use Illuminate\Support\Arr;
 
 class EspnConstants
 {
     public const POSITION_MAP = [
-        'QB'  => PositionEnum::QB,
-        'RB'  => PositionEnum::RB,
-        'WR'  => PositionEnum::WR,
-        'TE'  => PositionEnum::TE,
-        'DT'  => PositionEnum::DT,
-        'DE'  => PositionEnum::DE,
-        'LB'  => PositionEnum::LB,
-        'CB'  => PositionEnum::CB,
-        'S'   => PositionEnum::S,
-        'DB'  => PositionEnum::CB,
-        'DST' => PositionEnum::DST,
-        'K'   => PositionEnum::K,
-        'P'   => PositionEnum::P,
+        'QB'  => NFLPositions::QB,
+        'RB'  => NFLPositions::RB,
+        'WR'  => NFLPositions::WR,
+        'TE'  => NFLPositions::TE,
+        'DT'  => NFLPositions::DT,
+        'DE'  => NFLPositions::DE,
+        'LB'  => NFLPositions::LB,
+        'CB'  => NFLPositions::CB,
+        'S'   => NFLPositions::S,
+        'DB'  => NFLPositions::CB,
+        'DST' => NFLPositions::DST,
+        'K'   => NFLPositions::K,
+        'P'   => NFLPositions::P,
     ];
 
     // ESPN => LeagueSettings Model

@@ -17,12 +17,11 @@ return new class extends Migration
 
         Schema::create('player_stats_weekly', function (Blueprint $table) {
             $table->id();
-            $table->integer('week_number');
+            $table->integer('week');
             $table->timestamp('week_start');
             $table->timestamp('week_end');
 
             $table->foreignId('player_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
 
             $table->integer('games_played')->default(0);
             $table->integer('games_started')->default(0);
