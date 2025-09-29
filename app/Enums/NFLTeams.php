@@ -42,7 +42,7 @@ enum NFLTeams: string
         $opts = [];
 
         foreach (static::cases() as $case) {
-            $opts[$case->value] = $case;
+            $opts[$case->value] = $case->value;
         }
 
         return $opts;

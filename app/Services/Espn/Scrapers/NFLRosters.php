@@ -49,6 +49,13 @@ class NFLRosters
     {
         $teamAbb = ($teamAbb instanceof NFLTeams) ? $teamAbb : NFLTeams::from($teamAbb);
         $team = Arr::get(static::TEAMS, $teamAbb->value);
+
+        $cacheFileParams = [date('Y'), $teamAbb->value];
+
+        if ($cache = $this->getCache($cacheFileParams)) {
+            return $cache;
+        }
+
         $url = 'https://www.espn.com/nfl/team/roster/_/name/' . $team;
 
         $response = Http::withHeaders([
@@ -77,10 +84,37 @@ class NFLRosters
 
         $teamModel = Team::forAbbreviation($teamAbb)->first();
 
+        $players = $this->collectPlayersFromGroups($groups);
+
+        $this->setCache($cacheFileParams, $players);
+
         return [
             'team'   => $teamModel,
-            'roster' => $this->collectPlayersFromGroups($groups)
+            'roster' => $players
         ];
+    }
+
+    protected function getCachePath(array $params = [])
+    {
+        return storage_path('data/espn/nfl-teams/rosters/' . implode('-', $params) . '.json');
+    }
+
+    protected function getCache(array $params = [])
+    {
+        $path = $this->getCachePath($params);
+
+        if (file_exists($path)) {
+            return json_decode(file_get_contents($path), true);
+        }
+
+        return null;
+    }
+
+    protected function setCache(array $params = [], array $data = [])
+    {
+        $path = $this->getCachePath($params);
+
+        file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
     }
 
     /**

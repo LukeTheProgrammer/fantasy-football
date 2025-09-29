@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Traits;
 
+use App\Facades\Action;
 use App\Models\Player;
 use App\Models\PlayerAlias;
 use App\Models\Position;
@@ -12,11 +13,19 @@ use function Laravel\Prompts\select;
 
 trait DisambiguatesPlayers
 {
+    public array $disambiguator = [];
+
     public function disambiguatePlayer(
         string $playerName,
         ?Position $position = null,
         ?Team $team = null,
     ): Player|bool {
+        $this->disambiguator = [
+            'playerName' => $playerName,
+            'position' => $position,
+            'team' => $team,
+        ];
+
         $player = $this->findPlayerByFullName($playerName);
 
         if ($player instanceof Player) {
@@ -110,19 +119,24 @@ trait DisambiguatesPlayers
         $options = $players->mapWithKeys(function ($player) {
             $label = implode (' ', [
                 $player->full_name,
-                $player->position->abbreviation,
-                $player->team->abbreviation,
+                $player->position->id,
+                $player->team->id,
             ]);
 
             return [$player->id => $label];
         });
 
+        $options['create'] = 'Create New Player';
         $options['none'] = 'None';
 
         $playerId = select(
             label: 'Which player matches ' . $playerName,
             options: $options->toArray(),
         );
+
+        if ($playerId == 'create') {
+            return $this->createPlayer();
+        }
 
         if ($playerId === 'none') {
             return false;
@@ -133,16 +147,21 @@ trait DisambiguatesPlayers
 
     public function selectPlayerAliasFromList(string $playerName, Collection $aliases): Player|bool
     {
+        if (! $this->input->isInteractive()) {
+            return false;
+        }
+
         $options = $aliases->map(function ($alias) {
             $label = implode (' ', [
                 $alias->name,
-                $alias->position->abbreviation,
-                $alias->team->abbreviation,
+                $alias->position->id,
+                $alias->team->id,
             ]);
 
             return [$alias->player_id => $label];
         });
 
+        $options['create'] = 'Create New Player';
         $options['none'] = 'None';
 
         $playerId = select(
@@ -150,11 +169,32 @@ trait DisambiguatesPlayers
             options: $options->toArray(),
         );
 
+        if ($playerId == 'create') {
+            return $this->createPlayer();
+        }
+
         if ($playerId === 'none') {
             return false;
         }
 
         return Player::findOrFail($playerId);
+    }
+
+    public function createPlayer()
+    {
+        $nameSpace = strpos($this->disambiguator['playerName'], ' ');
+        $firstName = substr($this->disambiguator['playerName'], 0, $nameSpace);
+        $lastName = substr($this->disambiguator['playerName'], $nameSpace + 1);
+
+        Action::model(Player::class)->upsert([
+            'position_id' => $this->disambiguator['position']?->id,
+            'team_id'     => $this->disambiguator['team']?->id,
+            'full_name'   => $this->disambiguator['playerName'],
+            'first_name'  => $firstName,
+            'last_name'   => $lastName,
+        ]);
+
+        return true;
     }
 
     public function savePlayerAlias(Player $player, string $alias): void
