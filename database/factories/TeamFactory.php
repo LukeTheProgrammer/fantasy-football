@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\ConferenceEnum;
-use App\Enums\DivisionEnum;
+use App\Enums\NFLConferences;
+use App\Enums\NFLDivisions;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -26,7 +26,7 @@ class TeamFactory extends Factory
      */
     public function definition(): array
     {
-        $conference = fake()->randomElement(ConferenceEnum::cases());
+        $conference = fake()->randomElement(NFLConferences::cases());
         $division = $this->getRandomDivisionForConference($conference);
 
         return [
@@ -50,20 +50,20 @@ class TeamFactory extends Factory
     /**
      * Get a random division for the given conference.
      */
-    private function getRandomDivisionForConference(ConferenceEnum $conference): DivisionEnum
+    private function getRandomDivisionForConference(NFLConferences $conference): NFLDivisions
     {
         $divisions = match ($conference) {
-            ConferenceEnum::AFC => [
-                DivisionEnum::AFC_EAST,
-                DivisionEnum::AFC_NORTH,
-                DivisionEnum::AFC_SOUTH,
-                DivisionEnum::AFC_WEST,
+            NFLConferences::AFC => [
+                NFLDivisions::AFC_EAST,
+                NFLDivisions::AFC_NORTH,
+                NFLDivisions::AFC_SOUTH,
+                NFLDivisions::AFC_WEST,
             ],
-            ConferenceEnum::NFC => [
-                DivisionEnum::NFC_EAST,
-                DivisionEnum::NFC_NORTH,
-                DivisionEnum::NFC_SOUTH,
-                DivisionEnum::NFC_WEST,
+            NFLConferences::NFC => [
+                NFLDivisions::NFC_EAST,
+                NFLDivisions::NFC_NORTH,
+                NFLDivisions::NFC_SOUTH,
+                NFLDivisions::NFC_WEST,
             ],
         };
 
@@ -76,12 +76,12 @@ class TeamFactory extends Factory
     public function afc(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::AFC->value,
+            'conference' => NFLConferences::AFC->value,
             'division'   => fake()->randomElement([
-                DivisionEnum::AFC_EAST->value,
-                DivisionEnum::AFC_NORTH->value,
-                DivisionEnum::AFC_SOUTH->value,
-                DivisionEnum::AFC_WEST->value,
+                NFLDivisions::AFC_EAST->value,
+                NFLDivisions::AFC_NORTH->value,
+                NFLDivisions::AFC_SOUTH->value,
+                NFLDivisions::AFC_WEST->value,
             ]),
         ]);
     }
@@ -89,12 +89,12 @@ class TeamFactory extends Factory
     public function nfc(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::NFC->value,
+            'conference' => NFLConferences::NFC->value,
             'division'   => fake()->randomElement([
-                DivisionEnum::NFC_EAST->value,
-                DivisionEnum::NFC_NORTH->value,
-                DivisionEnum::NFC_SOUTH->value,
-                DivisionEnum::NFC_WEST->value,
+                NFLDivisions::NFC_EAST->value,
+                NFLDivisions::NFC_NORTH->value,
+                NFLDivisions::NFC_SOUTH->value,
+                NFLDivisions::NFC_WEST->value,
             ]),
         ]);
     }
@@ -105,64 +105,64 @@ class TeamFactory extends Factory
     public function afcEast(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::AFC->value,
-            'division'   => DivisionEnum::AFC_EAST->value,
+            'conference' => NFLConferences::AFC->value,
+            'division'   => NFLDivisions::AFC_EAST->value,
         ]);
     }
 
     public function afcNorth(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::AFC->value,
-            'division'   => DivisionEnum::AFC_NORTH->value,
+            'conference' => NFLConferences::AFC->value,
+            'division'   => NFLDivisions::AFC_NORTH->value,
         ]);
     }
 
     public function afcSouth(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::AFC->value,
-            'division'   => DivisionEnum::AFC_SOUTH->value,
+            'conference' => NFLConferences::AFC->value,
+            'division'   => NFLDivisions::AFC_SOUTH->value,
         ]);
     }
 
     public function afcWest(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::AFC->value,
-            'division'   => DivisionEnum::AFC_WEST->value,
+            'conference' => NFLConferences::AFC->value,
+            'division'   => NFLDivisions::AFC_WEST->value,
         ]);
     }
 
     public function nfcEast(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::NFC->value,
-            'division'   => DivisionEnum::NFC_EAST->value,
+            'conference' => NFLConferences::NFC->value,
+            'division'   => NFLDivisions::NFC_EAST->value,
         ]);
     }
 
     public function nfcNorth(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::NFC->value,
-            'division'   => DivisionEnum::NFC_NORTH->value,
+            'conference' => NFLConferences::NFC->value,
+            'division'   => NFLDivisions::NFC_NORTH->value,
         ]);
     }
 
     public function nfcSouth(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::NFC->value,
-            'division'   => DivisionEnum::NFC_SOUTH->value,
+            'conference' => NFLConferences::NFC->value,
+            'division'   => NFLDivisions::NFC_SOUTH->value,
         ]);
     }
 
     public function nfcWest(): static
     {
         return $this->state(fn (array $attributes) => [
-            'conference' => ConferenceEnum::NFC->value,
-            'division'   => DivisionEnum::NFC_WEST->value,
+            'conference' => NFLConferences::NFC->value,
+            'division'   => NFLDivisions::NFC_WEST->value,
         ]);
     }
 }

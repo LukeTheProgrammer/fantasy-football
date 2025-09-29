@@ -28,6 +28,11 @@ class PlayerProjectionsImporter
         return ($key) ? $this->driver->config->get($key) : $this->driver->config->toArray();
     }
 
+    public function setConfig(string $key, mixed $value)
+    {
+        $this->driver->config->put($key, $value);
+    }
+
     public function getDataMap(?string $key = null)
     {
         return ($key) ? $this->driver->dataMap[$key] : $this->driver->dataMap;

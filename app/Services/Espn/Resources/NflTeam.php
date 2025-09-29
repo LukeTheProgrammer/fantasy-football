@@ -2,12 +2,14 @@
 
 namespace App\Services\Espn\Resources;
 
+use App\Enums\NFLTeams;
 use App\Services\Espn\Enums\Apis;
 use App\Services\Espn\Enums\ApiVersions;
 use App\Services\Espn\Enums\ApiYears;
 use App\Services\Espn\Enums\Games;
 use App\Services\Espn\Enums\Leagues;
 use App\Services\Espn\Enums\Sports;
+use App\Services\Espn\Scrapers\NFLRosters;
 
 class NflTeam extends BaseResource
 {
@@ -79,5 +81,12 @@ class NflTeam extends BaseResource
         $response = $this->get($url, $this->query());
 
         return $response->json();
+    }
+
+    public function getRoster(string|NFLTeams $team)
+    {
+        $scraper = new NFLRosters();
+
+        return $scraper->getTeamRoster($team);
     }
 }

@@ -16,14 +16,16 @@ return new class extends Migration
         Schema::enableForeignKeyConstraints();
 
         Schema::create('teams', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 10)->primary();
             $table->integer('espn_id')->nullable();
+            $table->string('pfr_id')->nullable();
             $table->string('abbreviation');
             $table->string('location');
             $table->string('name');
             $table->string('logo')->nullable();
-            $table->enum('conference', ['NFC', 'AFC']);
+            $table->enum('conference', ['FA', 'NFC', 'AFC']);
             $table->enum('division', [
+                'FA',
                 'AFC East',
                 'AFC North',
                 'AFC South',
@@ -37,6 +39,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->unique('espn_id');
+            $table->unique('pfr_id');
             $table->unique('abbreviation');
             $table->unique('name');
         });

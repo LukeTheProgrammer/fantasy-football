@@ -2,14 +2,14 @@
 
 namespace App\Services\Imports;
 
-use App\Enums\RankingSourcesEnum;
-use App\Enums\FantasyPlatformsEnum;
+use App\Enums\DataSources;
+use App\Enums\FantasyPlatforms;
 use App\Services\Imports\Drivers\Rankings\FantasyProsRankingsDriver;
 use App\Services\Imports\Drivers\Projections\FantasyProsProjectionsDriver;
 use App\Services\Imports\Drivers\FantasyNFL\EspnDriver;
 use App\Services\Imports\Importers\DraftRankingsImporter;
 use App\Services\Imports\Importers\FantasyNFLImporter;
-use App\Services\Imports\Importers\PlayerProjectionsImporter;
+use App\Services\Imports\Importers\ProjectionsImporter;
 use Exception;
 use Illuminate\Support\Arr;
 
@@ -19,13 +19,13 @@ class ImportService
     {
         $drivers = [
             'draft_rankings' => [
-                RankingSourcesEnum::FANTASY_PROS->value => FantasyProsRankingsDriver::class,
+                DataSources::FANTASY_PROS->value => FantasyProsRankingsDriver::class,
             ],
             'fantasy_nfl' => [
-                FantasyPlatformsEnum::ESPN->value => EspnDriver::class,
+                FantasyPlatforms::ESPN->value => EspnDriver::class,
             ],
-            'player_projections' => [
-                RankingSourcesEnum::FANTASY_PROS->value => FantasyProsProjectionsDriver::class,
+            'projections' => [
+                DataSources::FANTASY_PROS->value => FantasyProsProjectionsDriver::class,
             ],
         ];
 
@@ -61,9 +61,9 @@ class ImportService
      *
      * @return FantasyNFLImporter
      */
-    public function fantasyNFL(string|FantasyPlatformsEnum $driver, ...$args)
+    public function fantasyNFL(string|FantasyPlatforms $driver, ...$args)
     {
-        $driver = (! $driver instanceof FantasyPlatformsEnum) ? FantasyPlatformsEnum::from($driver) : $driver;
+        $driver = (! $driver instanceof FantasyPlatforms) ? FantasyPlatforms::from($driver) : $driver;
 
         $driverClass = Arr::get($this->importDrivers('fantasy_nfl'), $driver->value, false);
 
@@ -77,16 +77,16 @@ class ImportService
     }
 
     /**
-     * Player Projections Import
+     * Projections Import
      *
      * @param string $driver
      * @param mixed ...$args
      *
-     * @return PlayerProjectionsImporter
+     * @return ProjectionsImporter
      */
-    public function playerProjections(string $driver, ...$args)
+    public function projections(string $driver, ...$args)
     {
-        $driverClass = Arr::get($this->importDrivers('player_projections'), $driver, false);
+        $driverClass = Arr::get($this->importDrivers('projections'), $driver, false);
 
         if (! $driverClass) {
             throw new Exception('Invalid driver: ' . $driver);
@@ -94,6 +94,6 @@ class ImportService
 
         $driver = new $driverClass(...$args);
 
-        return new PlayerProjectionsImporter($driver);
+        return new ProjectionsImporter($driver);
     }
 }

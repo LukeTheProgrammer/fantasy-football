@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\TeamAbb;
+use App\Enums\NFLTeams;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +16,20 @@ class Team extends Model
     use SoftDeletes;
 
     /**
+     * Indicates if the model's ID is auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * The data type of the primary key ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
      * The attributes that are not mass assignable.
      *
      * @var list<string>
@@ -27,9 +41,9 @@ class Team extends Model
     /**
      * Get the players for this team.
      */
-    public function players(): HasMany
+    public function playerTeams(): HasMany
     {
-        return $this->hasMany(Player::class);
+        return $this->hasMany(PlayerTeam::class);
     }
 
     /* ===[ Scopes ]=== */
@@ -37,9 +51,9 @@ class Team extends Model
     /**
      * Scope query by abbreviation.
      */
-    public function scopeForAbbreviation(Builder $query, string|TeamAbb $abbreviation): Builder
+    public function scopeForAbbreviation(Builder $query, string|NFLTeams $abbreviation): Builder
     {
-        return $query->where('abbreviation', '=', ($abbreviation instanceof TeamAbb) ? $abbreviation->value : $abbreviation);
+        return $query->where('abbreviation', '=', ($abbreviation instanceof NFLTeams) ? $abbreviation->value : $abbreviation);
     }
 
     /**

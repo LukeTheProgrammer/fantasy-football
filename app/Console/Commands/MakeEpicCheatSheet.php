@@ -2,13 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\select;
 
 class MakeEpicCheatSheet extends Command

@@ -82,7 +82,7 @@ class LoadTeamRosters extends Command
         $teamId = $this->team->espn_id;
 
         if (! $this->option('quiet')) {
-            $this->info('Loading players for ' . $this->team->abbreviation . ' [' . $teamId . ']' . PHP_EOL);
+            $this->info('Loading players for ' . $this->team->id . ' [' . $teamId . ']' . PHP_EOL);
         }
 
         $path = storage_path('data/espn/nfl/team-rosters/team-roster-' . $teamId . '.json');

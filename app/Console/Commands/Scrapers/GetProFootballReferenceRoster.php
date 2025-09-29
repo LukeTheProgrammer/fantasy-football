@@ -3,8 +3,9 @@
 namespace App\Console\Commands\Scrapers;
 
 use App\Console\Commands\Traits\DisambiguatesPlayers;
-use App\Enums\DataSourceEnum;
-use App\Enums\TeamAbb;
+use App\Enums\DataSources;
+use App\Enums\NFLPositions;
+use App\Enums\NFLTeams;
 use App\Exceptions\AmbiguousPlayerException;
 use App\Facades\Action;
 use App\Facades\Scraper;
@@ -48,12 +49,12 @@ class GetProFootballReferenceRoster extends Command
      */
     public function handle()
     {
-        $this->scraper = Scraper::scraper(DataSourceEnum::PRO_FOOTBALL_REFERENCE->value);
+        $this->scraper = Scraper::scraper(DataSources::PFR->value);
 
         $year = $this->argument('year') ?? select('Year?', [2025, 2024], 2025);
 
         if ($this->option('all')) {
-            foreach (TeamAbb::cases() as $teamAbb) {
+            foreach (NFLTeams::cases() as $teamAbb) {
                 if (! $this->option('quiet')) {
                     $this->info('Pulling rosters for ' . $teamAbb->value);
                 }
@@ -65,14 +66,14 @@ class GetProFootballReferenceRoster extends Command
                     continue;
                 }
 
-                $this->processData($roster);
+                $this->processData($roster, $teamAbb->value);
 
                 $this->saveData($roster, $year, $teamAbb->value);
             }
         } else {
-            $teamSelection = $this->argument('team') ?? select('Team?', TeamAbb::options());
+            $teamSelection = $this->argument('team') ?? select('Team?', NFLTeams::options());
 
-            $teamAbb = TeamAbb::from(Str::upper($teamSelection));
+            $teamAbb = NFLTeams::from(Str::upper($teamSelection));
 
             if (! $this->option('quiet')) {
                 $this->info('Pulling rosters for ' . $teamAbb->value);
@@ -108,17 +109,18 @@ class GetProFootballReferenceRoster extends Command
             }
         }
 
-        dd('die');
-
-        return $this->scraper->getTeamRoster(TeamAbb::from($team), $year);
+        return $this->scraper->getTeamRoster(NFLTeams::from($team), $year);
     }
 
-    private function processData(array $data)
+    private function processData(array $data, string $teamId)
     {
         $bar = $this->output->createProgressBar(count($data));
         $bar->start();
 
         foreach ($data as $playerData) {
+            $playerData['position_id'] = $this->fixPosition($playerData);
+            $playerData['team_id'] = $teamId;
+
             try {
                 $player = Action::model(Player::class)->upsert($playerData);
             } catch (AmbiguousPlayerException $e) {
@@ -168,5 +170,29 @@ class GetProFootballReferenceRoster extends Command
         }
 
         return $player;
+    }
+
+    private function fixPosition(array $data)
+    {
+        $id = Arr::get($data, 'position_id');
+
+        return match($id) {
+            1  => NFLPositions::QB->value,
+            2  => NFLPositions::WR->value,
+            3  => NFLPositions::RB->value,
+            4  => NFLPositions::TE->value,
+            5  => NFLPositions::K->value,
+            7  => NFLPositions::C->value,
+            8  => NFLPositions::OT->value,
+            9  => NFLPositions::G->value,
+            10 => NFLPositions::LB->value,
+            11 => NFLPositions::DE->value,
+            12 => NFLPositions::S->value,
+            13 => NFLPositions::DT->value,
+            14 => NFLPositions::CB->value,
+            15 => NFLPositions::LS->value,
+            16 => NFLPositions::P->value,
+            default => NFLPositions::QB->value,
+        };
     }
 }

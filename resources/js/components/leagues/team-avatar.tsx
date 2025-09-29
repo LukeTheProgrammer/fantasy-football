@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { type LeagueMember } from '@/types/models';
+import { type LeagueMemberResource, type LeagueTeamResource } from '@/types/resources';
 
 interface TeamAvatarProps {
-  member: LeagueMember;
+  member: LeagueMember | LeagueMemberResource | LeagueTeamResource;
 }
 
 export default function TeamAvatar({ member }: TeamAvatarProps) {

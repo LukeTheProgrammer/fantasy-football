@@ -6,12 +6,11 @@ import SettingsTab from '@/components/leagues/tab-content/settings-tab';
 import StandingsTab from '@/components/leagues/tab-content/standings-tab';
 import MatchupsTab from '@/components/leagues/tab-content/matchups-tab';
 import { Button } from '@/components/ui/button';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { isUserLeagueAdmin } from '@/lib/utils';
-import { type BreadcrumbItem, type SharedData } from '@/types';
-import { type League, type NflGame, type LeagueMember } from '@/types/models';
+import { type BreadcrumbItem } from '@/types';
+import { type LeagueResource , type LeagueMemberResource } from '@/types/resources';
 import { useState, useEffect } from 'react';
 import {
   Select,
@@ -37,18 +36,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface LeagueShowProps extends PageProps {
-  league: League;
-  nfl_games: NflGame[];
+  league: LeagueResource;
 }
 
-export default function ShowLeague({ league, nfl_games }: LeagueShowProps) {
-  const { auth } = usePage<SharedData>().props;
+export default function ShowLeague({ league }: LeagueShowProps) {
   const [selectedMemberId, setSelectedMemberId] = useState<string>('');
-  const [selectedMember, setSelectedMember] = useState<LeagueMember | null>(null);
+  const [selectedMember, setSelectedMember] = useState<LeagueMemberResource | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<string>('Week 1');
-
-  const userId = auth.user.id;
-  const userIsAdmin = isUserLeagueAdmin(league, userId);
 
   // Select the first member by default when the component mounts
   useEffect(() => {
@@ -78,9 +72,8 @@ export default function ShowLeague({ league, nfl_games }: LeagueShowProps) {
     setSelectedWeek(week);
   };
 
-  const getWeeks = (member: LeagueMember): string[] => {
-    return league.matchups.filter(m => m.home_member_id === member.id || m.away_member_id === member.id)
-      .map(m => `Week ${m.week}`);
+  const getWeeks = (): string[] => {
+    return Object.keys(league.matchups).map(m => `Week ${m}`);
   }
 
   return (
@@ -96,7 +89,7 @@ export default function ShowLeague({ league, nfl_games }: LeagueShowProps) {
             />
           </div>
           <div className="mt-4 flex space-x-2 md:mt-0">
-            {userIsAdmin && (
+            {league.is_admin && (
               <Link href={route('leagues.edit', league.id)}>
                 <Button variant="outline">Edit League</Button>
               </Link>
@@ -139,7 +132,7 @@ export default function ShowLeague({ league, nfl_games }: LeagueShowProps) {
                       <SelectValue placeholder={`Week ${selectedWeek}`} />
                     </SelectTrigger>
                     <SelectContent>
-                      {selectedMember && getWeeks(selectedMember).map((week) => (
+                      {getWeeks().map((week) => (
                         <SelectItem key={week} value={week}>
                           {week}
                         </SelectItem>
@@ -154,7 +147,6 @@ export default function ShowLeague({ league, nfl_games }: LeagueShowProps) {
                 league={league}
                 selectedMember={selectedMember}
                 selectedWeek={selectedWeek}
-                nfl_games={nfl_games}
               />
             </TabsContent>
             <TabsContent value="matchups">

@@ -16,8 +16,11 @@ class PositionSeeder extends Seeder
 
         foreach ($positions as $position) {
             Position::updateOrCreate(
-                [ 'abbreviation' => Arr::get($position, 'abbreviation') ],
-                [ 'name'         => Arr::get($position, 'name') ]
+                ['id' => Arr::get($position, 'abbreviation')],
+                [
+                    'abbreviation' => Arr::get($position, 'abbreviation'),
+                    'name'         => Arr::get($position, 'name'),
+                ]
             );
         }
     }

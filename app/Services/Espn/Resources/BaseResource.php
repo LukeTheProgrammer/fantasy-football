@@ -226,4 +226,24 @@ abstract class BaseResource
 
         return $url;
     }
+
+    public function getCahceFilePath(string $resource, string $method, array $params = [])
+    {
+        $fn = $resource . '/' . $method . '-' . implode('-', $params) . '.json';
+        return storage_path('data/espn/' . $fn);
+    }
+
+    public function getCache(string $filePath)
+    {
+        if (file_exists($filePath)) {
+            return json_decode(file_get_contents($filePath), true);
+        }
+
+        return false;
+    }
+
+    public function setCache(string $filePath, array $data)
+    {
+        file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT));
+    }
 }

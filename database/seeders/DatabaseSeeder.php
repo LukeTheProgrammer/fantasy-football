@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PositionSeeder::class,
             TeamSeeder::class,
+            PlayerSeeder::class,
+            PlayerAliasSeeder::class,
             RosterSeeder::class,
             ScheduleSeeder::class,
         ]);

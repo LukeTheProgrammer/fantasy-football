@@ -2,7 +2,7 @@
 
 namespace App\Services\Imports\Drivers\Rankings;
 
-use App\Enums\RankingSourcesEnum;
+use App\Enums\DataSources;
 use App\Models\DraftRanking;
 use App\Models\Player;
 use Exception;
@@ -28,7 +28,7 @@ class FantasyProsRankingsDriver extends BaseRankingsDriver
         public string $filePath,
         public string $fileType = 'csv',
     ) {
-        $this->source = RankingSourcesEnum::FANTASY_PROS->value;
+        $this->source = DataSources::FANTASY_PROS->value;
     }
 
     public function import()

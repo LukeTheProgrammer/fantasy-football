@@ -2,7 +2,7 @@
 
 namespace App\Services\Scrapers\Resources;
 
-use App\Enums\TeamAbb;
+use App\Enums\NFLTeams;
 use App\Models\Team;
 use Exception;
 use Illuminate\Support\Arr;
@@ -45,9 +45,9 @@ class Espn extends BaseScraperResource
         'WSH' => 'wsh/washington-commanders',
     ];
 
-    public function getTeamRoster(string|TeamAbb $teamAbb)
+    public function getTeamRoster(string|NFLTeams $teamAbb)
     {
-        $teamAbb = ($teamAbb instanceof TeamAbb) ? $teamAbb : TeamAbb::from($teamAbb);
+        $teamAbb = ($teamAbb instanceof NFLTeams) ? $teamAbb : NFLTeams::from($teamAbb);
         $team = Arr::get(static::TEAMS, $teamAbb->value);
         $url = 'https://www.espn.com/nfl/team/roster/_/name/' . $team;
 

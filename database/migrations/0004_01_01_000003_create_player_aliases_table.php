@@ -23,13 +23,11 @@ return new class extends Migration
         Schema::create('player_aliases', function (Blueprint $table) {
             $table->id();
             $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
-            $table->foreignId('team_id')->nullable()->constrained('teams')->nullOnDelete();
-            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['player_id', 'name', 'team_id', 'position_id']);
+            $table->unique(['player_id', 'name']);
         });
     }
 

@@ -7,11 +7,6 @@ use App\Models\PlayerAlias;
 use App\Models\Position;
 use App\Models\Team;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -36,8 +31,8 @@ class CreatePlayerAliasCommand extends Command
      */
     public function handle()
     {
-        $positions = Position::all()->pluck('abbreviation', 'id');
-        $teams = Team::all()->pluck('abbreviation', 'id');
+        $positions = Position::all()->pluck('id', 'id');
+        $teams = Team::all()->pluck('id', 'id');
 
         $data = [
             'name' => text('Name'),

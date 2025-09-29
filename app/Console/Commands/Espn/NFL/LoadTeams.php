@@ -82,8 +82,9 @@ class LoadTeams extends Command
         $logos = Arr::get($data, 'logos', []);
 
         return Team::updateOrCreate(
-            [ 'espn_id' => Arr::get($data, 'id') ],
+            [ 'id' => Arr::get($data, 'abbreviation') ],
             [
+                'espn_id'      => Arr::get($data, 'id'),
                 'abbreviation' => Arr::get($data, 'abbreviation'),
                 'location'     => Arr::get($data, 'location'),
                 'name'         => Arr::get($data, 'name'),

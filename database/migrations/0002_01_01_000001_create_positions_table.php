@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::enableForeignKeyConstraints();
 
         Schema::create('positions', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 10)->primary();
             $table->string('abbreviation');
             $table->string('name');
             $table->timestamps();

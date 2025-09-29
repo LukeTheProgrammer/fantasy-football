@@ -2,7 +2,7 @@
 
 namespace App\Services\Scrapers\Resources;
 
-use App\Enums\TeamAbb;
+use App\Enums\NFLTeams;
 use App\Models\Position;
 use App\Models\Team;
 use Exception;
@@ -51,7 +51,7 @@ class ProFootballReference extends BaseScraperResource
 
     private ?Collection $positions = null;
 
-    public function getTeamRoster(TeamAbb $teamAbb, int $year)
+    public function getTeamRoster(NFLTeams $teamAbb, int $year)
     {
         $this->team = Team::forAbbreviation($teamAbb)->first();
 

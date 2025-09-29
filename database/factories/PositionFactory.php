@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\PositionEnum;
+use App\Enums\NFLPositions;
 use App\Models\Position;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -25,7 +25,7 @@ class PositionFactory extends Factory
      */
     public function definition(): array
     {
-        $position = fake()->randomElement(PositionEnum::cases());
+        $position = fake()->randomElement(NFLPositions::cases());
 
         return [
             'abbreviation' => $position->value,

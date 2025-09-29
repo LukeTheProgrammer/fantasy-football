@@ -1,29 +1,41 @@
-import { type League, type LeagueMember } from '@/types/models';
 import TeamAvatar from '@/components/leagues/team-avatar';
 import { c } from '@/lib/conv';
 import { rankName } from '@/lib/utils';
 import { useMemo } from 'react';
+import { type LeagueResource, type LeagueMemberResource } from '@/types/resources';
 
 interface StandingsTabProps {
-  league: League;
+  league: LeagueResource;
+}
+
+interface Standing {
+  memberId: string;
+  member: LeagueMemberResource;
+  pointsFor: number;
+  pointsAgainst: number;
+  pfRank: string;
+  paRank: string;
+  record: string;
 }
 
 export default function StandingsTab({ league }: StandingsTabProps) {
 
   const { standings } = useMemo(() => {
-    const pfRanks: { member: LeagueMember; pf: number }[] = [];
-    const paRanks: { member: LeagueMember; pa: number }[] = [];
+    const pfRanks: { member: LeagueMemberResource; pf: number }[] = [];
+    const paRanks: { member: LeagueMemberResource; pa: number }[] = [];
 
-    const standings = league.members
-      .sort((a, b) => b.wins - a.wins)
-      .map(m => {
+    const standings: Standing[] = [];
+
+    league.members
+      .sort((a: LeagueMemberResource, b: LeagueMemberResource) => b.wins - a.wins)
+      .forEach((m: LeagueMemberResource) => {
         const pf = c(m.points_for).toFloat();
         const pa = c(m.points_against).toFloat();
 
         pfRanks.push({member: m, pf: pf});
         paRanks.push({member: m, pa: pa});
 
-        return {
+        const standing: Standing = {
           memberId: m.id,
           member: m,
           pointsFor: pf,
@@ -32,9 +44,11 @@ export default function StandingsTab({ league }: StandingsTabProps) {
           paRank: '',
           record: `${m.wins} - ${m.losses} - ${m.ties}`,
         };
+
+        standings.push(standing);
       });
 
-      pfRanks.sort((a, b) => b.pf - a.pf).map((r, k) => {
+      pfRanks.sort((a, b) => b.pf - a.pf).forEach((r, k) => {
         const si = standings.findIndex(s => s.memberId === r.member.id);
 
         if (si > -1) {
@@ -42,7 +56,7 @@ export default function StandingsTab({ league }: StandingsTabProps) {
         }
       });
 
-      paRanks.sort((a, b) => a.pa - b.pa).map((r, k) => {
+      paRanks.sort((a, b) => a.pa - b.pa).forEach((r, k) => {
         const si = standings.findIndex(s => s.memberId === r.member.id);
 
         if (si > -1) {
