@@ -71,6 +71,10 @@ class GetEspnRoster extends Command
         $scraper = Scraper::scraper(DataSources::ESPN->value);
         $data = $scraper->getTeamRoster($teamName);
 
+        if (! is_array($data['roster'])) {
+            dd($data);
+        }
+
         $teamId = $data['team']->id;
 
         foreach ($data['roster'] as $player) {
@@ -99,6 +103,7 @@ class GetEspnRoster extends Command
             $playerModel = Action::model(Player::class)->upsert([
                 'espn_id'       => $player['id'],
                 'position_id'   => $pos->id,
+                'team_id'       => $teamId,
                 'first_name'    => $firstName,
                 'last_name'     => $lastName,
                 'full_name'     => $fullName,

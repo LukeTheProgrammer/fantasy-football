@@ -34,7 +34,7 @@ class GetPlayers extends Command
     public function handle()
     {
         if ($this->option('all')) {
-            Team::all()->each(function ($team) {
+            Team::noFA()->get()->each(function ($team) {
                 $this->info("Getting NFL Team Players for team $team->espn_id");
                 $this->getPlayers($team->espn_id);
             });

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\League;
-use App\Models\NflGame;
 use Illuminate\Http\Request;
 use App\Http\Resources\LeagueShowResource;
 use Inertia\Inertia;
@@ -41,7 +40,6 @@ class LeagueController extends Controller
                 'rosters' => [
                     'nflGame',
                     'player',
-                    'playerProjection',
                 ],
                 'user',
             ],

@@ -46,7 +46,9 @@ class LoadRosters extends Command
         $year = $this->argument('year') ?? select('Year?', [2025, 2024], 2025);
 
         if ($this->option('all')) {
-            Team::all()->each(fn (Team $team) => $this->loadRoster($team, $year));
+            Team::noFA()->get()->each(
+                fn (Team $team) => $this->loadRoster($team, $year)
+            );
 
             return Command::SUCCESS;
         }

@@ -31,9 +31,9 @@ class GetEvents extends Command
     public function handle()
     {
         if ($this->option('all')) {
-            Team::all()->each(function ($team) {
-                $this->getEvents($team->espn_id);
-            });
+            Team::noFA()->get()->each(
+                fn (Team $team) => $this->getEvents($team->espn_id)
+            );
 
             return Command::SUCCESS;
         }

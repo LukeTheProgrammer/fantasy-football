@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PlayerAliasSeeder::class,
             RosterSeeder::class,
             ScheduleSeeder::class,
+            SeasonSeeder::class,
         ]);
     }
 }

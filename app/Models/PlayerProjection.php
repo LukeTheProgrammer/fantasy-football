@@ -78,4 +78,13 @@ class PlayerProjection extends Model
         return $query->where('nfl_game_id', ($game instanceof NFLGame) ? $game->id : $game);
     }
 
+    public function scopeForSeason(Builder $query, int $season): Builder
+    {
+        return $query->where('season', $season);
+    }
+
+    public function scopeForWeek(Builder $query, int $week): Builder
+    {
+        return $query->where('week', $week);
+    }
 }

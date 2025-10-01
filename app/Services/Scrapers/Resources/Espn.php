@@ -48,38 +48,62 @@ class Espn extends BaseScraperResource
     public function getTeamRoster(string|NFLTeams $teamAbb)
     {
         $teamAbb = ($teamAbb instanceof NFLTeams) ? $teamAbb : NFLTeams::from($teamAbb);
-        $team = Arr::get(static::TEAMS, $teamAbb->value);
-        $url = 'https://www.espn.com/nfl/team/roster/_/name/' . $team;
+        $teamModel = Team::forAbbreviation($teamAbb)->first();
 
-        $response = Http::withHeaders([
-            'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
-            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        ])->get($url);
+        $jsonFP = $this->getCahceFilePath([$teamAbb->value, date('Y-m-d')]) . '.json';
 
-        if (! $response->ok()) {
-            throw new Exception('Failed to fetch URL: ' . $url . ' (status ' . $response->status() . ')');
+        if ($json = $this->getCache($jsonFP, true)) {
+            return [
+                'team'   => $teamModel,
+                'roster' => $json,
+            ];
         }
 
-        $html = $response->body();
-        if ($html === '' || $html === null) {
-            throw new Exception('Received empty response from URL: ' . $url);
+        $html = '';
+        $htmlFP = $this->getCahceFilePath([$teamAbb->value, date('Y-m-d')]) . '.html';
+
+        $html = $this->getCache($htmlFP);
+
+        if (! $html) {
+            $team = Arr::get(static::TEAMS, $teamAbb->value);
+            $url = 'https://www.espn.com/nfl/team/roster/_/name/' . $team;
+
+            $response = Http::withHeaders([
+                'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            ])->get($url);
+
+            if (! $response->ok()) {
+                throw new Exception('Failed to fetch URL: ' . $url . ' (status ' . $response->status() . ')');
+            }
+
+            $html = $response->body();
+            if ($html === '' || $html === null) {
+                throw new Exception('Received empty response from URL: ' . $url);
+            }
+
+            $this->setCache($htmlFP, $html, true);
         }
 
         $groupsJson = $this->extractGroupsJson($html);
+
         if ($groupsJson === null) {
             throw new Exception('Could not locate roster groups JSON within the HTML.');
         }
 
         $groups = json_decode($groupsJson, true);
+
         if (! is_array($groups)) {
             throw new Exception('Failed to decode roster groups JSON.');
         }
 
-        $teamModel = Team::forAbbreviation($teamAbb)->first();
+        $players = $this->collectPlayersFromGroups($groups);
+
+        $this->setCache($jsonFP, $players);
 
         return [
             'team'   => $teamModel,
-            'roster' => $this->collectPlayersFromGroups($groups)
+            'roster' => $players
         ];
     }
 
@@ -171,5 +195,30 @@ class Espn extends BaseScraperResource
         }
 
         return $players;
+    }
+
+    public function getCahceFilePath(array $params = [])
+    {
+        $fn = implode('-', $params);
+        return storage_path('data/espn/nfl-teams/rosters/' . $fn);
+    }
+
+    public function getCache(string $filePath, bool $isJson = false)
+    {
+        if (file_exists($filePath)) {
+            return $isJson
+                ? json_decode(file_get_contents($filePath), true)
+                : file_get_contents($filePath);
+        }
+
+        return false;
+    }
+
+    public function setCache(string $filePath, array|string $data)
+    {
+        file_put_contents(
+            $filePath,
+            is_array($data) ? json_encode($data, JSON_PRETTY_PRINT) : $data
+        );
     }
 }

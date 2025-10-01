@@ -4,9 +4,7 @@ namespace Database\Seeders;
 
 use App\Facades\Action;
 use App\Models\Player;
-use App\Models\Position;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Arr;
 
 class PlayerSeeder extends Seeder
 {
@@ -17,8 +15,6 @@ class PlayerSeeder extends Seeder
         $players = json_decode($json, true);
 
         foreach ($players as $player) {
-            // $posId = Arr::get($player, 'position_id');
-            // $player['position_id'] = Position::forAbbreviation($posId)->first()->id;
             Action::model(Player::class)->upsert($player);
         }
     }

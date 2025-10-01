@@ -51,6 +51,14 @@ class Team extends Model
     /**
      * Scope query by abbreviation.
      */
+    public function scopeNoFA(Builder $query): Builder
+    {
+        return $query->where('id', '!=', 'FA');
+    }
+
+    /**
+     * Scope query by abbreviation.
+     */
     public function scopeForAbbreviation(Builder $query, string|NFLTeams $abbreviation): Builder
     {
         return $query->where('abbreviation', '=', ($abbreviation instanceof NFLTeams) ? $abbreviation->value : $abbreviation);

@@ -1,7 +1,5 @@
 
 import TeamAvatar from '@/components/leagues/team-avatar';
-import { c } from '@/lib/conv';
-import { useMemo } from 'react';
 import { type LeagueResource, type LeagueMemberResource } from '@/types/resources';
 
 interface MemberTabHeaderProps {
@@ -10,29 +8,6 @@ interface MemberTabHeaderProps {
 };
 
 export default function MemberTabHeader({ league, selectedMember }: MemberTabHeaderProps) {
-  const { pointsFor, pointsAgainst } = useMemo(() => {
-    if (!selectedMember) {
-      return { pointsFor: 0, pointsAgainst: 0 };
-    }
-
-    let pf = 0;
-    let pa = 0;
-
-    Object.entries(league.matchups).forEach(([, matchups]) => {
-      matchups.forEach(m => {
-        const homeTeam = m.home_team.id === selectedMember.id ? 'teamA' : 'teamB';
-
-        const teamAPoints = homeTeam === 'teamA' ? m.home_score : m.away_score;
-        const teamBPoints = homeTeam === 'teamB' ? m.home_score : m.away_score;
-
-        pf += c(teamAPoints).toFloat();
-        pa += c(teamBPoints).toFloat();
-      });
-    });
-
-    return { pointsFor: pf, pointsAgainst: pa };
-  }, [league.matchups, selectedMember]);
-
   if (selectedMember === null) {
     return (
       <div></div>
@@ -48,16 +23,18 @@ export default function MemberTabHeader({ league, selectedMember }: MemberTabHea
           <p className="text-xs text-muted-foreground">{selectedMember?.owner_name}</p>
         </div>
       </div>
-      <div className="flex align-center justify-end space-x-2">
-        <div className="min-w-[8em] pr-6">
+      <div className="flex align-center justify-end space-x-2 pr-1">
+        <div className="min-w-[8em] pr-6 text-right">
           <p className="text-xs text-muted-foreground">Points For</p>
-          <p className="font-extrabold text-lg">{pointsFor.toFixed(2)}</p>
+          <p className="font-extrabold text-lg">{selectedMember.points_for}</p>
+          <p className="text-xs text-muted-foreground pl-2"> ({selectedMember.points_for_rank})</p>
         </div>
-        <div className="min-w-[8em] pr-6">
+        <div className="min-w-[8em] pr-6 text-right">
           <p className="text-xs text-muted-foreground">Points Against</p>
-          <p className="font-extrabold text-lg">{pointsAgainst.toFixed(2)}</p>
+          <p className="font-extrabold text-lg">{selectedMember.points_against}</p>
+          <p className="text-xs text-muted-foreground pl-2"> ({selectedMember.points_against_rank})</p>
         </div>
-        <div className="min-w-[8em]">
+        <div className="min-w-[6em] text-right">
           <p className="text-xs text-muted-foreground">Record</p>
           <p className="font-extrabold text-lg">
             {selectedMember.wins} &nbsp; - &nbsp;

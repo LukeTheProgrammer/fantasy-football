@@ -199,7 +199,7 @@ export interface NflGame {
   away_team_id: string;
   year: number;
   week: number;
-  start_time: string;
+  starts_at: string;
   home_score: number;
   away_score: number;
   is_completed: boolean;

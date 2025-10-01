@@ -31,9 +31,9 @@ class GetDepthChart extends Command
     public function handle()
     {
         if ($this->option('all')) {
-            Team::all()->each(function ($team) {
-                $this->getDepthChart($team->espn_id);
-            });
+            Team::noFA()->get()->each(
+                fn (Team $team) => $this->getDepthChart($team->espn_id)
+            );
 
             return Command::SUCCESS;
         }

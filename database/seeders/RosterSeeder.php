@@ -24,7 +24,7 @@ class RosterSeeder extends Seeder
     {
         $dst = Position::forAbbreviation(NFLPositions::DST->value)->first();
 
-        Team::all()->each(function (Team $team) use ($dst) {
+        Team::noFA()->get()->each(function (Team $team) use ($dst) {
             $player = Player::espnId($team->espn_id)->forPosition($dst)->first();
 
             if (! $player instanceof Player) {

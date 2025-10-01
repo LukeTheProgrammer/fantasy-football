@@ -70,9 +70,7 @@ class LoadTeamRosters extends Command
 
     protected function loadAllRosters()
     {
-        Team::all()->each(function (Team $team) {
-            $this->loadTeamRoster($team);
-        });
+        Team::noFA()->get()->each(fn (Team $team) => $this->loadTeamRoster($team));
     }
 
     protected function loadTeamRoster(int|string|Team $teamArg)

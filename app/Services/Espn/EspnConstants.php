@@ -21,6 +21,7 @@ class EspnConstants
         'DST' => NFLPositions::DST,
         'K'   => NFLPositions::K,
         'P'   => NFLPositions::P,
+        'PK'  => NFLPositions::K,
     ];
 
     // ESPN => LeagueSettings Model

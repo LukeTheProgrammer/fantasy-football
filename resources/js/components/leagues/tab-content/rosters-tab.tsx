@@ -9,7 +9,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-
 interface RostersTabProps {
   league: LeagueResource;
   selectedMember: LeagueMemberResource | null;
@@ -50,7 +49,7 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
     };
 
     const weekNum = Number(selectedWeek.replace('Week ', ''));
-    const weekRoster = memberRosters[weekNum] || {};
+    const weekRoster = memberRosters[weekNum] || [];
 
     weekRoster.forEach(memberRoster => {
       const pos = memberRoster.player.position;
@@ -68,7 +67,10 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
         const bVal = b.overall_rank > 0 ? b.overall_rank : 9999;
         return aVal - bVal;
       });
-      pos.forEach((player: LeagueRosterResource) => players.push(player));
+      pos.forEach((player: LeagueRosterResource) => {
+        console.log('nfl_game', player.nfl_game);
+        players.push(player);
+      });
     }
 
     return players;
@@ -95,7 +97,7 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
             <TableHead className='text-center'>FP Pos</TableHead>
             <TableHead className='text-center'>FP Points</TableHead>
             <TableHead className='text-center'>ESPN Points</TableHead>
-            <TableHead className='text-center'>Points</TableHead>
+            <TableHead className='text-right'>Points</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -119,7 +121,9 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
               </TableCell>
               <TableCell className="text-center text-xs">
                 <p className="font-extrabold text-lg">
-                  {! roster.nfl_game ? ('Bye') : (
+                  {Object.keys(roster.nfl_game).length < 1 ? (
+                    <span className="text-muted-foreground">Bye</span>
+                  ) : (
                     (roster.player.team === roster.nfl_game.away_team?.id
                       ? <span>@ {roster.nfl_game.home_team?.id}</span>
                       : <span> {roster.nfl_game.away_team?.id}</span>
@@ -132,28 +136,28 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
               </TableCell>
               <TableCell className="text-center">
                 <p className="font-extrabold text-lg">
-                  {roster.player_projection.fp_pos_rank}
+                  {roster.player_projection.fp_pos_rank ? roster.player_projection.fp_pos_rank : '--'}
                 </p>
               </TableCell>
               <TableCell className="text-center">
                 <p className="font-extrabold text-lg">
-                  {roster.player_projection.fp_points}
+                  {roster.player_projection.fp_points ? roster.player_projection.fp_points : '--'}
                 </p>
                 <p className="pl-2 text-xs text-muted-foreground">
-                  {roster.fp_diff}
+                  {roster.fp_diff ? roster.fp_diff : ''}
                 </p>
               </TableCell>
               <TableCell className="text-center">
                 <p className="font-extrabold text-lg">
-                  {roster.player_projection.espn_points}
+                  {roster.player_projection.espn_points ? roster.player_projection.espn_points : '--'}
                 </p>
                 <p className="pl-2 text-xs text-muted-foreground">
-                  {roster.espn_diff}
+                  {roster.espn_diff ? roster.espn_diff : ''}
                 </p>
               </TableCell>
-              <TableCell className="text-center">
-                <p className="font-extrabold text-lg">
-                  {roster.fantasy_points}
+              <TableCell className="text-right">
+                <p className="font-extrabold text-lg text-right">
+                  {roster.fantasy_points ? roster.fantasy_points : '--'}
                 </p>
               </TableCell>
             </TableRow>

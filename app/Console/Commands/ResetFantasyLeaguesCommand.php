@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ResetFantasyLeaguesCommand extends Command
 {
@@ -27,6 +27,20 @@ class ResetFantasyLeaguesCommand extends Command
      */
     public function handle(): int
     {
+        // $this->rebuildTables();
+
+        $this->rebuildData();
+
+        $this->call('import:fantasy:league');
+        $this->call('import:fantasy:roster', ['leagueId' => 1, 'year' => 2025]);
+        // TODO - Clean up these commands, make ESPN League and Roster Drivers
+        // $this->call('import:fantasy-nfl:points', ['--quiet' => true, 'leagueId' => 1, 'year' => 2025]);
+
+        return Command::SUCCESS;
+    }
+
+    private function rebuildTables()
+    {
         $migrations = [
             '0003_01_01_000000_create_leagues_table.php',
             '0003_01_01_000001_create_league_settings_table.php',
@@ -44,12 +58,19 @@ class ResetFantasyLeaguesCommand extends Command
         }
 
         $this->call('migrate');
+    }
 
-        $this->call('import:fantasy-nfl:league');
-        // TODO - Clean up these commands, make ESPN League and Roster Drivers
-        // $this->call('espn:ffl:get:rosters', ['leagueId' => 1, 'year' => 2025]);
-        // $this->call('import:fantasy-nfl:points', ['--quiet' => true, 'leagueId' => 1, 'year' => 2025]);
-
-        return Command::SUCCESS;
+    private function rebuildData()
+    {
+        Schema::disableForeignKeyConstraints();
+        DB::table('leagues')->truncate();
+        DB::table('league_settings')->truncate();
+        DB::table('league_members')->truncate();
+        DB::table('league_member_rosters')->truncate();
+        DB::table('league_matchups')->truncate();
+        DB::table('drafts')->truncate();
+        DB::table('draft_picks')->truncate();
+        DB::table('draft_rankings')->truncate();
+        Schema::enableForeignKeyConstraints();
     }
 }

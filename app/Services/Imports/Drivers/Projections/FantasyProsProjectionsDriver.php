@@ -7,15 +7,11 @@ use App\Facades\Action;
 use App\Facades\FantasyPros;
 use App\Models\NflGame;
 use App\Models\Player;
-use App\Models\PlayerAlias;
 use App\Models\PlayerProjection;
-use App\Models\Position;
 use App\Models\Team;
 use App\Services\FantasyPros\Resources\ProjectionsResource;
-use App\Services\Imports\Importers\ProjectionsImporter;
 use Exception;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 
 class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 {

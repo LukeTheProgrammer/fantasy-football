@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('away_team_id', 10);
             $table->year('year');
             $table->integer('week');
-            $table->dateTime('start_time')->nullable();
+            $table->dateTime('starts_at')->nullable();
             $table->integer('home_score')->nullable();
             $table->integer('away_score')->nullable();
             $table->boolean('is_completed')->default(false);

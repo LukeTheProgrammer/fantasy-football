@@ -64,7 +64,9 @@ export interface LeagueMemberResource {
   losses: number;
   ties: number;
   points_for: number;
+  points_for_rank: string;
   points_against: number;
+  points_against_rank: string;
   faab_balance: number;
 
   rosters: Record<string, LeagueRosterResource[]>;
@@ -130,7 +132,7 @@ export interface NflGameResource {
   espn_id: string;
   year: number;
   week: number;
-  start_time: string;
+  starts_at: string;
   day: string;
   time: string;
   home_score: number;

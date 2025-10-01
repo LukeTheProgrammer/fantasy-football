@@ -397,7 +397,7 @@ namespace App\Models{
  * @property int $away_team_id
  * @property int $year
  * @property int $week
- * @property string|null $start_time
+ * @property string|null $starts_at
  * @property int|null $home_score
  * @property int|null $away_score
  * @property int $is_completed

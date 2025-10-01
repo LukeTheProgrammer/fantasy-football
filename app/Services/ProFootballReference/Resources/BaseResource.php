@@ -17,8 +17,6 @@ abstract class BaseResource
     {
         $filePath = $this->getCacheFilePath($params);
 
-        dump(json_encode(['getCache', $filePath, file_exists($filePath)]));
-
         if (! file_exists($filePath)) {
             return false;
         }

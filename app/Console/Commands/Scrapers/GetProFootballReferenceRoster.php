@@ -82,7 +82,7 @@ class GetProFootballReferenceRoster extends Command
             $data = $this->getData($year, $teamAbb->value);
 
             if (! empty($data)) {
-                $this->processData($data);
+                $this->processData($data, $teamAbb->value);
                 $this->saveData($data, $year, $teamAbb->value);
             }
         }

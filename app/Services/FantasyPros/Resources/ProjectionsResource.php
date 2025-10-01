@@ -2,12 +2,17 @@
 
 namespace App\Services\FantasyPros\Resources;
 
+use App\Models\Season;
+use App\Models\Week;
+use App\Traits\LoadsJsonFiles;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
 class ProjectionsResource extends BaseResource
 {
+    use LoadsJsonFiles;
+
     public array $sources = [
         '2-qb'    => 'https://www.fantasypros.com/nfl/rankings/superflex.php',
         'qb'      => 'https://www.fantasypros.com/nfl/rankings/qb.php',
@@ -24,17 +29,55 @@ class ProjectionsResource extends BaseResource
         'ppr-te'  => 'https://www.fantasypros.com/nfl/rankings/ppr-te.php',
     ];
 
+    public int $year;
+    public int $week;
+
+    public function __construct()
+    {
+        $this->year = Season::current()->first()->id;
+        $this->week = Week::current()->first()->week;
+    }
+
+    public function processDir(string $path)
+    {
+        $files = glob($path . '/*.html');
+
+        foreach ($files as $file) {
+            $html = file_get_contents($file);
+
+            $players = $this->parseHtml($html);
+
+            $jsonFP = str_replace('.html', '.json', $file);
+
+            file_put_contents($jsonFP, json_encode($players, JSON_PRETTY_PRINT));
+        }
+    }
+
     public function getProjections(string $source)
     {
         if (! isset($this->sources[$source])) {
             throw new InvalidArgumentException("Invalid source: $source");
         }
 
-        $filePath = $this->getSourceFilePath($source);
+        if ($players = $this->getPlayers($source)) {
+            return $players;
+        }
+
+        $html = $this->getHtml($source);
+
+        $players = $this->parseHtml($html);
+
+        $this->savePlayers($source, $players);
+
+        return $players ?? [];
+    }
+
+    private function getHtml(string $source): string
+    {
+        $filePath = $this->getSourceFilePath($source) . '.html';
 
         if (file_exists($filePath)) {
-            $html = file_get_contents($filePath);
-            return $this->parseHtml($html);
+            return file_get_contents($filePath);
         }
 
         $url = $this->sources[$source];
@@ -53,20 +96,42 @@ class ProjectionsResource extends BaseResource
 
         file_put_contents($filePath, $html);
 
-        $players = $this->parseHtml($html);
+        return $html;
+    }
 
-        return $players ?? [];
+    private function getPlayers(string $source): bool|array
+    {
+        $filePath = $this->getSourceFilePath($source) . '.json';
+
+        $data = $this->loadJsonFile($filePath);
+
+        return (! empty($data)) ? $data : false;
+    }
+
+    private function savePlayers(string $source, array $players): bool
+    {
+        $filePath = $this->getSourceFilePath($source) . '.json';
+
+        file_put_contents($filePath, json_encode($players, JSON_PRETTY_PRINT));
+
+        return true;
     }
 
     private function getSourceFilePath(string $source): string
     {
-        $dir = storage_path('data/fantasy-pros/projections/' . date('Y-m-d'));
+        $dir = storage_path(implode('/', [
+            'data',
+            'fantasy-pros',
+            'projections',
+            $this->year,
+            'week-' . $this->week,
+        ]));
 
         if (! file_exists($dir)) {
             mkdir($dir, 0775, true);
         }
 
-        return $dir . '/' . $source . '.html';
+        return $dir . '/' . date('Y-m-d') . '-' . $source;
     }
 
     /**

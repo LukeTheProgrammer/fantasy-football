@@ -6,14 +6,15 @@ use App\Facades\Espn;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueMemberRoster;
-use App\Models\Player;
 use App\Models\NflGame;
+use App\Models\Player;
+use App\Models\PlayerProjection;
+use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
 use App\Services\Espn\Resources\FantasyNFL;
 use App\Services\Espn\Data\FantasyNFL\TeamRosterEntryData;
-use App\Services\Espn\Data\FantasyNFL\PlayerData;
 use App\Services\Espn\Formatters\FantasyNFLRosterFormatter;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EspnRosterDriver
@@ -59,30 +60,66 @@ class EspnRosterDriver
         /** @var ResourceLeagueData $leagueData */
         $leagueData = $this->espn->getRostersForTeam($member->external_id, $week, $this->year);
 
-        /** @var TeamRosterData $rosterData */
-        $rosterData = $leagueData->teams->first()->roster;
+        $formatter = new FantasyNFLRosterFormatter($leagueData, $this->year, $week);
 
-        $rosterData->entries->each(function (TeamRosterEntryData $player) use ($member, $week) {
-            $this->importPlayer($member, $week, $player);
+        $roster = $formatter->getFormattedRoster();
+
+        $roster->each(function ($team) use ($member, $week) {
+            $team->each(function ($player) use ($member, $week) {
+                $this->importPlayer($member, $week, $player);
+            });
         });
     }
 
-    private function importPlayer(LeagueMember $member, int $week, TeamRosterEntryData $rosterEntry)
+    private function importPlayer(LeagueMember $member, int $week, array|Collection $player)
     {
-        $data = FantasyNFLRosterFormatter::formatRosterEntry($rosterEntry, $this->year, $week);
+        $player = ($player instanceof Collection) ? $player->toArray() : $player;
 
-        if (null === $data) {
-            return;
+        $player['nfl_game_id'] = $this->getNflGameId($player, $week)?->id;
+        $player['league_member_id'] = $member->id;
+        $player['season'] = $this->year;
+        $player['week'] = $week;
+        $player['deleted_at'] = null;
+
+        $find = Arr::only($player, ['league_member_id', 'nfl_game_id', 'player_id', 'season', 'week']);
+
+        $update = Arr::only($player, [
+            'lineup_slot_id',
+            'position_rank',
+            'overall_rank',
+            'percent_owned',
+            'percent_started',
+            'percent_changed',
+            'fantasy_points',
+            'deleted_at',
+        ]);
+
+        LeagueMemberRoster::query()->withTrashed()->updateOrCreate($find, $update);
+
+        $proj = Arr::get($player, 'espn_projected_points');
+
+        if ($proj && $proj > 0) {
+            PlayerProjection::updateOrCreate([
+                'player_id' => $player['player_id'],
+                'season'    => $player['season'],
+                'week'      => $player['week'],
+            ], [
+                'espn_projected_points' => $proj,
+            ]);
         }
+    }
 
-        $data['league_member_id'] = $member->id;
-        $data['season'] = $this->year;
-        $data['week'] = $week;
-        $data['deleted_at'] = null;
+    private function getNflGameId(array $player, int $week)
+    {
+        $teamId = Player::where('id', $player['player_id'])->select(['team_id']);
 
-        LeagueMemberRoster::query()->withTrashed()->updateOrCreate(
-            Arr::only($data, ['league_member_id', 'nfl_game_id', 'player_id', 'season', 'week']),
-            Arr::except($data, ['league_member_id', 'nfl_game_id', 'player_id', 'season', 'week'])
-        );
+        return NflGame::query()
+            ->where('year', $this->year)
+            ->where('week', $week)
+            ->where(function ($query) use ($teamId) {
+                $query->orWhereIn('home_team_id', $teamId)
+                    ->orWhereIn('away_team_id', $teamId);
+            })
+            ->first();
     }
 }

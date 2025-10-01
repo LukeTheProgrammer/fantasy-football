@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LeagueMemberRoster extends Model
@@ -50,17 +51,6 @@ class LeagueMemberRoster extends Model
     public function player(): BelongsTo
     {
         return $this->belongsTo(Player::class);
-    }
-
-    /**
-     * Get the player projection for this player.
-     */
-    public function playerProjection(): BelongsTo
-    {
-        return $this->belongsTo(PlayerProjection::class)
-            ->where('season', $this->season)
-            ->where('week', $this->week)
-            ->where('player_id', $this->player_id);
     }
 
     /**

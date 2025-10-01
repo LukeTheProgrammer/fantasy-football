@@ -33,17 +33,13 @@ export default function MatchupsTab({ league, selectedMember }: MatchupsTabProps
     const leagueMatchups: LeagueMatchupResource[] = [];
     const matchups: Matchup[] = [];
 
-    console.log(league.matchups);
     Object.entries(league.matchups).forEach(([, matchups]) => {
       matchups.forEach((m: LeagueMatchupResource) => {
-        // console.log(m);
         if (m.home_team.id === selectedMember.id || m.away_team.id === selectedMember.id) {
           leagueMatchups.push(m);
         }
       });
     });
-
-    console.log(leagueMatchups);
 
     leagueMatchups.sort((a, b) => a.week - b.week);
 

@@ -53,14 +53,14 @@ class LoadTeamSchedule extends Command
         if ($this->teamId) {
             return $this->loadTeamRoster();
         } else {
-            $this->teamId = select('Which team to pull', Team::all()->pluck('name', 'espn_id')->toArray());
+            $this->teamId = select('Which team to pull', Team::noFA()->get()->pluck('name', 'espn_id')->toArray());
             $this->loadTeamRoster();
         }
     }
 
     protected function loadAllRosters()
     {
-        Team::all()->each(function (Team $team) {
+        Team::noFA()->get()->each(function (Team $team) {
             $this->teamId = $team->espn_id;
             $this->loadTeamRoster();
         });
@@ -131,7 +131,7 @@ class LoadTeamSchedule extends Command
                 'away_team_id' => Team::forEspnId($awayTeam->team->id)->first()->id,
                 'year'         => $event->season->year,
                 'week'         => $event->week->number,
-                'start_time'   => $event->date,
+                'starts_at'   => $event->date,
                 'home_score'   => $homeTeam->score->value,
                 'away_score'   => $awayTeam->score->value,
                 'is_completed' => $competition->status->type->completed ?? false,

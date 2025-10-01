@@ -17,6 +17,8 @@ use Illuminate\Support\Collection;
 
 class LeagueShowResource extends JsonResource
 {
+    protected ?Collection $playerProjections = null;
+
     /**
      * Transform the resource into an array.
      *
@@ -24,6 +26,11 @@ class LeagueShowResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $this->playerProjections = PlayerProjection::forSeason($this->year)
+            ->get()
+            ->groupBy('player_id')
+            ->map(fn ($projections) => $projections->keyBy('week'));
+
         return [
             'id'          => $this->id,
             'name'        => $this->name,
@@ -65,26 +72,54 @@ class LeagueShowResource extends JsonResource
 
     private function getMembers()
     {
-        return $this->members->map(function ($member) {
+        // Build ranked lists for points for/against
+        $pf = $this->members
+            ->map(fn ($m) => ['id' => $m->id, 'pf' => $m->points_for])
+            ->sortByDesc(fn ($lm) => $lm['pf'])
+            ->values()
+            ->mapWithKeys(fn ($m, $i) => [$m['id'] => $i + 1]);
+
+        $pa = $this->members
+            ->map(fn ($m) => ['id' => $m->id, 'pa' => $m->points_against])
+            ->sortByDesc(fn ($lm) => $lm['pa'])
+            ->values()
+            ->mapWithKeys(fn ($m, $i) => [$m['id'] => $i + 1]);
+
+        return $this->members->map(function ($member) use ($pf, $pa) {
+            $pfRank = $pf->get($member->id);
+            $paRank = $pa->get($member->id);
+
             return [
-                'id'             => $member->id,
-                'league_id'      => $member->league_id,
-                'user_id'        => $member->user_id,
-                'external_id'    => $member->external_id,
-                'team_name'      => $member->team_name,
-                'owner_name'     => $member->owner_name,
-                'team_logo'      => $member->team_logo,
-                'is_admin'       => $member->is_admin,
-                'is_active'      => $member->is_active,
-                'wins'           => $member->wins,
-                'losses'         => $member->losses,
-                'ties'           => $member->ties,
-                'points_for'     => $member->points_for,
-                'points_against' => $member->points_against,
-                'faab_balance'   => $member->faab_balance,
-                'rosters'        => $this->formatRosters($member->rosters),
+                'id'                  => $member->id,
+                'league_id'           => $member->league_id,
+                'user_id'             => $member->user_id,
+                'external_id'         => $member->external_id,
+                'team_name'           => $member->team_name,
+                'owner_name'          => $member->owner_name,
+                'team_logo'           => $member->team_logo,
+                'is_admin'            => $member->is_admin,
+                'is_active'           => $member->is_active,
+                'wins'                => $member->wins,
+                'losses'              => $member->losses,
+                'ties'                => $member->ties,
+                'points_for'          => $member->points_for,
+                'points_for_rank'     => $this->rankName($pfRank),
+                'points_against'      => $member->points_against,
+                'points_against_rank' => $this->rankName($paRank),
+                'faab_balance'        => $member->faab_balance,
+                'rosters'             => $this->formatRosters($member->rosters),
             ];
         });
+    }
+
+    private function rankName(int|string $rank)
+    {
+        return match ($rank) {
+            1 => '1st',
+            2 => '2nd',
+            3 => '3rd',
+            default => $rank . 'th',
+        };
     }
 
     private function getDraft()
@@ -136,7 +171,7 @@ class LeagueShowResource extends JsonResource
                 'fantasy_points'        => $roster->fantasy_points,
                 'nfl_game'              => $this->formatNflGame($roster->nflGame),
                 'player'                => $this->formatPlayer($roster->player),
-                'player_projection'     => $this->formatPlayerProjection($roster->playerProjection),
+                'player_projection'     => $this->getPlayerProjection($roster->player, $roster->week),
             ];
 
             $points = Arr::get($data, 'fantasy_points', 0);
@@ -176,9 +211,12 @@ class LeagueShowResource extends JsonResource
         ];
     }
 
-    private function formatPlayerProjection(?PlayerProjection $playerProjection)
+    private function getPlayerProjection(Player $player, int $week)
     {
-        if (!$playerProjection) {
+        $projections = $this->playerProjections->get($player->id);
+        $playerProjection = $projections?->get($week);
+
+        if (! $playerProjection) {
             return [];
         }
 
@@ -191,7 +229,7 @@ class LeagueShowResource extends JsonResource
             'espn_points' => $playerProjection->espn_projected_points,
         ];
 
-        if ($this->league->settings->two_qb) {
+        if ($this->settings->two_qb) {
             $data['fp_points']       = $playerProjection->fp_2qb_projected_points;
             $data['fp_pos_rank']     = $playerProjection->fp_2qb_pos_rank;
             $data['fp_pos_rank_min'] = $playerProjection->fp_2qb_pos_rank_min;
@@ -199,7 +237,7 @@ class LeagueShowResource extends JsonResource
             $data['fp_pos_rank_avg'] = $playerProjection->fp_2qb_pos_rank_avg;
             $data['fp_pos_rank_std'] = $playerProjection->fp_2qb_pos_rank_std;
 
-        } else if ($this->league->settings->ppr === 'ppr') {
+        } else if ($this->settings->ppr === 'ppr') {
             $data['fp_points']       = $playerProjection->fp_ppr_projected_points;
             $data['fp_pos_rank']     = $playerProjection->fp_ppr_pos_rank;
             $data['fp_pos_rank_min'] = $playerProjection->fp_ppr_pos_rank_min;
@@ -207,7 +245,7 @@ class LeagueShowResource extends JsonResource
             $data['fp_pos_rank_avg'] = $playerProjection->fp_ppr_pos_rank_avg;
             $data['fp_pos_rank_std'] = $playerProjection->fp_ppr_pos_rank_std;
 
-        } else if ($this->league->settings->ppr === 'half-ppr') {
+        } else if ($this->settings->ppr === 'half-ppr') {
             $data['fp_points']       = $playerProjection->fp_half_projected_points;
             $data['fp_pos_rank']     = $playerProjection->fp_half_pos_rank;
             $data['fp_pos_rank_min'] = $playerProjection->fp_half_pos_rank_min;
@@ -250,14 +288,14 @@ class LeagueShowResource extends JsonResource
             return [];
         }
 
-        $gameTime = Carbon::parse($game->start_time);
+        $gameTime = Carbon::parse($game->starts_at);
 
         return [
             'id'           => $game->id,
             'espn_id'      => $game->espn_id,
             'year'         => $game->year,
             'week'         => $game->week,
-            'start_time'   => $game->start_time,
+            'starts_at'   => $game->starts_at,
             'day'          => $gameTime->format('D'),
             'time'         => $gameTime->format('g:i'),
             'home_score'   => $game->home_score,

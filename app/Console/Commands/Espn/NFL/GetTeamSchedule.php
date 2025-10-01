@@ -36,10 +36,11 @@ class GetTeamSchedule extends Command
         $year = $this->argument('year') ?? select('Which year to pull', [2025, 2024]);
 
         if ($this->option('all')) {
-            Team::all()->each(function ($team) use ($year) {
-                $this->getSchedule($team->espn_id, $year);
-            });
-            return;
+            Team::noFA()->get()->each(
+                fn (Team $team) => $this->getSchedule($team->espn_id, $year)
+            );
+
+            return Command::SUCCESS;
         }
 
         $teamId = $this->argument('espn_team_id');
@@ -47,7 +48,7 @@ class GetTeamSchedule extends Command
         if ($teamId) {
             $this->getSchedule($teamId, $year);
         } else {
-            $teamId = select('Which team to pull', Team::all()->pluck('name', 'espn_id')->toArray());
+            $teamId = select('Which team to pull', Team::noFA()->get()->pluck('name', 'espn_id')->toArray());
             $this->getSchedule($teamId, $year);
         }
 

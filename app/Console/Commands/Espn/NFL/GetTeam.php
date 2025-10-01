@@ -3,8 +3,8 @@
 namespace App\Console\Commands\Espn\NFL;
 
 use App\Facades\Espn;
+use App\Models\Team;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 
 class GetTeam extends Command
 {
@@ -32,9 +32,9 @@ class GetTeam extends Command
 
     {
         if ($this->option('all')) {
-            Team::all()->each(function ($team) {
-                $this->getTeam($team->espn_id);
-            });
+            Team::noFA()->get()->each(
+                fn (Team $team) => $this->getTeam($team->espn_id)
+            );
 
             return Command::SUCCESS;
         }

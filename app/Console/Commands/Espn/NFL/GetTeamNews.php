@@ -31,9 +31,9 @@ class GetTeamNews extends Command
     public function handle()
     {
         if ($this->option('all')) {
-            Team::all()->each(function ($team) {
-                $this->getTeamNews($team->espn_id);
-            });
+            Team::noFA()->get()->each(
+                fn (Team $team) => $this->getTeamNews($team->espn_id)
+            );
 
             return Command::SUCCESS;
         }

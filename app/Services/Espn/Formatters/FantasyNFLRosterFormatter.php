@@ -4,21 +4,46 @@ namespace App\Services\Espn\Formatters;
 
 use App\Models\Player;
 use App\Models\NflGame;
-use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
-use App\Services\Espn\Data\FantasyNFL\TeamRosterEntryData;
 use App\Services\Espn\Data\FantasyNFL\PlayerStatsData;
+use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
+use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
+use App\Services\Espn\Data\FantasyNFL\TeamRosterData;
+use App\Services\Espn\Data\FantasyNFL\TeamRosterEntryData;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class FantasyNFLRosterFormatter
 {
-    public static function fromLeague(ResourceLeagueData $leagueData, int $season, int $week)
+    protected array $nflGameIds = [];
+
+    public function __construct(
+        protected ResourceLeagueData $leagueData,
+        protected int $season,
+        protected int $week
+    ) {
+        $this->nflGameIds = NflGame::select(['id', 'espn_id'])
+            ->forYear($season)
+            ->forWeek($week)
+            ->get()
+            ->mapWithKeys(fn ($g) => [$g->espn_id => $g->id])
+            ->toArray();
+    }
+
+    public function getFormattedRoster()
     {
-        return $leagueData->teams->map(
-            fn (TeamRosterEntryData $team) => self::formatRosterEntry($team, $season, $week)
+        return $this->leagueData->teams->map(
+            fn (ResourceTeamsData $team) => $this->formatTeamRoster($team)
         )->filter();
     }
 
-    public static function formatRosterEntry(TeamRosterEntryData $entry, int $season, int $week)
+    public function formatTeamRoster(ResourceTeamsData $team)
+    {
+        return $team->roster->entries->map(
+            fn (TeamRosterEntryData $entry) => $this->formatRosterEntry($entry)
+        )->filter();
+    }
+
+    public function formatRosterEntry(TeamRosterEntryData $entry)
     {
         $player = $entry->playerPoolEntry->player;
         $ratings = $entry->playerPoolEntry->ratings;
@@ -28,8 +53,7 @@ class FantasyNFLRosterFormatter
 
         if ($playerId < 0) {
             // ESPN uses negative numbers for DSTs.
-            $playerId += 16000;
-            $playerId = abs($playerId);
+            $playerId = abs($playerId + 16000);
         }
 
         $playerModel = Player::espnId($playerId)->first();
@@ -44,17 +68,13 @@ class FantasyNFLRosterFormatter
             return null;
         }
 
-        $nflGame = NflGame::forTeam($playerModel->team_id)
-            ->forYear($season)
-            ->forWeek($week)
-            ->first();
-
         $data = [
             'player_id'             => $playerModel->id,
-            'nfl_game_id'           => $nflGame?->id,
-            'season'                => $season,
-            'week'                  => $week,
+            'nfl_game_id'           => null,
+            'season'                => $this->season,
+            'week'                  => $this->week,
             'fantasy_points'        => 0,
+            'espn_projected_points' => 0,
             'lineup_slot_id'        => $entry->lineupSlotId,
             'position_rank'         => $ratings->first()->positionalRanking,
             'overall_rank'          => $ratings->first()->totalRanking,
@@ -64,27 +84,30 @@ class FantasyNFLRosterFormatter
         ];
 
         foreach ($stats as $stat) {
-            $data = self::processStat($stat, $data);
+            $data = $this->processStat($stat, $data);
         }
 
         return $data;
     }
 
-    public static function processStat(PlayerStatsData $stat, array $data = [])
+    public function processStat(PlayerStatsData $stat, array $data = [])
     {
-        $season = Arr::get($stat, 'season');
-        $week = Arr::get($stat, 'week');
-
         $gameId = intval($stat->externalId);
-        $statWeek = intval($stat->scoringPeriodId);
+        $season = intval($stat->seasonId);
+        $week   = intval($stat->scoringPeriodId);
         $points = floatVal($stat->appliedTotal);
 
-        $isWeek = $week == $statWeek;
+        $isWeek = $week == $this->week;
         $isProjection = $stat->statSourceId === 1;
         $projectionKey = $season . $week;
 
         if ($isWeek && $gameId == $projectionKey && $isProjection) {
             $data['espn_projected_points'] = $points;
+        }
+
+        if ($isWeek && isset($this->nflGameIds[$gameId])) {
+            $data['fantasy_points'] = $points;
+            $data['nfl_game_id'] = $this->nflGameIds[$gameId];
         }
 
         return $data;
