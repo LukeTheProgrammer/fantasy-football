@@ -3,7 +3,6 @@
 namespace App\Services\Imports\Importers;
 
 use App\Models\League;
-use App\Models\User;
 use App\Services\Imports\Drivers\FantasyNFL\BaseFantasyNFLDriver;
 use Illuminate\Support\Collection;
 
@@ -19,9 +18,9 @@ class FantasyNFLImporter
         $this->driver->setConfig($config);
     }
 
-    public function importLeague(?User $creator = null, ?array $credentials = []): League
+    public function importLeague(array $leagueData = []): League
     {
-        return $this->driver->importLeague($creator, $credentials);
+        return $this->driver->importLeague($leagueData);
     }
 
     public function importRosters(League $league, int $year): League

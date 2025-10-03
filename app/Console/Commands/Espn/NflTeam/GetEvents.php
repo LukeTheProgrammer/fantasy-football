@@ -32,7 +32,7 @@ class GetEvents extends Command
     {
         if ($this->option('all')) {
             Team::noFA()->get()->each(
-                fn (Team $team) => $this->getEvents($team->espn_id)
+                fn (Team $team) => $this->getEvents($team)
             );
 
             return Command::SUCCESS;
@@ -41,19 +41,27 @@ class GetEvents extends Command
         $teamId = $this->argument('espn_team_id');
 
         if ($teamId) {
-            $this->getEvents($teamId);
+            $team = Team::forEspnId($teamId)->first();
+
+            if (! $team instanceof Team) {
+                $this->error("Team not found: $teamId");
+
+                return Command::FAILURE;
+            }
+
+            $this->getEvents($team);
 
             return Command::SUCCESS;
         }
     }
 
-    public function getEvents(int $teamId)
+    public function getEvents(Team $team)
     {
-        $nfl = Espn::nflTeam($teamId);
+        $nfl = Espn::nflTeam();
 
-        $events = $nfl->getEvents();
+        $events = $nfl->getEvents($team);
 
-        $path = storage_path('data/espn/nfl-teams/events/' . $teamId . '.json');
+        $path = storage_path('data/espn/nfl-teams/events/' . $team->espn_id . '.json');
 
         $bytes = file_put_contents($path, json_encode($events, JSON_PRETTY_PRINT));
 

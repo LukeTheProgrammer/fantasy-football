@@ -2,35 +2,16 @@
 
 namespace App\Services\Espn\Resources;
 
-use App\Services\Espn\Enums\Apis;
-use App\Services\Espn\Enums\ApiVersions;
-use App\Services\Espn\Enums\Leagues;
-use App\Services\Espn\Enums\Sports;
-use App\Services\Espn\Data\NFL\ResourceTeamScheduleData;
+use App\Services\Espn\Resources\NFL\GetEventSummary;
+use App\Services\Espn\Resources\NFL\GetLeaders;
+use App\Services\Espn\Resources\NFL\GetRoster;
+use App\Services\Espn\Resources\NFL\GetScoreboard;
+use App\Services\Espn\Resources\NFL\GetTeam;
+use App\Services\Espn\Resources\NFL\GetTeamNews;
+use App\Services\Espn\Resources\NFL\GetTeamSchedule;
 
-/**
- * News (Team Specific)	    site.api.espn.com/apis/site/v2/sports/football/nfl/news
- * Scoreboard (Site API)	site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard
- * Standings (Site API)	    site.api.espn.com/apis/site/v2/sports/football/nfl/standings
- * Game Summary (Site API)	site.api.espn.com/apis/site/v2/sports/football/nfl/summary
- * List Teams (Site API)	site.api.espn.com/apis/site/v2/sports/football/nfl/teams
- * Get Team (Site API)	    site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}
- * Team Roster (Site API)	site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}/roster
- * Team Schedule (Site API)	site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}/schedule
- * Leaders (Site API v3)	site.api.espn.com/apis/site/v3/sports/football/nfl/leaders
- */
-class NFL extends BaseResource
+class NFL extends BaseResourceCollection
 {
-    public ?ApiVersions $apiVersion = ApiVersions::V2;
-    public ?Apis $api = Apis::SITE;
-    public ?Leagues $league = Leagues::NFL;
-    public ?Sports $sport = Sports::FOOTBALL;
-
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * News
      *
@@ -40,13 +21,15 @@ class NFL extends BaseResource
      */
     public function getTeamNews(int|string|null $teamId = null)
     {
-        $url = $this->buildUrl('news');
+        $resource = new GetTeamNews($teamId);
 
-        $response = $this->get($url, $this->query([
-            'team' => $teamId,
-        ]));
+        $resource->teamId = $teamId;
 
-        return $response->json();
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
+
+        return $resource->fetch();
     }
 
     /**
@@ -58,11 +41,13 @@ class NFL extends BaseResource
      */
     public function getScoreboard()
     {
-        $url = $this->buildUrl('scoreboard');
+        $resource = new GetScoreboard();
 
-        $response = $this->get($url, $this->query());
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
 
-        return $response->json();
+        return $resource->fetch();
     }
 
     /**
@@ -74,13 +59,15 @@ class NFL extends BaseResource
      */
     public function getEventSummary(int|string $eventId)
     {
-        $url = $this->buildUrl('summary');
+        $resource = new GetEventSummary();
 
-        $response = $this->get($url, $this->query([
-            'event' => $eventId,
-        ]));
+        $resource->eventId = $eventId;
 
-        return $response->json();
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
+
+        return $resource->fetch();
     }
 
     /**
@@ -90,45 +77,37 @@ class NFL extends BaseResource
      *
      * @return mixed
      */
-    public function getTeams()
+    public function getTeam(int|string|null $teamId = null)
     {
-        $url = $this->buildUrl('teams');
+        $resource = new GetTeam();
 
-        $response = $this->get($url, $this->query());
+        $resource->teamId = $teamId;
 
-        return $response->json();
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
+
+        return $resource->fetch();
     }
 
     /**
-     * Get Team
-     *
-     * site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}
-     *
-     * @return mixed
-     */
-    public function getTeam(int $teamId)
-    {
-        $url = $this->buildUrl('teams/' . $teamId);
-
-        $response = $this->get($url, $this->query());
-
-        return $response->json();
-    }
-
-    /**
-     * Team Roster
+     * Roster
      *
      * site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}/roster
      *
      * @return mixed
      */
-    public function getTeamRoster(int $teamId)
+    public function getRoster(int|string $teamId)
     {
-        $url = $this->buildUrl('teams/' . $teamId . '/roster');
+        $resource = new GetRoster();
 
-        $response = $this->get($url, $this->query());
+        $resource->teamId = $teamId;
 
-        return $response->json();
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
+
+        return $resource->fetch();
     }
 
     /**
@@ -138,20 +117,18 @@ class NFL extends BaseResource
      *
      * @return mixed
      */
-    public function getTeamSchedule(int $teamId, ?int $year = null)
+    public function getTeamSchedule(int|string $teamId, int $year)
     {
-        $url = $this->buildUrl('teams/' . $teamId . '/schedule');
+        $resource = new GetTeamSchedule();
 
-        $q = array_filter([
-            'season' => $year,
-            'seasonType' => ($year) ? '2' : null,
-        ]);
+        $resource->teamId = $teamId;
+        $resource->year = $year;
 
-        $response = $this->get($url, $this->query($q));
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
 
-        return $this->returnRaw
-            ? $response->json()
-            : ResourceTeamScheduleData::from($response->json());
+        return $resource->fetch();
     }
 
     /**
@@ -163,32 +140,13 @@ class NFL extends BaseResource
      */
     public function getLeaders()
     {
-        $url = $this->buildUrl('leaders', ApiVersions::V3->value);
+        $resource = new GetLeaders();
 
-        $response = $this->get($url, $this->query());
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
 
-        return $response->json();
+        return $resource->fetch();
     }
 
-
-    /**
-     * Constructs URL string.
-     *
-     * @param string|null $path
-     * @param string|null $version
-     *
-     * @return string
-     */
-    private function buildUrl(?string $path = null, ?string $version = null): string
-    {
-        $v = $version ?? $this->apiVersion->value;
-
-        return $this->assembleUrl([
-            'http://' . $this->api->value,
-            'apis/site/' . $v,
-            'sports/' . $this->sport->value,
-            $this->league->value,
-            $path,
-        ]);
-    }
 }

@@ -63,6 +63,6 @@ class GetNFLRosters extends Command
 
     private function getRoster(NFLTeams $team, int $year): array
     {
-        return Espn::nflTeam($team->value)->getRoster($team);
+        return Espn::nflTeam()->getRoster($team);
     }
 }

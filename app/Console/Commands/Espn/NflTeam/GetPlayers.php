@@ -33,10 +33,12 @@ class GetPlayers extends Command
      */
     public function handle()
     {
+        $this->nfl = Espn::nflTeam();
+
         if ($this->option('all')) {
             Team::noFA()->get()->each(function ($team) {
                 $this->info("Getting NFL Team Players for team $team->espn_id");
-                $this->getPlayers($team->espn_id);
+                $this->getPlayers($team);
             });
 
             return Command::SUCCESS;
@@ -45,28 +47,33 @@ class GetPlayers extends Command
         $teamId = $this->argument('espn_team_id');
 
         if ($teamId) {
+            $team = Team::forEspnId($teamId)->first();
+
+            if (! $team instanceof Team) {
+                $this->error("Team not found: $teamId");
+
+                return Command::FAILURE;
+            }
+
             $this->info("Getting NFL Team Players for team $teamId");
-            $this->getPlayers($teamId);
+            $this->getPlayers($team);
 
             return Command::SUCCESS;
         }
-
     }
 
-    protected function getPlayers(int $teamId, int $page = 1)
+    protected function getPlayers(Team $team, int $page = 1)
     {
-        $this->nfl = Espn::nflTeam($teamId);
+        $players = $this->nfl->getPlayers($team, $page);
 
-        $players = $this->nfl->getPlayers($page);
-
-        $path = storage_path('data/espn/nfl-teams/players/' . $this->nfl->teamId . '-page-' . $page . '.json');
+        $path = storage_path('data/espn/nfl-teams/players/' . $team->espn_id . '-page-' . $page . '.json');
 
         $bytes = file_put_contents($path, json_encode($players, JSON_PRETTY_PRINT));
 
         $this->info("NFL Team Players saved to $path ($bytes bytes)");
 
         if ($players['pageCount'] > $page) {
-            $this->getPlayers($teamId, $page + 1);
+            $this->getPlayers($team, $page + 1);
         }
     }
 }

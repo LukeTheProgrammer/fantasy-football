@@ -24,6 +24,9 @@ class ImportService
             'fantasy_nfl' => [
                 FantasyPlatforms::ESPN->value => EspnDriver::class,
             ],
+            'nfl' => [
+                FantasyPlatforms::ESPN->value => EspnDriver::class,
+            ],
             'projections' => [
                 DataSources::FANTASY_PROS->value => FantasyProsProjectionsDriver::class,
             ],

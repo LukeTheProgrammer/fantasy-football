@@ -3,9 +3,6 @@
 namespace App\Services\Imports\Drivers\FantasyNFL;
 
 use App\Models\League;
-use App\Models\User;
-use App\Services\Espn\Data\FantasyNFL\CredentialsData;
-
 use Illuminate\Support\Collection;
 
 class EspnDriver extends BaseFantasyNFLDriver
@@ -19,12 +16,9 @@ class EspnDriver extends BaseFantasyNFLDriver
         });
     }
 
-    public function importLeague(User $creator, array|CredentialsData $credentials): League
+    public function importLeague(array $leagueData = []): League
     {
-        $importer = new EspnLeagueDriver(
-            $creator,
-            $credentials,
-        );
+        $importer = new EspnLeagueDriver($leagueData);
 
         return $importer->import();
     }

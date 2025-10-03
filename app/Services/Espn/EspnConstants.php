@@ -3,10 +3,46 @@
 namespace App\Services\Espn;
 
 use App\Enums\NFLPositions;
+use App\Enums\NFLTeams;
 use Illuminate\Support\Arr;
 
 class EspnConstants
 {
+    public const TEAM_ID_MAP = [
+        NFLTeams::ARI => '22',
+        NFLTeams::ATL => '1',
+        NFLTeams::BAL => '33',
+        NFLTeams::BUF => '2',
+        NFLTeams::CAR => '29',
+        NFLTeams::CHI => '3',
+        NFLTeams::CIN => '4',
+        NFLTeams::CLE => '5',
+        NFLTeams::DAL => '6',
+        NFLTeams::DEN => '7',
+        NFLTeams::DET => '8',
+        NFLTeams::GB  => '9',
+        NFLTeams::HOU => '34',
+        NFLTeams::IND => '11',
+        NFLTeams::JAX => '30',
+        NFLTeams::KC  => '12',
+        NFLTeams::LAC => '24',
+        NFLTeams::LAR => '14',
+        NFLTeams::LV  => '13',
+        NFLTeams::MIA => '15',
+        NFLTeams::MIN => '16',
+        NFLTeams::NE  => '17',
+        NFLTeams::NO  => '18',
+        NFLTeams::NYG => '19',
+        NFLTeams::NYJ => '20',
+        NFLTeams::PHI => '21',
+        NFLTeams::PIT => '23',
+        NFLTeams::SEA => '26',
+        NFLTeams::SF  => '25',
+        NFLTeams::TB  => '27',
+        NFLTeams::TEN => '10',
+        NFLTeams::WSH => '28',
+    ];
+
     public const POSITION_MAP = [
         'QB'  => NFLPositions::QB,
         'RB'  => NFLPositions::RB,

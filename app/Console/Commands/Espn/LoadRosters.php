@@ -70,7 +70,7 @@ class LoadRosters extends Command
 
     private function loadRoster(Team $team, int $year)
     {
-        $roster = Espn::nflTeam($team)->getRoster($team->id);
+        $roster = Espn::nflTeam()->getRoster($team);
 
         foreach ($roster as $player) {
             $playerModel = Player::espnId($player['id'])->first();

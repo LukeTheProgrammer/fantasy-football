@@ -3,238 +3,37 @@
 namespace App\Services\Espn\Resources;
 
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
-use App\Services\Espn\Enums\Apis;
-use App\Services\Espn\Enums\ApiVersions;
-use App\Services\Espn\Enums\ApiYears;
-use App\Services\Espn\Enums\FantasyNFLViews;
-use App\Services\Espn\Enums\Games;
-use App\Services\Espn\Enums\Leagues;
-use App\Services\Espn\Enums\Sports;
-use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
+use App\Services\Espn\Resources\FantasyNFL\GetLeague;
+use App\Services\Espn\Resources\FantasyNFL\GetRoster;
+use Illuminate\Support\Arr;
 
-class FantasyNFL extends BaseResource
+class FantasyNFL extends BaseResourceCollection
 {
-    public ?ApiVersions $apiVersion = ApiVersions::V3;
-    public ?ApiYears $apiYear = ApiYears::Y_2025;
-    public ?Apis $api = Apis::LM_READS;
-    public ?Games $game = Games::FANTASY_FOOTBALL;
-    public ?Leagues $league = Leagues::NFL;
-    public ?Sports $sport = Sports::FOOTBALL;
-
-    public int $leagueId;
-
-    public function __construct(public array|CredentialsData $credentials)
+    public function getLeague(array|CredentialsData $credentials)
     {
-        if (! $credentials instanceof CredentialsData) {
-            $this->credentials = CredentialsData::from($credentials);
+        $resource = new GetLeague($credentials);
+
+        if ($this->forcePull) {
+            $resource->forcePull();
         }
 
-        $this->leagueId = $this->credentials->leagueId;
-
-        $this->cookies = [
-            'espn_s2' => $this->credentials->s2,
-            'SWID'    => $this->credentials->swid,
-        ];
+        return $resource->fetch();
     }
 
-    public function getData(array $views = [], ?int $teamId = null)
+    public function getRoster(array|CredentialsData $credentials, array $opts = [])
     {
-        $url = $this->buildUrl($views, $teamId);
+        $resource = new GetRoster($credentials);
 
-        $response = $this->get($url, null, $this->cookies);
+        $resource->setOpts(
+            Arr::get($opts, 'teamId'),
+            Arr::get($opts, 'week'),
+            Arr::get($opts, 'year'),
+        );
 
-        return $response->json();
-    }
-
-    public function getLeague(?int $teamId = null)
-    {
-        $url = $this->buildUrl([], $teamId);
-
-        $response = $this->get($url, null, $this->cookies);
-
-        return $this->returnRaw
-            ? $response->json()
-            : ResourceLeagueData::from($response->json());
-    }
-
-    public function getMatchup(?int $teamId = null)
-    {
-        $views = [
-            FantasyNFLViews::MATCHUP,
-            FantasyNFLViews::MATCHUP_SCORE,
-            FantasyNFLViews::TEAM,
-            FantasyNFLViews::MODULAR,
-            FantasyNFLViews::NAV,
-        ];
-
-        $url = $this->buildUrl($views, $teamId);
-
-        $response = $this->get($url, null, $this->cookies);
-
-        return $this->returnRaw
-            ? $response->json()
-            : ResourceLeagueData::from($response->json());
-    }
-
-    public function getRosters(?int $teamId = null, ?int $week = null, ?int $year = null)
-    {
-        $views = [
-            FantasyNFLViews::ROSTER,
-            FantasyNFLViews::TEAM,
-            FantasyNFLViews::MODULAR,
-            FantasyNFLViews::NAV,
-        ];
-
-        $url = $this->buildUrl($views, $teamId);
-
-        $response = $this->get($url, null, $this->cookies);
-
-        return $this->returnRaw
-            ? $response->json()
-            : ResourceLeagueData::from($response->json());
-    }
-
-    /**
-     * Slightly more specific than getRosters to target better scoring data.
-     */
-    public function getRostersForTeam(int $teamId, ?int $week = null, ?int $year = null)
-    {
-        $fp = $this->getCahceFilePath('ffl', 'getRostersForTeam', [
-            $this->leagueId,
-            $teamId,
-            $year,
-            $week,
-            $this->returnRaw ? 'raw' : 'formatted',
-        ]);
-
-        if ($cache = $this->getCache($fp)) {
-            return $this->returnRaw ? $cache : ResourceLeagueData::from($cache);
+        if ($this->forcePull) {
+            $resource->forcePull();
         }
 
-        $views = [
-            FantasyNFLViews::ROSTER,
-        ];
-
-        $url = $this->buildUrl($views, null, $year);
-
-        $url .= '&forTeamId=' . $teamId;
-        $url .= '&scoringPeriodId=' . $week;
-
-        $response = $this->get($url, null, $this->cookies);
-
-        $data = $this->returnRaw
-            ? $response->json()
-            : ResourceLeagueData::from($response->json());
-
-        $this->setCache($fp, $this->returnRaw ? $data : $data->toArray());
-
-        return $data;
-    }
-
-    public function getSettings(?int $teamId = null)
-    {
-        $views = [
-            FantasyNFLViews::SETTINGS,
-            FantasyNFLViews::TEAM,
-            FantasyNFLViews::MODULAR,
-            FantasyNFLViews::NAV,
-        ];
-
-        $url = $this->buildUrl($views, $teamId);
-
-        $response = $this->get($url, null, $this->cookies);
-
-        return $this->returnRaw
-            ? $response->json()
-            : ResourceLeagueData::from($response->json());
-    }
-
-    public function getStandings(?int $teamId = null)
-    {
-        $views = [
-            FantasyNFLViews::STANDINGS,
-            FantasyNFLViews::TEAM,
-            FantasyNFLViews::MODULAR,
-            FantasyNFLViews::NAV,
-        ];
-
-        $url = $this->buildUrl($views, $teamId);
-
-        $response = $this->get($url, null, $this->cookies);
-
-        return $this->returnRaw
-            ? $response->json()
-            : ResourceLeagueData::from($response->json());
-    }
-
-    public function getTeams(?int $teamId = null)
-    {
-        $views = [
-            FantasyNFLViews::TEAM,
-            FantasyNFLViews::MODULAR,
-            FantasyNFLViews::NAV,
-        ];
-
-        $url = $this->buildUrl($views, $teamId);
-
-        $response = $this->get($url, null, $this->cookies);
-
-        return $this->returnRaw
-            ? $response->json()
-            : ResourceLeagueData::from($response->json());
-    }
-
-    public function getDraftRecap(?int $teamId = null)
-    {
-        $views = [
-            FantasyNFLViews::DRAFT,
-            FantasyNFLViews::SETTINGS,
-            FantasyNFLViews::TEAM,
-            FantasyNFLViews::MODULAR,
-            FantasyNFLViews::NAV,
-        ];
-
-        $url = $this->buildUrl($views, $teamId);
-
-        $response = $this->get($url, null, $this->cookies);
-
-        return $response->json();
-    }
-
-    private function buildUrl(array $views = [], ?int $teamId = null, ?int $year = null): string
-    {
-        $season = $year ?? $this->apiYear->value;
-
-        // https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2025/segments/0/leagues/691509
-        $url = $this->assembleUrl([
-            'https://' . $this->api->value,
-            'apis/' . $this->apiVersion->value,
-            'games/' . $this->game->value,
-            'seasons/' . $season,
-            'segments/0/leagues/' . $this->leagueId,
-        ]);
-
-        $query = $this->buildViewsQuery($views);
-
-        if ($teamId) {
-            $query .= '&rosterForTeamId=' . $teamId;
-        }
-
-        return $url . $query;
-    }
-
-    private function buildViewsQuery(array $views = [])
-    {
-        $views = empty($views) ? FantasyNFLViews::cases() : $views;
-
-        $mapped = array_map(function ($view) {
-            $viewName = ($view instanceof FantasyNFLViews)
-                ? $view
-                : FantasyNFLViews::tryFrom($view);
-
-            return ($viewName) ? 'view=' . $viewName->value : null;
-        }, $views);
-
-        return '?' . implode('&', array_filter($mapped));
+        return $resource->fetch();
     }
 }

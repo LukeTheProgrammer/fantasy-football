@@ -32,7 +32,7 @@ class GetDepthChart extends Command
     {
         if ($this->option('all')) {
             Team::noFA()->get()->each(
-                fn (Team $team) => $this->getDepthChart($team->espn_id)
+                fn (Team $team) => $this->getDepthChart($team)
             );
 
             return Command::SUCCESS;
@@ -41,19 +41,27 @@ class GetDepthChart extends Command
         $teamId = $this->argument('espn_team_id');
 
         if ($teamId) {
-            $this->getDepthChart($teamId);
+            $team = Team::forEspnId($teamId)->first();
+
+            if (! $team instanceof Team) {
+                $this->error("Team not found: $teamId");
+
+                return Command::FAILURE;
+            }
+
+            $this->getDepthChart($team);
 
             return Command::SUCCESS;
         }
     }
 
-    public function getDepthChart(int $teamId)
+    public function getDepthChart(Team $team)
     {
-        $nfl = Espn::nflTeam($teamId);
+        $nfl = Espn::nflTeam();
 
-        $depthChart = $nfl->getDepthChart();
+        $depthChart = $nfl->getDepthChart($team);
 
-        $path = storage_path('data/espn/nfl-teams/depth-charts/' . $teamId . '.json');
+        $path = storage_path('data/espn/nfl-teams/depth-charts/' . $team->espn_id . '.json');
 
         $bytes = file_put_contents($path, json_encode($depthChart, JSON_PRETTY_PRINT));
 

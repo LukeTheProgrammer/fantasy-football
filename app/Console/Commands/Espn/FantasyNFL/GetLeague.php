@@ -38,12 +38,8 @@ class GetLeague extends Command
             'swid' => $this->option('swid') ?? config('services.espn.default_swid'),
         ]);
 
-        $league = $fantasyNFL->getLeague();
+        $fantasyNFL->getLeague();
 
-        $path = storage_path('data/espn/ffl/' . $leagueId . '-league.json');
-
-        $bytes = file_put_contents($path, json_encode($league, JSON_PRETTY_PRINT));
-
-        $this->info(PHP_EOL . "NFL Fantasy League saved to $path ($bytes bytes)" . PHP_EOL);
+        $this->info('NFL Fantasy League [' . $leagueId . '] pulled and saved');
     }
 }

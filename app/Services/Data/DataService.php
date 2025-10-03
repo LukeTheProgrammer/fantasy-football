@@ -41,4 +41,25 @@ class DataService
 
         return new $sourceClass($args);
     }
+
+    public function espn(...$args)
+    {
+        $sourceClass = $this->sources(DataSources::ESPN->value);
+
+        return new $sourceClass($args);
+    }
+
+    public function fantasyPros(...$args)
+    {
+        $sourceClass = $this->sources(DataSources::FANTASY_PROS->value);
+
+        return new $sourceClass($args);
+    }
+
+    public function pfr(...$args)
+    {
+        $sourceClass = $this->sources(DataSources::PFR->value);
+
+        return new $sourceClass($args);
+    }
 }

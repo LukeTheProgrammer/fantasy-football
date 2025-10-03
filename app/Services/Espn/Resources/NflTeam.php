@@ -3,90 +3,69 @@
 namespace App\Services\Espn\Resources;
 
 use App\Enums\NFLTeams;
-use App\Services\Espn\Enums\Apis;
-use App\Services\Espn\Enums\ApiVersions;
-use App\Services\Espn\Enums\ApiYears;
-use App\Services\Espn\Enums\Games;
-use App\Services\Espn\Enums\Leagues;
-use App\Services\Espn\Enums\Sports;
-use App\Services\Espn\Scrapers\NFLRosters;
+use App\Models\Team;
+use App\Services\Espn\Resources\NFLTeam\GetDepthChart;
+use App\Services\Espn\Resources\NFLTeam\GetEvents;
+use App\Services\Espn\Resources\NFLTeam\GetPlayers;
+use App\Services\Espn\Resources\NFLTeam\GetRoster;
+use App\Services\Espn\Resources\NFLTeam\GetTeam;
 
-class NflTeam extends BaseResource
+class NflTeam extends BaseResourceCollection
 {
-    public ?ApiVersions $apiVersion = ApiVersions::V2;
-    public ?ApiYears $apiYear = ApiYears::Y_2025;
-    public ?Apis $api = Apis::SPORTS_CORE;
-    public ?Games $game = Games::FANTASY_FOOTBALL;
-    public ?Leagues $league = Leagues::NFL;
-    public ?Sports $sport = Sports::FOOTBALL;
-
-    public function __construct(public int|string $teamId)
+    public function getTeam(Team|NFLTeams|string $team)
     {
-        //
+        $resource = new GetTeam($team);
+
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
+
+        return $resource->fetch();
     }
 
-    public function buildUrl(?string $path = null, array $params = [])
+    public function getPlayers(Team|NFLTeams|string $team, int $page = 1)
     {
-        $scheme = $params['scheme'] ?? 'http';
-        $version = $params['version'] ?? $this->apiVersion->value;
-        $season = $params['year'] ?? $this->apiYear->value;
+        $resource = new GetPlayers($team);
 
-        // http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/teams
-        return $this->assembleUrl([
-            $scheme . '://' . $this->api->value,
-            $version,
-            'sports/' . $this->sport->value,
-            'leagues/' . $this->league->value,
-            'seasons/' . $season,
-            'teams/' . $this->teamId,
-            $path,
-        ]);
+        $resource->page = $page;
+
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
+
+        return $resource->fetch();
     }
 
-    public function getTeam()
+    public function getDepthChart(Team|NFLTeams|string $team)
     {
-        // /teams/1
-        $url = $this->buildUrl();
+        $resource = new GetDepthChart($team);
 
-        $response = $this->get($url, $this->query());
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
 
-        return $response->json();
+        return $resource->fetch();
     }
 
-    public function getPlayers(int $page = 1)
+    public function getEvents(Team|NFLTeams|string $team)
     {
-        // /teams/1/athletes
-        $url = $this->buildUrl('athletes');
+        $resource = new GetEvents($team);
 
-        $response = $this->get($url, $this->query(['page' => $page]));
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
 
-        return $response->json();
+        return $resource->fetch();
     }
 
-    public function getDepthChart()
+    public function getRoster(Team|NFLTeams|string $team)
     {
-        // /teams/1/depthcharts
-        $url = $this->buildUrl('depthcharts');
+        $resource = new GetRoster($team);
 
-        $response = $this->get($url, $this->query());
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
 
-        return $response->json();
-    }
-
-    public function getEvents()
-    {
-        // /teams/1/events
-        $url = $this->buildUrl('events');
-
-        $response = $this->get($url, $this->query());
-
-        return $response->json();
-    }
-
-    public function getRoster(string|NFLTeams $team)
-    {
-        $scraper = new NFLRosters();
-
-        return $scraper->getTeamRoster($team);
+        return $resource->fetch();
     }
 }

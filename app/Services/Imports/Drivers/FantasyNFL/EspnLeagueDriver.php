@@ -22,12 +22,17 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 
 class EspnLeagueDriver
 {
+    private User $creator;
+
     private FantasyNFL $espn;
 
     private ResourceLeagueData $apiLeague;
+
+    private ?CredentialsData $credentials = null;
 
     private array $draftData = [];
 
@@ -43,9 +48,21 @@ class EspnLeagueDriver
 
     private array $settingsData = [];
 
-    public function __construct(private ?User $creator = null, private ?array $credentials = [])
+    public function __construct(private array $metaData = [])
     {
-        $this->espn = Espn::fantasyNFL($credentials);
+        $this->creator = User::findOrFail(Arr::get($metaData, 'created_by_user_id'));
+
+        $this->credentials = CredentialsData::from([
+            'leagueId' => Arr::get($metaData, 'league_id'),
+            's2' => Arr::get($metaData, 's2'),
+            'swid' => Arr::get($metaData, 'swid'),
+        ]);
+
+        if (! $this->credentials instanceof CredentialsData) {
+            throw new InvalidArgumentException('Invalid credentials');
+        }
+
+        $this->espn = Espn::fantasyNFL($this->credentials);
     }
 
     public function import(): League

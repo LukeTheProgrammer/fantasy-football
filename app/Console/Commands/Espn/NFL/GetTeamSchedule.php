@@ -5,6 +5,8 @@ namespace App\Console\Commands\Espn\NFL;
 use App\Facades\Espn;
 use App\Models\Team;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
+
 use function Laravel\Prompts\select;
 
 class GetTeamSchedule extends Command
@@ -28,15 +30,19 @@ class GetTeamSchedule extends Command
      */
     protected $description = 'Loads NFL team schedule from the ESPN API.';
 
+    protected ?Collection $teams = null;
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
+        $this->teams = Team::noFA()->get();
+
         $year = $this->argument('year') ?? select('Which year to pull', [2025, 2024]);
 
         if ($this->option('all')) {
-            Team::noFA()->get()->each(
+            $this->teams->each(
                 fn (Team $team) => $this->getSchedule($team->espn_id, $year)
             );
 
@@ -47,10 +53,13 @@ class GetTeamSchedule extends Command
 
         if ($teamId) {
             $this->getSchedule($teamId, $year);
-        } else {
-            $teamId = select('Which team to pull', Team::noFA()->get()->pluck('name', 'espn_id')->toArray());
-            $this->getSchedule($teamId, $year);
+
+            return Command::SUCCESS;
         }
+
+        $teamId = select('Which team to pull', $this->teams->pluck('name', 'espn_id')->toArray());
+
+        $this->getSchedule($teamId, $year);
 
         return Command::SUCCESS;
     }
@@ -59,21 +68,12 @@ class GetTeamSchedule extends Command
     {
         $nfl = Espn::nfl();
 
-        $basePath = storage_path('data/espn/nfl/team-schedules');
-
         if ($this->option('raw')) {
             $nfl->returnRaw = true;
-            $basePath .= '/raw';
-        } else {
-            $basePath .= '/formatted';
         }
 
-        $schedule = $nfl->getTeamSchedule($teamId, $year);
+        $nfl->getTeamSchedule($teamId, $year);
 
-        $path = $basePath . '/team-schedule-' . $teamId . '-' . $year . '.json';
-
-        $bytes = file_put_contents($path, json_encode($schedule, JSON_PRETTY_PRINT));
-
-        $this->info("NFL Team Schedule saved to $path ($bytes bytes)");
+        $this->info('NFL Team [' . $teamId . '] Schedule pulled and saved');
     }
 }
