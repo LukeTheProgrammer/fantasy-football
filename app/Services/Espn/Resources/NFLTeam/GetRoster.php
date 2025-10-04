@@ -35,6 +35,6 @@ class GetRoster extends NFLTeamResource
 
         $data = $scraper->getTeamRoster($team);
 
-        return $this->returnResponse(Arr::get($data, 'roster', []));
+        return $this->returnResponse($data);
     }
 }

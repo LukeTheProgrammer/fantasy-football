@@ -113,13 +113,12 @@ abstract class BaseResource
     public function setTeamId(Team|NFLTeams|int|string $team)
     {
         if ($team instanceof NFLTeams) {
-            $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $team);
+            $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $team->value);
             return;
         }
 
         if ($team instanceof Team) {
-            $teamId = NFLTeams::from($team->id);
-            $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $teamId);
+            $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $team->id);
             return;
         }
 
@@ -135,21 +134,21 @@ abstract class BaseResource
             $teamId = NFLTeams::from($nflTeam->id);
         }
 
-        $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $teamId);
+        $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $teamId->value);
     }
 
     public function returnResponse(array|Response $response)
     {
         if ($this->dataFormat === Datum::FORMAT_EXTRACTED->value) {
-            return $this->returnExtracted($response->json());
+            return $this->returnExtracted($response);
         }
 
         if ($this->dataFormat === Datum::FORMAT_FORMATTED->value) {
-            return $this->returnFormatted($response->json());
+            return $this->returnFormatted($response);
         }
 
         // RETURN_RAW default
-        return $response->json();
+        return $this->returnRaw($response);
     }
 
     public function returnRaw(array|Response $response)

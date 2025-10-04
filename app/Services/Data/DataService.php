@@ -7,14 +7,11 @@ use App\Services\Data\Sources\BaseSource;
 use App\Services\Data\Sources\EspnSource;
 use App\Services\Data\Sources\FantasyProsSource;
 use App\Services\Data\Sources\ProFootballReferenceSource;
-use App\Traits\HasDataFormats;
 use Exception;
 use Illuminate\Support\Arr;
 
 class DataService
 {
-    use HasDataFormats;
-
     public function sources(string $type)
     {
         $sources = [
@@ -42,34 +39,27 @@ class DataService
             throw new Exception('Invalid source: ' . $source);
         }
 
-        return $this->make($sourceClass, $args);
+        return new $sourceClass($args);
     }
 
     public function espn(...$args)
     {
         $sourceClass = $this->sources(Datum::SOURCE_ESPN->value);
 
-        return $this->make($sourceClass, $args);
+        return new $sourceClass($args);
     }
 
     public function fantasyPros(...$args)
     {
         $sourceClass = $this->sources(Datum::SOURCE_FANTASY_PROS->value);
 
-        return $this->make($sourceClass, $args);
+        return new $sourceClass($args);
     }
 
     public function pfr(...$args)
     {
         $sourceClass = $this->sources(Datum::SOURCE_PFR->value);
 
-        return $this->make($sourceClass, $args);
-    }
-
-    private function make(string $sourceClass, ...$args)
-    {
-        return (new $sourceClass($args))
-            ->dataFormat($this->dataFormat)
-            ->forcePull($this->forcePull);
+        return new $sourceClass($args);
     }
 }

@@ -4,92 +4,80 @@ namespace App\Services\Espn\Scrapers;
 
 use App\Enums\NFLTeams;
 use App\Models\Team;
+use App\Traits\LoadsJsonFiles;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
 class NFLRosters
 {
+    use LoadsJsonFiles;
+
     public const TEAMS = [
-        NFLTeams::ARI => 'ari/arizona-cardinals',
-        NFLTeams::ATL => 'atl/atlanta-falcons',
-        NFLTeams::BAL => 'bal/baltimore-ravens',
-        NFLTeams::BUF => 'buf/buffalo-bills',
-        NFLTeams::CAR => 'car/carolina-panthers',
-        NFLTeams::CHI => 'chi/chicago-bears',
-        NFLTeams::CIN => 'cin/cincinnati-bengals',
-        NFLTeams::CLE => 'cle/cleveland-browns',
-        NFLTeams::DAL => 'dal/dallas-cowboys',
-        NFLTeams::DEN => 'den/denver-broncos',
-        NFLTeams::DET => 'det/detroit-lions',
-        NFLTeams::GB  => 'gb/green-bay-packers',
-        NFLTeams::HOU => 'hou/houston-texans',
-        NFLTeams::IND => 'ind/indianapolis-colts',
-        NFLTeams::JAX => 'jax/jacksonville-jaguars',
-        NFLTeams::KC  => 'kc/kansas-city-chiefs',
-        NFLTeams::LAC => 'lac/los-angeles-chargers',
-        NFLTeams::LAR => 'lar/los-angeles-rams',
-        NFLTeams::LV  => 'lv/las-vegas-raiders',
-        NFLTeams::MIA => 'mia/miami-dolphins',
-        NFLTeams::MIN => 'min/minnesota-vikings',
-        NFLTeams::NE  => 'ne/new-england-patriots',
-        NFLTeams::NO  => 'no/new-orleans-saints',
-        NFLTeams::NYG => 'nyg/new-york-giants',
-        NFLTeams::NYJ => 'nyj/new-york-jets',
-        NFLTeams::PHI => 'phi/philadelphia-eagles',
-        NFLTeams::PIT => 'pit/pittsburgh-steelers',
-        NFLTeams::SEA => 'sea/seattle-seahawks',
-        NFLTeams::SF  => 'sf/san-francisco-49ers',
-        NFLTeams::TB  => 'tb/tampa-bay-buccaneers',
-        NFLTeams::TEN => 'ten/tennessee-titans',
-        NFLTeams::WSH => 'wsh/washington-commanders',
-        //
-        // 'ARI' => 'ari/arizona-cardinals',
-        // 'ATL' => 'atl/atlanta-falcons',
-        // 'BAL' => 'bal/baltimore-ravens',
-        // 'BUF' => 'buf/buffalo-bills',
-        // 'CAR' => 'car/carolina-panthers',
-        // 'CHI' => 'chi/chicago-bears',
-        // 'CIN' => 'cin/cincinnati-bengals',
-        // 'CLE' => 'cle/cleveland-browns',
-        // 'DAL' => 'dal/dallas-cowboys',
-        // 'DEN' => 'den/denver-broncos',
-        // 'DET' => 'det/detroit-lions',
-        // 'GB'  => 'gb/green-bay-packers',
-        // 'HOU' => 'hou/houston-texans',
-        // 'IND' => 'ind/indianapolis-colts',
-        // 'JAX' => 'jax/jacksonville-jaguars',
-        // 'KC'  => 'kc/kansas-city-chiefs',
-        // 'LAC' => 'lac/los-angeles-chargers',
-        // 'LAR' => 'lar/los-angeles-rams',
-        // 'LV'  => 'lv/las-vegas-raiders',
-        // 'MIA' => 'mia/miami-dolphins',
-        // 'MIN' => 'min/minnesota-vikings',
-        // 'NE'  => 'ne/new-england-patriots',
-        // 'NO'  => 'no/new-orleans-saints',
-        // 'NYG' => 'nyg/new-york-giants',
-        // 'NYJ' => 'nyj/new-york-jets',
-        // 'PHI' => 'phi/philadelphia-eagles',
-        // 'PIT' => 'pit/pittsburgh-steelers',
-        // 'SEA' => 'sea/seattle-seahawks',
-        // 'SF'  => 'sf/san-francisco-49ers',
-        // 'TB'  => 'tb/tampa-bay-buccaneers',
-        // 'TEN' => 'ten/tennessee-titans',
-        // 'WSH' => 'wsh/washington-commanders',
+        'ARI' => 'ari/arizona-cardinals',
+        'ATL' => 'atl/atlanta-falcons',
+        'BAL' => 'bal/baltimore-ravens',
+        'BUF' => 'buf/buffalo-bills',
+        'CAR' => 'car/carolina-panthers',
+        'CHI' => 'chi/chicago-bears',
+        'CIN' => 'cin/cincinnati-bengals',
+        'CLE' => 'cle/cleveland-browns',
+        'DAL' => 'dal/dallas-cowboys',
+        'DEN' => 'den/denver-broncos',
+        'DET' => 'det/detroit-lions',
+        'GB'  => 'gb/green-bay-packers',
+        'HOU' => 'hou/houston-texans',
+        'IND' => 'ind/indianapolis-colts',
+        'JAX' => 'jax/jacksonville-jaguars',
+        'KC'  => 'kc/kansas-city-chiefs',
+        'LAC' => 'lac/los-angeles-chargers',
+        'LAR' => 'lar/los-angeles-rams',
+        'LV'  => 'lv/las-vegas-raiders',
+        'MIA' => 'mia/miami-dolphins',
+        'MIN' => 'min/minnesota-vikings',
+        'NE'  => 'ne/new-england-patriots',
+        'NO'  => 'no/new-orleans-saints',
+        'NYG' => 'nyg/new-york-giants',
+        'NYJ' => 'nyj/new-york-jets',
+        'PHI' => 'phi/philadelphia-eagles',
+        'PIT' => 'pit/pittsburgh-steelers',
+        'SEA' => 'sea/seattle-seahawks',
+        'SF'  => 'sf/san-francisco-49ers',
+        'TB'  => 'tb/tampa-bay-buccaneers',
+        'TEN' => 'ten/tennessee-titans',
+        'WSH' => 'wsh/washington-commanders',
     ];
 
-    public function getTeamRoster(string|NFLTeams $teamAbb)
+    public function __construct(protected ?string $cacheFilePath = null)
     {
-        $teamAbb = ($teamAbb instanceof NFLTeams) ? $teamAbb : NFLTeams::from($teamAbb);
-        $team = Arr::get(static::TEAMS, $teamAbb);
+        //
+    }
 
-        $cacheFileParams = [date('Y'), $teamAbb->value];
+    public function getTeamRoster(string|NFLTeams|Team $team)
+    {
+        $teamRoute = null;
+
+        if (! $team instanceof Team) {
+            $team  = Team::find(($team instanceof NFLTeams) ? $team->value : $team);
+        }
+
+        if (! $team instanceof Team) {
+            throw new Exception('Team not found: ' . json_encode($team));
+        }
+
+        $teamRoute = Arr::get(static::TEAMS, $team->id);
+
+        if (empty($teamRoute)) {
+            throw new Exception('Team Route not found: ' . json_encode($team));
+        }
+
+        $cacheFileParams = [date('Y'), $team->id];
 
         if ($cache = $this->getCache($cacheFileParams)) {
             return $cache;
         }
 
-        $url = 'https://www.espn.com/nfl/team/roster/_/name/' . $team;
+        $url = 'https://www.espn.com/nfl/team/roster/_/name/' . $teamRoute;
 
         $response = Http::withHeaders([
             'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
@@ -101,30 +89,28 @@ class NFLRosters
         }
 
         $html = $response->body();
+
         if ($html === '' || $html === null) {
             throw new Exception('Received empty response from URL: ' . $url);
         }
 
         $groupsJson = $this->extractGroupsJson($html);
+
         if ($groupsJson === null) {
             throw new Exception('Could not locate roster groups JSON within the HTML.');
         }
 
         $groups = json_decode($groupsJson, true);
+
         if (! is_array($groups)) {
             throw new Exception('Failed to decode roster groups JSON.');
         }
-
-        $teamModel = Team::forAbbreviation($teamAbb)->first();
 
         $players = $this->collectPlayersFromGroups($groups);
 
         $this->setCache($cacheFileParams, $players);
 
-        return [
-            'team'   => $teamModel,
-            'roster' => $players
-        ];
+        return $players;
     }
 
     protected function getCachePath(array $params = [])
@@ -134,18 +120,14 @@ class NFLRosters
 
     protected function getCache(array $params = [])
     {
-        $path = $this->getCachePath($params);
+        $path = $this->cacheFilePath ?? $this->getCachePath($params);
 
-        if (file_exists($path)) {
-            return json_decode(file_get_contents($path), true);
-        }
-
-        return null;
+        return $this->loadJsonFile($path);
     }
 
     protected function setCache(array $params = [], array $data = [])
     {
-        $path = $this->getCachePath($params);
+        $path = $this->cacheFilePath ?? $this->getCachePath($params);
 
         file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
     }
