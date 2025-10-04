@@ -49,7 +49,12 @@ trait UsesCacheFiles
      */
     public function getCache()
     {
-        return (! empty($this->cacheFilePath) && file_exists($this->cacheFilePath))
+        $hasCache = (
+            ! empty($this->cacheFilePath) &&
+            file_exists($this->cacheFilePath)
+        );
+
+        return $hasCache
             ? $this->loadJsonFile($this->cacheFilePath)
             : false;
     }

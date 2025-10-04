@@ -8,6 +8,7 @@ use App\Facades\Espn;
 use App\Facades\Import;
 use App\Models\League;
 use App\Models\Team;
+use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use InvalidArgumentException;
 
 class EspnSource extends BaseSource
@@ -19,32 +20,44 @@ class EspnSource extends BaseSource
         return null;
     }
 
-    public function getFantasyLeague(?League $league = null, ?array $credentials = null)
+    public function getFantasyLeague(?League $league = null, array|CredentialsData|null $credentials = null)
     {
         if (null === $league && null === $credentials) {
             throw new InvalidArgumentException('League or credentials must be provided');
         }
 
-        Espn::formatted()->getFantasyLeague(
-            ($league instanceof League) ? $league->credentials : $credentials
-        );
-
-        return true;
+        return Espn::dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getFantasyLeague(
+                ($league instanceof League) ? $league->credentials : $credentials
+            );
     }
 
     public function getFantasyLeagueRosters(League $league, int $year)
     {
-        $league->members->each(function ($member) use ($league, $year) {
+        $rosters = [];
+
+        $league->members->each(function ($member) use (&$rosters,$league, $year) {
+            $memberRosters = [];
+
             for ($week = 1; $week <= 18; $week++) {
-                Espn::formatted()->getFantasyLeagueRoster($league->credentials, [
-                    'teamId' => $member->external_id,
-                    'week' => $week,
-                    'year' => $year,
-                ]);
+                $weekKey = 'week.' . $week;
+                $data = Espn::dataFormat($this->dataFormat)
+                    ->forcePull($this->forcePull)
+                    ->getFantasyRoster($league->credentials, [
+                        'teamId' => $member->external_id,
+                        'week' => $week,
+                        'year' => $year,
+                    ]);
+
+                $memberRosters[$weekKey] = $data[0];
             }
+
+            $memberKey = 'member.' . $member->id;
+            $rosters[$memberKey] = collect($memberRosters);
         });
 
-        return true;
+        return collect($rosters);
     }
 
     public function getNFLProjections()
@@ -54,16 +67,16 @@ class EspnSource extends BaseSource
 
     public function getNFLRosters(Team|NFLTeams|string $team)
     {
-        Espn::nflTeam()->getRoster($team);
-
-        return true;
+        return Espn::dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getNFLTeamRoster($team);
     }
 
     public function getNFLSchedule(Team|NFLTeams|string $team, int $year)
     {
-        Espn::nfl()->getTeamSchedule($team, $year);
-
-        return true;
+        return Espn::dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getTeamSchedule($team, $year);
     }
 
     /* ===[ IMPORTERS ]=== */
@@ -84,7 +97,7 @@ class EspnSource extends BaseSource
         $importer->importLeague($leagueData);
     }
 
-    public function importFantasyLeagueRosters(League $league, int $year)
+    public function importFantasyRosters(League $league, int $year)
     {
         $importer = Import::fantasyNFL(FantasyPlatforms::ESPN);
 

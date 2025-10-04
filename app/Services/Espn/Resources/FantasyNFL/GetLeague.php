@@ -2,7 +2,8 @@
 
 namespace App\Services\Espn\Resources\FantasyNFL;
 
-use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
+use App\Services\Espn\Extractors\FantasyLeagueExtractor;
+use App\Services\Espn\Formatters\FantasyLeagueFormatter;
 use Illuminate\Http\Client\Response;
 
 class GetLeague extends FantasyNFLResource
@@ -14,7 +15,7 @@ class GetLeague extends FantasyNFLResource
         $file = [
             'league',
             $this->leagueId,
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/ffl/leagues/league-123456-formatted.json
@@ -32,15 +33,15 @@ class GetLeague extends FantasyNFLResource
 
     public function returnExtracted(array|Response $response)
     {
-        return ResourceLeagueData::from(
-            (is_array($response)) ? $response : $response->json()
-        );
+        return FantasyLeagueExtractor::from($response);
     }
 
     public function returnFormatted(array|Response $response)
     {
-        return ResourceLeagueData::from(
-            (is_array($response)) ? $response : $response->json()
+        $formatter = new FantasyLeagueFormatter(
+            $this->returnExtracted($response)
         );
+
+        return $formatter->getFormatted();
     }
 }

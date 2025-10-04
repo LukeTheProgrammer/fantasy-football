@@ -11,7 +11,7 @@ class GetTeam extends NFLTeamResource
         $file = [
             'team',
             $this->teamId,
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl-teams/team-123456-formatted.json

@@ -10,7 +10,7 @@ class GetScoreboard extends NFLResource
 
         $file = [
             date('Y-m-d'),
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl/scoreboards/2025-10-03-formatted.json

@@ -29,7 +29,7 @@ class GetTeamSchedule extends NFLResource
             'schedule',
             $this->teamId,
             $this->year,
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl/teams/schedule-1-2025-formatted.json

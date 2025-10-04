@@ -5,6 +5,7 @@ namespace App\Services\Data\Sources;
 use App\Enums\NFLTeams;
 use App\Models\League;
 use App\Models\Team;
+use App\Traits\HasDataFormats;
 
 /**
  * Data Source classes should have a method for each of the commands
@@ -14,41 +15,85 @@ use App\Models\Team;
  */
 abstract class BaseSource
 {
+    use HasDataFormats;
+
     /**
      * Get methods are to pull data from external sources and save
      * the data somewhere within the app for later use without
      * needing to re-pull the data.
      */
 
-    abstract public function getFantasyDraftRankings();
+    public function getFantasyDraftRankings()
+    {
+        return null;
+    }
 
-    abstract public function getFantasyLeague(?League $league = null, ?array $credentials = null);
+    public function getFantasyLeague(?League $league = null, ?array $credentials = null)
+    {
+        return null;
+    }
 
-    abstract public function getFantasyLeagueRosters(League $league, int $year);
+    public function getFantasyRosters(League $league, int $year)
+    {
+        return null;
+    }
 
-    abstract public function getNFLProjections();
+    public function getNFLProjections()
+    {
+        return null;
+    }
 
-    abstract public function getNFLRosters(Team|NFLTeams|string $team);
+    public function getNFLRosters(Team|NFLTeams|string $team)
+    {
+        return null;
+    }
 
-    abstract public function getNFLSchedule(Team|NFLTeams|string $team, int $year);
+    public function getNFLSchedule(Team|NFLTeams|string $team, int $year)
+    {
+        return null;
+    }
 
     /**
      * Import methods are to import data pulled by the get methods.
      */
 
-    abstract public function importFantasyDraftRankings();
+    public function importFantasyDraftRankings()
+    {
+        return null;
+    }
 
-    abstract public function importFantasyLeague(array $leagueData = []);
+    public function importFantasyLeague(array $leagueData = [])
+    {
+        return null;
+    }
 
-    abstract public function importFantasyLeagueRosters(League $league, int $year);
+    public function importFantasyRosters(League $league, int $year)
+    {
+        return null;
+    }
 
-    abstract public function importNFLProjections();
+    public function importNFLProjections()
+    {
+        return null;
+    }
 
-    abstract public function importNFLRosters();
+    public function importNFLRosters()
+    {
+        return null;
+    }
 
-    abstract public function importNFLSchedule();
+    public function importNFLSchedule()
+    {
+        return null;
+    }
 
-    abstract public function importPositions();
+    public function importPositions()
+    {
+        return null;
+    }
 
-    abstract public function importTeams();
+    public function importTeams()
+    {
+        return null;
+    }
 }

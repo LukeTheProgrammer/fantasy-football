@@ -23,6 +23,9 @@ class NFL extends BaseResourceCollection
     {
         $resource = new GetTeamNews($teamId);
 
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
+
         $resource->teamId = $teamId;
 
         if ($this->forcePull) {
@@ -43,6 +46,9 @@ class NFL extends BaseResourceCollection
     {
         $resource = new GetScoreboard();
 
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
+
         if ($this->forcePull) {
             $resource->forcePull();
         }
@@ -60,6 +66,9 @@ class NFL extends BaseResourceCollection
     public function getEventSummary(int|string $eventId)
     {
         $resource = new GetEventSummary();
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
 
         $resource->eventId = $eventId;
 
@@ -81,6 +90,9 @@ class NFL extends BaseResourceCollection
     {
         $resource = new GetTeam();
 
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
+
         $resource->teamId = $teamId;
 
         if ($this->forcePull) {
@@ -97,9 +109,12 @@ class NFL extends BaseResourceCollection
      *
      * @return mixed
      */
-    public function getRoster(int|string $teamId)
+    public function getRoster(int|string|null $teamId = null)
     {
         $resource = new GetRoster();
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
 
         $resource->teamId = $teamId;
 
@@ -117,9 +132,12 @@ class NFL extends BaseResourceCollection
      *
      * @return mixed
      */
-    public function getTeamSchedule(int|string $teamId, int $year)
+    public function getSchedule(int|string $teamId, int $year)
     {
         $resource = new GetTeamSchedule();
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
 
         $resource->teamId = $teamId;
         $resource->year = $year;
@@ -141,6 +159,9 @@ class NFL extends BaseResourceCollection
     public function getLeaders()
     {
         $resource = new GetLeaders();
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
 
         if ($this->forcePull) {
             $resource->forcePull();

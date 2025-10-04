@@ -2,6 +2,7 @@
 
 namespace App\Services\Espn\Resources;
 
+use App\Enums\Datum;
 use App\Enums\NFLTeams;
 use App\Models\Team;
 use App\Services\Espn\Enums\ApiVersions;
@@ -12,6 +13,7 @@ use App\Services\Espn\Enums\Leagues;
 use App\Services\Espn\Enums\Sports;
 use App\Services\Espn\EspnConstants;
 use App\Services\Espn\EspnService;
+use App\Traits\HasDataFormats;
 use App\Traits\LoadsJsonFiles;
 use App\Traits\MakesHttpRequests;
 use App\Traits\UsesCacheFiles;
@@ -21,19 +23,10 @@ use InvalidArgumentException;
 
 abstract class BaseResource
 {
+    use HasDataFormats;
     use LoadsJsonFiles;
     use MakesHttpRequests;
     use UsesCacheFiles;
-
-    /**
-     * Format of data to be returned.
-     */
-    public string $returnType = EspnService::RETURN_FORMATTED;
-
-    /**
-     * When true, skip the cache and pull fresh data.
-     */
-    protected bool $forcePull = false;
 
     /**
      * League ID.
@@ -92,11 +85,6 @@ abstract class BaseResource
     public ?Sports $sport = null;
 
     /**
-     * @inheritDoc
-     */
-    public ?string $cacheBaseDirectory = 'data/espn';
-
-    /**
      * Main function to send request and return data.
      *
      * @return mixed
@@ -122,36 +110,7 @@ abstract class BaseResource
 
     abstract public function sendRequest();
 
-    public function forcePull()
-    {
-        $this->forcePull = true;
-    }
-
-    public function setReturnType(string $returnType)
-    {
-        if (! in_array($returnType, EspnService::RETURN_TYPES)) {
-            throw new InvalidArgumentException('Invalid return type: ' . $returnType);
-        }
-
-        $this->returnType = $returnType;
-    }
-
-    public function setReturnRaw()
-    {
-        $this->returnType = EspnService::RETURN_RAW;
-    }
-
-    public function setReturnFormatted()
-    {
-        $this->returnType = EspnService::RETURN_FORMATTED;
-    }
-
-    public function setReturnExtracted()
-    {
-        $this->returnType = EspnService::RETURN_EXTRACTED;
-    }
-
-    public function setTeamId(Team|NFLTeams|string $team)
+    public function setTeamId(Team|NFLTeams|int|string $team)
     {
         if ($team instanceof NFLTeams) {
             $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $team);
@@ -181,12 +140,12 @@ abstract class BaseResource
 
     public function returnResponse(array|Response $response)
     {
-        if ($this->returnType === EspnService::RETURN_FORMATTED) {
-            return $this->returnFormatted($response->json());
+        if ($this->dataFormat === Datum::FORMAT_EXTRACTED->value) {
+            return $this->returnExtracted($response->json());
         }
 
-        if ($this->returnType === EspnService::RETURN_EXTRACTED) {
-            return $this->returnExtracted($response->json());
+        if ($this->dataFormat === Datum::FORMAT_FORMATTED->value) {
+            return $this->returnFormatted($response->json());
         }
 
         // RETURN_RAW default

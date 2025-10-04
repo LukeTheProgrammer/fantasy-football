@@ -7,12 +7,9 @@ use App\Models\NflGame;
 use App\Services\Espn\Data\FantasyNFL\PlayerStatsData;
 use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
 use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
-use App\Services\Espn\Data\FantasyNFL\TeamRosterData;
 use App\Services\Espn\Data\FantasyNFL\TeamRosterEntryData;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 
-class FantasyNFLRosterFormatter
+class FantasyRosterFormatter
 {
     protected array $nflGameIds = [];
 
@@ -29,7 +26,7 @@ class FantasyNFLRosterFormatter
             ->toArray();
     }
 
-    public function getFormattedRoster()
+    public function getFormatted()
     {
         return $this->leagueData->teams->map(
             fn (ResourceTeamsData $team) => $this->formatTeamRoster($team)

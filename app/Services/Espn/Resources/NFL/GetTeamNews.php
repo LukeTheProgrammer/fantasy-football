@@ -14,7 +14,7 @@ class GetTeamNews extends NFLResource
             'team',
             $this->teamId,
             date('Y-m-d'),
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl/news/team-123456-2025-10-03-formatted.json

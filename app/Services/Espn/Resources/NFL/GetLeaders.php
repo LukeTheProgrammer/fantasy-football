@@ -13,7 +13,7 @@ class GetLeaders extends NFLResource
         $file = [
             'leaders',
             date('Y-m-d'),
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl/leaders/leaders-2025-10-03-formatted.json

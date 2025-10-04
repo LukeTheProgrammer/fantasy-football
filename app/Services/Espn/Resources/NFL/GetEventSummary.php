@@ -13,7 +13,7 @@ class GetEventSummary extends NFLResource
         $file = [
             'event',
             $this->eventId,
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl/summary/event-123456-formatted.json

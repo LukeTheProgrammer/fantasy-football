@@ -23,7 +23,7 @@ class GetRoster extends NFLResource
             'team',
             $this->teamId,
             date('Y-m-d'),
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl/roster/team-1-2025-10-03-formatted.json

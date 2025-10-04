@@ -10,7 +10,6 @@ use App\Services\Espn\Enums\FantasyNFLViews;
 use App\Services\Espn\Enums\Games;
 use App\Services\Espn\Enums\Leagues;
 use App\Services\Espn\Enums\Sports;
-use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
 use App\Services\Espn\Resources\BaseResource;
 
 abstract class FantasyNFLResource extends BaseResource
@@ -83,104 +82,4 @@ abstract class FantasyNFLResource extends BaseResource
 
         return '?' . implode('&', array_filter($mapped));
     }
-
-    // TODO: Move each of these to their own Resource class
-
-    // public function getData(array $views = [], ?int $teamId = null)
-    // {
-    //     $url = $this->buildUrl($views, $teamId);
-
-    //     $response = $this->get($url, null, $this->cookies);
-
-    //     return $response->json();
-    // }
-
-    // public function getMatchup(?int $teamId = null)
-    // {
-    //     $views = [
-    //         FantasyNFLViews::MATCHUP,
-    //         FantasyNFLViews::MATCHUP_SCORE,
-    //         FantasyNFLViews::TEAM,
-    //         FantasyNFLViews::MODULAR,
-    //         FantasyNFLViews::NAV,
-    //     ];
-
-    //     $url = $this->buildUrl($views, $teamId);
-
-    //     $response = $this->get($url, null, $this->cookies);
-
-    //     return $this->returnRaw
-    //         ? $response->json()
-    //         : ResourceLeagueData::from($response->json());
-    // }
-
-    // public function getSettings(?int $teamId = null)
-    // {
-    //     $views = [
-    //         FantasyNFLViews::SETTINGS,
-    //         FantasyNFLViews::TEAM,
-    //         FantasyNFLViews::MODULAR,
-    //         FantasyNFLViews::NAV,
-    //     ];
-
-    //     $url = $this->buildUrl($views, $teamId);
-
-    //     $response = $this->get($url, null, $this->cookies);
-
-    //     return $this->returnRaw
-    //         ? $response->json()
-    //         : ResourceLeagueData::from($response->json());
-    // }
-
-    // public function getStandings(?int $teamId = null)
-    // {
-    //     $views = [
-    //         FantasyNFLViews::STANDINGS,
-    //         FantasyNFLViews::TEAM,
-    //         FantasyNFLViews::MODULAR,
-    //         FantasyNFLViews::NAV,
-    //     ];
-
-    //     $url = $this->buildUrl($views, $teamId);
-
-    //     $response = $this->get($url, null, $this->cookies);
-
-    //     return $this->returnRaw
-    //         ? $response->json()
-    //         : ResourceLeagueData::from($response->json());
-    // }
-
-    // public function getTeams(?int $teamId = null)
-    // {
-    //     $views = [
-    //         FantasyNFLViews::TEAM,
-    //         FantasyNFLViews::MODULAR,
-    //         FantasyNFLViews::NAV,
-    //     ];
-
-    //     $url = $this->buildUrl($views, $teamId);
-
-    //     $response = $this->get($url, null, $this->cookies);
-
-    //     return $this->returnRaw
-    //         ? $response->json()
-    //         : ResourceLeagueData::from($response->json());
-    // }
-
-    // public function getDraftRecap(?int $teamId = null)
-    // {
-    //     $views = [
-    //         FantasyNFLViews::DRAFT,
-    //         FantasyNFLViews::SETTINGS,
-    //         FantasyNFLViews::TEAM,
-    //         FantasyNFLViews::MODULAR,
-    //         FantasyNFLViews::NAV,
-    //     ];
-
-    //     $url = $this->buildUrl($views, $teamId);
-
-    //     $response = $this->get($url, null, $this->cookies);
-
-    //     return $response->json();
-    // }
 }

@@ -3,18 +3,20 @@
 namespace App\Providers;
 
 use App\Services\Actions\ActionService;
+use App\Services\Data\DataService;
 use App\Services\Espn\EspnService;
 use App\Services\FantasyPros\FantasyProsService;
 use App\Services\Imports\ImportService;
 use App\Services\ProFootballReference\ProFootballReferenceService;
 use App\Services\Scrapers\ScraperService;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     public $bindings = [
         'Action'               => ActionService::class,
+        'Data'                 => DataService::class,
         'Espn'                 => EspnService::class,
         'FantasyPros'          => FantasyProsService::class,
         'Import'               => ImportService::class,

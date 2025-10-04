@@ -2,11 +2,15 @@
 
 namespace App\Services\Espn;
 
+use App\Enums\Datum;
+use App\Enums\NFLTeams;
+use App\Models\Team;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
-use App\Services\Espn\Resources\BaseResource;
 use App\Services\Espn\Resources\FantasyNFL;
 use App\Services\Espn\Resources\NFL;
 use App\Services\Espn\Resources\NflTeam;
+use App\Traits\HasDataFormats;
+use Exception;
 
 /**
  * @see https://github.com/pseudo-r/Public-ESPN-API
@@ -14,74 +18,188 @@ use App\Services\Espn\Resources\NflTeam;
  */
 class EspnService
 {
-    public const RETURN_RAW       = 'raw';
-    public const RETURN_FORMATTED = 'formatted';
-    public const RETURN_EXTRACTED = 'extracted';
+    use HasDataFormats;
 
-    public const RETURN_TYPES = [
-        self::RETURN_RAW,
-        self::RETURN_FORMATTED,
-        self::RETURN_EXTRACTED,
-    ];
 
-    protected string $returnType = self::RETURN_RAW;
+    /* ===[ NFL ]=== */
 
-    protected bool $forcePull = false;
 
-    public function raw()
+    public function getNFLTeamNews(int|string $teamId)
     {
-        $this->returnType = self::RETURN_RAW;
-        return $this;
+        $resource = new NFL();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getTeamNews($teamId);
     }
 
-    public function extracted()
+    public function getNFLScoreboard()
     {
-        $this->returnType = self::RETURN_EXTRACTED;
-        return $this;
+        $resource = new NFL();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getScoreboard();
     }
 
-    public function formatted()
+    public function getNFLEventSummary(int|string $eventId)
     {
-        $this->returnType = self::RETURN_FORMATTED;
-        return $this;
+        $resource = new NFL();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getEventSummary($eventId);
     }
 
-    public function forcePull()
+    public function getNFLTeam(int|string|null $teamId = null)
     {
-        $this->forcePull = true;
-        return $this;
+        $resource = new NFL();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getTeam($teamId);
     }
 
-    public function nfl(): NFL
+    public function getNFLRoster(int|string|null $teamId = null)
     {
-        return new NFL();
+        $resource = new NFL();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getRoster($teamId);
     }
 
-    public function nflTeam(): NflTeam
+    public function getNFLSchedule(int|string $teamId, int $year)
     {
-        return new NflTeam();
+        $resource = new NFL();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getSchedule($teamId, $year);
     }
 
-    public function fantasyNFL(array|CredentialsData $credentials): FantasyNFL
+    public function getNFLLeaders()
     {
-        return new FantasyNFL($credentials);
+        $resource = new NFL();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getLeaders();
+    }
+
+
+    /* ===[ NFL Team ]=== */
+
+
+    public function getNFLTeamDepthChart(Team|NFLTeams|int|string $team)
+    {
+        $resource = new NFLTeam();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getDepthChart($team);
+    }
+
+    public function getNFLTeamEvents(Team|NFLTeams|int|string $team)
+    {
+        $resource = new NFLTeam();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getEvents($team);
+    }
+
+    public function getNFLPlayers(Team|NFLTeams|int|string $team, int $page = 1)
+    {
+        $resource = new NFLTeam();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getPlayers($team, $page);
+    }
+
+    public function getNFLTeamRoster(Team|NFLTeams|int|string $team)
+    {
+        $resource = new NFLTeam();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getRoster($team);
+    }
+
+    public function getNFLTeamData(Team|NFLTeams|int|string $team)
+    {
+        $resource = new NFLTeam();
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getTeam($team);
+    }
+
+
+    /* ===[ Fantasy NFL ]=== */
+
+
+    public function getFantasyDraft(array|CredentialsData $credentials, array $opts = [])
+    {
+        $resource = new FantasyNFL($credentials);
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getDraftRecap($credentials, $opts);
     }
 
     public function getFantasyLeague(array|CredentialsData $credentials)
     {
         $resource = new FantasyNFL($credentials);
 
-        return $resource->return($this->returnType)
+        return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
             ->getLeague($credentials);
     }
 
-    public function getFantasyLeagueRoster(array|CredentialsData $credentials, array $opts = [])
+    public function getFantasyMatchup(array|CredentialsData $credentials, array $opts = [])
     {
         $resource = new FantasyNFL($credentials);
 
-        return $resource->return($this->returnType)
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getMatchup($credentials, $opts);
+    }
+
+    public function getFantasyRoster(array|CredentialsData $credentials, array $opts = [])
+    {
+        $resource = new FantasyNFL($credentials);
+
+        return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
             ->getRoster($credentials, $opts);
+    }
+
+    public function getFantasySettings(array|CredentialsData $credentials, array $opts = [])
+    {
+        $resource = new FantasyNFL($credentials);
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getSettings($credentials, $opts);
+    }
+
+    public function getFantasyStandings(array|CredentialsData $credentials, array $opts = [])
+    {
+        $resource = new FantasyNFL($credentials);
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getStandings($credentials, $opts);
+    }
+
+    public function getFantasyTeams(array|CredentialsData $credentials, array $opts = [])
+    {
+        $resource = new FantasyNFL($credentials);
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getTeams($credentials, $opts);
     }
 }

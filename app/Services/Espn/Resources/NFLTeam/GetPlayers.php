@@ -8,13 +8,13 @@ class GetPlayers extends NFLTeamResource
 
     public function setCacheFilePath()
     {
-        $dirs = [];
+        $dirs = ['nfl-teams'];
 
         $file = [
             'players',
             $this->teamId,
             $this->page,
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl-teams/players-123456-1-formatted.json

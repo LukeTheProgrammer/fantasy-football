@@ -26,7 +26,7 @@ abstract class NFLTeamResource extends BaseResource
 
     public ?Sports $sport = Sports::FOOTBALL;
 
-    public function __construct(Team|NFLTeams|string $team)
+    public function __construct(Team|NFLTeams|int|string $team)
     {
         $this->setTeamId($team);
 

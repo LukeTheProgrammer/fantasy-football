@@ -2,24 +2,22 @@
 
 namespace App\Services\Imports\Drivers\FantasyNFL;
 
-use App\Facades\Espn;
+use App\Enums\Datum;
+use App\Facades\Data;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueMemberRoster;
 use App\Models\NflGame;
 use App\Models\Player;
 use App\Models\PlayerProjection;
-use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
-use App\Services\Espn\Resources\FantasyNFL;
-use App\Services\Espn\Data\FantasyNFL\TeamRosterEntryData;
-use App\Services\Espn\Formatters\FantasyNFLRosterFormatter;
+use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EspnRosterDriver
 {
-    private FantasyNFL $espn;
+    private array|Collection|null $rosters;
 
     public function __construct(private League $league, private int $year)
     {
@@ -39,7 +37,14 @@ class EspnRosterDriver
 
     private function setUp()
     {
-        $this->espn = Espn::fantasyNFL($this->league->credentials);
+        $this->rosters = Data::forcePull(false)
+            ->dataFormat(Datum::FORMAT_FORMATTED)
+            ->espn()
+            ->getFantasyLeagueRosters($this->league, $this->year);
+
+        if (! $this->rosters instanceof Collection) {
+            $this->rosters = collect($this->rosters);
+        }
 
         DB::table('league_member_rosters')
             ->whereIn('league_member_id', $this->league->members->pluck('id')->toArray())
@@ -48,26 +53,38 @@ class EspnRosterDriver
 
     private function importRosters()
     {
-        $this->league->members->each(function ($member) {
-            for ($week = 1; $week <= 18; $week++) {
-                $this->importRoster($member, $week);
-            }
+        $this->rosters->each(function ($roster, $memberKey) {
+            $this->imporMembertRoster($roster, $memberKey);
         });
     }
 
-    private function importRoster(LeagueMember $member, int $week)
+    private function imporMembertRoster(array|Collection $roster, string $memberKey)
     {
-        /** @var ResourceLeagueData $leagueData */
-        $leagueData = $this->espn->getRostersForTeam($member->external_id, $week, $this->year);
+        $roster = (! $roster instanceof Collection) ? collect($roster) : $roster;
 
-        $formatter = new FantasyNFLRosterFormatter($leagueData, $this->year, $week);
+        $memberId = str_replace('member.', '', $memberKey);
 
-        $roster = $formatter->getFormattedRoster();
+        // dd([$memberKey, $memberId, $roster]);
 
-        $roster->each(function ($team) use ($member, $week) {
-            $team->each(function ($player) use ($member, $week) {
-                $this->importPlayer($member, $week, $player);
-            });
+        $member = $this->league->members->firstWhere('id', $memberId);
+
+        if (! $member instanceof LeagueMember) {
+            throw new Exception('Member not found: ' . $memberId);
+        }
+
+        $roster->each(function ($weekRoster, $weekKey) use ($member) {
+            $weekNumber = (int) str_replace('week.', '', $weekKey);
+
+            $this->importWeekRoster($weekRoster, $member, $weekNumber);
+        });
+    }
+
+    private function importWeekRoster(array|Collection $roster, LeagueMember $member, int $week)
+    {
+        $roster = (! $roster instanceof Collection) ? collect($roster) : $roster;
+
+        $roster->each(function ($player) use ($member, $week) {
+            $this->importPlayer($member, $week, $player);
         });
     }
 

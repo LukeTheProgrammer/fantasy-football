@@ -2,8 +2,9 @@
 
 namespace App\Services\Espn\Resources\FantasyNFL;
 
-use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
 use App\Services\Espn\Enums\FantasyNFLViews;
+use App\Services\Espn\Extractors\FantasyRosterExtractor;
+use App\Services\Espn\Formatters\FantasyRosterFormatter;
 use Illuminate\Http\Client\Response;
 
 class GetRoster extends FantasyNFLResource
@@ -17,12 +18,12 @@ class GetRoster extends FantasyNFLResource
         $dirs = ['leagues'];
 
         $file = [
-            'league',
+            'roster',
             $this->leagueId,
             $this->teamId,
             $this->week,
             $this->year,
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/ffl/leagues/league-123456-formatted.json
@@ -54,15 +55,17 @@ class GetRoster extends FantasyNFLResource
 
     public function returnExtracted(array|Response $response)
     {
-        return ResourceLeagueData::from(
-            (is_array($response)) ? $response : $response->json()
-        );
+        return FantasyRosterExtractor::from($response);
     }
 
     public function returnFormatted(array|Response $response)
     {
-        return ResourceLeagueData::from(
-            (is_array($response)) ? $response : $response->json()
+        $formatter = new FantasyRosterFormatter(
+            $this->returnExtracted($response),
+            $this->year,
+            $this->week
         );
+
+        return $formatter->getFormatted();
     }
 }

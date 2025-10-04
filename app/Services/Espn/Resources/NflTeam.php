@@ -12,9 +12,12 @@ use App\Services\Espn\Resources\NFLTeam\GetTeam;
 
 class NflTeam extends BaseResourceCollection
 {
-    public function getTeam(Team|NFLTeams|string $team)
+    public function getDepthChart(Team|NFLTeams|int|string $team)
     {
-        $resource = new GetTeam($team);
+        $resource = new GetDepthChart($team);
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
 
         if ($this->forcePull) {
             $resource->forcePull();
@@ -23,9 +26,26 @@ class NflTeam extends BaseResourceCollection
         return $resource->fetch();
     }
 
-    public function getPlayers(Team|NFLTeams|string $team, int $page = 1)
+    public function getEvents(Team|NFLTeams|int|string $team)
+    {
+        $resource = new GetEvents($team);
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
+
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
+
+        return $resource->fetch();
+    }
+
+    public function getPlayers(Team|NFLTeams|int|string $team, int $page = 1)
     {
         $resource = new GetPlayers($team);
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
 
         $resource->page = $page;
 
@@ -36,31 +56,26 @@ class NflTeam extends BaseResourceCollection
         return $resource->fetch();
     }
 
-    public function getDepthChart(Team|NFLTeams|string $team)
-    {
-        $resource = new GetDepthChart($team);
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
-        return $resource->fetch();
-    }
-
-    public function getEvents(Team|NFLTeams|string $team)
-    {
-        $resource = new GetEvents($team);
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
-        return $resource->fetch();
-    }
-
-    public function getRoster(Team|NFLTeams|string $team)
+    public function getRoster(Team|NFLTeams|int|string $team)
     {
         $resource = new GetRoster($team);
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
+
+        if ($this->forcePull) {
+            $resource->forcePull();
+        }
+
+        return $resource->fetch();
+    }
+
+    public function getTeam(Team|NFLTeams|int|string $team)
+    {
+        $resource = new GetTeam($team);
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
 
         if ($this->forcePull) {
             $resource->forcePull();

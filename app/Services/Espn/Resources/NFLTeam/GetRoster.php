@@ -11,12 +11,12 @@ class GetRoster extends NFLTeamResource
 {
     public function setCacheFilePath()
     {
-        $dirs = [];
+        $dirs = ['nfl-teams'];
 
         $file = [
             'roster',
             $this->teamId,
-            $this->returnType,
+            $this->dataFormat,
         ];
 
         // EX: data/espn/nfl-teams/roster-123456-formatted.json

@@ -2,7 +2,7 @@
 
 namespace App\Services\Imports;
 
-use App\Enums\DataSources;
+use App\Enums\Datum;
 use App\Enums\FantasyPlatforms;
 use App\Services\Imports\Drivers\Rankings\FantasyProsRankingsDriver;
 use App\Services\Imports\Drivers\Projections\FantasyProsProjectionsDriver;
@@ -19,7 +19,7 @@ class ImportService
     {
         $drivers = [
             'draft_rankings' => [
-                DataSources::FANTASY_PROS->value => FantasyProsRankingsDriver::class,
+                Datum::SOURCE_FANTASY_PROS->value => FantasyProsRankingsDriver::class,
             ],
             'fantasy_nfl' => [
                 FantasyPlatforms::ESPN->value => EspnDriver::class,
@@ -28,7 +28,7 @@ class ImportService
                 FantasyPlatforms::ESPN->value => EspnDriver::class,
             ],
             'projections' => [
-                DataSources::FANTASY_PROS->value => FantasyProsProjectionsDriver::class,
+                Datum::SOURCE_FANTASY_PROS->value => FantasyProsProjectionsDriver::class,
             ],
         ];
 

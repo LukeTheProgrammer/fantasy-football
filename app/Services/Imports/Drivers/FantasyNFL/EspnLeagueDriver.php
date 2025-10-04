@@ -2,51 +2,24 @@
 
 namespace App\Services\Imports\Drivers\FantasyNFL;
 
-use App\Enums\FantasyPlatforms;
-use App\Facades\Espn;
+use App\Enums\Datum;
+use App\Facades\Data;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\Player;
 use App\Models\User;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
-use App\Services\Espn\Data\FantasyNFL\LineupSlotCountsData;
-use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
-use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
-use App\Services\Espn\Data\FantasyNFL\RosterSettingsData;
-use App\Services\Espn\Data\FantasyNFL\SettingsSettingsData;
-use App\Services\Espn\Data\FantasyNFL\ScheduleData;
-use App\Services\Espn\EspnConstants;
-use App\Services\Espn\Resources\FantasyNFL;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Carbon;
 use InvalidArgumentException;
 
 class EspnLeagueDriver
 {
     private User $creator;
 
-    private FantasyNFL $espn;
-
-    private ResourceLeagueData $apiLeague;
-
     private ?CredentialsData $credentials = null;
 
-    private array $draftData = [];
-
-    private array $draftPickData = [];
-
     private array $leagueData = [];
-
-    private array $membersData = [];
-
-    private array $rosterData = [];
-
-    private array $schedulesData = [];
-
-    private array $settingsData = [];
 
     public function __construct(private array $metaData = [])
     {
@@ -61,15 +34,11 @@ class EspnLeagueDriver
         if (! $this->credentials instanceof CredentialsData) {
             throw new InvalidArgumentException('Invalid credentials');
         }
-
-        $this->espn = Espn::fantasyNFL($this->credentials);
     }
 
     public function import(): League
     {
         $this->loadData();
-
-        $this->mapData();
 
         return $this->createLeague();
     }
@@ -78,162 +47,28 @@ class EspnLeagueDriver
 
     private function loadData()
     {
-        $this->apiLeague = $this->espn->getLeague();
-    }
-
-    private function mapData()
-    {
-        $this->mapLeagueData();
-
-        $this->mapSettingsData();
-
-        $this->mapDraftData();
-
-        $this->mapMembersData();
-
-        $this->mapScheduleData();
-    }
-
-    private function mapLeagueData()
-    {
-        /** @var SettingsSettingsData $settings */
-        $settings = $this->apiLeague->settings;
-
-        $this->leagueData = [
-            'created_by_user_id' => $this->creator->id,
-            'name'               => $settings->name,
-            'year'               => date('Y'),
-            'slug'               => 'espn-' . Str::slug($settings->name),
-            'description'        => null,
-            'platform'           => FantasyPlatforms::ESPN->value,
-            'platform_id'        => Arr::get($this->credentials, 'leagueId'),
-            'team_count'         => $settings->size,
-            'is_public'          => $settings->isPublic,
-            'join_code'          => Str::upper(Str::random(8)),
-            'is_active'          => true,
-            'credentials'        => $this->credentials,
-        ];
-    }
-
-    private function mapSettingsData()
-    {
-        /** @var ScoringSettingsData $scoring */
-        $scoring = $this->apiLeague->settings->scoringSettings;
-
-        /** @var RosterSettingsData $roster */
-        $roster = $this->apiLeague->settings->rosterSettings;
-
-        /** @var LineupSlotCountsData $lineup */
-        $lineup = $roster->lineupSlotCounts;
-
-        $this->settingsData = [
-            'roster_positions' => $this->getRosterPositions($lineup),
-            'roster_size'      => $lineup->getPositionCount(),
-            'starters_count'   => $lineup->getStartersCount(),
-            'bench_count'      => $lineup->getBenchCount(),
-            'ir_spots'         => $lineup->IR,
-            ...$this->mapScoringSettings($scoring->scoringItems),
-        ];
-
-        $recPts = $this->settingsData['reception_points'];
-        $ppr = ($recPts >= 1) ? 'ppr' : (($recPts >= 0) ? 'half-ppr' : 'standard');
-
-        $this->settingsData['ppr'] = $ppr;
-        $this->settingsData['two_qb'] = $this->isTwoQb();
-    }
-
-    private function mapDraftData()
-    {
-        /** @var DraftSettingsData $draftSettings */
-        $draftSettings = $this->apiLeague->settings->draftSettings;
-
-        /** @var DraftDetailData $draftDetail */
-        $draftDetail = $this->apiLeague->draftDetail;
-
-        $this->draftData = [
-            'draft_date'     => $this->getDate($draftSettings->date)?->toDateTimeString(),
-            'draft_type'     => $draftSettings->type,
-            'is_completed'   => $draftDetail->drafted,
-            'auction_budget' => $draftSettings->auctionBudget,
-            'time_per_pick'  => $draftSettings->timePerSelection,
-            'is_active'      => false,
-        ];
-
-        $draftDetail->picks->each(function ($pick) {
-            $this->draftPickData[] = [
-                'league_member_id'    => $pick->teamId,
-                'player_id'           => $pick->playerId,
-                'round'               => $pick->roundId,
-                'pick_number'         => $pick->roundPickNumber,
-                'overall_pick_number' => $pick->overallPickNumber,
-                'amount'              => $pick->bidAmount,
-                'is_keeper'           => $pick->keeper,
-            ];
-        });
-    }
-
-    private function mapMembersData()
-    {
-        /** @var Collection $members */
-        $members = $this->apiLeague->members;
-
-        $this->apiLeague->teams->each(function (ResourceTeamsData $team) use ($members) {
-
-            /** @var ?TeamRecordData $record */
-            $record = $team->record->get('overall', []);
-
-            $this->membersData[] = [
-                'external_id'    => $team->id,
-                'team_name'      => $team->name,
-                'owner_name'     => $this->findOwnerName($team, $members),
-                'team_logo'      => $team->logo,
-                'wins'           => $record?->wins,
-                'losses'         => $record?->losses,
-                'ties'           => $record?->ties,
-                'points_for'     => $record?->pointsFor,
-                'points_against' => $record?->pointsAgainst,
-                'faab_balance'   => 200 - intval($team->transactionCounter->acquisitionBudgetSpent),
-            ];
-
-            // $this->rosterData[] = [
-            //     'team_id' => $team->id,
-            //     'players' => $team->roster->entries->map(fn (TeamRosterEntryData $entry) => [
-            //         'player_id'   => $entry->playerId,
-            //         'position_id' => $entry->lineupSlotId,
-            //         'first_name'  => $entry->playerPoolEntry->player->firstName,
-            //         'roster_data' => [
-            //             'position_rank'  => $entry->playerPoolEntry->ratings->first()?->positionalRanking ?? 0,
-            //             'overall_rank'   => $entry->playerPoolEntry->ratings->first()?->totalRanking ?? 0,
-            //             'fantasy_points' => 0,
-            //             'deleted_at'     => null,
-            //         ],
-            //     ]),
-            // ];
-        });
-    }
-
-    private function mapScheduleData()
-    {
-        $this->apiLeague->schedule->each(function (ScheduleData $schedule) {
-            $this->schedulesData[] = [
-                'home_member_id' => $schedule->home->teamId,
-                'away_member_id' => $schedule->away->teamId,
-                'year' => 2025,
-                'week' => $schedule->matchupPeriodId,
-                'home_score' => $schedule->home->totalPoints,
-                'away_score' => $schedule->away->totalPoints,
-            ];
-        });
+        $this->leagueData = Data::forcePull(false)
+            ->dataFormat(Datum::FORMAT_FORMATTED)
+            ->espn()
+            ->getFantasyLeague(
+                credentials: $this->credentials
+            );
     }
 
     private function createLeague(): League
     {
+        $leagueData = $this->leagueData['league'];
+
+        $leagueData['created_by_user_id'] = $this->creator->id;
+        $leagueData['platform_id'] = Arr::get($this->credentials, 'leagueId');
+        $leagueData['credentials'] = $this->credentials;
+
         $league = League::updateOrCreate(
             [
-                'platform' => $this->leagueData['platform'],
-                'platform_id' => $this->leagueData['platform_id'],
+                'platform' => $leagueData['platform'],
+                'platform_id' => $leagueData['platform_id'],
             ],
-            $this->leagueData,
+            $leagueData,
         );
 
         $this->createSettings($league);
@@ -253,13 +88,13 @@ class EspnLeagueDriver
     {
         $league->settings()->updateOrCreate(
             ['league_id' => $league->id],
-            $this->settingsData,
+            $this->leagueData['settings'],
         );
     }
 
     private function createMembers(League $league)
     {
-        foreach ($this->membersData as $member) {
+        foreach ($this->leagueData['members'] as $member) {
             $league->members()->updateOrCreate(
                 ['external_id' => $member['external_id']],
                 $member,
@@ -271,7 +106,7 @@ class EspnLeagueDriver
     {
         $members = LeagueMember::forLeague($league)->get()->keyBy('external_id');
 
-        foreach ($this->rosterData as $roster) {
+        foreach ($this->leagueData['roster'] as $roster) {
             $member = $members->get($roster['team_id']);
 
             if (! $member instanceof LeagueMember) {
@@ -284,12 +119,12 @@ class EspnLeagueDriver
     {
         $draft = $league->draft()->updateOrCreate(
             ['league_id' => $league->id],
-            $this->draftData,
+            $this->leagueData['draft'],
         );
 
         $draft->picks()->delete();
 
-        foreach ($this->draftPickData as $pick) {
+        foreach ($this->leagueData['draftPicks'] as $pick) {
             $member = LeagueMember::forExtId($pick['league_member_id'])->first();
 
             if (! $member instanceof LeagueMember) {
@@ -316,7 +151,7 @@ class EspnLeagueDriver
 
     private function createMatchups(League $league)
     {
-        foreach ($this->schedulesData as $matchup) {
+        foreach ($this->leagueData['schedules'] as $matchup) {
             $homeMember = LeagueMember::forExtId($matchup['home_member_id'])->first();
             $awayMember = LeagueMember::forExtId($matchup['away_member_id'])->first();
 
@@ -335,61 +170,5 @@ class EspnLeagueDriver
                 $matchup,
             );
         }
-    }
-
-    private function getRosterPositions(LineupSlotCountsData $lineup): array
-    {
-        $positions = [];
-
-        foreach ($lineup->toArray() as $slot => $count) {
-            if ($count > 0) {
-                $positions = array_merge($positions, array_fill(0, $count, $slot));
-            }
-        }
-
-        return $positions;
-    }
-
-    private function mapScoringSettings(Collection $scoring): array
-    {
-        $mapped = [];
-
-        foreach (EspnConstants::SCORING_MAP as $espnKey => $modelKey) {
-            $value = $scoring->firstWhere('label', $espnKey);
-
-            if ($value) {
-                $mapped[$modelKey] = $value->value;
-            }
-        }
-
-        return $mapped;
-    }
-
-    private function findOwnerName(ResourceTeamsData $team, Collection $members): string
-    {
-        $member = $members->firstWhere('id', $team->primaryOwner);
-
-        return ($member)
-            ? $member->firstName . ' ' . $member->lastName
-            : $team->name . ' Owner';
-    }
-
-    /**
-     * Api timestamps are in ms.
-     *
-     * @param integer|null $timestamp
-     *
-     * @return Carbon|null
-     */
-    private function getDate(?int $timestamp): ?Carbon
-    {
-        return ($timestamp) ? Carbon::parse($timestamp/1000) : null;
-    }
-
-    private function isTwoQb(): bool
-    {
-        $roster = collect(Arr::get($this->settingsData, 'roster_positions', []));
-
-        return $roster->filter(fn ($p) => $p === 'QB')->count() > 1;
     }
 }

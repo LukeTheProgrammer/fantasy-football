@@ -6,15 +6,16 @@ class GetDepthChart extends NFLTeamResource
 {
     public function setCacheFilePath()
     {
-        $dirs = [];
+        $dirs = ['nfl-teams'];
 
         $file = [
             'depthchart',
             $this->teamId,
-            $this->returnType,
+            date('Y-m-d'),
+            $this->dataFormat,
         ];
 
-        // EX: data/espn/nfl-teams/depthchart-123456-formatted.json
+        // EX: data/espn/nfl-teams/depthchart-123456-2025-10-03-formatted.json
         $this->cacheFilePath = $this->getCacheFilePath($dirs, $file);
     }
 
