@@ -37,7 +37,7 @@ class Player extends Model
      */
     public function aliases(): HasMany
     {
-        return $this->hasMany(PlayerAlias::class);
+        return $this->hasMany(PlayerAlias::class, 'player_ulid', 'ulid');
     }
 
     /**
