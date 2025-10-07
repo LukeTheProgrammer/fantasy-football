@@ -40,12 +40,6 @@ class ImportRostersCommand extends Command
 
         $importer = Import::fantasyNFL($league->platform);
 
-        // Soft delete all existing rosters for the league and year
-        LeagueMemberRoster::query()
-            ->whereIn('league_member_id', $league->members()->select('id'))
-            ->forSeason($year)
-            ->delete();
-
         $this->info('Importing rosters...');
 
         $importer->importRosters($league, $year);

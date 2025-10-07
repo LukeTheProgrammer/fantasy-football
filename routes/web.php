@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DraftController;
-use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\DraftRankingController;
+use App\Http\Controllers\LeagueController;
+use App\Http\Controllers\PlayersController;
+use App\Http\Controllers\PlayerAliasesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -11,6 +13,8 @@ Route::get('/', fn () => Inertia::render('welcome'))->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('players', [PlayersController::class, 'index'])->name('players.index');
+    Route::get('player-aliases', [PlayerAliasesController::class, 'index'])->name('player_aliases.index');
 
     // League model
     Route::prefix('leagues')->name('leagues.')->group(function () {

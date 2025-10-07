@@ -30,7 +30,7 @@ abstract class NFLTeamResource extends BaseResource
     {
         $this->setTeamId($team);
 
-        $this->cacheBaseDirectory = 'data/espn';
+        $this->cacheBaseDirectory = 'data/espn/nfl-teams';
     }
 
     public function buildUrl(?string $path = null, array $params = [])

@@ -7,6 +7,8 @@ use App\Facades\Action;
 use App\Facades\FantasyPros;
 use App\Models\NflGame;
 use App\Models\Player;
+use App\Models\PlayerAlias;
+use App\Models\PlayerNotFound;
 use App\Models\PlayerProjection;
 use App\Models\Team;
 use App\Services\FantasyPros\Resources\ProjectionsResource;
@@ -34,6 +36,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
         $this->fp = FantasyPros::projections();
 
+
         $errors = [];
 
         $this->config->each(function ($config, $key) use (&$errors) {
@@ -50,7 +53,15 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
     public function load()
     {
         foreach ($this->fp->sources as $label => $url) {
-            $data = $this->fp->getProjections($label);
+            $data = $this->fp->getProjections(
+                $label,
+                $this->config->get('year'),
+                $this->config->get('week')
+            );
+
+            if (empty($data)) {
+                continue;
+            }
 
             foreach ($data as $player) {
                 $this->save($label, $player);
@@ -65,9 +76,6 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
         }
 
         $update = [
-            'season' => $this->config->get('year'),
-            'week' => $this->config->get('week'),
-
             'fp_projected_points' => null,
             'fp_pos_rank' => null,
             'fp_pos_rank_min' => null,
@@ -142,7 +150,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
         $player = $this->findPlayer($playerData);
 
         if (! $player instanceof Player) {
-            dd(['Player Not Found' => $playerData]);
+            // dd(['Player Not Found' => $playerData]);
             $this->addError('Player Not Found', $playerData, $update);
             return;
         }
@@ -163,33 +171,54 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
         $find = [
             'player_id' => $player->id,
-            'nfl_game_id' => $nflGame->id,
+            'season' => $this->config->get('year'),
+            'week' => $this->config->get('week'),
         ];
+
+        $update['nfl_game_id'] = $nflGame->id;
+
+        if ($player->id === 1814) {
+            // dump($find, $update);
+        }
 
         PlayerProjection::updateOrCreate($find, $update);
     }
 
     public function findPlayer(array $data)
     {
-        $name = Arr::get($data, 'player_name');
-        $nameSpace = strpos($name, ' ');
-        $firstName = substr($name, 0, $nameSpace);
-        $lastName = substr($name, $nameSpace + 1);
+        $player = Player::fpId(Arr::get($data, 'player_id'))->first();
 
-        $playerData = [
-            'fp_id' => Arr::get($data, 'player_id'),
-            'team_id' => $this->getTeamId(Arr::get($data, 'player_team_id')),
-            'position_id' => Arr::get($data, 'player_position_id'),
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'full_name' => $name,
-        ];
+        if (! $player instanceof Player) {
+            $pq = Player::where('full_name', '=', Arr::get($data, 'player_name'));
 
-        return Action::model(Player::class)->upsert($playerData);
+            if ($pq->count() === 1) {
+                $player = $pq->first();
+            }
+        }
+
+        if (! $player instanceof Player) {
+            $paq = PlayerAlias::where('name', '=', Arr::get($data, 'player_name'));
+
+            if ($paq->count() === 1) {
+                $player = $paq->first()->player;
+            }
+        }
+
+        if (! $player instanceof Player) {
+            $this->addError('Player Not Found', $data, []);
+            Action::model(PlayerNotFound::class)->upsert($data, get_called_class());
+            return null;
+        }
+
+        return $player;
     }
 
-    public function getTeamId(string $team)
+    public function getTeamId(?string $team = null)
     {
+        if (empty($team)) {
+            return null;
+        }
+
         return match ($team) {
             'ARI' => NFLTeams::ARI->value,
             'JAC' => NFLTeams::JAX->value,
@@ -210,9 +239,13 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
             ->forYear($this->config->get('year'))
             ->forWeek($this->config->get('week'));
 
-        // dd($q->toSql(), $q->getBindings());
+        $game = $q->first();
 
-        return $q->first();
+        if (! $game instanceof NflGame) {
+            dd('Game Not Found', $player->toArray(), $q->toSql(), $q->getBindings());
+        }
+
+        return $game;
     }
 
     public function addError(string $type, array $playerData, array $formattedData)

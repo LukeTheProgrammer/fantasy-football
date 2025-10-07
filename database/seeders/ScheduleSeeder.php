@@ -9,27 +9,11 @@ class ScheduleSeeder extends Seeder
 {
     public function run(): void
     {
-        Artisan::call('espn:nfl:get:team-schedule', [
-            '--all' => true,
-            '--quiet' => true,
+        Artisan::call('import:nfl:schedule', [
             'year' => 2024,
         ]);
 
-        Artisan::call('espn:nfl:get:team-schedule', [
-            '--all' => true,
-            '--quiet' => true,
-            'year' => 2025,
-        ]);
-
-        Artisan::call('espn:nfl:load:team-schedules', [
-            '--all' => true,
-            '--quiet' => true,
-            'year' => 2024,
-        ]);
-
-        Artisan::call('espn:nfl:load:team-schedules', [
-            '--all' => true,
-            '--quiet' => true,
+        Artisan::call('import:nfl:schedule', [
             'year' => 2025,
         ]);
     }

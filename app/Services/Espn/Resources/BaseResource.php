@@ -156,12 +156,28 @@ abstract class BaseResource
         return (is_array($response)) ? $response : $response->json();
     }
 
-    public function returnFormatted(array|Response $response)
+    /**
+     * Extracted data should be an instance of Spatie/Data
+     * that is very close to the raw format.
+     *
+     * @param array|Response $response
+     *
+     * @return mixed
+     */
+    public function returnExtracted(array|Response $response)
     {
         return (is_array($response)) ? $response : $response->json();
     }
 
-    public function returnExtracted(array|Response $response)
+    /**
+     * Formatted data should be formatted to be most efficiently
+     * used by the application.
+     *
+     * @param array|Response $response
+     *
+     * @return mixed
+     */
+    public function returnFormatted(array|Response $response)
     {
         return (is_array($response)) ? $response : $response->json();
     }

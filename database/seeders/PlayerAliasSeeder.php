@@ -16,15 +16,15 @@ class PlayerAliasSeeder extends Seeder
         $aliases = json_decode($json, true);
 
         foreach ($aliases as $alias) {
-            $playerId = Arr::get($alias, 'player_id');
-            $player = Player::find($playerId);
+            $playerId = Arr::get($alias, 'player_ulid');
+            $player = Player::where('ulid', $playerId)->first();
 
             if (! $player instanceof Player) {
                 dump('Player not found for alias: ' . json_encode($alias));
                 continue;
             }
 
-            PlayerAlias::updateOrCreate([ 'player_id' => $player->id, 'name' => Arr::get($alias, 'name')], []);
+            PlayerAlias::updateOrCreate([ 'player_ulid' => $player->ulid, 'name' => Arr::get($alias, 'name')]);
         }
     }
 }

@@ -6,7 +6,7 @@ class GetTeam extends NFLTeamResource
 {
     public function setCacheFilePath()
     {
-        $dirs = [];
+        $dirs = ['teams'];
 
         $file = [
             'team',

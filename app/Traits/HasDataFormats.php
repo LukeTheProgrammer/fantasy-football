@@ -7,7 +7,7 @@ use Exception;
 
 trait HasDataFormats
 {
-    protected string $dataFormat = Datum::FORMAT_RAW->value;
+    protected string $dataFormat = Datum::FORMAT_FORMATTED->value;
 
     protected bool $forcePull = false;
 

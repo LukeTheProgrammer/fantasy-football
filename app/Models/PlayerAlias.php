@@ -25,7 +25,7 @@ class PlayerAlias extends Model
      */
     public function player(): BelongsTo
     {
-        return $this->belongsTo(Player::class);
+        return $this->belongsTo(Player::class, 'player_ulid', 'ulid');
     }
 
     public function team(): BelongsTo
@@ -43,5 +43,11 @@ class PlayerAlias extends Model
     public function scopeForName(Builder $query, string $name): Builder
     {
         return $query->where('name', $name);
+    }
+
+    public function scopeNameLike(Builder $query, string $name): Builder
+    {
+        $like = '%' . $name . '%';
+        return $query->where('name', 'like', $like);
     }
 }

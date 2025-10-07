@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('draft_id')->constrained()->cascadeOnDelete();
             $table->foreignId('league_member_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('player_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('player_id')->constrained()->cascadeOnDelete();
             $table->integer('round')->default(0);
             $table->integer('pick_number')->default(0);
             $table->integer('overall_pick_number')->default(0);

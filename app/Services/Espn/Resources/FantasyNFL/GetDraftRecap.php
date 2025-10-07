@@ -10,13 +10,14 @@ class GetDraftRecap extends FantasyNFLResource
 {
     public function setCacheFilePath()
     {
-        $dirs = ['leagues'];
+        $dirs = [
+            'league-' . $this->leagueId,
+            $this->dataFormat,
+        ];
 
         $file = [
             'draft-recap',
-            $this->leagueId,
             date('Y'),
-            $this->dataFormat,
         ];
 
         // EX: data/espn/ffl/leagues/draft-recap-123456-2025-formatted.json

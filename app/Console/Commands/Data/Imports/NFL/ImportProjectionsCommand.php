@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands\Data\Imports\NFL;
 
-use App\Enums\DataSources;
-use App\Facades\Import;
+use App\Facades\Data;
 use App\Models\Season;
 use App\Models\Week;
-use App\Services\Imports\Importers\ProjectionsImporter;
 use Illuminate\Console\Command;
 use function Laravel\Prompts\select;
 
@@ -18,8 +16,8 @@ class ImportProjectionsCommand extends Command
      * @var string
      */
     protected $signature = 'import:nfl:projections
-        {year? : Year}
-        {week? : Week}
+        { year? : Year }
+        { week? : Week }
     ';
 
     /**
@@ -29,25 +27,17 @@ class ImportProjectionsCommand extends Command
      */
     protected $description = 'Import NFL Projections';
 
-    protected ?ProjectionsImporter $import = null;
-
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $this->import = Import::projections(
-            DataSources::FANTASY_PROS->value
-        );
+        $year = $this->argument('year') ?? select('Year', [2025, 2024], Season::current()->first()->id);
+        $week = $this->argument('week') ?? select('Week', range(1, 18), Week::current()->first()->week);
 
-        $this->import->setUp([
-            'year' => $this->argument('year') ?? select('Year', [2025, 2024], Season::current()->first()->id),
-            'week' => $this->argument('week') ?? select('Week', range(1, 18), Week::current()->first()->week),
-        ]);
+        $this->info('Importing Projections for season ' . $year . ' Week ' . $week);
 
-        $this->import->load();
-
-        $errors = $this->import->getErrors();
+        $errors = Data::fantasyPros()->importNFLProjections($year, $week);
 
         if (! empty($errors)) {
             $this->error('Errors found:');

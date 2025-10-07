@@ -16,4 +16,9 @@ class NFLImporter
     {
         return $this->driver->importRosters($team, $year);
     }
+
+    public function importSchedule(Team $team, int $year)
+    {
+        return $this->driver->importSchedule($team, $year);
+    }
 }

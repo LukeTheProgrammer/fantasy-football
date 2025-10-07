@@ -139,6 +139,7 @@ export interface NflGameResource {
   away_score: number;
   is_completed: boolean;
   is_playoff: boolean;
+  is_bye: boolean;
 
   home_team: NflTeamResource;
   away_team: NflTeamResource;

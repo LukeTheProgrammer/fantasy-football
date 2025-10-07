@@ -19,9 +19,10 @@ return new class extends Migration
             $table->id();
             $table->string('espn_id')->nullable();
             $table->string('home_team_id', 10);
-            $table->string('away_team_id', 10);
+            $table->string('away_team_id', 10)->nullable();
             $table->year('year');
             $table->integer('week');
+            $table->boolean('is_bye')->default(false);
             $table->dateTime('starts_at')->nullable();
             $table->integer('home_score')->nullable();
             $table->integer('away_score')->nullable();

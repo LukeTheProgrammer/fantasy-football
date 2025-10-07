@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Scrapers;
 
-use App\Enums\DataSources;
+use App\Enums\Datum;
 use App\Facades\Action;
 use App\Facades\Scraper;
 use App\Models\Position;
@@ -68,7 +68,7 @@ class GetEspnRoster extends Command
             $this->info("Loading rosters for {$teamName}");
         }
 
-        $scraper = Scraper::scraper(DataSources::ESPN->value);
+        $scraper = Scraper::scraper(Datum::SOURCE_ESPN->value);
         $data = $scraper->getTeamRoster($teamName);
 
         if (! is_array($data['roster'])) {

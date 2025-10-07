@@ -17,7 +17,7 @@ return new class extends Migration
 
         Schema::create('draft_rankings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
+            $table->foreignId('player_id')->constrained()->cascadeOnDelete();
             $table->year('year');
             $table->date('ranked_at');
             $table->enum('type', ['redraft', 'dynasty'])->default('redraft');

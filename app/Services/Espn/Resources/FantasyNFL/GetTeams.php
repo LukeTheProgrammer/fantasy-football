@@ -10,13 +10,14 @@ class GetTeams extends FantasyNFLResource
 {
     public function setCacheFilePath()
     {
-        $dirs = ['leagues'];
+        $dirs = [
+            'league-' . $this->leagueId,
+            $this->dataFormat,
+        ];
 
         $file = [
             'teams',
-            $this->leagueId,
             date('Y-m-d'),
-            $this->dataFormat,
         ];
 
         // EX: data/espn/ffl/leagues/teams-123456-2025-10-03-formatted.json

@@ -38,17 +38,17 @@ abstract class BaseSource
         return null;
     }
 
-    public function getNFLProjections()
+    public function getNFLProjections(int $year, int $week)
     {
         return null;
     }
 
-    public function getNFLRosters(Team|NFLTeams|string $team)
+    public function getNFLRosters(Team $team)
     {
         return null;
     }
 
-    public function getNFLSchedule(Team|NFLTeams|string $team, int $year)
+    public function getNFLSchedule(Team $team, int $year)
     {
         return null;
     }
@@ -72,17 +72,17 @@ abstract class BaseSource
         return null;
     }
 
-    public function importNFLProjections()
+    public function importNFLProjections(int $year, int $week)
     {
         return null;
     }
 
-    public function importNFLRosters()
+    public function importNFLRosters(Team $team, int $year)
     {
         return null;
     }
 
-    public function importNFLSchedule()
+    public function importNFLSchedule(Team $team, int $year)
     {
         return null;
     }

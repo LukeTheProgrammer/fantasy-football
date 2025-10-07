@@ -175,11 +175,11 @@ class LeagueShowResource extends JsonResource
             ];
 
             $points = Arr::get($data, 'fantasy_points', 0);
-            $espn = Arr::get($data, 'player_projection.espn_projected_points', 0);
+            $espn = Arr::get($data, 'player_projection.espn_points', 0);
             $fp = Arr::get($data, 'player_projection.fp_points', 0);
 
-            $data['espn_diff'] = ($points > 0 && $espn > 0) ? $points - $espn : 0;
-            $data['fp_diff'] = ($points > 0 && $fp > 0) ? $points - $fp : 0;
+            $data['espn_diff'] = ($points > 0 && $espn > 0) ? round($points - $espn, 2) : 0;
+            $data['fp_diff'] = ($points > 0 && $fp > 0) ? round($points - $fp, 2) : 0;
 
             return $data;
         })->groupBy('week');
@@ -227,42 +227,85 @@ class LeagueShowResource extends JsonResource
             'season'      => $playerProjection->season,
             'week'        => $playerProjection->week,
             'espn_points' => $playerProjection->espn_projected_points,
+
+            'fp_points'   => $this->firstProjection([
+                $playerProjection->fp_projected_points,
+                $playerProjection->fp_half_projected_points,
+                $playerProjection->fp_2qb_projected_points,
+                $playerProjection->fp_ppr_projected_points,
+            ]),
+            'fp_pos_rank'   => $this->firstProjection([
+                $playerProjection->fp_pos_rank,
+                $playerProjection->fp_half_pos_rank,
+                $playerProjection->fp_2qb_pos_rank,
+                $playerProjection->fp_ppr_pos_rank,
+            ]),
+            'fp_pos_rank_min' => $this->firstProjection([
+                $playerProjection->fp_pos_rank_min,
+                $playerProjection->fp_half_pos_rank_min,
+                $playerProjection->fp_2qb_pos_rank_min,
+                $playerProjection->fp_ppr_pos_rank_min,
+            ]),
+            'fp_pos_rank_max' => $this->firstProjection([
+                $playerProjection->fp_pos_rank_max,
+                $playerProjection->fp_half_pos_rank_max,
+                $playerProjection->fp_2qb_pos_rank_max,
+                $playerProjection->fp_ppr_pos_rank_max,
+            ]),
+            'fp_pos_rank_avg' => $this->firstProjection([
+                $playerProjection->fp_pos_rank_avg,
+                $playerProjection->fp_half_pos_rank_avg,
+                $playerProjection->fp_2qb_pos_rank_avg,
+                $playerProjection->fp_ppr_pos_rank_avg,
+            ]),
+            'fp_pos_rank_std' => $this->firstProjection([
+                $playerProjection->fp_pos_rank_std,
+                $playerProjection->fp_half_pos_rank_std,
+                $playerProjection->fp_2qb_pos_rank_std,
+                $playerProjection->fp_ppr_pos_rank_std,
+            ]),
+
+            'fp_2qb_projected_points' => $playerProjection->fp_2qb_projected_points,
+            'fp_2qb_pos_rank' => $playerProjection->fp_2qb_pos_rank,
+            'fp_2qb_pos_rank_min' => $playerProjection->fp_2qb_pos_rank_min,
+            'fp_2qb_pos_rank_max' => $playerProjection->fp_2qb_pos_rank_max,
+            'fp_2qb_pos_rank_avg' => $playerProjection->fp_2qb_pos_rank_avg,
+            'fp_2qb_pos_rank_std' => $playerProjection->fp_2qb_pos_rank_std,
+
+            'fp_ppr_projected_points' => $playerProjection->fp_ppr_projected_points,
+            'fp_ppr_pos_rank' => $playerProjection->fp_ppr_pos_rank,
+            'fp_ppr_pos_rank_min' => $playerProjection->fp_ppr_pos_rank_min,
+            'fp_ppr_pos_rank_max' => $playerProjection->fp_ppr_pos_rank_max,
+            'fp_ppr_pos_rank_avg' => $playerProjection->fp_ppr_pos_rank_avg,
+            'fp_ppr_pos_rank_std' => $playerProjection->fp_ppr_pos_rank_std,
+
+            'fp_half_projected_points' => $playerProjection->fp_half_projected_points,
+            'fp_half_pos_rank' => $playerProjection->fp_half_pos_rank,
+            'fp_half_pos_rank_min' => $playerProjection->fp_half_pos_rank_min,
+            'fp_half_pos_rank_max' => $playerProjection->fp_half_pos_rank_max,
+            'fp_half_pos_rank_avg' => $playerProjection->fp_half_pos_rank_avg,
+            'fp_half_pos_rank_std' => $playerProjection->fp_half_pos_rank_std,
+
+            'fp_projected_points' => $playerProjection->fp_projected_points,
+            'fp_pos_rank' => $playerProjection->fp_pos_rank,
+            'fp_pos_rank_min' => $playerProjection->fp_pos_rank_min,
+            'fp_pos_rank_max' => $playerProjection->fp_pos_rank_max,
+            'fp_pos_rank_avg' => $playerProjection->fp_pos_rank_avg,
+            'fp_pos_rank_std' => $playerProjection->fp_pos_rank_std,
         ];
 
-        if ($this->settings->two_qb) {
-            $data['fp_points']       = $playerProjection->fp_2qb_projected_points;
-            $data['fp_pos_rank']     = $playerProjection->fp_2qb_pos_rank;
-            $data['fp_pos_rank_min'] = $playerProjection->fp_2qb_pos_rank_min;
-            $data['fp_pos_rank_max'] = $playerProjection->fp_2qb_pos_rank_max;
-            $data['fp_pos_rank_avg'] = $playerProjection->fp_2qb_pos_rank_avg;
-            $data['fp_pos_rank_std'] = $playerProjection->fp_2qb_pos_rank_std;
+        return $data;
+    }
 
-        } else if ($this->settings->ppr === 'ppr') {
-            $data['fp_points']       = $playerProjection->fp_ppr_projected_points;
-            $data['fp_pos_rank']     = $playerProjection->fp_ppr_pos_rank;
-            $data['fp_pos_rank_min'] = $playerProjection->fp_ppr_pos_rank_min;
-            $data['fp_pos_rank_max'] = $playerProjection->fp_ppr_pos_rank_max;
-            $data['fp_pos_rank_avg'] = $playerProjection->fp_ppr_pos_rank_avg;
-            $data['fp_pos_rank_std'] = $playerProjection->fp_ppr_pos_rank_std;
-
-        } else if ($this->settings->ppr === 'half-ppr') {
-            $data['fp_points']       = $playerProjection->fp_half_projected_points;
-            $data['fp_pos_rank']     = $playerProjection->fp_half_pos_rank;
-            $data['fp_pos_rank_min'] = $playerProjection->fp_half_pos_rank_min;
-            $data['fp_pos_rank_max'] = $playerProjection->fp_half_pos_rank_max;
-            $data['fp_pos_rank_avg'] = $playerProjection->fp_half_pos_rank_avg;
-            $data['fp_pos_rank_std'] = $playerProjection->fp_half_pos_rank_std;
-
-        } else {
-            $data['fp_points']       = $playerProjection->fp_projected_points;
-            $data['fp_pos_rank']     = $playerProjection->fp_pos_rank;
-            $data['fp_pos_rank_min'] = $playerProjection->fp_pos_rank_min;
-            $data['fp_pos_rank_max'] = $playerProjection->fp_pos_rank_max;
-            $data['fp_pos_rank_avg'] = $playerProjection->fp_pos_rank_avg;
-            $data['fp_pos_rank_std'] = $playerProjection->fp_pos_rank_std;
+    private function firstProjection(array $data)
+    {
+        foreach ($data as $proj) {
+            if (! empty($proj) && $proj > 0) {
+                return $proj;
+            }
         }
 
-        return $data;
+        return 0;
     }
 
     private function formatDraftPicks(Collection $picks)
@@ -295,13 +338,14 @@ class LeagueShowResource extends JsonResource
             'espn_id'      => $game->espn_id,
             'year'         => $game->year,
             'week'         => $game->week,
-            'starts_at'   => $game->starts_at,
+            'starts_at'    => $game->starts_at,
             'day'          => $gameTime->format('D'),
             'time'         => $gameTime->format('g:i'),
             'home_score'   => $game->home_score,
             'away_score'   => $game->away_score,
             'is_completed' => $game->is_completed,
             'is_playoff'   => $game->is_playoff,
+            'is_bye'       => $game->is_bye,
             'home_team'    => $this->formatNflTeam($game->homeTeam),
             'away_team'    => $this->formatNflTeam($game->awayTeam),
         ];

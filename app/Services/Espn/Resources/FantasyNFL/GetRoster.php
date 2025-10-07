@@ -15,15 +15,16 @@ class GetRoster extends FantasyNFLResource
 
     public function setCacheFilePath()
     {
-        $dirs = ['leagues'];
+        $dirs = [
+            'league-' . $this->leagueId,
+            $this->dataFormat,
+        ];
 
         $file = [
             'roster',
-            $this->leagueId,
             $this->teamId,
             $this->week,
             $this->year,
-            $this->dataFormat,
         ];
 
         // EX: data/espn/ffl/leagues/league-123456-formatted.json
@@ -55,17 +56,17 @@ class GetRoster extends FantasyNFLResource
 
     public function returnExtracted(array|Response $response)
     {
-        return FantasyRosterExtractor::from($response);
+        return FantasyRosterExtractor::from(
+            (is_array($response)) ? $response : $response->json()
+        );
     }
 
     public function returnFormatted(array|Response $response)
     {
-        $formatter = new FantasyRosterFormatter(
-            $this->returnExtracted($response),
+        return FantasyRosterFormatter::from(
+            (is_array($response)) ? $response : $response->json(),
             $this->year,
             $this->week
         );
-
-        return $formatter->getFormatted();
     }
 }

@@ -19,10 +19,6 @@ class NflTeam extends BaseResourceCollection
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -32,10 +28,6 @@ class NflTeam extends BaseResourceCollection
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }
@@ -49,10 +41,6 @@ class NflTeam extends BaseResourceCollection
 
         $resource->page = $page;
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -63,10 +51,6 @@ class NflTeam extends BaseResourceCollection
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -76,10 +60,6 @@ class NflTeam extends BaseResourceCollection
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }

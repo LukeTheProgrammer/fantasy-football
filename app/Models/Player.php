@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Player extends Model
 {
@@ -17,16 +18,12 @@ class Player extends Model
     use SoftDeletes;
 
     /**
-     * The attributes that are not mass assignable.
-     *
-     * @var list<string>
+     * @inheritDoc
      */
     protected $guarded = [];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * @inheritDoc
      */
     protected $casts = [
         'birth_date' => 'datetime',
@@ -180,6 +177,16 @@ class Player extends Model
     }
 
     /* ===[ Attributes ]=== */
+
+    /**
+     * Set a ULID when created.
+     */
+    public function ulid(): Attribute
+    {
+        return Attribute::make(
+            set: fn () => (empty($this->ulid) ? Str::ulid() : $this->ulid),
+        );
+    }
 
     /**
      * Get the player's age.

@@ -32,6 +32,17 @@ class FantasyLeagueFormatter
         //
     }
 
+    public static function from(array|ResourceLeagueData $data)
+    {
+        if (! $data instanceof ResourceLeagueData) {
+            $data = ResourceLeagueData::from($data);
+        }
+
+        $formatter = new FantasyLeagueFormatter($data);
+
+        return $formatter->getFormatted();
+    }
+
     public function getFormatted()
     {
         $this->formatData();

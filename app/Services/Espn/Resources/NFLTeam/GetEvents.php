@@ -6,10 +6,10 @@ class GetEvents extends NFLTeamResource
 {
     public function setCacheFilePath()
     {
-        $dirs = ['nfl-teams'];
+        $dirs = ['events'];
 
         $file = [
-            'events',
+            'team',
             $this->teamId,
             $this->dataFormat,
         ];

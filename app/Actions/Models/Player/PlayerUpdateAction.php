@@ -13,6 +13,8 @@ class PlayerUpdateAction
 
         $player->update($data);
 
+        $this->updateAliases($player, $playerData);
+
         return $player;
     }
 
@@ -37,5 +39,14 @@ class PlayerUpdateAction
             'weight'        => Arr::get($data, 'weight'),
             'college'       => Arr::get($data, 'college'),
         ]);
+    }
+
+    private function updateAliases(Player $player, array $playerData = []): void
+    {
+        $aliases = Arr::get($playerData, 'aliases', []);
+
+        foreach ($aliases as $alias) {
+            $player->aliases()->updateOrCreate(['name' => $alias['name']]);
+        }
     }
 }

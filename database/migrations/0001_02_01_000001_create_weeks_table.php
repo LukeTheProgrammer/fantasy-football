@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedInteger('week');
             $table->boolean('is_current')->default(false);
             $table->date('starts_at')->nullable();
+            $table->date('ends_at')->nullable();
             $table->timestamps();
 
             $table->foreign('season_id')->references('id')->on('seasons')->cascadeOnDelete();

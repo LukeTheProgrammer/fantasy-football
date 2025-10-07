@@ -10,4 +10,9 @@ abstract class BaseNFLDriver
     {
         //
     }
+
+    public function importSchedule(Team $team, int $year)
+    {
+        //
+    }
 }
