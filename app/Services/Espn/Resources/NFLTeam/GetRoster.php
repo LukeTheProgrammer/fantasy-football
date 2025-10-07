@@ -5,16 +5,15 @@ namespace App\Services\Espn\Resources\NFLTeam;
 use App\Models\Team;
 use App\Services\Espn\Scrapers\NFLRosters;
 use Exception;
-use Illuminate\Support\Arr;
 
 class GetRoster extends NFLTeamResource
 {
     public function setCacheFilePath()
     {
-        $dirs = ['nfl-teams'];
+        $dirs = ['rosters'];
 
         $file = [
-            'roster',
+            'team',
             $this->teamId,
             $this->dataFormat,
         ];
@@ -35,6 +34,6 @@ class GetRoster extends NFLTeamResource
 
         $data = $scraper->getTeamRoster($team);
 
-        return $this->returnResponse(Arr::get($data, 'roster', []));
+        return $this->returnResponse($data);
     }
 }

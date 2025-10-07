@@ -69,13 +69,13 @@ class EspnService
             ->getRoster($teamId);
     }
 
-    public function getNFLSchedule(int|string $teamId, int $year)
+    public function getNFLSchedule(Team $team, int $year)
     {
         $resource = new NFL();
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getSchedule($teamId, $year);
+            ->getSchedule($team, $year);
     }
 
     public function getNFLLeaders()

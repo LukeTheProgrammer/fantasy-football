@@ -28,6 +28,16 @@ const mainNavItems: NavItem[] = [
     href: '/rankings',
     icon: LayoutGrid,
   },
+  {
+    title: 'Players',
+    href: '/players',
+    icon: LayoutGrid,
+  },
+  {
+    title: 'Player Aliases',
+    href: '/player-aliases',
+    icon: LayoutGrid,
+  },
 ];
 
 const footerNavItems: NavItem[] = [

@@ -22,12 +22,14 @@ return new class extends Migration
          */
         Schema::create('player_aliases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('player_id')->constrained('players')->cascadeOnDelete();
+            $table->string('player_ulid');
             $table->string('name');
+            $table->timestamp('last_checked_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['player_id', 'name']);
+            $table->unique(['player_ulid', 'name']);
+            $table->foreign('player_ulid')->references('ulid')->on('players')->cascadeOnDelete();
         });
     }
 

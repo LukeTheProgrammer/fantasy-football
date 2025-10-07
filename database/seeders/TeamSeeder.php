@@ -34,15 +34,15 @@ class TeamSeeder extends Seeder
             );
 
             // Create all the DST players
-            Action::model(Player::class)->upsert([
-                'team_id'       => $team->id,
-                'position_id'   => $dst->id,
-                'espn_id'       => Arr::get($team, 'espn_id'),
-                'first_name'    => Arr::get($team, 'location'),
-                'last_name'     => Arr::get($team, 'name'),
-                'full_name'     => Arr::get($team, 'location') . ' ' . Arr::get($team, 'name'),
-                'headshot'      => Arr::get($team, 'logo'),
-            ]);
+            // Action::model(Player::class)->upsert([
+            //     'team_id'       => $team->id,
+            //     'position_id'   => $dst->id,
+            //     'espn_id'       => Arr::get($team, 'espn_id'),
+            //     'first_name'    => Arr::get($team, 'location'),
+            //     'last_name'     => Arr::get($team, 'name'),
+            //     'full_name'     => Arr::get($team, 'location') . ' ' . Arr::get($team, 'name'),
+            //     'headshot'      => Arr::get($team, 'logo'),
+            // ]);
         }
     }
 }

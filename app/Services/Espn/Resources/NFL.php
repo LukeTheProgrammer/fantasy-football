@@ -2,13 +2,14 @@
 
 namespace App\Services\Espn\Resources;
 
+use App\Models\Team;
 use App\Services\Espn\Resources\NFL\GetEventSummary;
 use App\Services\Espn\Resources\NFL\GetLeaders;
 use App\Services\Espn\Resources\NFL\GetRoster;
+use App\Services\Espn\Resources\NFL\GetSchedule;
 use App\Services\Espn\Resources\NFL\GetScoreboard;
 use App\Services\Espn\Resources\NFL\GetTeam;
 use App\Services\Espn\Resources\NFL\GetTeamNews;
-use App\Services\Espn\Resources\NFL\GetTeamSchedule;
 
 class NFL extends BaseResourceCollection
 {
@@ -28,10 +29,6 @@ class NFL extends BaseResourceCollection
 
         $resource->teamId = $teamId;
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -48,10 +45,6 @@ class NFL extends BaseResourceCollection
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }
@@ -72,10 +65,6 @@ class NFL extends BaseResourceCollection
 
         $resource->eventId = $eventId;
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -94,10 +83,6 @@ class NFL extends BaseResourceCollection
         $resource->dataFormat($this->dataFormat);
 
         $resource->teamId = $teamId;
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }
@@ -118,10 +103,6 @@ class NFL extends BaseResourceCollection
 
         $resource->teamId = $teamId;
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -132,19 +113,15 @@ class NFL extends BaseResourceCollection
      *
      * @return mixed
      */
-    public function getSchedule(int|string $teamId, int $year)
+    public function getSchedule(Team $team, int $year)
     {
-        $resource = new GetTeamSchedule();
+        $resource = new GetSchedule();
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
 
-        $resource->teamId = $teamId;
+        $resource->team = $team;
         $resource->year = $year;
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }
@@ -162,10 +139,6 @@ class NFL extends BaseResourceCollection
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }

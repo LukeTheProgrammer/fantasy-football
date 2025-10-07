@@ -1,5 +1,6 @@
 import MemberTabHeader from '@/components/leagues/tab-content/member-tab-header';
 import { type LeagueResource, type LeagueMemberResource, type LeagueRosterResource } from '@/types/resources';
+import ShowPoints from '@/components/show-points';
 import {
   Table,
   TableBody,
@@ -63,13 +64,17 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
 
     for (const p in positions) {
       const pos = positions[p].sort((a: LeagueRosterResource, b: LeagueRosterResource) => {
-        const aVal = a.overall_rank > 0 ? a.overall_rank : 9999;
-        const bVal = b.overall_rank > 0 ? b.overall_rank : 9999;
-        return aVal - bVal;
+        const aVal = a.fantasy_points > 0 ? a.fantasy_points : -1;
+        const bVal = b.fantasy_points > 0 ? b.fantasy_points : -1;
+        return bVal - aVal;
       });
+
       pos.forEach((player: LeagueRosterResource) => {
-        console.log('nfl_game', player.nfl_game);
         players.push(player);
+
+        if (player.player.full_name === 'Baker Mayfield') {
+          console.log(player);
+        }
       });
     }
 
@@ -94,9 +99,9 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
             <TableHead className='text-center'>POS</TableHead>
             <TableHead>Player</TableHead>
             <TableHead className='text-center'>Game</TableHead>
-            <TableHead className='text-center'>FP Pos</TableHead>
-            <TableHead className='text-center'>FP Points</TableHead>
-            <TableHead className='text-center'>ESPN Points</TableHead>
+            <TableHead className='text-center'>FP Rank</TableHead>
+            <TableHead className='text-center'>FP</TableHead>
+            <TableHead className='text-center'>ESPN</TableHead>
             <TableHead className='text-right'>Points</TableHead>
           </TableRow>
         </TableHeader>
@@ -121,7 +126,7 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
               </TableCell>
               <TableCell className="text-center text-xs">
                 <p className="font-extrabold text-lg">
-                  {Object.keys(roster.nfl_game).length < 1 ? (
+                  {roster.nfl_game.is_bye ? (
                     <span className="text-muted-foreground">Bye</span>
                   ) : (
                     (roster.player.team === roster.nfl_game.away_team?.id
@@ -131,17 +136,17 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
                   )}
                 </p>
                 <p className="pl-2 text-xs text-muted-foreground">
-                  {roster.nfl_game.day} {roster.nfl_game.time}
+                  {roster.nfl_game.is_bye ? '' : `(${roster.nfl_game.day} ${roster.nfl_game.time})`}
                 </p>
               </TableCell>
               <TableCell className="text-center">
                 <p className="font-extrabold text-lg">
-                  {roster.player_projection.fp_pos_rank ? roster.player_projection.fp_pos_rank : '--'}
+                  <ShowPoints value={roster.player_projection.fp_pos_rank} />
                 </p>
               </TableCell>
               <TableCell className="text-center">
                 <p className="font-extrabold text-lg">
-                  {roster.player_projection.fp_points ? roster.player_projection.fp_points : '--'}
+                  <ShowPoints value={roster.player_projection.fp_points} />
                 </p>
                 <p className="pl-2 text-xs text-muted-foreground">
                   {roster.fp_diff ? roster.fp_diff : ''}
@@ -149,7 +154,7 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
               </TableCell>
               <TableCell className="text-center">
                 <p className="font-extrabold text-lg">
-                  {roster.player_projection.espn_points ? roster.player_projection.espn_points : '--'}
+                  <ShowPoints value={roster.player_projection.espn_points} />
                 </p>
                 <p className="pl-2 text-xs text-muted-foreground">
                   {roster.espn_diff ? roster.espn_diff : ''}
@@ -157,7 +162,7 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
               </TableCell>
               <TableCell className="text-right">
                 <p className="font-extrabold text-lg text-right">
-                  {roster.fantasy_points ? roster.fantasy_points : '--'}
+                  <ShowPoints value={roster.fantasy_points} />
                 </p>
               </TableCell>
             </TableRow>

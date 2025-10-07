@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LeagueController;
 use App\Http\Controllers\Api\LeagueMemberController;
 use App\Http\Controllers\Api\LeagueSeasonController;
 use App\Http\Controllers\Api\LeagueSettingsController;
+use App\Http\Controllers\Api\PlayerAliasController;
 use App\Http\Controllers\Api\PlayerController;
 use App\Http\Controllers\Api\TeamController;
 use Illuminate\Http\Request;
@@ -16,9 +17,12 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    Route::post('players/search', [PlayerController::class, 'search']);
+
     // Protected team routes for create, update, delete
     Route::apiResource('teams', TeamController::class)->except(['create', 'show']);
     Route::apiResource('players', PlayerController::class)->except(['index', 'show']);
+    Route::apiResource('player-aliases', PlayerAliasController::class)->only(['update']);
 
     // League management routes
     Route::apiResource('leagues', LeagueController::class);
@@ -26,9 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('league-members', LeagueMemberController::class);
 
     // League season routes
-    Route::apiResource('leagues.seasons', LeagueSeasonController::class)->parameters([
-        'seasons' => 'season'
-    ]);
+    // Route::apiResource('leagues.seasons', LeagueSeasonController::class)->parameters([
+    //     'seasons' => 'season'
+    // ]);
 
     // Custom league routes
     Route::post('leagues/join', [LeagueController::class, 'join']);

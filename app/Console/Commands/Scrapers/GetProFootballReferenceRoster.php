@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Scrapers;
 
 use App\Console\Commands\Traits\DisambiguatesPlayers;
-use App\Enums\DataSources;
+use App\Enums\Datum;
 use App\Enums\NFLPositions;
 use App\Enums\NFLTeams;
 use App\Exceptions\AmbiguousPlayerException;
@@ -49,7 +49,7 @@ class GetProFootballReferenceRoster extends Command
      */
     public function handle()
     {
-        $this->scraper = Scraper::scraper(DataSources::PFR->value);
+        $this->scraper = Scraper::scraper(Datum::SOURCE_PFR->value);
 
         $year = $this->argument('year') ?? select('Year?', [2025, 2024], 2025);
 

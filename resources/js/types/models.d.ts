@@ -217,6 +217,7 @@ export interface Player {
   pfr_id: string | null;
   fp_id: string | null;
   position_id: string;
+  team_id: string | null;
   first_name: string;
   last_name: string;
   full_name: string;
@@ -228,6 +229,7 @@ export interface Player {
   draft_pick: string | null;
   draft_team: string | null;
   birth_date: string | null;
+  jersey_number: string | null;
   headshot: string | null;
   created_at: string;
   updated_at: string;

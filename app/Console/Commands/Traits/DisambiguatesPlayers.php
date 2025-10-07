@@ -75,7 +75,13 @@ trait DisambiguatesPlayers
         }
 
         if ($queryCount === 1) {
-            return $aliasQuery->first()->player;
+            $aliasModel = $aliasQuery->first();
+
+            if ($aliasModel->player instanceof Player) {
+                return $aliasModel->player;
+            } else {
+                dd($aliasModel->toArray());
+            }
         }
 
         if ($queryCount > 1) {

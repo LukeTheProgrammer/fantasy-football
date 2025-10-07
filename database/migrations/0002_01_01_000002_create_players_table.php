@@ -17,6 +17,7 @@ return new class extends Migration
 
         Schema::create('players', function (Blueprint $table) {
             $table->id();
+            $table->string('ulid')->unique();
             $table->integer('espn_id')->nullable();
             $table->string('pfr_id')->nullable();
             $table->string('fp_id')->nullable();

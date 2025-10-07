@@ -2,7 +2,6 @@
 
 namespace App\Services\Imports\Importers;
 
-use App\Enums\NFLTeams;
 use App\Models\Team;
 use App\Services\Imports\Drivers\NFL\BaseNFLDriver;
 
@@ -13,8 +12,13 @@ class NFLImporter
         //
     }
 
-    public function importRosters(Team|NFLTeams|string $team, int $year)
+    public function importRosters(Team $team, int $year)
     {
         return $this->driver->importRosters($team, $year);
+    }
+
+    public function importSchedule(Team $team, int $year)
+    {
+        return $this->driver->importSchedule($team, $year);
     }
 }

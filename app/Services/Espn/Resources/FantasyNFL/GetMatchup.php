@@ -10,13 +10,15 @@ class GetMatchup extends FantasyNFLResource
 {
     public function setCacheFilePath()
     {
-        $dirs = ['leagues'];
+        $dirs = [
+            'league-' . $this->leagueId,
+            $this->dataFormat,
+        ];
 
         $file = [
             'matchup',
-            $this->leagueId,
             $this->teamId,
-            $this->dataFormat,
+            date('Y'),
         ];
 
         // EX: data/espn/ffl/leagues/matchup-123456-1-formatted.json

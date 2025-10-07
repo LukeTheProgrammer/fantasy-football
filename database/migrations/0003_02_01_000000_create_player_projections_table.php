@@ -18,7 +18,7 @@ return new class extends Migration
         Schema::create('player_projections', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('player_id')->constrained('players')->onDelete('cascade');
+            $table->foreignId('player_id')->constrained()->cascadeOnDelete();
             $table->foreignId('nfl_game_id')->nullable()->constrained('nfl_games')->cascadeOnDelete();
 
             $table->year('season')->default(now()->year);

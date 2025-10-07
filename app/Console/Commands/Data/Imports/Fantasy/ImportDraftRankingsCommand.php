@@ -8,7 +8,7 @@ use App\Models\Position;
 use App\Models\Team;
 use App\Console\Commands\Traits\DisambiguatesPlayers;
 use App\Services\Imports\Importers\DraftRankingsImporter;
-use App\Enums\DataSources;
+use App\Enums\Datum;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -94,7 +94,7 @@ class ImportDraftRankingsCommand extends Command
         $file = select('Select a file to import', $files);
 
         $this->import = Import::draftRankings(
-            DataSources::FANTASY_PROS,
+            Datum::SOURCE_FANTASY_PROS,
             $file,
             'csv',
         );

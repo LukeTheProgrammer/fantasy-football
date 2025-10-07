@@ -102,9 +102,9 @@ export default function ShowLeague({ league }: LeagueShowProps) {
 
         <div className="mb-8">
           <Tabs defaultValue="rosters">
-            <div className="flex items-center justify-between">
-              <div>
-                <TabsList className="mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <TabsList>
                   <TabsTrigger className="w-[7rem]" value="rosters">Rosters</TabsTrigger>
                   <TabsTrigger className="w-[7rem]" value="matchups">Matchups</TabsTrigger>
                   <TabsTrigger className="w-[7rem]" value="standings">Standings</TabsTrigger>
@@ -112,34 +112,32 @@ export default function ShowLeague({ league }: LeagueShowProps) {
                   <TabsTrigger className="w-[7rem]" value="draft">Draft</TabsTrigger>
                 </TabsList>
               </div>
-              <div>
-                <div className="flex items-center justify-end space-x-2">
-                  <Select value={selectedMemberId} onValueChange={(value) => handleMemberIdChange(value)}>
-                    <SelectTrigger className="w-[16em]">
-                      <SelectValue placeholder={`Week ${selectedWeek}`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {league.members.map((member) => (
-                        <SelectItem key={member.id} value={member.id.toString()}>
-                          {member.team_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="flex items-center justify-end space-x-2">
+                <Select value={selectedMemberId} onValueChange={(value) => handleMemberIdChange(value)}>
+                  <SelectTrigger className="w-[16em]">
+                    <SelectValue placeholder={`Week ${selectedWeek}`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {league.members.map((member) => (
+                      <SelectItem key={member.id} value={member.id.toString()}>
+                        {member.team_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                  <Select value={selectedWeek} onValueChange={(value) => handleWeekChange(value)}>
-                    <SelectTrigger className="w-[16em]">
-                      <SelectValue placeholder={`Week ${selectedWeek}`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getWeeks().map((week) => (
-                        <SelectItem key={week} value={week}>
-                          {week}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select value={selectedWeek} onValueChange={(value) => handleWeekChange(value)}>
+                  <SelectTrigger className="w-[16em]">
+                    <SelectValue placeholder={`Week ${selectedWeek}`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getWeeks().map((week) => (
+                      <SelectItem key={week} value={week}>
+                        {week}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <TabsContent value="rosters">

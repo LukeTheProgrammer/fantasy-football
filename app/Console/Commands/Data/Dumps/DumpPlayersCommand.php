@@ -44,9 +44,10 @@ class DumpPlayersCommand extends Command
         $bar->start();
 
         $query->each(function ($player) use (&$data, $bar) {
-            $a = Arr::except($player->toArray(), ['id', 'created_at', 'updated_at', 'deleted_at']);
-
-            $a['position_id'] = $player->position->abbreviation;
+            $a = array_merge(
+                [ 'ulid' => $player->ulid ],
+                Arr::except($player->toArray(), ['id', 'ulid', 'created_at', 'updated_at', 'deleted_at'])
+            );
 
             $data[] = json_encode($a);
 
@@ -71,9 +72,10 @@ class DumpPlayersCommand extends Command
         $bar->start();
 
         $query->each(function ($playerAlias) use (&$data, $bar) {
-            $pa = Arr::except($playerAlias->toArray(), ['id', 'created_at', 'updated_at', 'deleted_at']);
-            $pa['espn_id'] = $playerAlias->player->espn_id;
-            $pa['pfr_id'] = $playerAlias->player->pfr_id;
+            $pa = array_merge(
+                [ 'player_ulid' => $playerAlias->player_ulid ],
+                Arr::except($playerAlias->toArray(), ['id', 'player_ulid', 'created_at', 'updated_at', 'deleted_at'])
+            );
 
             $data[] = json_encode($pa);
             $bar->advance();

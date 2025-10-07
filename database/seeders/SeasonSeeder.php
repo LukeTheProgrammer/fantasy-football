@@ -17,15 +17,16 @@ class SeasonSeeder extends Seeder
 
     private function createSeason(int $year): void
     {
-        $games = NflGame::forYear($year)->orderBy('week')->get()->groupBy('week');
-
         $season = Season::updateOrCreate(
             ['id' => $year],
             ['is_current' => (string) $year === date('Y')]
         );
 
-        foreach ($games as $week => $weekGames) {
-            $first = $weekGames->sortBy('starts_at')->first();
+        for ($week = 1; $week <= 18; $week++) {
+            $games = NflGame::forYear($year)->forWeek($week)->orderBy('starts_at')->get();
+
+            $first = $games->first();
+            $last = $games->last();
 
             Week::updateOrCreate(
                 [
@@ -34,10 +35,11 @@ class SeasonSeeder extends Seeder
                 ],
                 [
                     'starts_at' => $first?->starts_at,
+                    'ends_at' => $last?->starts_at,
                 ]
             );
         }
 
-        Week::whereDate('starts_at', '>=', date('Y-m-d'))->limit(1)->update(['is_current' => true]);
+        Week::whereDate('ends_at', '>=', date('Y-m-d'))->limit(1)->update(['is_current' => true]);
     }
 }

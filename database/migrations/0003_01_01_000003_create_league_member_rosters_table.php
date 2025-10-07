@@ -18,7 +18,7 @@ return new class extends Migration
         Schema::create('league_member_rosters', function (Blueprint $table) {
             $table->id();
             $table->foreignId('league_member_id')->constrained('league_members')->onDelete('cascade');
-            $table->foreignId('player_id')->constrained('players')->onDelete('cascade');
+            $table->foreignId('player_id')->constrained()->cascadeOnDelete();
             $table->foreignId('nfl_game_id')->nullable()->constrained('nfl_games')->cascadeOnDelete();
             $table->year('season')->default(now()->year);
             $table->unsignedInteger('week')->default(0);
@@ -36,6 +36,7 @@ return new class extends Migration
                 ['league_member_id', 'player_id', 'nfl_game_id', 'season', 'week'],
                 'league_member_rosters_unique'
             );
+
         });
     }
 

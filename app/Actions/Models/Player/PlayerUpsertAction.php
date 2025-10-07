@@ -5,8 +5,10 @@ namespace App\Actions\Models\Player;
 use App\Exceptions\AmbiguousPlayerException;
 use App\Facades\Action;
 use App\Models\Player;
+use App\Models\PlayerAlias;
 use App\Models\PlayerTeam;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class PlayerUpsertAction
 {
@@ -51,6 +53,16 @@ class PlayerUpsertAction
             }
         }
 
+        $fpId = Arr::get($data, 'fp_id');
+
+        if (! empty($fpId)) {
+            $fpQuery = Player::fpId($fpId);
+
+            if ($fpQuery->count() === 1) {
+                return $fpQuery->first();
+            }
+        }
+
         $fullName = Arr::get($data, 'full_name');
         $fullNameQuery = Player::where('full_name', '=', $fullName);
 
@@ -64,6 +76,12 @@ class PlayerUpsertAction
             throw new AmbiguousPlayerException(
                 'Multiple players found for ' . Arr::get($data, 'full_name') . ' ' . json_encode($fn)
             );
+        }
+
+        $aliasQuery = PlayerAlias::forName($fullName);
+
+        if ($aliasQuery->count() === 1) {
+            return $aliasQuery->first()->player;
         }
 
         return null;

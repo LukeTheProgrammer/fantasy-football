@@ -2,18 +2,22 @@
 
 namespace App\Services\Espn\Resources\NFL;
 
+use App\Models\Team;
 use Exception;
+use App\Services\Espn\Extractors\NFLScheduleExtractor;
+use App\Services\Espn\Formatters\NFLScheduleFormatter;
+use Illuminate\Http\Client\Response;
 
-class GetTeamSchedule extends NFLResource
+class GetSchedule extends NFLResource
 {
-    public int|string|null $teamId = null;
+    public ?Team $team = null;
 
     public int|string|null $year = null;
 
     public function validate()
     {
-        if (empty($this->teamId)) {
-            throw new Exception('Team ID is required');
+        if (empty($this->team)) {
+            throw new Exception('Team is required');
         }
 
         if (empty($this->year)) {
@@ -27,7 +31,7 @@ class GetTeamSchedule extends NFLResource
 
         $file = [
             'schedule',
-            $this->teamId,
+            $this->team->espn_id,
             $this->year,
             $this->dataFormat,
         ];
@@ -38,7 +42,7 @@ class GetTeamSchedule extends NFLResource
 
     public function sendRequest()
     {
-        $url = $this->buildUrl('teams/' . $this->teamId . '/schedule');
+        $url = $this->buildUrl('teams/' . $this->team->espn_id . '/schedule');
 
         $response = $this->get($url, $this->query([
             'season' => $this->year,
@@ -46,5 +50,19 @@ class GetTeamSchedule extends NFLResource
         ]));
 
         return $this->returnResponse($response);
+    }
+
+    public function returnExtracted(array|Response $response)
+    {
+        return NFLScheduleExtractor::from(
+            (is_array($response)) ? $response : $response->json()
+        );
+    }
+
+    public function returnFormatted(array|Response $response)
+    {
+        return NFLScheduleFormatter::from(
+            (is_array($response)) ? $response : $response->json()
+        );
     }
 }

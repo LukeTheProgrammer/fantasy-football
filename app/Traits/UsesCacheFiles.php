@@ -34,12 +34,15 @@ trait UsesCacheFiles
         $path = implode('/', [
             $this->cacheBaseDirectory,
             implode('/', array_filter($dirs)),
-            implode('-', array_filter($fileName)) . '.' . $extension,
         ]);
 
-        $path = stripMultipleSlashes($path);
+        $path = storage_path(stripMultipleSlashes($path));
 
-        return storage_path($path);
+        $this->makeCacheDir($path);
+
+        $file = implode('-', array_filter($fileName)) . '.' . $extension;
+
+        return $path . '/' . $file;
     }
 
     /**
@@ -49,6 +52,9 @@ trait UsesCacheFiles
      */
     public function getCache()
     {
+        // bust all the caches to fix player_id
+        return false;
+
         $hasCache = (
             ! empty($this->cacheFilePath) &&
             file_exists($this->cacheFilePath)
@@ -73,5 +79,23 @@ trait UsesCacheFiles
             $this->cacheFilePath,
             $json ? json_encode($data, JSON_PRETTY_PRINT) : $data
         );
+    }
+
+    private function makeCacheDir(string $path)
+    {
+        if (is_dir($path)) {
+            return;
+        }
+
+        $ds = DIRECTORY_SEPARATOR;
+        $relativePath = str_replace(base_path(), '', $path);
+        $parts = explode($ds, $relativePath);
+
+        foreach ($parts as $part) {
+            $path .= $ds . $part;
+            if (! is_dir($path)) {
+                mkdir($path, 0777, true);
+            }
+        }
     }
 }

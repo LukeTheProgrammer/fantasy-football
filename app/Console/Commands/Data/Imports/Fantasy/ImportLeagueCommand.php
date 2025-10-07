@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Data\Imports\Fantasy;
 
 use App\Enums\FantasyPlatforms;
+use App\Facades\Data;
 use App\Facades\Import;
 use App\Models\League;
 use App\Models\User;
@@ -28,13 +29,17 @@ class ImportLeagueCommand extends Command
      */
     protected $description = 'Import Fantasy NFL League';
 
-    protected string $action;
-
     protected FantasyNFLImporter $importer;
 
-    protected array $credentials = [];
+    protected ?League $league = null;
+
+    protected ?FantasyPlatforms $platform = null;
 
     protected User $creator;
+
+    protected string $action;
+
+    protected array $credentials = [];
 
     /**
      * Execute the console command.
@@ -45,11 +50,9 @@ class ImportLeagueCommand extends Command
 
         $this->setUp();
 
-        $this->info('Importing league...');
+        $this->import();
 
-        $league = $this->importer->importLeague($this->creator, $this->credentials);
-
-        $this->info($league->name . ' imported successfully!');
+        $this->info($this->league->name . ' imported successfully!');
     }
 
     protected function setUp()
@@ -65,13 +68,9 @@ class ImportLeagueCommand extends Command
     {
         $leagueId = select('League', League::all()->pluck('name', 'id')->toArray());
 
-        $league = League::findOrFail($leagueId);
-
-        $this->creator = $league->creator;
-
-        if ($league->platform === FantasyPlatforms::ESPN->value) {
-            return $this->setUpEspnImporter($league);
-        }
+        $this->league = League::findOrFail($leagueId);
+        $this->creator = $this->league->creator;
+        $this->platform = FantasyPlatforms::from($this->league->platform);
     }
 
     protected function setUpCreate()
@@ -86,35 +85,40 @@ class ImportLeagueCommand extends Command
             default: FantasyPlatforms::ESPN->value
         );
 
-        $platform = FantasyPlatforms::from(Str::upper($platformArg));
+        $this->platform = FantasyPlatforms::from(Str::upper($platformArg));
+    }
 
-        if ($platform === FantasyPlatforms::ESPN) {
-            return $this->setUpEspnImporter();
+    protected function import()
+    {
+        $this->info('Importing league...');
+
+        if ($this->platform === FantasyPlatforms::ESPN) {
+            return $this->importEspn();
         }
     }
 
-    protected function setUpEspnImporter(?League $league = null)
+    protected function importEspn()
     {
-        $this->importer = Import::fantasyNFL(FantasyPlatforms::ESPN);
+        $data = [
+            'created_by_user_id' => null,
+            'league_id' => null,
+            's2' => null,
+            'swid' => null,
+        ];
 
-        if ($league instanceof League) {
-            $this->credentials = $league->credentials;
-            $this->creator = $league->creator;
+        if ($this->league instanceof League) {
+            $data['created_by_user_id'] = $this->league->creator->id;
+            $data['league_id']          = $this->league->credentials['leagueId'];
+            $data['s2']                 = $this->league->credentials['s2'];
+            $data['swid']               = $this->league->credentials['swid'];
+
         } else {
-            $this->credentials = [
-                'leagueId' => intval(text(
-                    label: 'League ID',
-                    default: config('services.espn.default_league_id'),
-                )),
-                's2' => text(
-                    label: 'S2',
-                    default: config('services.espn.default_s2'),
-                ),
-                'swid' => text(
-                    label: 'SWID',
-                    default: config('services.espn.default_swid'),
-                ),
-            ];
+            $data['created_by_user_id'] = $this->creator->id;
+            $data['league_id']          = intval(text('League ID', config('services.espn.default_league_id')));
+            $data['s2']                 = text('S2', config('services.espn.default_s2'));
+            $data['swid']               = text('SWID', config('services.espn.default_swid'));
         }
+
+        $this->league = Data::espn()->importFantasyLeague($data);
     }
 }

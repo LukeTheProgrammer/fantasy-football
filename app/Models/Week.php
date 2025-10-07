@@ -32,10 +32,18 @@ class Week extends Model
     /* ===[ Scopes ]=== */
 
     /**
-     * Scope query by current season.
+     * Scope query for current week.
      */
     public function scopeCurrent(Builder $query): Builder
     {
         return $query->where('is_current', true);
+    }
+
+    /**
+     * Scope query for weeks in a season.
+     */
+    public function scopeForSeason(Builder $query, int $season): Builder
+    {
+        return $query->where('season_id', $season);
     }
 }

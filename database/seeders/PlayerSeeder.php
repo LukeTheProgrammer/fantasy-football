@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Facades\Action;
 use App\Models\Player;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +14,10 @@ class PlayerSeeder extends Seeder
         $players = json_decode($json, true);
 
         foreach ($players as $player) {
-            Action::model(Player::class)->upsert($player);
+            Player::updateOrCreate(
+                ['ulid' => $player['ulid']],
+                $player
+            );
         }
     }
 }

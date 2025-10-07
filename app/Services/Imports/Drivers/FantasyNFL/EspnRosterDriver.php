@@ -37,10 +37,7 @@ class EspnRosterDriver
 
     private function setUp()
     {
-        $this->rosters = Data::forcePull(false)
-            ->dataFormat(Datum::FORMAT_FORMATTED)
-            ->espn()
-            ->getFantasyLeagueRosters($this->league, $this->year);
+        $this->rosters = Data::espn()->getFantasyLeagueRosters($this->league, $this->year);
 
         if (! $this->rosters instanceof Collection) {
             $this->rosters = collect($this->rosters);

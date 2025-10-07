@@ -2,7 +2,7 @@
 
 namespace App\Services\Scrapers;
 
-use App\Enums\DataSources;
+use App\Enums\Datum;
 use App\Services\Scrapers\Resources\BaseScraperResource;
 use App\Services\Scrapers\Resources\Espn;
 use App\Services\Scrapers\Resources\ProFootballReference;
@@ -14,8 +14,8 @@ class ScraperService
     public function resources(string $type)
     {
         $resources = [
-            DataSources::ESPN->value                   => Espn::class,
-            DataSources::PFR->value => ProFootballReference::class,
+            Datum::SOURCE_ESPN->value                   => Espn::class,
+            Datum::SOURCE_PFR->value => ProFootballReference::class,
         ];
 
         return Arr::get($resources, $type, []);

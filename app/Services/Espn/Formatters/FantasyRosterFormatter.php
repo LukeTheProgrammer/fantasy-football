@@ -26,6 +26,21 @@ class FantasyRosterFormatter
             ->toArray();
     }
 
+    public static function from(
+        array|ResourceLeagueData $leagueData,
+        int $season,
+        int $week
+    )
+    {
+        if (! $leagueData instanceof ResourceLeagueData) {
+            $leagueData = ResourceLeagueData::from($leagueData);
+        }
+
+        $formatter = new FantasyRosterFormatter($leagueData, $season, $week);
+
+        return $formatter->getFormatted();
+    }
+
     public function getFormatted()
     {
         return $this->leagueData->teams->map(

@@ -47,12 +47,9 @@ class EspnLeagueDriver
 
     private function loadData()
     {
-        $this->leagueData = Data::forcePull(false)
-            ->dataFormat(Datum::FORMAT_FORMATTED)
-            ->espn()
-            ->getFantasyLeague(
-                credentials: $this->credentials
-            );
+        $this->leagueData = Data::espn()->getFantasyLeague(
+            credentials: $this->credentials
+        );
     }
 
     private function createLeague(): League

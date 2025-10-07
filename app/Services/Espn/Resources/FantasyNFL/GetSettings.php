@@ -10,13 +10,14 @@ class GetSettings extends FantasyNFLResource
 {
     public function setCacheFilePath()
     {
-        $dirs = ['leagues'];
+        $dirs = [
+            'league-' . $this->leagueId,
+            $this->dataFormat,
+        ];
 
         $file = [
             'settings',
-            $this->leagueId,
             date('Y-m-d'),
-            $this->dataFormat,
         ];
 
         // EX: data/espn/ffl/leagues/settings-123456-2025-10-03-formatted.json

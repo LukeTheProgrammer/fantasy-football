@@ -23,10 +23,6 @@ class FantasyNFL extends BaseResourceCollection
 
         $resource->setOpts(Arr::get($opts, 'teamId'));
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -36,10 +32,6 @@ class FantasyNFL extends BaseResourceCollection
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }
@@ -52,10 +44,6 @@ class FantasyNFL extends BaseResourceCollection
         $resource->dataFormat($this->dataFormat);
 
         $resource->setOpts(Arr::get($opts, 'teamId'));
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }
@@ -73,10 +61,6 @@ class FantasyNFL extends BaseResourceCollection
             Arr::get($opts, 'year'),
         );
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -88,10 +72,6 @@ class FantasyNFL extends BaseResourceCollection
         $resource->dataFormat($this->dataFormat);
 
         $resource->setOpts(Arr::get($opts, 'teamId'));
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }
@@ -105,10 +85,6 @@ class FantasyNFL extends BaseResourceCollection
 
         $resource->setOpts(Arr::get($opts, 'teamId'));
 
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
-
         return $resource->fetch();
     }
 
@@ -120,10 +96,6 @@ class FantasyNFL extends BaseResourceCollection
         $resource->dataFormat($this->dataFormat);
 
         $resource->setOpts(Arr::get($opts, 'teamId'));
-
-        if ($this->forcePull) {
-            $resource->forcePull();
-        }
 
         return $resource->fetch();
     }

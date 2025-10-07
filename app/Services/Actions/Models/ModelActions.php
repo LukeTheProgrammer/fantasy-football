@@ -12,12 +12,14 @@ use App\Actions\Models\Leagues\LeagueUpdateAction;
 use App\Actions\Models\Player\PlayerCreateAction;
 use App\Actions\Models\Player\PlayerUpdateAction;
 use App\Actions\Models\Player\PlayerUpsertAction;
+use App\Actions\Models\PlayerNotFound\PlayerNotFoundUpsertAction;
 use App\Actions\Models\PlayerTeam\PlayerTeamUpsertAction;
 use App\Models\Draft;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
 use App\Models\Player;
+use App\Models\PlayerNotFound;
 use App\Models\PlayerTeam;
 use Exception;
 use Illuminate\Support\Arr;
@@ -44,6 +46,9 @@ class ModelActions
             'create' => PlayerCreateAction::class,
             'update' => PlayerUpdateAction::class,
             'upsert' => PlayerUpsertAction::class,
+        ],
+        PlayerNotFound::class => [
+            'upsert' => PlayerNotFoundUpsertAction::class,
         ],
         PlayerTeam::class => [
             'upsert' => PlayerTeamUpsertAction::class,

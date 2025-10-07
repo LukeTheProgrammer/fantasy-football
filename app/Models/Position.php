@@ -15,23 +15,17 @@ class Position extends Model
     use SoftDeletes;
 
     /**
-     * Indicates if the model's ID is auto-incrementing.
-     *
-     * @var bool
+     * @inheritDoc
      */
     public $incrementing = false;
 
     /**
-     * The data type of the primary key ID.
-     *
-     * @var string
+     * @inheritDoc
      */
-    protected $keyType = 'string';
+    public $keyType = 'string';
 
     /**
-     * The attributes that are not mass assignable.
-     *
-     * @var list<string>
+     * @inheritDoc
      */
     protected $guarded = [];
 

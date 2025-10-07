@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum NFLTeams: string
 {
+    case FA  = 'FA';
     case ARI = 'ARI';
     case ATL = 'ATL';
     case BAL = 'BAL';

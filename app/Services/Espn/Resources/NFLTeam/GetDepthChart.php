@@ -6,10 +6,10 @@ class GetDepthChart extends NFLTeamResource
 {
     public function setCacheFilePath()
     {
-        $dirs = ['nfl-teams'];
+        $dirs = ['depth-charts'];
 
         $file = [
-            'depthchart',
+            'team',
             $this->teamId,
             date('Y-m-d'),
             $this->dataFormat,

@@ -10,12 +10,14 @@ class GetLeague extends FantasyNFLResource
 {
     public function setCacheFilePath()
     {
-        $dirs = ['leagues'];
+        $dirs = [
+            'league-' . $this->leagueId,
+            $this->dataFormat,
+        ];
 
         $file = [
             'league',
-            $this->leagueId,
-            $this->dataFormat,
+            date('Y-m-d'),
         ];
 
         // EX: data/espn/ffl/leagues/league-123456-formatted.json
@@ -38,10 +40,8 @@ class GetLeague extends FantasyNFLResource
 
     public function returnFormatted(array|Response $response)
     {
-        $formatter = new FantasyLeagueFormatter(
+        return FantasyLeagueFormatter::from(
             $this->returnExtracted($response)
         );
-
-        return $formatter->getFormatted();
     }
 }

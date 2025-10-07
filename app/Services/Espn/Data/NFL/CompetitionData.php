@@ -22,6 +22,9 @@ class CompetitionData extends BaseData
         public ?bool $ticketsAvailable = null,
 
         #[WithCast(CarbonCast::class)]
+        public string|Carbon|null $date = null,
+
+        #[WithCast(CarbonCast::class)]
         public string|Carbon|null $timestamp = null,
 
         #[WithCast(BroadcastData::class)]
@@ -42,8 +45,12 @@ class CompetitionData extends BaseData
         #[WithCast(CompetitionVenueData::class)]
         public array|CompetitionVenueData $venue = [],
     ) {
-        $this->timestamp = (is_string($this->timestamp))
-            ? Carbon::parse($this->timestamp)
-            : $this->timestamp;
+        // $this->timestamp = (is_string($this->timestamp))
+        //     ? Carbon::parse($this->timestamp)
+        //     : $this->timestamp;
+
+        // $this->date = (is_string($this->date))
+        //     ? Carbon::parse($this->date)
+        //     : $this->date;
     }
 }
