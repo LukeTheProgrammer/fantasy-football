@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\PlayerObserver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
+#[ObservedBy(PlayerObserver::class)]
 class Player extends Model
 {
     use HasFactory;
@@ -20,7 +23,9 @@ class Player extends Model
     /**
      * @inheritDoc
      */
-    protected $guarded = [];
+    protected $guarded = [
+        'ulid',
+    ];
 
     /**
      * @inheritDoc

@@ -25,7 +25,7 @@ class DraftRanking extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'year' => 'integer',
+        'season' => 'integer',
         'ranking' => 'integer',
         'tier' => 'integer',
         'adp' => 'decimal:2',
@@ -41,11 +41,11 @@ class DraftRanking extends Model
     }
 
     /**
-     * Scope a query to only include rankings for a specific year.
+     * Scope a query to only include rankings for a specific season.
      */
-    public function scopeForYear(Builder $query, int $year): Builder
+    public function scopeForSeason(Builder $query, int $season): Builder
     {
-        return $query->where('year', $year);
+        return $query->where('season', $season);
     }
 
     /**

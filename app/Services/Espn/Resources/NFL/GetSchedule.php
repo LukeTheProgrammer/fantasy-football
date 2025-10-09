@@ -12,7 +12,7 @@ class GetSchedule extends NFLResource
 {
     public ?Team $team = null;
 
-    public int|string|null $year = null;
+    public int|string|null $season = null;
 
     public function validate()
     {
@@ -20,8 +20,8 @@ class GetSchedule extends NFLResource
             throw new Exception('Team is required');
         }
 
-        if (empty($this->year)) {
-            throw new Exception('Year is required');
+        if (empty($this->season)) {
+            throw new Exception('Season is required');
         }
     }
 
@@ -32,7 +32,7 @@ class GetSchedule extends NFLResource
         $file = [
             'schedule',
             $this->team->espn_id,
-            $this->year,
+            $this->season,
             $this->dataFormat,
         ];
 
@@ -45,7 +45,7 @@ class GetSchedule extends NFLResource
         $url = $this->buildUrl('teams/' . $this->team->espn_id . '/schedule');
 
         $response = $this->get($url, $this->query([
-            'season' => $this->year,
+            'season' => $this->season,
             'seasonType' => '2',
         ]));
 

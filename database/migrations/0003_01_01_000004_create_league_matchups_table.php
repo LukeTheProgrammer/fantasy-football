@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('league_id')->constrained()->cascadeOnDelete();
             $table->foreignId('home_member_id')->constrained('league_members')->cascadeOnDelete();
             $table->foreignId('away_member_id')->constrained('league_members')->cascadeOnDelete();
-            $table->year('year');
+            $table->year('season');
             $table->integer('week')->unsigned();
             $table->decimal('home_score', 8, 2)->nullable();
             $table->decimal('away_score', 8, 2)->nullable();

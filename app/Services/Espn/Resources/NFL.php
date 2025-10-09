@@ -20,14 +20,13 @@ class NFL extends BaseResourceCollection
      *
      * @return mixed
      */
-    public function getTeamNews(int|string|null $teamId = null)
+    public function getTeamNews(Team $team)
     {
-        $resource = new GetTeamNews($teamId);
+        $resource = new GetTeamNews();
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
-
-        $resource->teamId = $teamId;
+        $resource->team = $team;
 
         return $resource->fetch();
     }
@@ -75,14 +74,13 @@ class NFL extends BaseResourceCollection
      *
      * @return mixed
      */
-    public function getTeam(int|string|null $teamId = null)
+    public function getTeam(?Team $team = null)
     {
         $resource = new GetTeam();
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
-
-        $resource->teamId = $teamId;
+        $resource->team = $team;
 
         return $resource->fetch();
     }
@@ -94,14 +92,13 @@ class NFL extends BaseResourceCollection
      *
      * @return mixed
      */
-    public function getRoster(int|string|null $teamId = null)
+    public function getRoster(Team $team)
     {
         $resource = new GetRoster();
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
-
-        $resource->teamId = $teamId;
+        $resource->team = $team;
 
         return $resource->fetch();
     }
@@ -113,7 +110,7 @@ class NFL extends BaseResourceCollection
      *
      * @return mixed
      */
-    public function getSchedule(Team $team, int $year)
+    public function getSchedule(Team $team, int $season)
     {
         $resource = new GetSchedule();
 
@@ -121,7 +118,7 @@ class NFL extends BaseResourceCollection
         $resource->dataFormat($this->dataFormat);
 
         $resource->team = $team;
-        $resource->year = $year;
+        $resource->season = $season;
 
         return $resource->fetch();
     }

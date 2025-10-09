@@ -99,7 +99,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \App\Models\Player $player
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DraftRanking forYear(int $year)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DraftRanking forSeason(int $year)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DraftRanking fromSource(string $source)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DraftRanking newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DraftRanking newQuery()

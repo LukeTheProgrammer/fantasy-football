@@ -78,7 +78,7 @@ class MakeMilhavenCheatSheet extends Command
     {
         $this->info('Loading data');
 
-        $q = DraftRanking::forYear(2025)->orderBy('id');
+        $q = DraftRanking::forSeason(2025)->orderBy('id');
 
         $bar = $this->output->createProgressBar($q->count());
         $bar->start();

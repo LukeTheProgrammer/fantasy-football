@@ -25,7 +25,7 @@ class FantasyProsProjectionsCsvDriver extends BaseProjectionsDriver
             'position' => null,
             'ppr'      => null,
             'week'     => null,
-            'year'     => null,
+            'season'   => null,
         ]);
     }
 
@@ -80,7 +80,7 @@ class FantasyProsProjectionsCsvDriver extends BaseProjectionsDriver
         $player = $this->findPlayer($data);
 
         if (! $player instanceof Player) {
-            $this->addPlayerNotFoundError($fileData, $data);
+            $this->addPlayerMissingError($fileData, $data);
             return;
         }
 
@@ -169,7 +169,7 @@ class FantasyProsProjectionsCsvDriver extends BaseProjectionsDriver
 
         return NflGame::query()
             ->forTeam($player->team)
-            ->forYear($this->config->get('year'))
+            ->forSeason($this->config->get('season'))
             ->forWeek($this->config->get('week'))
             ->select('nfl_games.*')
             ->first();
@@ -180,7 +180,7 @@ class FantasyProsProjectionsCsvDriver extends BaseProjectionsDriver
         fclose($this->fp);
     }
 
-    public function addPlayerNotFoundError(array $fileData, array $formattedData)
+    public function addPlayerMissingError(array $fileData, array $formattedData)
     {
         $this->errors[] = [
             'type' => 'Player Not Found',

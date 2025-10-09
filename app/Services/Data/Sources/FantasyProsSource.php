@@ -12,20 +12,20 @@ class FantasyProsSource extends BaseSource
     /* ===[ GETTERS ]=== */
 
 
-    public function getNFLProjections(int $year, int $week)
+    public function getNFLProjections(int $season, int $week)
     {
-        return FantasyPros::projections()->getAllProjections($year, $week);
+        return FantasyPros::projections()->getAllProjections($season, $week);
     }
 
 
     /* ===[ IMPORTERS ]=== */
 
 
-    public function importNFLProjections(int $year, int $week)
+    public function importNFLProjections(int $season, int $week)
     {
         $import = Import::projections(Datum::SOURCE_FANTASY_PROS->value);
 
-        $import->setUp(['year' => $year,'week' => $week]);
+        $import->setUp(['season' => $season,'week' => $week]);
 
         $import->load();
 

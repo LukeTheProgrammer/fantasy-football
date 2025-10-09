@@ -32,9 +32,9 @@ class ResetFantasyLeaguesCommand extends Command
         $this->rebuildData();
 
         $this->call('import:fantasy:league');
-        $this->call('import:fantasy:roster', ['leagueId' => 1, 'year' => 2025]);
+        $this->call('import:fantasy:roster', ['leagueId' => 1, 'season' => 2025]);
         // TODO - Clean up these commands, make ESPN League and Roster Drivers
-        // $this->call('import:fantasy-nfl:points', ['--quiet' => true, 'leagueId' => 1, 'year' => 2025]);
+        // $this->call('import:fantasy-nfl:points', ['--quiet' => true, 'leagueId' => 1, 'season' => 2025]);
 
         return Command::SUCCESS;
     }

@@ -20,7 +20,7 @@ class GetTeamSchedule extends Command
         { --a|all       : Get all NFL teams    }
         { --r|raw       : Return raw response  }
         { espn_team_id? : The ESPN NFL team ID }
-        { year?         : Which year to pull   }
+        { season?         : Which season to pull   }
     ';
 
     /**
@@ -39,11 +39,11 @@ class GetTeamSchedule extends Command
     {
         $this->teams = Team::noFA()->get();
 
-        $year = $this->argument('year') ?? select('Which year to pull', [2025, 2024]);
+        $season = $this->argument('season') ?? select('Which season to pull', [2025, 2024]);
 
         if ($this->option('all')) {
             $this->teams->each(
-                fn (Team $team) => $this->getSchedule($team->espn_id, $year)
+                fn (Team $team) => $this->getSchedule($team->espn_id, $season)
             );
 
             return Command::SUCCESS;
@@ -52,19 +52,19 @@ class GetTeamSchedule extends Command
         $teamId = $this->argument('espn_team_id');
 
         if ($teamId) {
-            $this->getSchedule($teamId, $year);
+            $this->getSchedule($teamId, $season);
 
             return Command::SUCCESS;
         }
 
         $teamId = select('Which team to pull', $this->teams->pluck('name', 'espn_id')->toArray());
 
-        $this->getSchedule($teamId, $year);
+        $this->getSchedule($teamId, $season);
 
         return Command::SUCCESS;
     }
 
-    public function getSchedule(int $teamId, int $year)
+    public function getSchedule(int $teamId, int $season)
     {
         $nfl = Espn::nfl();
 
@@ -72,7 +72,7 @@ class GetTeamSchedule extends Command
             $nfl->returnRaw = true;
         }
 
-        $nfl->getTeamSchedule($teamId, $year);
+        $nfl->getTeamSchedule($teamId, $season);
 
         $this->info('NFL Team [' . $teamId . '] Schedule pulled and saved');
     }

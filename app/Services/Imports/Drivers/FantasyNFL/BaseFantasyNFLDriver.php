@@ -16,5 +16,5 @@ abstract class BaseFantasyNFLDriver
 
     abstract public function setConfig(array|Collection $config);
     abstract public function importLeague(array $leagueData = []): League;
-    abstract public function importRosters(League $league, int $year): League;
+    abstract public function importRosters(League $league, int $season): League;
 }

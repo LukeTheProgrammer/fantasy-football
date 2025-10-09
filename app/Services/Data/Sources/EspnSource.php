@@ -28,11 +28,11 @@ class EspnSource extends BaseSource
             );
     }
 
-    public function getFantasyLeagueRosters(League $league, int $year)
+    public function getFantasyLeagueRosters(League $league, int $season)
     {
         $rosters = [];
 
-        $league->members->each(function ($member) use (&$rosters,$league, $year) {
+        $league->members->each(function ($member) use (&$rosters, $league, $season) {
             $memberRosters = [];
 
             for ($week = 1; $week <= 18; $week++) {
@@ -42,7 +42,7 @@ class EspnSource extends BaseSource
                     ->getFantasyRoster($league->credentials, [
                         'teamId' => $member->external_id,
                         'week' => $week,
-                        'year' => $year,
+                        'season' => $season,
                     ]);
 
                 $memberRosters[$weekKey] = $data[0];
@@ -55,18 +55,18 @@ class EspnSource extends BaseSource
         return collect($rosters);
     }
 
-    public function getNFLRosters(Team $team)
+    public function getNFLRosters(Team $team, int $season)
     {
         return Espn::dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getNFLTeamRoster($team);
+            ->getNFLTeamRoster($team, $season);
     }
 
-    public function getNFLSchedule(Team $team, int $year)
+    public function getNFLSchedule(Team $team, int $season)
     {
         return Espn::dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getNFLSchedule($team, $year);
+            ->getNFLSchedule($team, $season);
     }
 
     /* ===[ IMPORTERS ]=== */
@@ -77,29 +77,29 @@ class EspnSource extends BaseSource
             throw new InvalidArgumentException('League data must be provided');
         }
 
-        $importer = Import::fantasyNFL(FantasyPlatforms::ESPN);
+        $importer = Import::fantasyNFL(FantasyPlatforms::ESPN->value);
 
         return $importer->importLeague($leagueData);
     }
 
-    public function importFantasyRosters(League $league, int $year)
+    public function importFantasyRosters(League $league, int $season)
     {
-        $importer = Import::fantasyNFL(FantasyPlatforms::ESPN);
+        $importer = Import::fantasyNFL(FantasyPlatforms::ESPN->value);
 
-        return $importer->importRosters($league, $year);
+        return $importer->importRosters($league, $season);
     }
 
-    public function importNFLRosters(Team $team, int $year)
+    public function importNFLRosters(Team $team, int $season)
     {
-        $importer = Import::nfl(FantasyPlatforms::ESPN);
+        $importer = Import::nfl(FantasyPlatforms::ESPN->value);
 
-        return $importer->importRosters($team, $year);
+        return $importer->importRosters($team, $season);
     }
 
-    public function importNFLSchedule(Team $team, int $year)
+    public function importNFLSchedule(Team $team, int $season)
     {
-        $importer = Import::nfl(FantasyPlatforms::ESPN);
+        $importer = Import::nfl(FantasyPlatforms::ESPN->value);
 
-        return $importer->importSchedule($team, $year);
+        return $importer->importSchedule($team, $season);
     }
 }

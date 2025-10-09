@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Models\Week;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
 
 class ResetAppCommand extends Command
 {
@@ -28,7 +26,7 @@ class ResetAppCommand extends Command
      */
     public function handle(): int
     {
-        $year = date('Y');
+        $season = date('Y');
 
         $this->call('migrate:fresh');
         $this->call('db:seed', ['-vvv' => true]);
@@ -37,12 +35,12 @@ class ResetAppCommand extends Command
         $this->call('import:fantasy:league');
 
         $this->info('Importing Fantasy Roster');
-        $this->call('import:fantasy:roster', ['leagueId' => 1, 'year' => $year]);
+        $this->call('import:fantasy:roster', ['leagueId' => 1, 'season' => $season]);
 
         $this->info('Importing NFL Projections');
-        Week::forSeason($year)->get()->each(function ($week) {
+        Week::forSeason($season)->get()->each(function ($week) {
             $this->info("Importing NFL Projections for Week {$week->week}");
-            $this->call('import:nfl:projections', ['year' => $week->season_id, 'week' => $week->week]);
+            $this->call('import:nfl:projections', ['season' => $week->season_id, 'week' => $week->week]);
 
             if ($week->is_current) {
                 return false;

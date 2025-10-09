@@ -51,11 +51,11 @@ class RostersResource extends BaseResource
 
     private ?Collection $positions = null;
 
-    public function getTeamRoster(Team|NFLTeams $team, int $year)
+    public function getTeamRoster(Team|NFLTeams $team, int $season)
     {
         $this->team = ($team instanceof NFLTeams) ? Team::find($team->value) : $team;
 
-        if ($cache = $this->getCache(['rosters', $this->team->id, $year])) {
+        if ($cache = $this->getCache(['rosters', $this->team->id, $season])) {
             return $cache;
         }
 
@@ -67,7 +67,7 @@ class RostersResource extends BaseResource
             throw new Exception('Invalid team abbreviation: ' . $this->team->id);
         }
 
-        $url = "https://www.pro-football-reference.com/teams/{$teamKey}/{$year}_roster.htm";
+        $url = "https://www.pro-football-reference.com/teams/{$teamKey}/{$season}_roster.htm";
 
         $response = Http::get($url);
 
@@ -80,7 +80,7 @@ class RostersResource extends BaseResource
         $data = $this->formatData($this->parseRosterFromHtml($html));
 
         $this->setCache(
-            $this->getCacheFilePath(['rosters', $this->team->id, $year]),
+            $this->getCacheFilePath(['rosters', $this->team->id, $season]),
             $data
         );
 

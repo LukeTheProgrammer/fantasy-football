@@ -27,7 +27,7 @@ class LoadRosters extends Command
     protected $signature = 'pfr:load:rosters
         { --a|all   : Scrapes all teams }
         { --q|quiet : Scrapes all teams }
-        { year?     : Year              }
+        { season?   : Season            }
         { team?     : Team abbreviation }
     ';
 
@@ -38,14 +38,14 @@ class LoadRosters extends Command
      */
     protected $description = 'Loads rosters from Pro Football Reference';
 
-    private ?int $year = null;
+    private ?int $season = null;
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $this->year = $this->argument('year') ?? select('Year?', [2025, 2024], 2025);
+        $this->season = $this->argument('season') ?? select('Season?', [2025, 2024], 2025);
 
         if ($this->option('all')) {
             Team::noFA()->get()->each(fn (Team $team) => $this->loadRoster($team));
@@ -68,7 +68,7 @@ class LoadRosters extends Command
             $this->info('Pulling rosters for ' . $team->id);
         }
 
-        $roster = ProFootballReference::getRoster($team, $this->year);
+        $roster = ProFootballReference::getRoster($team, $this->season);
 
         foreach ($roster as $player) {
             $this->loadPlayer($player, $team);

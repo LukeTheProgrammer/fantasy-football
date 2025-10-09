@@ -60,7 +60,7 @@ export default function Drafts({ drafts }: DraftIndexProps) {
             {drafts.map((draft) => (
               <Card key={draft.id} className="overflow-hidden">
                 <CardHeader>
-                  <CardTitle>{draft.league.name} {draft.league.year}</CardTitle>
+                  <CardTitle>{draft.league.name} {draft.league.season}</CardTitle>
                   <CardDescription>
                     {isUserDraftAdmin(draft, userId) && (
                       <Badge variant="outline" className="mr-2">

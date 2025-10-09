@@ -58,7 +58,7 @@ export default function TeamsTable({ leagueId }: TeamsProps) {
   //     <TableBody>
   //       {drafts.map((draft) => (
   //         <TableRow key={draft.id}>
-  //           <TableCell>{draft.league_season.year}</TableCell>
+  //           <TableCell>{draft.league_season.season}</TableCell>
   //           <TableCell>{draft.draft_type}</TableCell>
   //           <TableCell>{draft.draft_date}</TableCell>
   //           <TableCell>{draft.is_completed ? 'Completed' : 'Upcoming'}</TableCell>

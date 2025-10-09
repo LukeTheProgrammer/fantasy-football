@@ -21,7 +21,7 @@ interface Draft {
   };
   league: {
     name: string;
-    year: number;
+    season: number;
   };
 }
 
@@ -72,7 +72,7 @@ export default function DraftsTable({ leagueId }: DraftsProps) {
       <TableBody>
         {drafts.map((draft) => (
           <TableRow key={draft.id}>
-            <TableCell>{draft.league?.year}</TableCell>
+            <TableCell>{draft.league?.season}</TableCell>
             <TableCell>{draft.draft_type}</TableCell>
             <TableCell>{draft.draft_date}</TableCell>
             <TableCell>{draft.is_completed ? 'Completed' : 'Upcoming'}</TableCell>

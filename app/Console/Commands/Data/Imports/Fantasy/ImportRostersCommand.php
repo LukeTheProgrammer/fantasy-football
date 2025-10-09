@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands\Data\Imports\Fantasy;
 
-use App\Facades\Import;
+use App\Facades\Data;
 use App\Models\League;
-use App\Models\LeagueMemberRoster;
 use Illuminate\Console\Command;
 use function Laravel\Prompts\select;
 
@@ -17,7 +16,7 @@ class ImportRostersCommand extends Command
      */
     protected $signature = 'import:fantasy:roster
         { leagueId? : League to pull }
-        { year?     : Year to pull   }
+        { season?   : Season to pull }
     ';
 
     /**
@@ -34,15 +33,13 @@ class ImportRostersCommand extends Command
     {
         $leagueId = $this->argument('leagueId') ?? select('Select a league', League::all()->pluck('name', 'id')->toArray());
 
-        $year = $this->argument('year') ?? select('Select a year', [2025, 2024], 2025);
+        $season = $this->argument('season') ?? select('Select a season', [2025, 2024], 2025);
 
         $league = League::findOrFail($leagueId);
 
-        $importer = Import::fantasyNFL($league->platform);
-
         $this->info('Importing rosters...');
 
-        $importer->importRosters($league, $year);
+        Data::source($league->platform)->importFantasyRosters($league, $season);
 
         $this->info('Rosters imported successfully!');
     }

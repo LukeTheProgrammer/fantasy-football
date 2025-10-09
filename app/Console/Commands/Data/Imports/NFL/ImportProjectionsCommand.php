@@ -16,7 +16,7 @@ class ImportProjectionsCommand extends Command
      * @var string
      */
     protected $signature = 'import:nfl:projections
-        { year? : Year }
+        { season? : Season }
         { week? : Week }
     ';
 
@@ -32,18 +32,30 @@ class ImportProjectionsCommand extends Command
      */
     public function handle()
     {
-        $year = $this->argument('year') ?? select('Year', [2025, 2024], Season::current()->first()->id);
+        $season = $this->argument('season') ?? select('Season', [2025, 2024], Season::current()->first()->id);
         $week = $this->argument('week') ?? select('Week', range(1, 18), Week::current()->first()->week);
 
-        $this->info('Importing Projections for season ' . $year . ' Week ' . $week);
+        $this->info('Importing Projections for season ' . $season . ' Week ' . $week);
 
-        $errors = Data::fantasyPros()->importNFLProjections($year, $week);
+        $errors = Data::fantasyPros()->importNFLProjections($season, $week);
 
         if (! empty($errors)) {
-            $this->error('Errors found:');
-            $this->table(['key', 'val'], array_map(fn ($v, $k) => [$k, json_encode($v)], $errors));
+            $this->displayErrors($errors);
         }
 
         $this->info('Import complete');
+    }
+
+    private function displayErrors(array $errors): void
+    {
+        $this->error('Errors found:');
+
+        $rows = [];
+
+        foreach ($errors as $k => $v) {
+            $rows[] = [$k, json_encode($v)];
+        }
+
+        $this->table(['key', 'val'], $rows);
     }
 }

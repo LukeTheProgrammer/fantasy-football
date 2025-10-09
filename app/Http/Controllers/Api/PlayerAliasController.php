@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PlayerAliasCreateRequest;
 use App\Http\Requests\PlayerAliasUpdateRequest;
 use App\Models\PlayerAlias;
 use Illuminate\Http\Request;
@@ -14,27 +15,19 @@ class PlayerAliasController extends Controller
      */
     public function index()
     {
-        return response()->json(PlayerAlias::all());
-    }
-
-    /**
-     * Searches for players.
-     */
-    public function search(Request $request)
-    {
-        $search = $request->input('search');
-
         return response()->json(
-            PlayerAlias::nameLike($search)->get()
+            PlayerAlias::with(['player'])->orderBy('name')->get()
         );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PlayerAliasCreateRequest $request)
     {
-        //
+        $playerAlias = PlayerAlias::create($request->validated());
+
+        return response()->json($playerAlias->load('player'));
     }
 
     /**
@@ -42,7 +35,7 @@ class PlayerAliasController extends Controller
      */
     public function show(PlayerAlias $playerAlias)
     {
-        return response()->json($playerAlias);
+        return response()->json($playerAlias->load('player'));
     }
 
     /**
@@ -60,8 +53,8 @@ class PlayerAliasController extends Controller
      */
     public function destroy(PlayerAlias $playerAlias)
     {
-        // $playerAlias->delete();
+        $playerAlias->delete();
 
-        // return response()->json($playerAlias);
+        return response()->json($playerAlias);
     }
 }

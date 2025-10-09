@@ -30,11 +30,11 @@ class ProjectionsResource extends BaseResource
         'ppr-te'  => 'https://www.fantasypros.com/nfl/rankings/ppr-te.php',
     ];
 
-    public ?int $year = null;
+    public ?int $season = null;
 
     public ?int $week = null;
 
-    public ?int $currentYear = null;
+    public ?int $currentSeason = null;
 
     public ?int $currentWeek = null;
 
@@ -42,28 +42,28 @@ class ProjectionsResource extends BaseResource
 
     public function __construct()
     {
-        $this->currentYear = Season::current()->first()->id;
+        $this->currentSeason = Season::current()->first()->id;
         $this->currentWeek = Week::current()->first()->week;
     }
 
-    public function getAllProjections(?int $year = null, ?int $week = null)
+    public function getAllProjections(?int $season = null, ?int $week = null)
     {
         $proj = [];
 
         foreach ($this->sources as $source => $url) {
-            $proj[$source] = $this->getProjections($source, $year, $week);
+            $proj[$source] = $this->getProjections($source, $season, $week);
         }
 
         return $proj;
     }
 
-    public function getProjections(string $source, ?int $year = null, ?int $week = null)
+    public function getProjections(string $source, ?int $season = null, ?int $week = null)
     {
         if (! isset($this->sources[$source])) {
             throw new InvalidArgumentException("Invalid source: $source");
         }
 
-        $this->year = $year ?? $this->currentYear;
+        $this->season = $season ?? $this->currentSeason;
         $this->week = $week ?? $this->currentWeek;
 
         $this->setIsCurrentWeek();
@@ -72,12 +72,12 @@ class ProjectionsResource extends BaseResource
             return $players;
         }
 
-        return $this->pullProjections($source, $year, $week);
+        return $this->pullProjections($source, $season, $week);
     }
 
-    public function pullProjections(string $source, ?int $year = null, ?int $week = null)
+    public function pullProjections(string $source, ?int $season = null, ?int $week = null)
     {
-        $this->year = $year ?? $this->currentYear;
+        $this->season = $season ?? $this->currentSeason;
         $this->week = $week ?? $this->currentWeek;
 
         $this->setIsCurrentWeek();
@@ -121,7 +121,7 @@ class ProjectionsResource extends BaseResource
                 str_replace(storage_path('data/fantasy-pros/projections'), '', $filePath)
             )));
 
-            $this->year = (int) $pathData[0];
+            $this->season = (int) $pathData[0];
             $this->week = (int) str_replace('week-', '', $pathData[1]);
 
             $html = file_get_contents($filePath);
@@ -144,7 +144,7 @@ class ProjectionsResource extends BaseResource
     private function setIsCurrentWeek(): void
     {
         $this->isCurrentWeek = (
-            $this->year === $this->currentYear &&
+            $this->season === $this->currentSeason &&
             $this->week === $this->currentWeek
         );
     }
@@ -155,7 +155,7 @@ class ProjectionsResource extends BaseResource
             'data',
             'fantasy-pros',
             'projections',
-            $this->year,
+            $this->season,
             'week-' . $this->week,
         ]));
 
@@ -223,7 +223,7 @@ class ProjectionsResource extends BaseResource
 
     private function formatPlayers(array $players)
     {
-        return ProjectionFormatter::from($players, $this->year, $this->week);
+        return ProjectionFormatter::from($players, $this->season, $this->week);
     }
 
     private function savePlayers(string $source, array $players): bool

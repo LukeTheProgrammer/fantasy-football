@@ -23,8 +23,8 @@ class PlayerAliasUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => ['sometimes', 'string'],
-            'player_id' => ['sometimes', 'exists:players,id'],
+            'name'        => ['sometimes', 'string'],
+            'player_ulid' => ['sometimes', 'exists:players,ulid'],
         ];
     }
 }

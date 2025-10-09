@@ -4,7 +4,7 @@ namespace App\Actions\Models\Leagues;
 
 use App\Enums\FantasyPlatforms;
 use App\Facades\Action;
-use App\Facades\Import;
+use App\Facades\Data;
 use App\Models\League;
 use App\Models\Draft;
 use App\Models\LeagueMember;
@@ -24,7 +24,7 @@ class LeagueCreateAction
         $league = League::create([
             'created_by_user_id' => $creator->id,
             'name'               => Arr::get($data, 'name'),
-            'year'               => Arr::get($data, 'year', date('Y')),
+            'season'             => Arr::get($data, 'season', date('Y')),
             'slug'               => Str::slug(Arr::get($data, 'name')),
             'description'        => Arr::get($data, 'description'),
             'team_count'         => Arr::get($data, 'team_count'),
@@ -44,17 +44,12 @@ class LeagueCreateAction
 
     private function createEspnLeague(User $creator, array $data): League
     {
-        $importer = Import::fantasyNFL(FantasyPlatforms::ESPN);
-
-        $importer->setCredentials([
-            'leagueId' => Arr::get($data, 'espn_league_id'),
-            's2'       => Arr::get($data, 'espn_s2'),
-            'swid'     => Arr::get($data, 'espn_swid'),
+        return Data::espn()->importFantasyLeague([
+            'created_by_user_id' => $creator->id,
+            'league_id'          => Arr::get($data, 'espn_league_id'),
+            's2'                 => Arr::get($data, 'espn_s2'),
+            'swid'               => Arr::get($data, 'espn_swid'),
         ]);
-
-        $importer->setCreator($creator);
-
-        return $importer->import();
     }
 
     private function createLeagueSettings(League $league, array $data): void

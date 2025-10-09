@@ -8,6 +8,7 @@ use App\Services\Imports\Drivers\Rankings\FantasyProsRankingsDriver;
 use App\Services\Imports\Drivers\Projections\FantasyProsProjectionsDriver;
 use App\Services\Imports\Drivers\FantasyNFL\EspnDriver;
 use App\Services\Imports\Drivers\NFL\EspnNFLDriver;
+use App\Services\Imports\Drivers\NFL\ProFootballReferenceDriver;
 use App\Services\Imports\Importers\DraftRankingsImporter;
 use App\Services\Imports\Importers\FantasyNFLImporter;
 use App\Services\Imports\Importers\NFLImporter;
@@ -28,6 +29,7 @@ class ImportService
             ],
             'nfl' => [
                 FantasyPlatforms::ESPN->value => EspnNFLDriver::class,
+                Datum::SOURCE_PFR->value => ProFootballReferenceDriver::class,
             ],
             'projections' => [
                 Datum::SOURCE_FANTASY_PROS->value => FantasyProsProjectionsDriver::class,

@@ -20,7 +20,7 @@ class GetRosters extends Command
      */
     protected $signature = 'espn:ffl:get:rosters
         { leagueId? : League to pull }
-        { year?     : Year to pull   }
+        { season?   : Season to pull }
     ';
 
     /**
@@ -36,7 +36,7 @@ class GetRosters extends Command
 
     protected array $nflGameIds = [];
 
-    protected ?int $year = null;
+    protected ?int $season = null;
 
     protected ?int $week = null;
 
@@ -56,7 +56,7 @@ class GetRosters extends Command
 
         $leagueId = $this->argument('leagueId') ?? select('Select a league', League::all()->pluck('name', 'id')->toArray());
 
-        $this->year = $this->argument('year') ?? select('Select a year', [2025, 2024], 2025);
+        $this->season = $this->argument('season') ?? select('Select a season', [2025, 2024], 2025);
 
         $this->league = League::findOrFail($leagueId);
 
@@ -71,17 +71,17 @@ class GetRosters extends Command
     {
         $this->week = $week;
 
-        $this->info('Getting Rosters for Season ' . $this->year . ' Week ' . $this->week);
+        $this->info('Getting Rosters for Season ' . $this->season . ' Week ' . $this->week);
 
         $bar = $this->output->createProgressBar($this->league->members->count());
         $bar->start();
 
         $this->league->members->each(function ($member) use ($bar) {
             $bar->advance();
-            $this->rawPath = $this->getPath(true, $member->external_id, $this->year);
-            $this->formattedPath = $this->getPath(false, $member->external_id, $this->year);
+            $this->rawPath = $this->getPath(true, $member->external_id, $this->season);
+            $this->formattedPath = $this->getPath(false, $member->external_id, $this->season);
 
-            $roster = $this->api->getRostersForTeam($member->external_id, $this->week, $this->year);
+            $roster = $this->api->getRostersForTeam($member->external_id, $this->week, $this->season);
 
             // $this->saveRoster($roster, true);
 
@@ -96,11 +96,11 @@ class GetRosters extends Command
         }
     }
 
-    private function getPath(bool $raw, int|string $memberId, int $year): string
+    private function getPath(bool $raw, int|string $memberId, int $season): string
     {
         $base = 'data/espn/ffl/rosters/';
         $base .= $raw ? 'raw' : 'formatted';
-        $parts = [$this->league->platform_id, 'team', $memberId, 'year', $year];
+        $parts = [$this->league->platform_id, 'team', $memberId, 'season', $season];
 
         if ($raw) {
             $parts[] = 'week';
@@ -130,7 +130,7 @@ class GetRosters extends Command
                         $data[$playerId] = [
                             'league_member_id'      => $member->id,
                             'player_id'             => $playerId,
-                            'season'                => $this->year,
+                            'season'                => $this->season,
                             'week'                  => $this->week,
                             'nfl_game_id'           => null,
                             'fantasy_points'        => 0,
@@ -155,14 +155,14 @@ class GetRosters extends Command
     private function processStat(array $stat, array $data = [])
     {
         $gameId  = intval(Arr::get($stat, 'externalId', false));
-        $year    = intval(Arr::get($stat, 'seasonId', false));
+        $season    = intval(Arr::get($stat, 'seasonId', false));
         $week    = intval(Arr::get($stat, 'scoringPeriodId', false));
         $points  = floatVal(Arr::get($stat, 'appliedTotal', 0));
 
         $isWeek = $week == $this->week;
         $isProjection = Arr::get($stat, 'statSourceId', false) === 1;
 
-        $projectionKey = $year . $week;
+        $projectionKey = $season . $week;
 
         if ($isWeek && $gameId == $projectionKey && $isProjection) {
             $data['espn_projected_points'] = $points;

@@ -102,14 +102,14 @@ class ImportFantasyProsRankingsCommand extends Command
 
         // Just for testing
         $this->import->setUp([
-            'year' => date('Y'),
+            'season' => date('Y'),
             'ranked_at' => Carbon::now()->toDateString(),
             'ranking_type' => 'redraft',
             'ppr' => 0.5,
         ]);
 
         // $this->import->setUp([
-        //     'year' => text('What year are these rankings for?', date('Y')),
+        //     'season' => text('What season are these rankings for?', date('Y')),
         //     'ranked_at' => text('What date were these rankings ranked at?', Carbon::now()->toDateString()),
         //     'ranking_type' => select(
         //         label: 'Select a ranking type',

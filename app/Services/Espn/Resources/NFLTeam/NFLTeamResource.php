@@ -37,7 +37,7 @@ abstract class NFLTeamResource extends BaseResource
     {
         $scheme = $params['scheme'] ?? 'http';
         $version = $params['version'] ?? $this->apiVersion->value;
-        $season = $params['year'] ?? $this->apiYear->value;
+        $season = $params['season'] ?? $this->apiYear->value;
 
         // http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/teams
         return $this->assembleUrl([

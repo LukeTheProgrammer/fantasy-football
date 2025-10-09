@@ -58,7 +58,7 @@ class FantasyNFL extends BaseResourceCollection
         $resource->setOpts(
             Arr::get($opts, 'teamId'),
             Arr::get($opts, 'week'),
-            Arr::get($opts, 'year'),
+            Arr::get($opts, 'season'),
         );
 
         return $resource->fetch();

@@ -2,7 +2,6 @@
 
 namespace App\Services\Espn;
 
-use App\Enums\Datum;
 use App\Enums\NFLTeams;
 use App\Models\Team;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
@@ -10,7 +9,6 @@ use App\Services\Espn\Resources\FantasyNFL;
 use App\Services\Espn\Resources\NFL;
 use App\Services\Espn\Resources\NflTeam;
 use App\Traits\HasDataFormats;
-use Exception;
 
 /**
  * @see https://github.com/pseudo-r/Public-ESPN-API
@@ -24,13 +22,13 @@ class EspnService
     /* ===[ NFL ]=== */
 
 
-    public function getNFLTeamNews(int|string $teamId)
+    public function getNFLTeamNews(Team $team)
     {
         $resource = new NFL();
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getTeamNews($teamId);
+            ->getTeamNews($team);
     }
 
     public function getNFLScoreboard()
@@ -51,31 +49,31 @@ class EspnService
             ->getEventSummary($eventId);
     }
 
-    public function getNFLTeam(int|string|null $teamId = null)
+    public function getNFLTeam(?Team $team = null)
     {
         $resource = new NFL();
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getTeam($teamId);
+            ->getTeam($team);
     }
 
-    public function getNFLRoster(int|string|null $teamId = null)
+    public function getNFLRoster(?Team $team = null)
     {
         $resource = new NFL();
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getRoster($teamId);
+            ->getRoster($team);
     }
 
-    public function getNFLSchedule(Team $team, int $year)
+    public function getNFLSchedule(Team $team, int $season)
     {
         $resource = new NFL();
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getSchedule($team, $year);
+            ->getSchedule($team, $season);
     }
 
     public function getNFLLeaders()
@@ -91,7 +89,7 @@ class EspnService
     /* ===[ NFL Team ]=== */
 
 
-    public function getNFLTeamDepthChart(Team|NFLTeams|int|string $team)
+    public function getNFLTeamDepthChart(Team $team)
     {
         $resource = new NFLTeam();
 
@@ -100,7 +98,7 @@ class EspnService
             ->getDepthChart($team);
     }
 
-    public function getNFLTeamEvents(Team|NFLTeams|int|string $team)
+    public function getNFLTeamEvents(Team $team)
     {
         $resource = new NFLTeam();
 
@@ -109,7 +107,7 @@ class EspnService
             ->getEvents($team);
     }
 
-    public function getNFLPlayers(Team|NFLTeams|int|string $team, int $page = 1)
+    public function getNFLPlayers(Team $team, int $page = 1)
     {
         $resource = new NFLTeam();
 
@@ -118,7 +116,7 @@ class EspnService
             ->getPlayers($team, $page);
     }
 
-    public function getNFLTeamRoster(Team|NFLTeams|int|string $team)
+    public function getNFLTeamRoster(Team $team)
     {
         $resource = new NFLTeam();
 
@@ -127,7 +125,7 @@ class EspnService
             ->getRoster($team);
     }
 
-    public function getNFLTeamData(Team|NFLTeams|int|string $team)
+    public function getNFLTeamData(Team $team)
     {
         $resource = new NFLTeam();
 

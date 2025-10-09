@@ -95,7 +95,7 @@ class DraftController extends Controller
         ]);
 
         // Get available players for drafting
-        $availablePlayers = DraftRanking::where('year', $draft->league->year)
+        $availablePlayers = DraftRanking::where('season', $draft->league->season)
             ->where(function ($q) {
                 $q->orWhere('average_rank', '>', 0)
                     ->orWhere('average_value', '>', 0)

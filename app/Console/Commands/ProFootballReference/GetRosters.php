@@ -18,7 +18,7 @@ class GetRosters extends Command
     protected $signature = 'pfr:get:rosters
         { --a|all   : Scrapes all teams }
         { --q|quiet : Scrapes all teams }
-        { year?     : Year              }
+        { season?   : Season            }
         { team?     : NFLTeam Enum      }
     ';
 
@@ -34,7 +34,7 @@ class GetRosters extends Command
      */
     public function handle()
     {
-        $year = $this->argument('year') ?? select('Year?', [2025, 2024], 2025);
+        $season = $this->argument('season') ?? select('Season?', [2025, 2024], 2025);
 
         if ($this->option('all')) {
             foreach (NFLTeams::cases() as $team) {
@@ -42,7 +42,7 @@ class GetRosters extends Command
                     $this->info('Pulling rosters for ' . $team->value);
                 }
 
-                $this->getRoster($team, $year);
+                $this->getRoster($team, $season);
             }
 
             return Command::SUCCESS;
@@ -56,13 +56,13 @@ class GetRosters extends Command
             $this->info('Pulling rosters for ' . $team->value);
         }
 
-        $this->getRoster($team, $year);
+        $this->getRoster($team, $season);
 
         return Command::SUCCESS;
     }
 
-    private function getRoster(NFLTeams $team, int $year): array
+    private function getRoster(NFLTeams $team, int $season): array
     {
-        return ProFootballReference::getTeamRoster($team, $year);
+        return ProFootballReference::getTeamRoster($team, $season);
     }
 }

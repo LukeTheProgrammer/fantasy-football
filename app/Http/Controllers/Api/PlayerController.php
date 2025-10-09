@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Facades\Action;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PlayerCreateRequest;
 use App\Http\Requests\PlayerUpdateRequest;
 use App\Models\Player;
 use Illuminate\Http\Request;
@@ -33,9 +34,11 @@ class PlayerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PlayerCreateRequest $request)
     {
-        //
+        $player = Action::model(Player::class)->create($request->validated());
+
+        return response()->json($player);
     }
 
     /**

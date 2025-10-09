@@ -16,7 +16,8 @@ class ImportRostersCommand extends Command
      * @var string
      */
     protected $signature = 'import:nfl:roster
-        { year? : The year to import }
+        { --espn  : Use ESPN; default is pro football reference }
+        { season? : The season to import }
     ';
 
     /**
@@ -31,11 +32,16 @@ class ImportRostersCommand extends Command
      */
     public function handle()
     {
-        $year = $this->argument('year') ?? select('Year', [2025, 2024], Season::current()->first()->id);
+        $season = $this->argument('season') ?? select('Season', [2025, 2024], Season::current()->first()->id);
 
-        Team::noFA()->get()->each(function (Team $team) use ($year) {
-            $this->info('Importing ' . $year . ' Roster for ' . $team->id);
-            Data::espn()->importNFLRosters($team, $year);
+        Team::noFA()->get()->each(function (Team $team) use ($season) {
+            $this->info('Importing ' . $season . ' Roster for ' . $team->id);
+
+            if ($this->option('espn')) {
+                Data::espn()->importNFLRosters($team, $season);
+            } else {
+                Data::pfr()->importNFLRosters($team, $season);
+            }
         });
     }
 }

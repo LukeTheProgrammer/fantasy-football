@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PlayerNotFound extends Model
+class PlayerMissing extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -15,7 +15,7 @@ class PlayerNotFound extends Model
     /**
      * @inheritDoc
      */
-    protected $table = 'players_not_found';
+    protected $table = 'players_missing';
 
     /**
      * @inheritDoc

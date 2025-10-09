@@ -44,7 +44,7 @@ class NFLScheduleFormatter
 
         $data = [
             'espn_id'      => $event->id,
-            'year'         => $event->season->year,
+            'season'       => $event->season->year,
             'week'         => $event->week->number,
             'starts_at'    => Carbon::parse($event->date)->toDateTimeString(),
             'is_completed' => $competition->status->type->completed,

@@ -4,7 +4,7 @@ namespace App\Services\FantasyPros\Formatters;
 
 use App\Facades\Action;
 use App\Models\Player;
-use App\Models\PlayerNotFound;
+use App\Models\PlayerMissing;
 use App\Services\FantasyPros\Data\PlayerData;
 use Illuminate\Support\Collection;
 
@@ -73,7 +73,7 @@ class ProjectionFormatter
         }
 
         if (! $playerModel instanceof Player) {
-            Action::model(PlayerNotFound::class)->upsert(
+            Action::model(PlayerMissing::class)->upsert(
                 data: $player->toArray(),
                 source: get_called_class(),
             );

@@ -11,7 +11,7 @@ class GetRoster extends FantasyNFLResource
 {
     public int|string $week;
 
-    public int|string $year;
+    public int|string $season;
 
     public function setCacheFilePath()
     {
@@ -24,18 +24,18 @@ class GetRoster extends FantasyNFLResource
             'roster',
             $this->teamId,
             $this->week,
-            $this->year,
+            $this->season,
         ];
 
         // EX: data/espn/ffl/leagues/league-123456-formatted.json
         $this->cacheFilePath = $this->getCacheFilePath($dirs, $file);
     }
 
-    public function setOpts(int|string $teamId, int|string $week, int|string $year)
+    public function setOpts(int|string $teamId, int|string $week, int|string $season)
     {
         $this->teamId = $teamId;
         $this->week = $week;
-        $this->year = $year;
+        $this->season = $season;
     }
 
     public function sendRequest()
@@ -44,7 +44,7 @@ class GetRoster extends FantasyNFLResource
             FantasyNFLViews::ROSTER,
         ];
 
-        $url = $this->buildUrl($views, null, $this->year);
+        $url = $this->buildUrl($views, null, $this->season);
 
         $url .= '&forTeamId=' . $this->teamId;
         $url .= '&scoringPeriodId=' . $this->week;
@@ -65,7 +65,7 @@ class GetRoster extends FantasyNFLResource
     {
         return FantasyRosterFormatter::from(
             (is_array($response)) ? $response : $response->json(),
-            $this->year,
+            $this->season,
             $this->week
         );
     }

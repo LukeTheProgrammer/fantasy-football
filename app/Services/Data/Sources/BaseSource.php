@@ -33,22 +33,22 @@ abstract class BaseSource
         return null;
     }
 
-    public function getFantasyRosters(League $league, int $year)
+    public function getFantasyRosters(League $league, int $season)
     {
         return null;
     }
 
-    public function getNFLProjections(int $year, int $week)
+    public function getNFLProjections(int $season, int $week)
     {
         return null;
     }
 
-    public function getNFLRosters(Team $team)
+    public function getNFLRosters(Team $team, int $season)
     {
         return null;
     }
 
-    public function getNFLSchedule(Team $team, int $year)
+    public function getNFLSchedule(Team $team, int $season)
     {
         return null;
     }
@@ -67,22 +67,22 @@ abstract class BaseSource
         return null;
     }
 
-    public function importFantasyRosters(League $league, int $year)
+    public function importFantasyRosters(League $league, int $season)
     {
         return null;
     }
 
-    public function importNFLProjections(int $year, int $week)
+    public function importNFLProjections(int $season, int $week)
     {
         return null;
     }
 
-    public function importNFLRosters(Team $team, int $year)
+    public function importNFLRosters(Team $team, int $season)
     {
         return null;
     }
 
-    public function importNFLSchedule(Team $team, int $year)
+    public function importNFLSchedule(Team $team, int $season)
     {
         return null;
     }

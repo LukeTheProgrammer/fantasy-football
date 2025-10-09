@@ -26,7 +26,7 @@ class LeagueShowResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $this->playerProjections = PlayerProjection::forSeason($this->year)
+        $this->playerProjections = PlayerProjection::forSeason($this->season)
             ->get()
             ->groupBy('player_id')
             ->map(fn ($projections) => $projections->keyBy('week'));
@@ -34,7 +34,7 @@ class LeagueShowResource extends JsonResource
         return [
             'id'          => $this->id,
             'name'        => $this->name,
-            'year'        => $this->year,
+            'season'      => $this->season,
             'slug'        => $this->slug,
             'description' => $this->description,
             'platform'    => $this->platform,
@@ -58,7 +58,7 @@ class LeagueShowResource extends JsonResource
         return $this->matchups->map(function ($matchup) {
             return [
                 'id'                   => $matchup->id,
-                'year'                 => $matchup->year,
+                'season'               => $matchup->season,
                 'week'                 => $matchup->week,
                 'home_score'           => $matchup->home_score,
                 'away_score'           => $matchup->away_score,
@@ -336,7 +336,7 @@ class LeagueShowResource extends JsonResource
         return [
             'id'           => $game->id,
             'espn_id'      => $game->espn_id,
-            'year'         => $game->year,
+            'season'         => $game->season,
             'week'         => $game->week,
             'starts_at'    => $game->starts_at,
             'day'          => $gameTime->format('D'),

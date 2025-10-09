@@ -2,7 +2,7 @@
 export interface LeagueResource {
   id: string;
   name: string;
-  year: number;
+  season: number;
   slug: string;
   description: string;
   platform: string;
@@ -27,7 +27,7 @@ export interface LeagueCreatorResource {
 
 export interface LeagueMatchupResource {
   id: string;
-  year: number;
+  season: number;
   week: number;
   home_score: number;
   away_score: number;
@@ -130,7 +130,7 @@ export interface LeagueProjectionResource {
 export interface NflGameResource {
   id: string;
   espn_id: string;
-  year: number;
+  season: number;
   week: number;
   starts_at: string;
   day: string;

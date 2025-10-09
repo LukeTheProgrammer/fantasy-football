@@ -3,10 +3,10 @@
 use App\Http\Controllers\Api\DraftController;
 use App\Http\Controllers\Api\LeagueController;
 use App\Http\Controllers\Api\LeagueMemberController;
-use App\Http\Controllers\Api\LeagueSeasonController;
 use App\Http\Controllers\Api\LeagueSettingsController;
 use App\Http\Controllers\Api\PlayerAliasController;
 use App\Http\Controllers\Api\PlayerController;
+use App\Http\Controllers\Api\PlayerMissingController;
 use App\Http\Controllers\Api\TeamController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Protected team routes for create, update, delete
     Route::apiResource('teams', TeamController::class)->except(['create', 'show']);
     Route::apiResource('players', PlayerController::class)->except(['index', 'show']);
-    Route::apiResource('player-aliases', PlayerAliasController::class)->only(['update']);
+    Route::apiResource('player-aliases', PlayerAliasController::class)->except(['show']);
+    Route::apiResource('players-missing', PlayerMissingController::class)->except(['show']);
 
     // League management routes
     Route::apiResource('leagues', LeagueController::class);

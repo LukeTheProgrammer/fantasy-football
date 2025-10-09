@@ -46,9 +46,9 @@ abstract class FantasyNFLResource extends BaseResource
         $this->cookieDomain = 'espn.com';
     }
 
-    protected function buildUrl(array $views = [], ?int $teamId = null, ?int $year = null): string
+    protected function buildUrl(array $views = [], ?int $teamId = null, ?int $season = null): string
     {
-        $season = $year ?? $this->apiYear->value;
+        $season = $season ?? $this->apiYear->value;
 
         // https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2025/segments/0/leagues/691509
         $url = $this->assembleUrl([

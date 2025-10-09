@@ -15,15 +15,15 @@ class SeasonSeeder extends Seeder
         $this->createSeason(2025);
     }
 
-    private function createSeason(int $year): void
+    private function createSeason(int $season): void
     {
         $season = Season::updateOrCreate(
-            ['id' => $year],
-            ['is_current' => (string) $year === date('Y')]
+            ['id' => $season],
+            ['is_current' => (string) $season === date('Y')]
         );
 
         for ($week = 1; $week <= 18; $week++) {
-            $games = NflGame::forYear($year)->forWeek($week)->orderBy('starts_at')->get();
+            $games = NflGame::forSeason($season)->forWeek($week)->orderBy('starts_at')->get();
 
             $first = $games->first();
             $last = $games->last();

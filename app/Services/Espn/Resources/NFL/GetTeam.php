@@ -2,17 +2,19 @@
 
 namespace App\Services\Espn\Resources\NFL;
 
+use App\Models\Team;
+
 class GetTeam extends NFLResource
 {
-    public int|string|null $teamId = null;
+    public Team|null $team = null;
 
     public function setCacheFilePath()
     {
         $dirs = ['teams'];
 
         $file = [
-            (null !== $this->teamId) ? 'team' : 'teams',
-            (null !== $this->teamId) ? $this->teamId : null,
+            (null !== $this->team->espn_id) ? 'team' : 'teams',
+            (null !== $this->team->espn_id) ? $this->team->espn_id : null,
             $this->dataFormat,
         ];
 
@@ -24,8 +26,8 @@ class GetTeam extends NFLResource
     {
         $url = $this->buildUrl('teams');
 
-        if (null !== $this->teamId) {
-            $url .= '/' . $this->teamId;
+        if (null !== $this->team->espn_id) {
+            $url .= '/' . $this->team->espn_id;
         }
 
         $response = $this->get($url);

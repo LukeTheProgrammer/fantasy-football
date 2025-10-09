@@ -23,9 +23,9 @@ class EspnDriver extends BaseFantasyNFLDriver
         return $importer->import();
     }
 
-    public function importRosters(League $league, int $year): League
+    public function importRosters(League $league, int $season): League
     {
-        $importer = new EspnRosterDriver($league, $year);
+        $importer = new EspnRosterDriver($league, $season);
 
         return $importer->import();
     }

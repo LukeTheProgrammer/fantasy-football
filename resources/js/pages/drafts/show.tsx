@@ -41,12 +41,12 @@ export default function ShowDraft({ draft }: DraftShowProps) {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={`${draft.league.name} ${draft.league.year}`} />
+      <Head title={`${draft.league.name} ${draft.league.season}`} />
 
       <div className="flex-1 p-8">
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
           <div>
-            <Heading title={`${draft.league.name} ${draft.league.year}`} />
+            <Heading title={`${draft.league.name} ${draft.league.season}`} />
           </div>
           <div className="mt-4 flex space-x-2 md:mt-0">
             {isUserDraftAdmin(draft, userId) && (
@@ -65,7 +65,7 @@ export default function ShowDraft({ draft }: DraftShowProps) {
           <Card>
             <CardContent className="space-y-4">
               <div className="mb-8 grid w-full">
-                <h2 className="text-lg font-semibold">{draft.league.name} {draft.league.year} Draft</h2>
+                <h2 className="text-lg font-semibold">{draft.league.name} {draft.league.season} Draft</h2>
                 <p className="text-sm text-muted-foreground">Information about your fantasy football draft.</p>
               </div>
 

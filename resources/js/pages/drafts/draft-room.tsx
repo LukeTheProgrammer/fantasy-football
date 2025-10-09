@@ -39,8 +39,8 @@ export default function DraftRoom({ draft, availablePlayers }: DraftIndexProps) 
       const player = draftRank.player;
       return (
         player.full_name.toLowerCase().includes(searchTerm) ||
-        player.position.abbreviation.toLowerCase().includes(searchTerm) ||
-        player.team.abbreviation.toLowerCase().includes(searchTerm)
+        player.position_id.toLowerCase().includes(searchTerm) ||
+        player.team_id.toLowerCase().includes(searchTerm)
       );
     });
   }, [availablePlayers, filterText]);
@@ -50,7 +50,7 @@ export default function DraftRoom({ draft, availablePlayers }: DraftIndexProps) 
       <Head title="Draft Room" />
 
       <div className="flex-1 p-8">
-        <Heading title={`${draft.league.name} ${draft.league.year} Draft Room`}/>
+        <Heading title={`${draft.league.name} ${draft.league.season} Draft Room`}/>
 
         <div className="mb-8">
           <div className="flex gap-2 overflow-x-auto">
@@ -74,8 +74,8 @@ export default function DraftRoom({ draft, availablePlayers }: DraftIndexProps) 
                       <span>Players</span>
                     </div>
                     <div className="grow-1">
-                      <Input 
-                        placeholder="Filter players..." 
+                      <Input
+                        placeholder="Filter players..."
                         value={filterText}
                         onChange={(e) => setFilterText(e.target.value)}
                       />

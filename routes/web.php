@@ -14,7 +14,6 @@ Route::get('/', fn () => Inertia::render('welcome'))->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('players', [PlayersController::class, 'index'])->name('players.index');
-    Route::get('player-aliases', [PlayerAliasesController::class, 'index'])->name('player_aliases.index');
 
     // League model
     Route::prefix('leagues')->name('leagues.')->group(function () {

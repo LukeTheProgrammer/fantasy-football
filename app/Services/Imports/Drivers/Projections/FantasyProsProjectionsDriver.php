@@ -8,7 +8,7 @@ use App\Facades\FantasyPros;
 use App\Models\NflGame;
 use App\Models\Player;
 use App\Models\PlayerAlias;
-use App\Models\PlayerNotFound;
+use App\Models\PlayerMissing;
 use App\Models\PlayerProjection;
 use App\Models\Team;
 use App\Services\FantasyPros\Resources\ProjectionsResource;
@@ -23,7 +23,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
     {
         $this->config = collect([
             'week' => null,
-            'year' => null,
+            'season' => null,
         ]);
     }
 
@@ -55,7 +55,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
         foreach ($this->fp->sources as $label => $url) {
             $data = $this->fp->getProjections(
                 $label,
-                $this->config->get('year'),
+                $this->config->get('season'),
                 $this->config->get('week')
             );
 
@@ -171,7 +171,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
         $find = [
             'player_id' => $player->id,
-            'season' => $this->config->get('year'),
+            'season' => $this->config->get('season'),
             'week' => $this->config->get('week'),
         ];
 
@@ -206,7 +206,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
         if (! $player instanceof Player) {
             $this->addError('Player Not Found', $data, []);
-            Action::model(PlayerNotFound::class)->upsert($data, get_called_class());
+            Action::model(PlayerMissing::class)->upsert($data, get_called_class());
             return null;
         }
 
@@ -236,7 +236,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
         $q = NflGame::query()
             ->forTeam($player->team)
-            ->forYear($this->config->get('year'))
+            ->forSeason($this->config->get('season'))
             ->forWeek($this->config->get('week'));
 
         $game = $q->first();

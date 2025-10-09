@@ -17,7 +17,7 @@ return new class extends Migration
 
         Schema::create('fantasy_points_seasons', function (Blueprint $table) {
             $table->id();
-            $table->year('year')->default(now()->year);
+            $table->year('season')->default(now()->year);
             $table->foreignId('league_id')->constrained('leagues')->cascadeOnDelete();
             $table->foreignId('player_id')->constrained()->cascadeOnDelete();
             $table->decimal('points', 10, 2)->default(0);

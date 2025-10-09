@@ -12,13 +12,13 @@ class NFLImporter
         //
     }
 
-    public function importRosters(Team $team, int $year)
+    public function importRosters(Team $team, int $season)
     {
-        return $this->driver->importRosters($team, $year);
+        return $this->driver->importRosters($team, $season);
     }
 
-    public function importSchedule(Team $team, int $year)
+    public function importSchedule(Team $team, int $season)
     {
-        return $this->driver->importSchedule($team, $year);
+        return $this->driver->importSchedule($team, $season);
     }
 }

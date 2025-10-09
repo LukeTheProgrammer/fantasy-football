@@ -1,7 +1,10 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, Plus } from 'lucide-react';
+import { positions } from '@/constants/positions';
+import { teams } from '@/constants/teams';
 
 interface PlayerAlias {
   name: string;
@@ -11,6 +14,8 @@ interface PlayerFormData {
   first_name: string;
   last_name: string;
   full_name: string;
+  position_id: string;
+  team_id: string;
   height: string;
   weight: string;
   college: string;
@@ -19,12 +24,18 @@ interface PlayerFormData {
   aliases: PlayerAlias[];
 }
 
+interface PlayerFormConfig {
+  showOptionalFields?: boolean;
+}
+
 interface PlayerFormProps {
   formData: PlayerFormData;
   onChange: (data: PlayerFormData) => void;
+  config?: PlayerFormConfig;
 }
 
-export default function PlayerForm({ formData, onChange }: PlayerFormProps) {
+export default function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps) {
+  const { showOptionalFields = true } = config;
   const handleInputChange = (field: keyof PlayerFormData, value: string) => {
     const updatedData = {
       ...formData,
@@ -89,101 +100,140 @@ export default function PlayerForm({ formData, onChange }: PlayerFormProps) {
         </div>
       </div>
 
-      <div className="grid gap-2">
-        <Label htmlFor="jersey_number">Jersey Number</Label>
-        <Input
-          id="jersey_number"
-          value={formData.jersey_number}
-          onChange={(e) => handleInputChange('jersey_number', e.target.value)}
-          placeholder="e.g., 12"
-        />
-      </div>
-
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="height">Height</Label>
-          <Input
-            id="height"
-            value={formData.height}
-            onChange={(e) => handleInputChange('height', e.target.value)}
-            placeholder="e.g., 6'2&quot;"
-          />
+          <Label htmlFor="position_id">Position</Label>
+          <Select value={formData.position_id} onValueChange={(value) => handleInputChange('position_id', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select position" />
+            </SelectTrigger>
+            <SelectContent>
+              {positions.map((position) => (
+                <SelectItem key={position.id} value={position.id}>
+                  {position.name} ({position.id})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+
         <div className="grid gap-2">
-          <Label htmlFor="weight">Weight</Label>
-          <Input
-            id="weight"
-            value={formData.weight}
-            onChange={(e) => handleInputChange('weight', e.target.value)}
-            placeholder="e.g., 215"
-          />
+          <Label htmlFor="team_id">Team</Label>
+          <Select value={formData.team_id} onValueChange={(value) => handleInputChange('team_id', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select team" />
+            </SelectTrigger>
+            <SelectContent>
+              {teams.map((team) => (
+                <SelectItem key={team.id} value={team.id}>
+                  {team.location} {team.name} ({team.id})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      <div className="grid gap-2">
-        <Label htmlFor="college">College</Label>
-        <Input
-          id="college"
-          value={formData.college}
-          onChange={(e) => handleInputChange('college', e.target.value)}
-        />
-      </div>
+      {showOptionalFields && (
+        <>
 
-      <div className="grid gap-2">
-        <Label htmlFor="draft_year">Draft Year</Label>
-        <Input
-          id="draft_year"
-          value={formData.draft_year}
-          onChange={(e) => handleInputChange('draft_year', e.target.value)}
-          placeholder="e.g., 2020"
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <div className="flex items-center justify-between">
-          <Label>Aliases</Label>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleAddAlias}
-            className="flex items-center gap-1"
-          >
-            <Plus className="h-4 w-4" />
-            Add Alias
-          </Button>
-        </div>
-        
-        {formData.aliases.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            No aliases added yet. Click "Add Alias" to add alternative names for this player.
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {formData.aliases.map((alias, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  value={alias.name}
-                  onChange={(e) => handleUpdateAlias(index, e.target.value)}
-                  placeholder="Enter alias name..."
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDeleteAlias(index)}
-                  className="flex items-center gap-1 text-red-600 hover:text-red-700"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
+          <div className="grid gap-2">
+            <Label htmlFor="jersey_number">Jersey Number</Label>
+            <Input
+              id="jersey_number"
+              value={formData.jersey_number}
+              onChange={(e) => handleInputChange('jersey_number', e.target.value)}
+              placeholder="e.g., 12"
+            />
           </div>
-        )}
-      </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="height">Height</Label>
+              <Input
+                id="height"
+                value={formData.height}
+                onChange={(e) => handleInputChange('height', e.target.value)}
+                placeholder="e.g., 6'2&quot;"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="weight">Weight</Label>
+              <Input
+                id="weight"
+                value={formData.weight}
+                onChange={(e) => handleInputChange('weight', e.target.value)}
+                placeholder="e.g., 215"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="college">College</Label>
+            <Input
+              id="college"
+              value={formData.college}
+              onChange={(e) => handleInputChange('college', e.target.value)}
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="draft_year">Draft Year</Label>
+            <Input
+              id="draft_year"
+              value={formData.draft_year}
+              onChange={(e) => handleInputChange('draft_year', e.target.value)}
+              placeholder="e.g., 2020"
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <div className="flex items-center justify-between">
+              <Label>Aliases</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddAlias}
+                className="flex items-center gap-1"
+              >
+                <Plus className="h-4 w-4" />
+                Add Alias
+              </Button>
+            </div>
+
+            {formData.aliases.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                No aliases added yet. Click "Add Alias" to add alternative names for this player.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {formData.aliases.map((alias, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      value={alias.name}
+                      onChange={(e) => handleUpdateAlias(index, e.target.value)}
+                      placeholder="Enter alias name..."
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteAlias(index)}
+                      className="flex items-center gap-1 text-red-600 hover:text-red-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-export type { PlayerFormData };
+export type { PlayerFormData, PlayerFormConfig };

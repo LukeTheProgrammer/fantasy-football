@@ -2,9 +2,11 @@
 
 namespace App\Services\Espn\Resources\NFL;
 
+use App\Models\Team;
+
 class GetTeamNews extends NFLResource
 {
-    public int|string|null $teamId = null;
+    public Team|null $team = null;
 
     public function setCacheFilePath()
     {
@@ -12,7 +14,7 @@ class GetTeamNews extends NFLResource
 
         $file = [
             'team',
-            $this->teamId,
+            $this->team->espn_id,
             date('Y-m-d'),
             $this->dataFormat,
         ];
@@ -26,7 +28,7 @@ class GetTeamNews extends NFLResource
         $url = $this->buildUrl('news');
 
         $response = $this->get($url, $this->query([
-            'team' => $this->teamId,
+            'team' => $this->team->espn_id,
         ]));
 
         return $this->returnResponse($response);

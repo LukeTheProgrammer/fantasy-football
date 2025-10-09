@@ -19,7 +19,7 @@ class EspnRosterDriver
 {
     private array|Collection|null $rosters;
 
-    public function __construct(private League $league, private int $year)
+    public function __construct(private League $league, private int $season)
     {
         //
     }
@@ -37,7 +37,7 @@ class EspnRosterDriver
 
     private function setUp()
     {
-        $this->rosters = Data::espn()->getFantasyLeagueRosters($this->league, $this->year);
+        $this->rosters = Data::espn()->getFantasyLeagueRosters($this->league, $this->season);
 
         if (! $this->rosters instanceof Collection) {
             $this->rosters = collect($this->rosters);
@@ -91,7 +91,7 @@ class EspnRosterDriver
 
         $player['nfl_game_id'] = $this->getNflGameId($player, $week)?->id;
         $player['league_member_id'] = $member->id;
-        $player['season'] = $this->year;
+        $player['season'] = $this->season;
         $player['week'] = $week;
         $player['deleted_at'] = null;
 
@@ -128,7 +128,7 @@ class EspnRosterDriver
         $teamId = Player::where('id', $player['player_id'])->select(['team_id']);
 
         return NflGame::query()
-            ->where('year', $this->year)
+            ->where('season', $this->season)
             ->where('week', $week)
             ->where(function ($query) use ($teamId) {
                 $query->orWhereIn('home_team_id', $teamId)

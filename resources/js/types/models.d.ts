@@ -24,7 +24,7 @@ export interface DraftPick {
   round: number;
   amount: string;
   is_keeper: boolean;
-  previous_year_cost: string;
+  previous_season_cost: string;
   pick_time: string;
   created_at: string;
   updated_at: string;
@@ -36,7 +36,7 @@ export interface DraftPick {
 export interface DraftRanking {
   id: number;
   player_id: number;
-  year: number;
+  season: number;
   type: string;
   source: string | null;
   ranking: number | null;
@@ -69,7 +69,7 @@ export interface League {
   id: number;
   created_by_user_id: number;
   name: string;
-  year: number;
+  season: number;
   slug: string;
   description: string | null;
   platform: string;
@@ -145,7 +145,7 @@ export interface LeagueMatchup {
   league_id: number;
   home_member_id: number;
   away_member_id: number;
-  year: number;
+  season: number;
   week: number;
   home_score: number | null;
   away_score: number | null;
@@ -197,7 +197,7 @@ export interface NflGame {
   espn_id: number;
   home_team_id: string;
   away_team_id: string;
-  year: number;
+  season: number;
   week: number;
   starts_at: string;
   home_score: number;
@@ -262,6 +262,17 @@ export interface PlayerAlias {
   player: Player;
   team: Team;
   position: Position;
+}
+
+export interface PlayerMissing {
+  id: number;
+  source_class: string | null;
+  source_data: string | object;
+  unique_id_key: string | null;
+  unique_id_value: string | null;
+  name: string | null;
+  position_id: string | null;
+  team_id: string | null;
 }
 
 export interface Position {

@@ -17,7 +17,7 @@ return new class extends Migration
 
         Schema::create('player_stats_yearly', function (Blueprint $table) {
             $table->id();
-            $table->year('year');
+            $table->year('season');
             $table->foreignId('player_id')->constrained()->cascadeOnDelete();
 
             $table->integer('games_played')->default(0);

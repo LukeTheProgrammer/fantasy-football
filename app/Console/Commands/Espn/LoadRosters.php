@@ -27,7 +27,7 @@ class LoadRosters extends Command
     protected $signature = 'espn:load:nfl-rosters
         { --a|all   : Gets all teams }
         { --q|quiet : Gets all teams }
-        { year?     : Year           }
+        { season?   : Season         }
         { team?     : NFLTeam Enum   }
     ';
 
@@ -43,11 +43,11 @@ class LoadRosters extends Command
      */
     public function handle()
     {
-        $year = $this->argument('year') ?? select('Year?', [2025, 2024], 2025);
+        $season = $this->argument('season') ?? select('Season?', [2025, 2024], 2025);
 
         if ($this->option('all')) {
             Team::noFA()->get()->each(
-                fn (Team $team) => $this->loadRoster($team, $year)
+                fn (Team $team) => $this->loadRoster($team, $season)
             );
 
             return Command::SUCCESS;
@@ -63,12 +63,12 @@ class LoadRosters extends Command
             $this->info('Pulling rosters for ' . $team->value);
         }
 
-        $this->loadRoster($team, $year);
+        $this->loadRoster($team, $season);
 
         return Command::SUCCESS;
     }
 
-    private function loadRoster(Team $team, int $year)
+    private function loadRoster(Team $team, int $season)
     {
         $roster = Espn::nflTeam()->getRoster($team);
 

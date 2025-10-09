@@ -31,7 +31,7 @@ class GetProFootballReferenceRoster extends Command
     protected $signature = 'scrapers:pfr:get-roster
         { --a|all   : Scrapes all teams }
         { --q|quiet : Scrapes all teams }
-        { year?     : Year              }
+        { season?   : Season            }
         { team?     : Team abbreviation }
     ';
 
@@ -51,7 +51,7 @@ class GetProFootballReferenceRoster extends Command
     {
         $this->scraper = Scraper::scraper(Datum::SOURCE_PFR->value);
 
-        $year = $this->argument('year') ?? select('Year?', [2025, 2024], 2025);
+        $season = $this->argument('season') ?? select('Season?', [2025, 2024], 2025);
 
         if ($this->option('all')) {
             foreach (NFLTeams::cases() as $teamAbb) {
@@ -59,7 +59,7 @@ class GetProFootballReferenceRoster extends Command
                     $this->info('Pulling rosters for ' . $teamAbb->value);
                 }
 
-                $roster = $this->getData($year, $teamAbb->value);
+                $roster = $this->getData($season, $teamAbb->value);
 
                 if (empty($roster)) {
                     $this->error('No data found for ' . $teamAbb->value);
@@ -68,7 +68,7 @@ class GetProFootballReferenceRoster extends Command
 
                 $this->processData($roster, $teamAbb->value);
 
-                $this->saveData($roster, $year, $teamAbb->value);
+                $this->saveData($roster, $season, $teamAbb->value);
             }
         } else {
             $teamSelection = $this->argument('team') ?? select('Team?', NFLTeams::options());
@@ -79,20 +79,20 @@ class GetProFootballReferenceRoster extends Command
                 $this->info('Pulling rosters for ' . $teamAbb->value);
             }
 
-            $data = $this->getData($year, $teamAbb->value);
+            $data = $this->getData($season, $teamAbb->value);
 
             if (! empty($data)) {
                 $this->processData($data, $teamAbb->value);
-                $this->saveData($data, $year, $teamAbb->value);
+                $this->saveData($data, $season, $teamAbb->value);
             }
         }
 
         return Command::SUCCESS;
     }
 
-    private function getData(int $year, string $team)
+    private function getData(int $season, string $team)
     {
-        $path = $this->getFilePath($year, $team);
+        $path = $this->getFilePath($season, $team);
         $this->info($path);
 
         if (file_exists($path)) {
@@ -109,7 +109,7 @@ class GetProFootballReferenceRoster extends Command
             }
         }
 
-        return $this->scraper->getTeamRoster(NFLTeams::from($team), $year);
+        return $this->scraper->getTeamRoster(NFLTeams::from($team), $season);
     }
 
     private function processData(array $data, string $teamId)
@@ -142,15 +142,15 @@ class GetProFootballReferenceRoster extends Command
         echo PHP_EOL . PHP_EOL;
     }
 
-    private function saveData(array $data, int $year, string $team)
+    private function saveData(array $data, int $season, string $team)
     {
-        $path = $this->getFilePath($year, $team);
+        $path = $this->getFilePath($season, $team);
         file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
     }
 
-    private function getFilePath(int $year, string $team): string
+    private function getFilePath(int $season, string $team): string
     {
-        return storage_path('data/pro-football-reference/rosters-' . $year . '-' . $team . '.json');
+        return storage_path('data/pro-football-reference/rosters-' . $season . '-' . $team . '.json');
     }
 
     private function handleAmbiguousPlayer(array $data)

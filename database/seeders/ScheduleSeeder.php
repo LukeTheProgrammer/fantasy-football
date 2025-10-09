@@ -10,11 +10,11 @@ class ScheduleSeeder extends Seeder
     public function run(): void
     {
         Artisan::call('import:nfl:schedule', [
-            'year' => 2024,
+            'season' => 2024,
         ]);
 
         Artisan::call('import:nfl:schedule', [
-            'year' => 2025,
+            'season' => 2025,
         ]);
     }
 }

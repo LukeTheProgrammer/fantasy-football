@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('players_not_found');
+        Schema::dropIfExists('players_missing');
         Schema::enableForeignKeyConstraints();
 
-        Schema::create('players_not_found', function (Blueprint $table) {
+        Schema::create('players_missing', function (Blueprint $table) {
             $table->id();
             $table->string('source_class')->nullable();
             $table->json('source_data');
@@ -35,7 +35,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('players_not_found');
+        Schema::dropIfExists('players_missing');
         Schema::enableForeignKeyConstraints();
     }
 };

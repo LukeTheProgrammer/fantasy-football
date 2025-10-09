@@ -23,7 +23,7 @@ class LoadTeamSchedule extends Command
         { --r|raw       : Return raw response }
         { --q|quiet     : Do not show output  }
         { espn_team_id? : The ESPN Team ID    }
-        { year?         : Which year to pull  }
+        { season?         : Which season to pull  }
     ';
 
     /**
@@ -33,7 +33,7 @@ class LoadTeamSchedule extends Command
      */
     protected $description = 'Loads team schedules from a file.';
 
-    protected ?int $year = null;
+    protected ?int $season = null;
 
     protected int|string|null $teamId = null;
 
@@ -42,7 +42,7 @@ class LoadTeamSchedule extends Command
      */
     public function handle()
     {
-        $this->year = $this->argument('year') ?? select('Which year to pull', [2025, 2024]);
+        $this->season = $this->argument('season') ?? select('Which season to pull', [2025, 2024]);
 
         if ($this->option('all')) {
             return $this->loadAllRosters();
@@ -91,7 +91,7 @@ class LoadTeamSchedule extends Command
             'nfl',
             'team-schedules',
             $this->option('raw') ? 'raw' : 'formatted',
-            'team-schedule-' . $this->teamId . '-' . $this->year . '.json'
+            'team-schedule-' . $this->teamId . '-' . $this->season . '.json'
         ];
 
         return storage_path(implode('/', $parts));
@@ -129,7 +129,7 @@ class LoadTeamSchedule extends Command
                 'espn_id'      => $event->id,
                 'home_team_id' => Team::forEspnId($homeTeam->team->id)->first()->id,
                 'away_team_id' => Team::forEspnId($awayTeam->team->id)->first()->id,
-                'year'         => $event->season->year,
+                'season'         => $event->season->season,
                 'week'         => $event->week->number,
                 'starts_at'   => $event->date,
                 'home_score'   => $homeTeam->score->value,

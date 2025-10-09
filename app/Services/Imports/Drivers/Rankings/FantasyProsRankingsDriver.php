@@ -14,7 +14,7 @@ class FantasyProsRankingsDriver extends BaseRankingsDriver
     // File pointer
     public $fp;
 
-    public ?int $year = null;
+    public ?int $season = null;
 
     public ?Carbon $rankedAt = null;
 
@@ -46,7 +46,7 @@ class FantasyProsRankingsDriver extends BaseRankingsDriver
             throw new Exception('File does not exist ' . $this->filePath);
         }
 
-        $this->year = Arr::get($options, 'year', date('Y'));
+        $this->season = Arr::get($options, 'season', date('Y'));
         $this->rankedAt = Arr::get($options, 'ranked_at', Carbon::now());
         $this->type = Arr::get($options, 'type', 'redraft');
         $this->ppr = Arr::get($options, 'ppr', 0);
@@ -75,7 +75,7 @@ class FantasyProsRankingsDriver extends BaseRankingsDriver
 
         $find = [
             'player_id' => $player->id,
-            'year'      => $this->year,
+            'season'      => $this->season,
             'ranked_at' => $this->rankedAt->toDateString(),
             'type'      => $this->type,
             'source'    => $this->source,

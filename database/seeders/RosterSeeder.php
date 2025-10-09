@@ -40,22 +40,16 @@ class RosterSeeder extends Seeder
 
     private function espn()
     {
-        Artisan::call('scrapers:espn:get-roster', [
-            '--all' => true,
-            '--quiet' => true,
+        Artisan::call('import:nfl:roster', [
+            '--espn' => true,
+            'season' => 2025,
         ]);
     }
 
     private function pfr()
     {
-        Artisan::call('pfr:load:rosters', [
-            '--all' => true,
-            'year'  => 2025,
+        Artisan::call('import:nfl:roster', [
+            'season'  => 2025,
         ]);
-
-        // Artisan::call('pfr:load:rosters', [
-        //     '--all' => true,
-        //     'year'  => 2024,
-        // ]);
     }
 }

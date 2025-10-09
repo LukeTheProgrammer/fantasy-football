@@ -4,10 +4,8 @@ namespace App\Console\Commands\Data\Imports\Fantasy;
 
 use App\Enums\FantasyPlatforms;
 use App\Facades\Data;
-use App\Facades\Import;
 use App\Models\League;
 use App\Models\User;
-use App\Services\Imports\Importers\FantasyNFLImporter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use function Laravel\Prompts\select;
@@ -28,8 +26,6 @@ class ImportLeagueCommand extends Command
      * @var string
      */
     protected $description = 'Import Fantasy NFL League';
-
-    protected FantasyNFLImporter $importer;
 
     protected ?League $league = null;
 
@@ -114,9 +110,9 @@ class ImportLeagueCommand extends Command
 
         } else {
             $data['created_by_user_id'] = $this->creator->id;
-            $data['league_id']          = intval(text('League ID', config('services.espn.default_league_id')));
-            $data['s2']                 = text('S2', config('services.espn.default_s2'));
-            $data['swid']               = text('SWID', config('services.espn.default_swid'));
+            $data['league_id']          = intval(text('League ID', 'League ID', config('services.espn.default_league_id')));
+            $data['s2']                 = text('S2', 'S2', config('services.espn.default_s2'));
+            $data['swid']               = text('SWID', 'SWID', config('services.espn.default_swid'));
         }
 
         $this->league = Data::espn()->importFantasyLeague($data);

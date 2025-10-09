@@ -23,8 +23,8 @@ class FantasyNFLImporter
         return $this->driver->importLeague($leagueData);
     }
 
-    public function importRosters(League $league, int $year): League
+    public function importRosters(League $league, int $season): League
     {
-        return $this->driver->importRosters($league, $year);
+        return $this->driver->importRosters($league, $season);
     }
 }

@@ -19,7 +19,7 @@ class FantasyRosterFormatter
         protected int $week
     ) {
         $this->nflGameIds = NflGame::select(['id', 'espn_id'])
-            ->forYear($season)
+            ->forSeason($season)
             ->forWeek($week)
             ->get()
             ->mapWithKeys(fn ($g) => [$g->espn_id => $g->id])

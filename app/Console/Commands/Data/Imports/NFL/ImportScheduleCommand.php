@@ -14,7 +14,7 @@ class ImportScheduleCommand extends Command
      * @var string
      */
     protected $signature = 'import:nfl:schedule
-        { year? : The year to import }
+        { season? : The season to import }
     ';
 
     /**
@@ -29,11 +29,11 @@ class ImportScheduleCommand extends Command
      */
     public function handle()
     {
-        $year = $this->argument('year') ?? date('Y');
+        $season = $this->argument('season') ?? date('Y');
 
-        Team::noFA()->get()->each(function (Team $team) use ($year) {
-            $this->info('Importing ' . $year . ' Schedule for ' . $team->id);
-            Data::espn()->importNFLSchedule($team, $year);
+        Team::noFA()->get()->each(function (Team $team) use ($season) {
+            $this->info('Importing ' . $season . ' Schedule for ' . $team->id);
+            Data::espn()->importNFLSchedule($team, $season);
         });
     }
 }

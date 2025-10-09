@@ -6,7 +6,7 @@ use App\Enums\NFLTeams;
 use App\Facades\Action;
 use App\Models\Player;
 use App\Models\PlayerAlias;
-use App\Models\PlayerNotFound;
+use App\Models\PlayerMissing;
 use App\Services\FantasyPros\Formatters\ProjectionFormatter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
@@ -35,10 +35,10 @@ class CleanPlayersNotFoundCommand extends Command
 
     public function handle(): void
     {
-        PlayerNotFound::all()->each(fn ($pn) => $this->processPlayerNotFound($pn));
+        PlayerMissing::all()->each(fn ($pn) => $this->processPlayerMissing($pn));
     }
 
-    protected function processPlayerNotFound(PlayerNotFound $pn)
+    protected function processPlayerMissing(PlayerMissing $pn)
     {
         $this->info('Resolving ' . $pn->id);
 
@@ -174,7 +174,7 @@ class CleanPlayersNotFoundCommand extends Command
         }
     }
 
-    protected function resolveFantasyProsFormatter(PlayerNotFound $pn)
+    protected function resolveFantasyProsFormatter(PlayerMissing $pn)
     {
         $data = is_array($pn->source_data) ? $pn->source_data : json_decode($pn->source_data, true);
 
@@ -205,7 +205,7 @@ class CleanPlayersNotFoundCommand extends Command
             $player = $this->selectPlayer($pq->get());
 
             if ($player instanceof Player) {
-                $this->resolvePlayerNotFound($pn, $player, [
+                $this->resolvePlayerMissing($pn, $player, [
                     'fp_id' => $playerData['fp_id'],
                 ]);
                 return;
@@ -216,7 +216,7 @@ class CleanPlayersNotFoundCommand extends Command
             $player = $pq->first();
 
             if (confirm('Is this the correct player? ' . $this->playerLabel($player))) {
-                $this->resolvePlayerNotFound($pn, $player, [
+                $this->resolvePlayerMissing($pn, $player, [
                     'fp_id' => $playerData['fp_id'],
                 ]);
                 return;
@@ -230,7 +230,7 @@ class CleanPlayersNotFoundCommand extends Command
                 $player = $this->selectPlayer($pq->get());
 
                 if ($player instanceof Player) {
-                    $this->resolvePlayerNotFound($pn, $player, [
+                    $this->resolvePlayerMissing($pn, $player, [
                         'fp_id' => $playerData['fp_id'],
                     ]);
                     return;
@@ -241,7 +241,7 @@ class CleanPlayersNotFoundCommand extends Command
                 $player = $pq->first();
 
                 if (confirm('Is this the correct player? ' . $this->playerLabel($player))) {
-                    $this->resolvePlayerNotFound($pn, $player, [
+                    $this->resolvePlayerMissing($pn, $player, [
                         'fp_id' => $playerData['fp_id'],
                     ]);
                     return;
@@ -264,7 +264,7 @@ class CleanPlayersNotFoundCommand extends Command
         }
     }
 
-    private function resolvePlayerNotFound(PlayerNotFound $pn, Player $player, array $update)
+    private function resolvePlayerMissing(PlayerMissing $pn, Player $player, array $update)
     {
         if (! empty($update)) {
             $player->update($update);

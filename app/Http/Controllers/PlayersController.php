@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\Action;
-use App\Http\Requests\PlayerUpdateRequest;
 use App\Models\Player;
-use App\Models\PlayerAlias;
 use App\Models\Position;
 use App\Models\Team;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PlayersController extends Controller

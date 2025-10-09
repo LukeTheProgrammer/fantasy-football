@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('created_by_user_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
-            $table->integer('year');
+            $table->integer('season');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->string('platform')->default('ESPN');

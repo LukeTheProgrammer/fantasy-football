@@ -70,7 +70,7 @@ class FantasyLeagueFormatter
 
         $this->data['league'] = [
             'name'        => $settings->name,
-            'year'        => date('Y'),
+            'season'      => date('Y'),
             'slug'        => 'espn-' . Str::slug($settings->name),
             'description' => null,
             'platform'    => FantasyPlatforms::ESPN->value,
@@ -171,7 +171,7 @@ class FantasyLeagueFormatter
             $this->data['schedules'][] = [
                 'home_member_id' => $schedule->home->teamId,
                 'away_member_id' => $schedule->away->teamId,
-                'year' => 2025,
+                'season' => 2025,
                 'week' => $schedule->matchupPeriodId,
                 'home_score' => $schedule->home->totalPoints,
                 'away_score' => $schedule->away->totalPoints,

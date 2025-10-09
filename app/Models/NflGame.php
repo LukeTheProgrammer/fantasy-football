@@ -25,7 +25,7 @@ class NflGame extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'year' => 'integer',
+        'season' => 'integer',
         'week' => 'integer',
     ];
 
@@ -58,7 +58,7 @@ class NflGame extends Model
     /* ===[ Scopes ]=== */
 
     /**
-     * Scope for year.
+     * Scope to a Team.
      */
     public function scopeForTeam(Builder $query, int|string|Team $team): Builder
     {
@@ -69,18 +69,18 @@ class NflGame extends Model
     }
 
     /**
-     * Scope for year.
+     * Scope to a season.
      */
-    public function scopeForYear(Builder $query, int|string $year): Builder
+    public function scopeForSeason(Builder $query, int|string|Season $season): Builder
     {
-        return $query->where('year', $year);
+        return $query->where('season', ($season instanceof Season) ? $season->id : $season);
     }
 
     /**
      * Scope for week.
      */
-    public function scopeForWeek(Builder $query, int|string $week): Builder
+    public function scopeForWeek(Builder $query, int|string|Week $week): Builder
     {
-        return $query->where('week', $week);
+        return $query->where('week', ($week instanceof Week) ? $week->week : $week);
     }
 }

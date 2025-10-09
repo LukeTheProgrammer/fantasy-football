@@ -51,7 +51,7 @@ class ProFootballReference extends BaseScraperResource
 
     private ?Collection $positions = null;
 
-    public function getTeamRoster(NFLTeams $teamAbb, int $year)
+    public function getTeamRoster(NFLTeams $teamAbb, int $season)
     {
         $this->team = Team::forAbbreviation($teamAbb)->first();
 
@@ -63,7 +63,7 @@ class ProFootballReference extends BaseScraperResource
             throw new Exception('Invalid team abbreviation: ' . $teamAbb);
         }
 
-        $url = "https://www.pro-football-reference.com/teams/{$teamKey}/{$year}_roster.htm"; //#roster
+        $url = "https://www.pro-football-reference.com/teams/{$teamKey}/{$season}_roster.htm"; //#roster
 
         $response = Http::get($url);
 

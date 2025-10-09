@@ -22,7 +22,7 @@ export default function DraftTab({ league }: DraftTabProps) {
         <div className="border-b p-6 grid grid-cols-3">
           <div className="text-left">
             <h2 className="text-lg font-semibold">Draft</h2>
-            <p>{league.name} {league.year} Draft</p>
+            <p>{league.name} {league.season} Draft</p>
           </div>
           <div className="flex items-center justify-center">
             {playersDrafted > 0 && totalPlayers > 0 && (

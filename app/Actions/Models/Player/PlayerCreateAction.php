@@ -4,6 +4,7 @@ namespace App\Actions\Models\Player;
 
 use App\Models\Player;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class PlayerCreateAction
 {
@@ -15,6 +16,7 @@ class PlayerCreateAction
         $player = Player::create([
             'espn_id'       => Arr::get($data, 'espn_id'),
             'pfr_id'        => Arr::get($data, 'pfr_id'),
+            'fp_id'         => Arr::get($data, 'fp_id'),
             'position_id'   => Arr::get($data, 'position_id'),
             'team_id'       => Arr::get($data, 'team_id'),
             'first_name'    => Arr::get($data, 'first_name'),

@@ -10,8 +10,11 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/multi-select';
 import FormDialog from '@/components/form-dialog';
 import PlayerForm, { type PlayerFormData } from '@/forms/player-form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
+import PlayerAliases from '@/components/players/player-aliases';
+import MissingPlayers from '@/components/players/missing-players';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -181,44 +184,55 @@ export default function NflPlayers({ players, teams, positions }: NflPlayersProp
           description="View and manage NFL players"
         />
 
-        <div className="flex justify-between items-center gap-6 mb-6">
-
-          <div className="flex justify-start items-center grow-1 gap-6">
-            <div className="flex items-center gap-4">
-              <MultiSelect
-                options={teamOptions}
-                onValueChange={setSelectedTeams}
-                defaultValue={selectedTeams}
-                placeholder="Select teams..."
-                className="w-[250px]"
-                maxCount={3}
-              />
+        <div className="mb-8">
+          <Tabs defaultValue="players">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <TabsList>
+                  <TabsTrigger className="w-[7rem]" value="players">Players</TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="aliases">Aliases</TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="missing">Missing</TabsTrigger>
+                </TabsList>
+              </div>
             </div>
-            <div className="flex items-center gap-4">
-              <MultiSelect
-                options={positionOptions}
-                onValueChange={setSelectedPositions}
-                defaultValue={selectedPositions}
-                placeholder="Select positions..."
-                className="w-[200px]"
-                maxCount={3}
-              />
-            </div>
-          </div>
 
-          <div className="flex justify-end items-center gap-6">
-            <Input
-              type="search"
-              placeholder="Search players"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm"
-            />
-          </div>
+            <TabsContent value="players">
+              <div className="flex justify-between items-center gap-6 mb-6">
+                <div className="flex justify-start items-center grow-1 gap-6">
+                  <div className="flex items-center gap-4">
+                    <MultiSelect
+                      options={teamOptions}
+                      onValueChange={setSelectedTeams}
+                      defaultValue={selectedTeams}
+                      placeholder="Select teams..."
+                      className="w-[250px]"
+                      maxCount={3}
+                    />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <MultiSelect
+                      options={positionOptions}
+                      onValueChange={setSelectedPositions}
+                      defaultValue={selectedPositions}
+                      placeholder="Select positions..."
+                      className="w-[200px]"
+                      maxCount={3}
+                    />
+                  </div>
+                </div>
 
-        </div>
+                <div className="flex justify-end items-center gap-6">
+                  <Input
+                    type="search"
+                    placeholder="Search players"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="max-w-sm"
+                  />
+                </div>
+              </div>
 
-        <div className="mb-8 rounded-lg border bg-card p-6">
+              <div className="rounded-lg border bg-card p-6">
           {currentPlayers.length === 0 ? (
             <div className="py-12 text-center">
               <h3 className="mb-2 text-lg font-medium">No players found</h3>
@@ -357,6 +371,17 @@ export default function NflPlayers({ players, teams, positions }: NflPlayersProp
               </div>
             </div>
           )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="aliases">
+              <PlayerAliases />
+            </TabsContent>
+
+            <TabsContent value="missing">
+              <MissingPlayers />
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Edit Player Dialog */}
