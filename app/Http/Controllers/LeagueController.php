@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\League;
-use Illuminate\Http\Request;
 use App\Http\Resources\LeagueShowResource;
+use App\Models\League;
+use App\Models\Season;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class LeagueController extends Controller
@@ -34,7 +35,7 @@ class LeagueController extends Controller
     {
         $league->load([
             'creator',
-            'draft.picks',
+            'draft.picks' => ['leagueMember', 'player'],
             'matchups' => ['homeTeam', 'awayTeam'],
             'members' => [
                 'rosters' => [

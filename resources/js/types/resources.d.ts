@@ -3,6 +3,7 @@ export interface LeagueResource {
   id: string;
   name: string;
   season: number;
+  week: number;
   slug: string;
   description: string;
   platform: string;

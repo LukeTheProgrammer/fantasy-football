@@ -23,7 +23,11 @@ class SeasonSeeder extends Seeder
         );
 
         for ($week = 1; $week <= 18; $week++) {
-            $games = NflGame::forSeason($season)->forWeek($week)->orderBy('starts_at')->get();
+            $games = NflGame::forSeason($season)
+                ->forWeek($week)
+                ->whereNotNull('starts_at')
+                ->orderBy('starts_at')
+                ->get();
 
             $first = $games->first();
             $last = $games->last();

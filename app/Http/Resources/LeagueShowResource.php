@@ -9,6 +9,7 @@ use App\Models\NflGame;
 use App\Models\Player;
 use App\Models\PlayerProjection;
 use App\Models\Team;
+use App\Models\Week;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
@@ -35,6 +36,7 @@ class LeagueShowResource extends JsonResource
             'id'          => $this->id,
             'name'        => $this->name,
             'season'      => $this->season,
+            'week'        => Week::current()->first()->week,
             'slug'        => $this->slug,
             'description' => $this->description,
             'platform'    => $this->platform,
@@ -314,13 +316,13 @@ class LeagueShowResource extends JsonResource
             return [
                 'id'                  => $pick->id,
                 'draft_id'            => $pick->draft_id,
-                'league_member_id'    => $pick->league_member_id,
-                'player_id'           => $pick->player_id,
                 'round'               => $pick->round,
                 'pick_number'         => $pick->pick_number,
                 'overall_pick_number' => $pick->overall_pick_number,
                 'amount'              => $pick->amount,
                 'is_keeper'           => $pick->is_keeper,
+                'league_member'       => Arr::except($pick->leagueMember->toArray(), ['created_at', 'updated_at']),
+                'player'              => Arr::except($pick->player->toArray(), ['created_at', 'updated_at']),
             ];
         });
     }
