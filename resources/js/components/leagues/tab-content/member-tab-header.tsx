@@ -15,7 +15,7 @@ export default function MemberTabHeader({ league, selectedMember }: MemberTabHea
   }
 
   return (
-    <div className="w-full flex items-center justify-between mb-6">
+    <div className="w-full flex items-center justify-between mb-2">
       <div className="flex items-center justify-start space-x-2">
         <TeamAvatar member={selectedMember || league.members[0]} />
         <div>
@@ -24,17 +24,21 @@ export default function MemberTabHeader({ league, selectedMember }: MemberTabHea
         </div>
       </div>
       <div className="flex align-center justify-end space-x-2 pr-1">
-        <div className="min-w-[8em] pr-6 text-right">
+        <div className="min-w-[8em] pr-6">
           <p className="text-xs text-muted-foreground">Points For</p>
-          <p className="font-extrabold text-lg">{selectedMember.points_for}</p>
-          <p className="text-xs text-muted-foreground pl-2"> ({selectedMember.points_for_rank})</p>
+          <p>
+            <span className="font-extrabold text-lg">{selectedMember.points_for}</span>
+            <span className="text-xs text-muted-foreground pl-2"> ({selectedMember.points_for_rank})</span>
+          </p>
         </div>
-        <div className="min-w-[8em] pr-6 text-right">
+        <div className="min-w-[8em]">
           <p className="text-xs text-muted-foreground">Points Against</p>
-          <p className="font-extrabold text-lg">{selectedMember.points_against}</p>
-          <p className="text-xs text-muted-foreground pl-2"> ({selectedMember.points_against_rank})</p>
+          <p>
+            <span className="font-extrabold text-lg">{selectedMember.points_against}</span>
+            <span className="text-xs text-muted-foreground pl-2"> ({selectedMember.points_against_rank})</span>
+          </p>
         </div>
-        <div className="min-w-[6em] text-right">
+        <div className="min-w-[3em] text-right">
           <p className="text-xs text-muted-foreground">Record</p>
           <p className="font-extrabold text-lg">
             {selectedMember.wins} &nbsp; - &nbsp;

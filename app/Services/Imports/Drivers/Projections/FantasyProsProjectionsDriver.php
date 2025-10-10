@@ -53,7 +53,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
     public function load()
     {
         foreach ($this->fp->sources as $label => $url) {
-            $data = $this->fp->getProjections(
+            $data = $this->fp->getProjection(
                 $label,
                 $this->config->get('season'),
                 $this->config->get('week')
@@ -163,11 +163,11 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
         $nflGame = $this->findNflGame($player);
 
-        if (! $nflGame instanceof NFLGame) {
-            // dd(['NflGame Not Found' => $playerData]);
-            $this->addError('NflGame Not Found', $playerData, $update);
-            return;
-        }
+        // if (! $nflGame instanceof NFLGame) {
+        //     // dd(['NflGame Not Found' => $playerData]);
+        //     $this->addError('NflGame Not Found', $playerData, $update);
+        //     return;
+        // }
 
         $find = [
             'player_id' => $player->id,
@@ -175,11 +175,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
             'week' => $this->config->get('week'),
         ];
 
-        $update['nfl_game_id'] = $nflGame->id;
-
-        if ($player->id === 1814) {
-            // dump($find, $update);
-        }
+        $update['nfl_game_id'] = $nflGame?->id ?? null;
 
         PlayerProjection::updateOrCreate($find, $update);
     }
@@ -229,8 +225,8 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
     public function findNflGame(Player $player)
     {
-        if (! $player->team instanceof Team) {
-            dd('Player has no team', $player->toArray());
+        if ($player->team_id == 'FA' || ! $player->team instanceof Team) {
+            // dd('Player has no team', $player->toArray());
             return null;
         }
 
@@ -241,7 +237,7 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
         $game = $q->first();
 
-        if (! $game instanceof NflGame) {
+        if (! $game instanceof NflGame ) {
             dd('Game Not Found', $player->toArray(), $q->toSql(), $q->getBindings());
         }
 

@@ -126,9 +126,11 @@ class GetData extends Command
     protected function saveData(string $key, array $value)
     {
         $path = $this->filePath($key);
+        $dirPath = dirname($path);
 
-        if ($this->option('custom') && ! is_dir(dirname($path))) {
-            mkdir(dirname($path), 0775, true);
+        if ($this->option('custom') && ! is_dir($dirPath)) {
+            Log::debug('Creating Dir', [__CLASS__, $dirPath]);
+            mkdir($dirPath, 0775, true);
         }
 
         $bytes = file_put_contents($path, json_encode($value, JSON_PRETTY_PRINT));

@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\Log;
+
 trait UsesCacheFiles
 {
     use LoadsJsonFiles;
@@ -88,13 +90,18 @@ trait UsesCacheFiles
         }
 
         $ds = DIRECTORY_SEPARATOR;
-        $relativePath = str_replace(base_path(), '', $path);
-        $parts = explode($ds, $relativePath);
+        $relativePath = stripMultipleSlashes(str_replace(base_path(), '', $path));
+        $parts = explode($ds, rtrim(ltrim($relativePath, $ds), $ds));
+
+        $dir = base_path();
 
         foreach ($parts as $part) {
-            $path .= $ds . $part;
-            if (! is_dir($path)) {
-                mkdir($path, 0777, true);
+            $dir .= stripMultipleSlashes($ds . $part);
+
+            if (! is_dir($dir)) {
+                if (! mkdir($dir, 0777, true)) {
+                    Log::error('Failed to create directory: ' . $dir);
+                }
             }
         }
     }

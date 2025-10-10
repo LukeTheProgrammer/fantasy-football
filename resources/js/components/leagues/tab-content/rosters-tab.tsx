@@ -108,10 +108,10 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
         <TableBody>
           {getPlayers(selectedMember?.rosters || {}).map((roster) => (
             <TableRow key={roster?.player?.id}>
-              <TableCell className="text-center border-s-4" style={{ borderLeftColor: posBorderColor(roster.player.position) }}>
+              <TableCell className="py-0 text-center border-s-4" style={{ borderLeftColor: posBorderColor(roster.player.position) }}>
                 {roster.player.position}
               </TableCell>
-              <TableCell className="flex items-center justify-start">
+              <TableCell className="py-0 flex items-center justify-start">
                 <div className="w-[4em] flex items-center justify-center">
                   {roster.player.headshot && (
                     <img src={roster.player.headshot} alt={roster.player.full_name} className="h-10" />
@@ -124,27 +124,29 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
                   </p>
                 </div>
               </TableCell>
-              <TableCell className="text-center text-xs">
-                <p className="font-extrabold text-lg">
-                  {roster.nfl_game.is_bye ? (
-                    <span className="text-muted-foreground">Bye</span>
-                  ) : (
-                    (roster.player.team === roster.nfl_game.away_team?.id
-                      ? <span>@ {roster.nfl_game.home_team?.id}</span>
-                      : <span> {roster.nfl_game.away_team?.id}</span>
-                    )
-                  )}
-                </p>
-                <p className="pl-2 text-xs text-muted-foreground">
-                  {roster.nfl_game.is_bye ? '' : `(${roster.nfl_game.day} ${roster.nfl_game.time})`}
-                </p>
+              <TableCell className="py-0 text-center">
+                {roster.nfl_game.is_bye ? (
+                  <p className="text-muted-foreground">Bye</p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center justify-end font-extrabold text-lg text-right">
+                      {roster.player.team === roster.nfl_game.away_team?.id
+                        ? <span>@ {roster.nfl_game.home_team?.id}</span>
+                        : <span> {roster.nfl_game.away_team?.id}</span>
+                      }
+                    </div>
+                    <div className="flex items-center text-muted-foreground text-left">
+                      {roster.nfl_game.day} {roster.nfl_game.time}
+                    </div>
+                  </div>
+                )}
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="py-0 text-center">
                 <p className="font-extrabold text-lg">
                   <ShowPoints value={roster.player_projection.fp_pos_rank} />
                 </p>
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="py-0 text-center">
                 <p className="font-extrabold text-lg">
                   <ShowPoints value={roster.player_projection.fp_points} />
                 </p>
@@ -152,7 +154,7 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
                   {roster.fp_diff ? roster.fp_diff : ''}
                 </p>
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="py-0 text-center">
                 <p className="font-extrabold text-lg">
                   <ShowPoints value={roster.player_projection.espn_points} />
                 </p>
@@ -160,7 +162,7 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
                   {roster.espn_diff ? roster.espn_diff : ''}
                 </p>
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="py-0 text-right">
                 <p className="font-extrabold text-lg text-right">
                   <ShowPoints value={roster.fantasy_points} />
                 </p>

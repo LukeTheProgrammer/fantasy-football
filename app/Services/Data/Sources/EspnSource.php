@@ -10,6 +10,7 @@ use App\Models\League;
 use App\Models\Team;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use InvalidArgumentException;
+use Illuminate\Support\Collection;
 
 class EspnSource extends BaseSource
 {
@@ -45,7 +46,7 @@ class EspnSource extends BaseSource
                         'season' => $season,
                     ]);
 
-                $memberRosters[$weekKey] = $data[0];
+                $memberRosters[$weekKey] = ($data instanceof Collection) ? $data->first() : $data[0];
             }
 
             $memberKey = 'member.' . $member->id;

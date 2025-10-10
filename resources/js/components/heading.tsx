@@ -6,8 +6,8 @@ type HeadingProps = {
 
 export default function Heading({ title, description, rightContent }: HeadingProps) {
   return (
-    <div className="mb-8">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="mb-6">
+      <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-3xl">{title}</h1>
           <p className="">{description || ''}</p>

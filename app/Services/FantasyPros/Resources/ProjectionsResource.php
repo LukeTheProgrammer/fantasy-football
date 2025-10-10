@@ -8,6 +8,7 @@ use App\Services\FantasyPros\Formatters\ProjectionFormatter;
 use App\Traits\LoadsJsonFiles;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class ProjectionsResource extends BaseResource
@@ -34,11 +35,17 @@ class ProjectionsResource extends BaseResource
 
     public ?int $week = null;
 
-    public ?int $currentSeason = null;
+    private ?int $currentSeason = null;
 
-    public ?int $currentWeek = null;
+    private ?int $currentWeek = null;
 
-    public bool $isCurrentWeek = false;
+    private bool $isCurrentWeek = false;
+
+    private bool $pullNewData = false;
+
+    private string $dataDir = '';
+
+    private string $archiveDir = '';
 
     public function __construct()
     {
@@ -46,18 +53,18 @@ class ProjectionsResource extends BaseResource
         $this->currentWeek = Week::current()->first()->week;
     }
 
-    public function getAllProjections(?int $season = null, ?int $week = null)
+    public function getProjections(?int $season = null, ?int $week = null)
     {
         $proj = [];
 
         foreach ($this->sources as $source => $url) {
-            $proj[$source] = $this->getProjections($source, $season, $week);
+            $proj[$source] = $this->getProjection($source, $season, $week);
         }
 
         return $proj;
     }
 
-    public function getProjections(string $source, ?int $season = null, ?int $week = null)
+    public function getProjection(string $source, ?int $season = null, ?int $week = null)
     {
         if (! isset($this->sources[$source])) {
             throw new InvalidArgumentException("Invalid source: $source");
@@ -66,34 +73,15 @@ class ProjectionsResource extends BaseResource
         $this->season = $season ?? $this->currentSeason;
         $this->week = $week ?? $this->currentWeek;
 
-        $this->setIsCurrentWeek();
+        $this->setUp();
 
-        if ($players = $this->getPlayers($source)) {
-            return $players;
+        if ($this->shouldPull($source)) {
+            $this->pullProjection($source);
         }
 
-        return $this->pullProjections($source, $season, $week);
+        return $this->getPlayers($source);
     }
 
-    public function pullProjections(string $source, ?int $season = null, ?int $week = null)
-    {
-        $this->season = $season ?? $this->currentSeason;
-        $this->week = $week ?? $this->currentWeek;
-
-        $this->setIsCurrentWeek();
-
-        $html = $this->getHtml($source);
-
-        if (! $html) {
-            return false;
-        }
-
-        $players = $this->parseHtml($html);
-
-        $this->savePlayers($source, $players);
-
-        return $players;
-    }
 
     /**
      * Just for formatting older files.
@@ -141,16 +129,13 @@ class ProjectionsResource extends BaseResource
 
     //
 
-    private function setIsCurrentWeek(): void
+    private function setUp()
     {
         $this->isCurrentWeek = (
             $this->season === $this->currentSeason &&
             $this->week === $this->currentWeek
         );
-    }
 
-    private function getFileDir(): string
-    {
         $dir = storage_path(implode('/', [
             'data',
             'fantasy-pros',
@@ -159,33 +144,105 @@ class ProjectionsResource extends BaseResource
             'week-' . $this->week,
         ]));
 
-        if (! is_dir($dir)) {
-            mkdir($dir, 0775, true);
+        $this->dataDir = $dir;
+
+        $this->archiveDir = $dir . '/' . date('Y-m-d');
+
+        if (! is_dir($this->dataDir)) {
+            Log::debug('Creating Dir', [__CLASS__, 1, $this->dataDir]);
+            dump('Creating Dir' . $this->dataDir);
+            mkdir($this->dataDir, 0775, true);
         }
 
-        if (! is_dir($dir . '/' . date('Y-m-d'))) {
-            mkdir($dir . '/' . date('Y-m-d'), 0775, true);
+        if ($this->isCurrentWeek && ! is_dir($this->archiveDir)) {
+            Log::debug('Creating Dir', [__CLASS__, 2, $this->archiveDir]);
+            dump('Creating Dir' . $this->archiveDir);
+            mkdir($this->archiveDir, 0775, true);
         }
-
-        return $dir;
     }
 
-    private function getHtml(string $source): bool|string
+    private function shouldPull(string $source): bool
     {
-        $fileName = $source . '.html';
-        $filePath = $this->getFileDir() . '/' . $fileName;
+        return ! $this->dataExists($source) || (! $this->archiveExists($source) && $this->isCurrentWeek);
+    }
 
-        if (file_exists($filePath)) {
-            return file_get_contents($filePath);
-        }
+    private function dataExists(string $source): bool
+    {
+        $fileName = $source . '.json';
+        $dataPath = $this->dataDir . '/' . $fileName;
 
-        // FP does not have archival data, so if we didn't pull it
-        // at the time, we can't pull it now.
-        if (! $this->isCurrentWeek) {
+        return file_exists($dataPath);
+    }
+
+    private function archiveExists(string $source): bool
+    {
+        $fileName = $source . '.json';
+        $dataPath = $this->archiveDir . '/' . $fileName;
+
+        return file_exists($dataPath);
+    }
+
+    private function pullProjection(string $source, ?int $season = null, ?int $week = null): bool|array
+    {
+        $this->season = $season ?? $this->currentSeason;
+        $this->week = $week ?? $this->currentWeek;
+
+        $this->setUp();
+
+        $html = $this->pullHtml($source);
+
+        if (! $html) {
             return false;
         }
 
-        $archiveFilePath = $this->getFileDir() . '/' . date('Y-m-d') . '/' . $fileName;
+        $players = $this->parseHtml($html);
+
+        $this->savePlayers($source, $players);
+
+        return $players;
+    }
+
+    private function getPlayers(string $source): bool|array
+    {
+        $fileName = $source . '.json';
+        $dataPath = $this->dataDir . '/' . $fileName;
+
+        $data = $this->loadJsonFile($dataPath);
+
+        return empty($data) ? false : $data;
+    }
+
+    private function formatPlayers(array $players)
+    {
+        return ProjectionFormatter::from($players, $this->season, $this->week);
+    }
+
+    private function savePlayers(string $source, array $players): bool
+    {
+        $fileName = $source . '.json';
+        $dataPath = $this->dataDir . '/' . $fileName;
+        $archivePath = $this->archiveDir . '/' . $fileName;
+
+        file_put_contents($dataPath, json_encode($players, JSON_PRETTY_PRINT));
+        file_put_contents($archivePath, json_encode($players, JSON_PRETTY_PRINT));
+
+        $formattedFileName = $source . '-formatted.json';
+        $formattedDataPath = $this->dataDir . '/' . $formattedFileName;
+        $formattedArchivePath = $this->archiveDir . '/' . $formattedFileName;
+
+        $projections = $this->formatPlayers($players);
+
+        file_put_contents($formattedDataPath, json_encode($projections, JSON_PRETTY_PRINT));
+        file_put_contents($formattedArchivePath, json_encode($projections, JSON_PRETTY_PRINT));
+
+        return true;
+    }
+
+    private function pullHtml(string $source): bool|string
+    {
+        $fileName = $source . '.html';
+        $dataPath = $this->dataDir . '/' . $fileName;
+        $archivePath = $this->archiveDir . '/' . $fileName;
 
         $url = $this->sources[$source];
 
@@ -201,50 +258,10 @@ class ProjectionsResource extends BaseResource
 
         $html = $response->body();
 
-        file_put_contents($filePath, $html);
-        file_put_contents($archiveFilePath, $html);
+        file_put_contents($dataPath, $html);
+        file_put_contents($archivePath, $html);
 
         return $html;
-    }
-
-    private function getPlayers(string $source): bool|array
-    {
-        $fileName = $source . '.json';
-        $filePath = $this->getFileDir() . '/' . $fileName;
-
-        $data = $this->loadJsonFile($filePath);
-
-        if (! empty($data)) {
-            // dump('Loaded: '. $filePath);
-        }
-
-        return empty($data) ? false : $data;
-    }
-
-    private function formatPlayers(array $players)
-    {
-        return ProjectionFormatter::from($players, $this->season, $this->week);
-    }
-
-    private function savePlayers(string $source, array $players): bool
-    {
-        $fileName = $source . '.json';
-        $filePath = $this->getFileDir() . '/' . $fileName;
-        $archiveFilePath = $this->getFileDir() . '/' . date('Y-m-d') . '/' . $fileName;
-
-        file_put_contents($filePath, json_encode($players, JSON_PRETTY_PRINT));
-        file_put_contents($archiveFilePath, json_encode($players, JSON_PRETTY_PRINT));
-
-        $formattedFileName = $source . '-formatted.json';
-        $formattedFilePath = $this->getFileDir() . '/' . $formattedFileName;
-        $formattedArchiveFilePath = $this->getFileDir() . '/' . date('Y-m-d') . '/' . $formattedFileName;
-
-        $projections = $this->formatPlayers($players);
-
-        file_put_contents($formattedFilePath, json_encode($projections, JSON_PRETTY_PRINT));
-        file_put_contents($formattedArchiveFilePath, json_encode($projections, JSON_PRETTY_PRINT));
-
-        return true;
     }
 
     /**

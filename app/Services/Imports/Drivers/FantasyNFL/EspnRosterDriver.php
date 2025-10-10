@@ -55,13 +55,9 @@ class EspnRosterDriver
         });
     }
 
-    private function imporMembertRoster(array|Collection $roster, string $memberKey)
+    private function imporMembertRoster(Collection $roster, string $memberKey)
     {
-        $roster = (! $roster instanceof Collection) ? collect($roster) : $roster;
-
         $memberId = str_replace('member.', '', $memberKey);
-
-        // dd([$memberKey, $memberId, $roster]);
 
         $member = $this->league->members->firstWhere('id', $memberId);
 
@@ -70,34 +66,34 @@ class EspnRosterDriver
         }
 
         $roster->each(function ($weekRoster, $weekKey) use ($member) {
+            if ($weekRoster instanceof Collection ? $weekRoster->isEmpty() : empty($weekRoster)) {
+                return true;
+            }
+
             $weekNumber = (int) str_replace('week.', '', $weekKey);
 
             $this->importWeekRoster($weekRoster, $member, $weekNumber);
         });
     }
 
-    private function importWeekRoster(array|Collection $roster, LeagueMember $member, int $week)
+    private function importWeekRoster(Collection $roster, LeagueMember $member, int $week)
     {
-        $roster = (! $roster instanceof Collection) ? collect($roster) : $roster;
-
         $roster->each(function ($player) use ($member, $week) {
             $this->importPlayer($member, $week, $player);
         });
     }
 
-    private function importPlayer(LeagueMember $member, int $week, array|Collection $player)
+    private function importPlayer(LeagueMember $member, int $week, Collection $player)
     {
-        $player = ($player instanceof Collection) ? $player->toArray() : $player;
-
         $player['nfl_game_id'] = $this->getNflGameId($player, $week)?->id;
         $player['league_member_id'] = $member->id;
         $player['season'] = $this->season;
         $player['week'] = $week;
         $player['deleted_at'] = null;
 
-        $find = Arr::only($player, ['league_member_id', 'nfl_game_id', 'player_id', 'season', 'week']);
+        $find = Arr::only($player->toArray(), ['league_member_id', 'nfl_game_id', 'player_id', 'season', 'week']);
 
-        $update = Arr::only($player, [
+        $update = Arr::only($player->toArray(), [
             'lineup_slot_id',
             'position_rank',
             'overall_rank',
@@ -123,9 +119,9 @@ class EspnRosterDriver
         }
     }
 
-    private function getNflGameId(array $player, int $week)
+    private function getNflGameId(Collection $player, int $week)
     {
-        $teamId = Player::where('id', $player['player_id'])->select(['team_id']);
+        $teamId = Player::where('id', $player->get('player_id'))->select(['team_id']);
 
         return NflGame::query()
             ->where('season', $this->season)

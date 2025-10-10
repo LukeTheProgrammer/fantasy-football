@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import Heading from '@/components/heading';
-import LeagueForm from './form';
+import LeagueForm from '@/forms/league-form';
 import { Head } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import { router } from '@inertiajs/react';
@@ -28,7 +28,7 @@ export default function CreateLeague() {
         <LeagueForm
           submitEndpoint="/api/leagues"
           submitMethod="post"
-          submitButtonText="Create League"
+          submitButtonText="Create"
           processingButtonText="Creating..."
           successMessage="Your fantasy league has been created successfully!"
           redirectPath="/dashboard"

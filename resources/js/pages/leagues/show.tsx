@@ -42,7 +42,7 @@ interface LeagueShowProps extends PageProps {
 export default function ShowLeague({ league }: LeagueShowProps) {
   const [selectedMemberId, setSelectedMemberId] = useState<string>('');
   const [selectedMember, setSelectedMember] = useState<LeagueMemberResource | null>(null);
-  const [selectedWeek, setSelectedWeek] = useState<string>('Week 1');
+  const [selectedWeek, setSelectedWeek] = useState<string>(league.week ? `Week ${league.week}` : 'Week 1');
 
   // Select the first member by default when the component mounts
   useEffect(() => {
@@ -60,9 +60,9 @@ export default function ShowLeague({ league }: LeagueShowProps) {
 
   useEffect(() => {
     if (!selectedWeek) {
-      setSelectedWeek('Week 1');
+      setSelectedWeek(league.week ? `Week ${league.week}` : 'Week 1');
     }
-  }, [selectedWeek]);
+  }, [selectedWeek, league.week]);
 
   const handleMemberIdChange = (memberId: string) => {
     setSelectedMemberId(memberId);
@@ -81,7 +81,7 @@ export default function ShowLeague({ league }: LeagueShowProps) {
       <Head title={league.name} />
 
       <div className="flex-1 p-8">
-        <div className="mb-6 flex flex-col items-start justify-between md:flex-row">
+        <div className="mb-2 flex flex-col items-start justify-between md:flex-row">
           <div>
             <Heading
               title={league.name}
@@ -100,9 +100,9 @@ export default function ShowLeague({ league }: LeagueShowProps) {
           </div>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-2">
           <Tabs defaultValue="rosters">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
                 <TabsList>
                   <TabsTrigger className="w-[7rem]" value="rosters">Rosters</TabsTrigger>

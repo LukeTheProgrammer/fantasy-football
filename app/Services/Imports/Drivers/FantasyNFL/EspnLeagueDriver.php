@@ -40,7 +40,11 @@ class EspnLeagueDriver
     {
         $this->loadData();
 
-        return $this->createLeague();
+        $league = $this->createLeague();
+
+        Data::espn()->getFantasyLeagueRosters($league, $league->season);
+
+        return $league;
     }
 
     //
@@ -57,7 +61,7 @@ class EspnLeagueDriver
         $leagueData = $this->leagueData['league'];
 
         $leagueData['created_by_user_id'] = $this->creator->id;
-        $leagueData['platform_id'] = Arr::get($this->credentials, 'leagueId');
+        $leagueData['platform_id'] = $this->credentials->leagueId;
         $leagueData['credentials'] = $this->credentials;
 
         $league = League::updateOrCreate(

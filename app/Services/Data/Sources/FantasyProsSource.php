@@ -14,7 +14,7 @@ class FantasyProsSource extends BaseSource
 
     public function getNFLProjections(int $season, int $week)
     {
-        return FantasyPros::projections()->getAllProjections($season, $week);
+        return FantasyPros::projections()->getProjections($season, $week);
     }
 
 

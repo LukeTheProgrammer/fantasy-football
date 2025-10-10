@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -31,8 +31,8 @@ interface LeagueFormProps {
 const defaultFormData: LeagueFormData = {
   platform: 'espn',
   espn_league_id: '',
-  espn_s2: '',
-  espn_swid: '',
+  espn_s2: 'AECFlzzeJ8XDumpNnipkrOUpZKHLnOYHmY%2BgRgwol3DvlUBavY%2BFumaCzcBxUQ%2Brg1h9HJRWWI%2FoY1qs%2BcqohAJ%2FzozkV5QIs6AHhUwhfrCOk4vzIQlrLNQIeN1N6T0LPpOw4hZmnRhpRy21%2F9xMn6dSozcElj28tJwZCj8zajnhLDgXjJ92ei6R5BEvPVKXpt%2F0azG8EpOmDPeq%2BSWxaZg74rnQJ8PfmUkVmz3c4k%2FXw4RHbNC3cslndrGNflUxkgq20blEIEpKqbAwCztCKnDRyuKt0b5pVYkXJFPJnkl5wg%3D%3D',
+  espn_swid: '{D5956E6B-2C41-428B-9E26-67AC379841B0}',
 };
 
 export default function LeagueForm({
@@ -166,13 +166,14 @@ export default function LeagueForm({
               )}
             </div>
           </CardContent>
+          <CardFooter>
+            <div className="w-full flex justify-end align-bottom space-x-2 pt-8">
+              <Button type="submit" disabled={processing}>
+                {processing ? processingButtonText : submitButtonText}
+              </Button>
+            </div>
+          </CardFooter>
         </Card>
-      </div>
-
-      <div className="flex justify-end space-x-2">
-        <Button type="submit" disabled={processing}>
-          {processing ? processingButtonText : submitButtonText}
-        </Button>
       </div>
     </form>
   );

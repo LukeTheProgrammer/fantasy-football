@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import Heading from '@/components/heading';
-import LeagueForm from './form';
+import LeagueForm from '@/forms/league-form';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '@inertiajs/core';
 import { type BreadcrumbItem } from '@/types';
@@ -16,7 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/leagues',
   },
   {
-    title: 'Edit League',
+    title: 'Edit Credentials',
     href: '#',
   },
 ];
@@ -26,31 +26,12 @@ interface EditLeagueProps extends PageProps {
 }
 
 export default function EditLeague({ league }: EditLeagueProps) {
-  // Map League to LeagueFormData
+  // Map League to LeagueFormData (for platform credentials)
   const formData = {
-    name: league.name,
-    description: league.description || '',
-    team_count: league.team_count || 10,
-    is_public: league.is_public,
-    draft_type: league.draft_type,
-    draft_date: league.draft_date || '',
-    settings: {
-      roster_positions: league.settings.roster_positions,
-      roster_size: league.settings.roster_size,
-      starters_count: league.settings.starters_count,
-      bench_count: league.settings.bench_count,
-      ir_spots: league.settings.ir_spots,
-      passing_points_per_yard: league.settings.passing_points_per_yard || 0,
-      passing_td_points: league.settings.passing_td_points,
-      interception_points: league.settings.interception_points,
-      rushing_points_per_yard: league.settings.rushing_points_per_yard || 0,
-      rushing_td_points: league.settings.rushing_td_points,
-      receiving_points_per_yard: league.settings.receiving_points_per_yard || 0,
-      receiving_td_points: league.settings.receiving_td_points,
-      reception_points: league.settings.reception_points,
-      fumble_lost_points: league.settings.fumble_lost_points,
-      two_point_conversion_points: league.settings.two_point_conversion_points,
-    }
+    platform: league.platform || 'espn',
+    espn_league_id: league.credentials?.find((cred: any) => cred.key === 'espn_league_id')?.value || '',
+    espn_s2: league.credentials?.find((cred: any) => cred.key === 'espn_s2')?.value || '',
+    espn_swid: league.credentials?.find((cred: any) => cred.key === 'espn_swid')?.value || '',
   };
 
   return (
@@ -58,15 +39,15 @@ export default function EditLeague({ league }: EditLeagueProps) {
       <Head title="Edit League" />
 
       <div className="flex-1 p-8">
-        <Heading title="Edit Fantasy League" description="Update your fantasy football league settings" />
+        <Heading title="Edit League Credentials" description="Update your league's platform connection settings" />
 
         <LeagueForm
           initialData={formData}
-          submitEndpoint={`/api/leagues/${league.id}`}
+          submitEndpoint={`/api/leagues/${league.id}/credentials`}
           submitMethod="patch"
-          submitButtonText="Update League"
+          submitButtonText="Update"
           processingButtonText="Updating..."
-          successMessage="Your fantasy league has been updated successfully!"
+          successMessage="League credentials have been updated successfully!"
           redirectPath={`/leagues/${league.id}`}
           onSuccess={() => true}
         />

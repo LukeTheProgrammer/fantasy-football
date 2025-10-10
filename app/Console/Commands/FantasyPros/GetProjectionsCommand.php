@@ -4,7 +4,6 @@ namespace App\Console\Commands\FantasyPros;
 
 use App\Console\Commands\Traits\DisambiguatesPlayers;
 use App\Facades\FantasyPros;
-use App\Services\FantasyPros\Resources\ProjectionsResource;
 use Illuminate\Console\Command;
 
 class GetProjectionsCommand extends Command
@@ -38,7 +37,7 @@ class GetProjectionsCommand extends Command
         $bar->start();
 
         foreach ($sources as $label) {
-            $fp->getProjections($label);
+            $fp->getProjection($label);
             $bar->advance();
         }
 
