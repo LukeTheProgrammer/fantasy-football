@@ -2,6 +2,14 @@ import TeamAvatar from '@/components/leagues/team-avatar';
 import { useMemo } from 'react';
 import { type LeagueResource, type LeagueMemberResource } from '@/types/resources';
 import { rankName } from '@/lib/utils';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 interface StandingsTabProps {
   league: LeagueResource;
@@ -46,44 +54,50 @@ export default function StandingsTab({ league }: StandingsTabProps) {
         <h4 className="text-lg font-semibold">Standings</h4>
       </div>
 
-      {standings.map((standings, k) => (
-        <div key={k} className="flex items-center justify-between rounded-md border p-3 mb-2">
-          <div className="flex items-center justify-start space-x-4">
-            <div>
-              {rankName(k + 1)}
-            </div>
-            <TeamAvatar member={standings.member} />
-            <div>
-              <h4 className="text-lg font-semibold">{standings.member.team_name}</h4>
-              <p className="text-xs text-muted-foreground">{standings.member.owner_name}</p>
-            </div>
-          </div>
-          <div className="flex align-center justify-end space-x-8">
-            <div className="min-w-[8em] pr-4">
-              <p className="text-xs text-muted-foreground">Points For</p>
-              <p>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>RK</TableHead>
+            <TableHead>Team</TableHead>
+            <TableHead>Points For</TableHead>
+            <TableHead>Points Against</TableHead>
+            <TableHead>Record</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {standings.map((standings, k) => (
+            <TableRow key={k}>
+              <TableCell>
+                {rankName(k + 1)}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center justify-start space-x-2">
+                  <TeamAvatar member={standings.member} />
+                  <div className="ml-2">
+                    <span className="text-lg font-bold">{standings.member.team_name}</span>
+                    <span className="text-xs text-muted-foreground pl-2">{standings.member.owner_name}</span>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell>
                 <span className="text-lg font-extrabold">{standings.pointsFor}</span>
                 <span className="text-xs text-muted-foreground pl-2"> ({standings.pfRank})</span>
-              </p>
-            </div>
-            <div className="min-w-[8em] pr-4">
-              <p className="text-xs text-muted-foreground">Points Against</p>
-              <p>
+              </TableCell>
+              <TableCell>
                 <span className="text-lg font-extrabold">{standings.pointsAgainst}</span>
                 <span className="text-xs text-muted-foreground pl-2"> ({standings.paRank})</span>
-              </p>
-            </div>
-            <div className="min-w-[4em] text-right">
-              <p className="text-xs text-muted-foreground">Record</p>
-              <p className="text-lg font-extrabold">
-                {standings.member.wins} &nbsp; - &nbsp;
-                {standings.member.losses}
-                <>{standings.member.ties > 0 ? ` &nbsp; - &nbsp;${standings.member.ties}` : ''}</>
-              </p>
-            </div>
-          </div>
-        </div>
-      ))}
+              </TableCell>
+              <TableCell>
+                <span className="text-lg font-extrabold">
+                  {standings.member.wins} &nbsp; - &nbsp;
+                  {standings.member.losses}
+                  {standings.member.ties > 0 ? ` &nbsp; - &nbsp;${standings.member.ties}` : ''}
+                </span>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

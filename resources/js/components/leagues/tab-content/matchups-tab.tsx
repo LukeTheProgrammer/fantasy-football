@@ -3,6 +3,14 @@ import TeamAvatar from '@/components/leagues/team-avatar';
 import { c } from '@/lib/conv';
 import { type LeagueMatchupResource, type LeagueMemberResource, type LeagueResource, type LeagueTeamResource } from '@/types/resources';
 import { useMemo } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 interface MatchupsTabProps {
   league: LeagueResource;
@@ -88,32 +96,46 @@ export default function MatchupsTab({ league, selectedMember }: MatchupsTabProps
     <div className="col-span-1 mb-8 rounded-lg border bg-card p-4">
       <MemberTabHeader league={league} selectedMember={selectedMember} />
 
-      {matchups.map((matchup, k) => (
-        <div key={k} className="mb-2 flex items-center justify-between rounded-md border p-3">
-          <div className="text-muted-foreground">Week {matchup.week}</div>
-          <div className="grow-1 px-4 text-xs">
-            <div className="flex items-center justify-start space-x-6">
-              <TeamAvatar member={matchup.teamB.team} />
-              <div>
-                <p className="text-lg">{matchup.teamB.team.team_name}</p>
-                <p className="text-muted-foreground">{matchup.teamB.team.owner_name}</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center justify-center">
-            {!matchup.complete ? (
-              ''
-            ) : (
-              <>
-                <div className="min-w-10 text-left">{matchup.teamA.points}</div>
-                <div className="min-w-2 text-center">-</div>
-                <div className="min-w-10 text-right">{matchup.teamB.points}</div>
-              </>
-            )}
-          </div>
-          <div className="min-w-10 pl-2 text-center">{!matchup.complete ? '--' : <>{matchup.teamA.points > matchup.teamB.points ? 'W' : 'L'}</>}</div>
-        </div>
-      ))}
+      <div className="mt-4">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Week</TableHead>
+              <TableHead>Team</TableHead>
+              <TableHead>{selectedMember.team_name}</TableHead>
+              <TableHead>Opponent</TableHead>
+              <TableHead>&nbsp;</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {matchups.map((matchup, k) => (
+              <TableRow key={k}>
+                <TableCell>Week {matchup.week}</TableCell>
+                <TableCell>
+                  <div className="flex items-center justify-start space-x-6">
+                    <TeamAvatar member={matchup.teamB.team} />
+                    <div>
+                      <p>
+                        <span className="font-bold">{matchup.teamB.team.team_name}</span>
+                        <span className="text-muted-foreground pl-2">{matchup.teamB.team.owner_name}</span>
+                      </p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {matchup.complete && (matchup.teamA.points)}
+                </TableCell>
+                <TableCell>
+                  {matchup.complete && (matchup.teamB.points)}
+                </TableCell>
+                <TableCell className="min-w-10 pl-2 text-center">
+                  {!matchup.complete ? '--' : <>{matchup.teamA.points > matchup.teamB.points ? 'W' : 'L'}</>}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
