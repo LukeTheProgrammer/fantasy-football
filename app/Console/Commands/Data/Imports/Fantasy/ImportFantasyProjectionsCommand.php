@@ -33,8 +33,25 @@ class ImportFantasyProjectionsCommand extends Command
     public function handle()
     {
         $season = $this->argument('season') ?? select('Season', [2025, 2024], Season::current()->first()->id);
-        $week = $this->argument('week') ?? select('Week', range(1, 18), Week::current()->first()->week);
+        $week = $this->argument('week');
 
+        if ($week) {
+            $this->importWeek($season, $week);
+        } else {
+            Week::forSeason($season)->get()->each(function (Week $week) use ($season) {
+                $this->importWeek($season, $week->week);
+
+                if ($week->is_current) {
+                    return false;
+                }
+            });
+        }
+
+        $this->info('Import complete');
+    }
+
+    private function importWeek(int $season, int $week)
+    {
         $this->info('Importing Projections for season ' . $season . ' Week ' . $week);
 
         $errors = Data::fantasyPros()->importNFLProjections($season, $week);
@@ -42,8 +59,6 @@ class ImportFantasyProjectionsCommand extends Command
         if (! empty($errors)) {
             $this->displayErrors($errors);
         }
-
-        $this->info('Import complete');
     }
 
     private function displayErrors(array $errors): void

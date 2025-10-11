@@ -2,10 +2,10 @@
 
 namespace App\Services\Imports\Drivers\FantasyNFL;
 
-use App\Enums\Datum;
 use App\Facades\Data;
 use App\Models\League;
 use App\Models\LeagueMember;
+use App\Models\LeagueMatchup;
 use App\Models\Player;
 use App\Models\User;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
@@ -153,8 +153,8 @@ class EspnLeagueDriver
     private function createMatchups(League $league)
     {
         foreach ($this->leagueData['schedules'] as $matchup) {
-            $homeMember = LeagueMember::forExtId($matchup['home_member_id'])->first();
-            $awayMember = LeagueMember::forExtId($matchup['away_member_id'])->first();
+            $homeMember = LeagueMember::forLeague($league)->forExtId($matchup['home_member_id'])->first();
+            $awayMember = LeagueMember::forLeague($league)->forExtId($matchup['away_member_id'])->first();
 
             if (! $homeMember instanceof LeagueMember) {
                 Log::error('Member not found for home team id', $matchup);
@@ -166,10 +166,22 @@ class EspnLeagueDriver
                 continue;
             }
 
-            $league->matchups()->updateOrCreate(
-                ['home_member_id' => $homeMember->id, 'away_member_id' => $awayMember->id],
-                $matchup,
-            );
+            $find = [
+                'league_id' => $league->id,
+                'season' => $matchup['season'],
+                'week' => $matchup['week'],
+                'home_member_id' => $homeMember->id,
+                'away_member_id' => $awayMember->id,
+            ];
+
+            $update = array_filter([
+                'home_score' => Arr::get($matchup, 'home_score'),
+                'away_score' => Arr::get($matchup, 'away_score'),
+                'home_projected_score' => Arr::get($matchup, 'home_projected_score'),
+                'away_projected_score' => Arr::get($matchup, 'away_projected_score'),
+            ]);
+
+            LeagueMatchup::updateOrCreate($find, $update);
         }
     }
 }

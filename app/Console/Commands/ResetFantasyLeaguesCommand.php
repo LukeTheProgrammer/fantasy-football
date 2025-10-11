@@ -31,10 +31,41 @@ class ResetFantasyLeaguesCommand extends Command
 
         $this->rebuildData();
 
-        $this->call('import:fantasy:league');
+        $this->call('import:fantasy:league', [
+            '--create' => true,
+            '--creator-id' => 1,
+            '--season' => 2025,
+            '--platform' => 'ESPN',
+            '--platform-id' => 691509, // Milhaven
+            '--espn-s2' => config('services.espn.default_s2'),
+            '--espn-swid' => config('services.espn.default_swid'),
+        ]);
+
+        // $this->call('import:fantasy:league', [
+        //     '--sync' => true,
+        //     '--league-id' => 1,
+        //     '--season' => 2025,
+        // ]);
+
         $this->call('import:fantasy:roster', ['leagueId' => 1, 'season' => 2025]);
-        // TODO - Clean up these commands, make ESPN League and Roster Drivers
-        $this->call('import:fantasy:projections', ['season' => 2025]);
+
+        $this->call('import:fantasy:league', [
+            '--create' => true,
+            '--creator-id' => 1,
+            '--season' => 2025,
+            '--platform' => 'ESPN',
+            '--platform-id' => 61235367, // HawkHorns
+            '--espn-s2' => config('services.espn.default_s2'),
+            '--espn-swid' => config('services.espn.default_swid'),
+        ]);
+
+        // $this->call('import:fantasy:league', [
+        //     '--sync' => true,
+        //     '--league-id' => 2,
+        //     '--season' => 2025,
+        // ]);
+
+        $this->call('import:fantasy:roster', ['leagueId' => 2, 'season' => 2025]);
 
         return Command::SUCCESS;
     }

@@ -12,7 +12,8 @@ class ResetAppCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:reset';
+    protected $signature = 'app:reset
+        { season? : Season }';
 
     /**
      * The console command description.
@@ -26,7 +27,7 @@ class ResetAppCommand extends Command
      */
     public function handle(): int
     {
-        $season = date('Y');
+        $season = $this->argument('season') ?? date('Y');
 
         $this->call('migrate:fresh');
         $this->call('db:seed', ['-vvv' => true]);
@@ -38,14 +39,7 @@ class ResetAppCommand extends Command
         $this->call('import:fantasy:roster', ['leagueId' => 1, 'season' => $season]);
 
         $this->info('Importing NFL Projections');
-        Week::forSeason($season)->get()->each(function ($week) {
-            $this->info("Importing NFL Projections for Week {$week->week}");
-            $this->call('import:nfl:projections', ['season' => $week->season_id, 'week' => $week->week]);
-
-            if ($week->is_current) {
-                return false;
-            }
-        });
+        $this->call('import:fantasy:projections', ['season' => $season]);
 
         return Command::SUCCESS;
     }

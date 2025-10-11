@@ -108,28 +108,26 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
         <TableBody>
           {getPlayers(selectedMember?.rosters || {}).map((roster) => (
             <TableRow key={roster?.player?.id}>
-              <TableCell className="py-0 text-center border-s-4" style={{ borderLeftColor: posBorderColor(roster.player.position) }}>
+              <TableCell className="py-1 text-center border-s-4" style={{ borderLeftColor: posBorderColor(roster.player.position) }}>
                 {roster.player.position}
               </TableCell>
-              <TableCell className="py-0 flex items-center justify-start">
+              <TableCell className="py-1 flex items-center justify-start">
                 <div className="w-[4em] flex items-center justify-center">
                   {roster.player.headshot && (
-                    <img src={roster.player.headshot} alt={roster.player.full_name} className="h-10" />
+                    <img src={roster.player.headshot} alt={roster.player.full_name} className="h-8" />
                   )}
                 </div>
-                <div className="pl-2">
-                  <p className="font-bold">{roster?.player?.full_name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {roster.player.team} &nbsp; • &nbsp; {roster.player.position} {roster.position_rank}
-                  </p>
-                </div>
+                <p className="pl-2 min-w-[12em] font-bold">{roster?.player?.full_name}</p>
+                <p className="pl-2 min-w-[3em] text-muted-foreground">{roster.player.team}</p>
+                <p className="text-muted-foreground">&nbsp; • &nbsp;</p>
+                <p className="pl-2 min-w-[3em] text-muted-foreground">{roster.player.position} {roster.position_rank}</p>
               </TableCell>
-              <TableCell className="py-0 text-center">
+              <TableCell className="py-1 text-center">
                 {roster.nfl_game.is_bye ? (
                   <p className="text-muted-foreground">Bye</p>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center justify-end font-extrabold text-lg text-right">
+                    <div className="flex items-center justify-end font-extrabold text-right">
                       {roster.player.team === roster.nfl_game.away_team?.id
                         ? <span>@ {roster.nfl_game.home_team?.id}</span>
                         : <span> {roster.nfl_game.away_team?.id}</span>
@@ -141,29 +139,29 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
                   </div>
                 )}
               </TableCell>
-              <TableCell className="py-0 text-center">
-                <p className="font-extrabold text-lg">
+              <TableCell className="py-1 text-center">
+                <p className="font-extrabold">
                   <ShowPoints value={roster.player_projection.fp_pos_rank} />
                 </p>
               </TableCell>
-              <TableCell className="py-0 text-center">
-                <p className="font-extrabold text-lg">
+              <TableCell className="py-1 text-center">
+                <p className="font-extrabold">
                   <ShowPoints value={roster.player_projection.fp_points} />
                 </p>
                 <p className="pl-2 text-xs text-muted-foreground">
                   {roster.fp_diff ? roster.fp_diff : ''}
                 </p>
               </TableCell>
-              <TableCell className="py-0 text-center">
-                <p className="font-extrabold text-lg">
+              <TableCell className="py-1 text-center">
+                <p className="font-extrabold">
                   <ShowPoints value={roster.player_projection.espn_points} />
                 </p>
                 <p className="pl-2 text-xs text-muted-foreground">
                   {roster.espn_diff ? roster.espn_diff : ''}
                 </p>
               </TableCell>
-              <TableCell className="py-0 text-right">
-                <p className="font-extrabold text-lg text-right">
+              <TableCell className="py-1 text-right">
+                <p className="font-extrabold text-right">
                   <ShowPoints value={roster.fantasy_points} />
                 </p>
               </TableCell>

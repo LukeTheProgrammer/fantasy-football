@@ -35,21 +35,28 @@ interface Matchup {
 export default function MatchupsTab({ league, selectedMember }: MatchupsTabProps) {
   const { matchups } = useMemo((): { matchups: Matchup[] } => {
     if (!selectedMember) {
+      console.error('No selected member');
       return { matchups: [] as Matchup[] };
     }
+
 
     const leagueMatchups: LeagueMatchupResource[] = [];
     const matchups: Matchup[] = [];
 
     Object.entries(league.matchups).forEach(([, matchups]) => {
       matchups.forEach((m: LeagueMatchupResource) => {
-        if (m.home_team.id === selectedMember.id || m.away_team.id === selectedMember.id) {
+        const mid = selectedMember.id;
+        const hid = m.home_team.id;
+        const aid = m.away_team.id;
+
+        if (hid === mid || aid === mid) {
           leagueMatchups.push(m);
         }
       });
     });
 
     leagueMatchups.sort((a, b) => a.week - b.week);
+
 
     leagueMatchups.map((m) => {
       const homeTeam = m.home_team.id === selectedMember.id ? 'teamA' : 'teamB';

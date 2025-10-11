@@ -18,7 +18,17 @@ class ImportLeagueCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'import:fantasy:league';
+    protected $signature = 'import:fantasy:league
+        { --create       : Create a new league }
+        { --sync         : Sync an existing league }
+        { --platform=    : Platform to pull }
+        { --platform-id= : Platform ID to pull }
+        { --creator-id=  : Creator ID to pull }
+        { --league-id=   : League ID to sync }
+        { --season=      : Season to pull }
+        { --espn-s2=     : ESPN S2 to pull }
+        { --espn-swid=   : ESPN SWID to pull }
+    ';
 
     /**
      * The console command description.
@@ -31,7 +41,7 @@ class ImportLeagueCommand extends Command
 
     protected ?FantasyPlatforms $platform = null;
 
-    protected User $creator;
+    protected ?User $creator = null;
 
     protected string $action;
 
@@ -42,17 +52,31 @@ class ImportLeagueCommand extends Command
      */
     public function handle()
     {
-        $this->action = select('Do you want to sync an existing league or create a new one?', ['Create', 'Sync'], 'Create');
-
         $this->setUp();
 
         $this->import();
 
         $this->info($this->league->name . ' imported successfully!');
+
+        $this->league = null;
+        $this->platform = null;
+        $this->creator = null;
+        $this->action = '';
+        $this->credentials = [];
     }
 
     protected function setUp()
     {
+        if ($this->option('create')) {
+            $this->action = 'Create';
+
+        } elseif ($this->option('sync')) {
+            $this->action = 'Sync';
+
+        } else {
+            $this->action = select('Do you want to sync an existing league or create a new one?', ['Create', 'Sync'], 'Create');
+        }
+
         if ($this->action === 'Sync') {
             return $this->setUpSync();
         }
@@ -62,7 +86,7 @@ class ImportLeagueCommand extends Command
 
     protected function setUpSync()
     {
-        $leagueId = select('League', League::all()->pluck('name', 'id')->toArray());
+        $leagueId = $this->option('league-id') ?? select('League', League::all()->pluck('name', 'id')->toArray());
 
         $this->league = League::findOrFail($leagueId);
         $this->creator = $this->league->creator;
@@ -71,11 +95,11 @@ class ImportLeagueCommand extends Command
 
     protected function setUpCreate()
     {
-        $creatorId = select('Creator', User::all()->pluck('name', 'id')->toArray());
+        $creatorId = $this->option('creator-id') ?? select('Creator', User::all()->pluck('name', 'id')->toArray());
 
         $this->creator = User::findOrFail($creatorId);
 
-        $platformArg = select(
+        $platformArg = $this->option('platform') ?? select(
             label: 'Platform',
             options: FantasyPlatforms::options()->toArray(),
             default: FantasyPlatforms::ESPN->value
@@ -110,10 +134,12 @@ class ImportLeagueCommand extends Command
 
         } else {
             $data['created_by_user_id'] = $this->creator->id;
-            $data['league_id']          = intval(text('League ID', 'League ID', config('services.espn.default_league_id')));
-            $data['s2']                 = text('S2', 'S2', config('services.espn.default_s2'));
-            $data['swid']               = text('SWID', 'SWID', config('services.espn.default_swid'));
+            $data['league_id']          = intval($this->option('platform-id') ?? text('League ID', 'League ID', config('services.espn.default_league_id')));
+            $data['s2']                 = $this->option('espn-s2') ?? text('S2', 'S2', config('services.espn.default_s2'));
+            $data['swid']               = $this->option('espn-swid') ?? text('SWID', 'SWID', config('services.espn.default_swid'));
         }
+
+        $this->info('Importing ESPN League ' . $data['league_id'] . ' for user ' . $data['created_by_user_id']);
 
         $this->league = Data::espn()->importFantasyLeague($data);
     }

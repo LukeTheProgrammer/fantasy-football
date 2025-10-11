@@ -66,7 +66,9 @@ class EspnRosterDriver
         }
 
         $roster->each(function ($weekRoster, $weekKey) use ($member) {
-            if ($weekRoster instanceof Collection ? $weekRoster->isEmpty() : empty($weekRoster)) {
+            $weekRoster = collect($weekRoster);
+
+            if ($weekRoster->isEmpty()) {
                 return true;
             }
 
@@ -79,7 +81,7 @@ class EspnRosterDriver
     private function importWeekRoster(Collection $roster, LeagueMember $member, int $week)
     {
         $roster->each(function ($player) use ($member, $week) {
-            $this->importPlayer($member, $week, $player);
+            $this->importPlayer($member, $week, collect($player));
         });
     }
 
