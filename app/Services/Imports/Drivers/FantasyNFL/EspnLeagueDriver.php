@@ -3,6 +3,7 @@
 namespace App\Services\Imports\Drivers\FantasyNFL;
 
 use App\Facades\Data;
+use App\Models\DraftPick;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueMatchup;
@@ -126,7 +127,7 @@ class EspnLeagueDriver
         $draft->picks()->delete();
 
         foreach ($this->leagueData['draftPicks'] as $pick) {
-            $member = LeagueMember::forExtId($pick['league_member_id'])->first();
+            $member = LeagueMember::forLeague($league)->forExtId($pick['league_member_id'])->first();
 
             if (! $member instanceof LeagueMember) {
                 Log::error('Member not found for draft pick', $pick);
@@ -140,13 +141,21 @@ class EspnLeagueDriver
                 continue;
             }
 
-            $pick['league_member_id'] = $member->id;
-            $pick['player_id'] = $player->id;
+            $find = [
+                'draft_id' => $draft->id,
+                'league_member_id' => $member->id,
+                'player_id' => $player->id,
+            ];
 
-            $draft->picks()->updateOrCreate(
-                ['league_member_id' => $member->id, 'player_id' => $player->id],
-                $pick,
-            );
+            $update = [
+                'round' => $pick['round'],
+                'pick_number' => $pick['pick_number'],
+                'overall_pick_number' => $pick['overall_pick_number'],
+                'amount' => $pick['amount'],
+                'is_keeper' => $pick['is_keeper'],
+            ];
+
+            DraftPick::updateOrCreate($find, $update);
         }
     }
 

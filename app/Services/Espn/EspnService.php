@@ -2,13 +2,15 @@
 
 namespace App\Services\Espn;
 
-use App\Enums\NFLTeams;
+use App\Models\League;
 use App\Models\Team;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
+use App\Services\Espn\Formatters\FantasyLineupFormatter;
 use App\Services\Espn\Resources\FantasyNFL;
 use App\Services\Espn\Resources\NFL;
 use App\Services\Espn\Resources\NflTeam;
 use App\Traits\HasDataFormats;
+use Illuminate\Support\Collection;
 
 /**
  * @see https://github.com/pseudo-r/Public-ESPN-API
@@ -199,5 +201,10 @@ class EspnService
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
             ->getTeams($credentials, $opts);
+    }
+
+    public function sortFantasyLineup(League $league, array|Collection $roster)
+    {
+        return FantasyLineupFormatter::from($league, $roster);
     }
 }

@@ -28,10 +28,10 @@ class NFLScheduleFormatter
 
         $formatter = new NFLScheduleFormatter($data);
 
-        return $formatter->getFormatted();
+        return $formatter->format();
     }
 
-    public function getFormatted()
+    public function format()
     {
         return $this->scheduleData->events->map(
             fn (EventData $event) => $this->formatEvent($event)

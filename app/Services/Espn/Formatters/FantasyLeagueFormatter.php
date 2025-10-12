@@ -40,10 +40,10 @@ class FantasyLeagueFormatter
 
         $formatter = new FantasyLeagueFormatter($data);
 
-        return $formatter->getFormatted();
+        return $formatter->format();
     }
 
-    public function getFormatted()
+    public function format()
     {
         $this->formatData();
 

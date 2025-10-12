@@ -1,16 +1,17 @@
 import { c } from '@/lib/conv';
 
-interface ShowPointsProps {
+interface ShowRankProps {
   value: number | string | null;
+  prepend?: string | null;
+  append?: string | null;
 }
 
-export default function ShowPoints({ value }: ShowPointsProps) {
-
+export default function ShowRank({ value, prepend, append }: ShowRankProps) {
   const val = c(value).toNumber();
 
   if (val > 0) {
     return (
-      <span> {val} </span>
+      <span> {prepend ? prepend : ''} {val} {append ? append : ''} </span>
     );
   }
 

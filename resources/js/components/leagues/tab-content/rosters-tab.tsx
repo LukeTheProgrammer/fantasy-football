@@ -1,6 +1,8 @@
 import MemberTabHeader from '@/components/leagues/tab-content/member-tab-header';
 import { type LeagueResource, type LeagueMemberResource, type LeagueRosterResource } from '@/types/resources';
 import ShowPoints from '@/components/show-points';
+import ShowRank from '@/components/show-rank';
+import RostersTableRow from '@/components/leagues/tab-content/rosters-table-row';
 import {
   Table,
   TableBody,
@@ -16,28 +18,16 @@ interface RostersTabProps {
   selectedWeek: string;
 };
 
+interface Lineup {
+  starters: LeagueRosterResource[];
+  bench: LeagueRosterResource[];
+}
+
 export default function ShowLeague({ league, selectedMember, selectedWeek }: RostersTabProps) {
 
-  const posBorderColor = (pos: string) => {
-    switch (pos) {
-      case 'QB':
-        return '#75A374';
-      case 'RB':
-        return '#5882FA';
-      case 'WR':
-        return '#F5CA49';
-      case 'TE':
-        return '#DE926D';
-      default:
-        return '#999999';
-    }
-  };
-
-  // const getPlayers = (rosters: []): [] => rosters;
-
-  const getPlayers = (memberRosters: Record<string, LeagueRosterResource[]>): LeagueRosterResource[] => {
+  const getLineup = (memberRosters: Record<string, LeagueRosterResource[]>): Lineup => {
     if (!memberRosters || Object.keys(memberRosters).length === 0) {
-      return [];
+      return { starters: [], bench: [] };
     }
 
     const positions = {
@@ -50,35 +40,26 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
     };
 
     const weekNum = Number(selectedWeek.replace('Week ', ''));
-    const weekRoster = memberRosters[weekNum] || [];
+    const roster = memberRosters[weekNum] || [];
 
-    weekRoster.forEach(memberRoster => {
-      const pos = memberRoster.player.position;
+    const lineup: Lineup = {
+      starters: [] as LeagueRosterResource[],
+      bench: [] as LeagueRosterResource[],
+    };
 
-      if (pos in positions) {
-        positions[pos].push(memberRoster);
+    roster.forEach(rosterSlot => {
+      if (rosterSlot.lineup_slot_id === 20) {
+        positions[rosterSlot.player.position].push(rosterSlot);
+      } else {
+        lineup.starters.push(rosterSlot);
       }
     });
 
-    const players: LeagueRosterResource[] = [];
+    Object.entries(positions).forEach(([, players]) => {
+      lineup.bench.push(...players);
+    });
 
-    for (const p in positions) {
-      const pos = positions[p].sort((a: LeagueRosterResource, b: LeagueRosterResource) => {
-        const aVal = a.fantasy_points > 0 ? a.fantasy_points : -1;
-        const bVal = b.fantasy_points > 0 ? b.fantasy_points : -1;
-        return bVal - aVal;
-      });
-
-      pos.forEach((player: LeagueRosterResource) => {
-        players.push(player);
-
-        if (player.player.full_name === 'Baker Mayfield') {
-          console.log(player);
-        }
-      });
-    }
-
-    return players;
+    return lineup;
   }
 
   if (selectedMember === null) {
@@ -88,6 +69,8 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
       </div>
     );
   }
+
+  const lineup = getLineup(selectedMember?.rosters || {});
 
   return (
     <div className="w-full p-4 mb-8 rounded-lg border bg-card">
@@ -99,73 +82,20 @@ export default function ShowLeague({ league, selectedMember, selectedWeek }: Ros
             <TableHead className='text-center'>POS</TableHead>
             <TableHead>Player</TableHead>
             <TableHead className='text-center'>Game</TableHead>
-            <TableHead className='text-center'>FP Rank</TableHead>
-            <TableHead className='text-center'>FP</TableHead>
+            <TableHead className='text-center'>Fantasy Pros</TableHead>
             <TableHead className='text-center'>ESPN</TableHead>
             <TableHead className='text-right'>Points</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {getPlayers(selectedMember?.rosters || {}).map((roster) => (
-            <TableRow key={roster?.player?.id}>
-              <TableCell className="py-1 text-center border-s-4" style={{ borderLeftColor: posBorderColor(roster.player.position) }}>
-                {roster.player.position}
-              </TableCell>
-              <TableCell className="py-1 flex items-center justify-start">
-                <div className="w-[4em] flex items-center justify-center">
-                  {roster.player.headshot && (
-                    <img src={roster.player.headshot} alt={roster.player.full_name} className="h-8" />
-                  )}
-                </div>
-                <p className="pl-2 min-w-[12em] font-bold">{roster?.player?.full_name}</p>
-                <p className="pl-2 min-w-[3em] text-muted-foreground">{roster.player.team}</p>
-                <p className="text-muted-foreground">&nbsp; • &nbsp;</p>
-                <p className="pl-2 min-w-[3em] text-muted-foreground">{roster.player.position} {roster.position_rank}</p>
-              </TableCell>
-              <TableCell className="py-1 text-center">
-                {roster.nfl_game.is_bye ? (
-                  <p className="text-muted-foreground">Bye</p>
-                ) : (
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center justify-end font-extrabold text-right">
-                      {roster.player.team === roster.nfl_game.away_team?.id
-                        ? <span>@ {roster.nfl_game.home_team?.id}</span>
-                        : <span> {roster.nfl_game.away_team?.id}</span>
-                      }
-                    </div>
-                    <div className="flex items-center text-muted-foreground text-left">
-                      {roster.nfl_game.day} {roster.nfl_game.time}
-                    </div>
-                  </div>
-                )}
-              </TableCell>
-              <TableCell className="py-1 text-center">
-                <p className="font-extrabold">
-                  <ShowPoints value={roster.player_projection.fp_pos_rank} />
-                </p>
-              </TableCell>
-              <TableCell className="py-1 text-center">
-                <p className="font-extrabold">
-                  <ShowPoints value={roster.player_projection.fp_points} />
-                </p>
-                <p className="pl-2 text-xs text-muted-foreground">
-                  {roster.fp_diff ? roster.fp_diff : ''}
-                </p>
-              </TableCell>
-              <TableCell className="py-1 text-center">
-                <p className="font-extrabold">
-                  <ShowPoints value={roster.player_projection.espn_points} />
-                </p>
-                <p className="pl-2 text-xs text-muted-foreground">
-                  {roster.espn_diff ? roster.espn_diff : ''}
-                </p>
-              </TableCell>
-              <TableCell className="py-1 text-right">
-                <p className="font-extrabold text-right">
-                  <ShowPoints value={roster.fantasy_points} />
-                </p>
-              </TableCell>
-            </TableRow>
+          {lineup.starters.map((roster) => (
+            <RostersTableRow key={roster?.player?.id} roster={roster} />
+          ))}
+          <TableRow>
+            <TableCell className='text-center' colSpan={6}>&nbsp;</TableCell>
+          </TableRow>
+          {lineup.bench.map((roster) => (
+            <RostersTableRow key={roster?.player?.id} roster={roster} />
           ))}
         </TableBody>
       </Table>

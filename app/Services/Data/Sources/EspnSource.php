@@ -9,7 +9,9 @@ use App\Facades\Import;
 use App\Models\League;
 use App\Models\Team;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
+use App\Services\Espn\EspnConstants;
 use InvalidArgumentException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class EspnSource extends BaseSource
@@ -102,5 +104,19 @@ class EspnSource extends BaseSource
         $importer = Import::nfl(FantasyPlatforms::ESPN->value);
 
         return $importer->importSchedule($team, $season);
+    }
+
+    /* ===[ FORMATTERS ]=== */
+
+    public function sortFantasyLineup(League $league, array|Collection $roster)
+    {
+        return Espn::sortFantasyLineup($league, $roster);
+    }
+
+    public function lineupSlotName(mixed $lineupSlotId)
+    {
+        $name = Arr::get(EspnConstants::POSITION_SLOT_MAP, $lineupSlotId);
+
+        return ($name === EspnConstants::POSITION_SLOT_MAP[23]) ? 'Flex' : $name;
     }
 }

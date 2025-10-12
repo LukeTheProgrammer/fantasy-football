@@ -2,10 +2,10 @@
 
 namespace App\Services\Data\Sources;
 
-use App\Enums\NFLTeams;
 use App\Models\League;
 use App\Models\Team;
 use App\Traits\HasDataFormats;
+use Illuminate\Support\Collection;
 
 /**
  * Data Source classes should have a method for each of the commands
@@ -93,6 +93,20 @@ abstract class BaseSource
     }
 
     public function importTeams()
+    {
+        return null;
+    }
+
+    /**
+     * Data formatting helper methods.
+     */
+
+    public function sortFantasyLineup(League $league, array|Collection $roster)
+    {
+        return $roster;
+    }
+
+    public function lineupSlotName(mixed $lineupSlotId)
     {
         return null;
     }

@@ -80,7 +80,8 @@ export interface LeagueRosterResource {
   nfl_game_id: string;
   season: number;
   week: number;
-  lineup_slot_id: string;
+  lineup_slot_id: number;
+  lineup_slot_name: string | null;
   position_rank: number;
   overall_rank: number;
   percent_owned: number;

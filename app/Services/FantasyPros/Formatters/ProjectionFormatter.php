@@ -23,10 +23,10 @@ class ProjectionFormatter
     {
         $formatter = new ProjectionFormatter($players, $season, $week);
 
-        return $formatter->getFormatted();
+        return $formatter->format();
     }
 
-    public function getFormatted()
+    public function format()
     {
         $this->formatData();
 

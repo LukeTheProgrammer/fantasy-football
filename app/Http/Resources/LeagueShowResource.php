@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Facades\Data;
 use App\Models\DraftPick;
 use App\Models\LeagueMember;
 use App\Models\LeagueMemberRoster;
@@ -10,6 +11,7 @@ use App\Models\Player;
 use App\Models\PlayerProjection;
 use App\Models\Team;
 use App\Models\Week;
+use App\Services\Data\Sources\BaseSource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
@@ -19,6 +21,8 @@ use Illuminate\Support\Collection;
 class LeagueShowResource extends JsonResource
 {
     protected ?Collection $playerProjections = null;
+
+    protected ?BaseSource $data = null;
 
     /**
      * Transform the resource into an array.
@@ -31,6 +35,8 @@ class LeagueShowResource extends JsonResource
             ->get()
             ->groupBy('player_id')
             ->map(fn ($projections) => $projections->keyBy('week'));
+
+        $this->data = Data::source($this->platform);
 
         return [
             'id'          => $this->id,
@@ -157,34 +163,48 @@ class LeagueShowResource extends JsonResource
 
     private function formatRosters(Collection $rosters)
     {
-        return $rosters->map(function (LeagueMemberRoster $roster) {
-            $data = [
-                'id'                    => $roster->id,
-                'league_member_id'      => $roster->league_member_id,
-                'player_id'             => $roster->player_id,
-                'nfl_game_id'           => $roster->nfl_game_id,
-                'season'                => $roster->season,
-                'week'                  => $roster->week,
-                'lineup_slot_id'        => $roster->lineup_slot_id,
-                'position_rank'         => $roster->position_rank,
-                'overall_rank'          => $roster->overall_rank,
-                'percent_owned'         => $roster->percent_owned,
-                'percent_started'       => $roster->percent_started,
-                'fantasy_points'        => $roster->fantasy_points,
-                'nfl_game'              => $this->formatNflGame($roster->nflGame),
-                'player'                => $this->formatPlayer($roster->player),
-                'player_projection'     => $this->getPlayerProjection($roster->player, $roster->week),
-            ];
+        $formatted = [];
 
-            $points = Arr::get($data, 'fantasy_points', 0);
-            $espn = Arr::get($data, 'player_projection.espn_points', 0);
-            $fp = Arr::get($data, 'player_projection.fp_points', 0);
+        $rosters->groupBy('week')->map(function (Collection $roster, $week) use (&$formatted) {
+            $weekRoster = [];
 
-            $data['espn_diff'] = ($points > 0 && $espn > 0) ? round($points - $espn, 2) : 0;
-            $data['fp_diff'] = ($points > 0 && $fp > 0) ? round($points - $fp, 2) : 0;
+            $roster->map(function (LeagueMemberRoster $roster) use (&$weekRoster) {
+                $data = [
+                    'id'                    => $roster->id,
+                    'league_member_id'      => $roster->league_member_id,
+                    'player_id'             => $roster->player_id,
+                    'nfl_game_id'           => $roster->nfl_game_id,
+                    'season'                => $roster->season,
+                    'week'                  => $roster->week,
+                    'lineup_slot_id'        => $roster->lineup_slot_id,
+                    'lineup_slot_name'      => $this->data->lineupSlotName($roster->lineup_slot_id),
+                    'position_rank'         => $roster->position_rank,
+                    'overall_rank'          => $roster->overall_rank,
+                    'percent_owned'         => $roster->percent_owned,
+                    'percent_started'       => $roster->percent_started,
+                    'fantasy_points'        => $roster->fantasy_points,
+                    'nfl_game'              => $this->formatNflGame($roster->nflGame),
+                    'player'                => $this->formatPlayer($roster->player),
+                    'player_projection'     => $this->getPlayerProjection($roster->player, $roster->week),
+                ];
 
-            return $data;
-        })->groupBy('week');
+                $points = Arr::get($data, 'fantasy_points', 0);
+                $espn = Arr::get($data, 'player_projection.espn_points', 0);
+                $fp = Arr::get($data, 'player_projection.fp_points', 0);
+
+                $data['espn_diff'] = ($points > 0 && $espn > 0) ? round($points - $espn, 2) : 0;
+                $data['fp_diff'] = ($points > 0 && $fp > 0) ? round($points - $fp, 2) : 0;
+
+                $weekRoster[] = $data;
+            });
+
+            $formatted[$week] = $this->data->sortFantasyLineup(
+                $this->resource,
+                $weekRoster
+            );
+        });
+
+        return $formatted;
     }
 
     private function formatPlayer(?Player $player)

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,8 @@ class DraftPick extends Model
         'pick_time' => 'datetime',
     ];
 
+    /* ===[ Relationships ]=== */
+
     /**
      * Get the draft that owns the pick.
      */
@@ -53,5 +56,22 @@ class DraftPick extends Model
     public function player(): BelongsTo
     {
         return $this->belongsTo(Player::class);
+    }
+
+    /* ===[ Scopes ]=== */
+
+    public function scopeForDraft(Builder $query, Draft|int|string $draft): Builder
+    {
+        return $query->where('draft_id', $draft instanceof Draft ? $draft->id : $draft);
+    }
+
+    public function scopeForLeagueMember(Builder $query, LeagueMember|int|string $member): Builder
+    {
+        return $query->where('league_member_id', $member instanceof LeagueMember ? $member->id : $member);
+    }
+
+    public function scopeForPlayer(Builder $query, Player|int|string $player): Builder
+    {
+        return $query->where('player_id', $player instanceof Player ? $player->id : $player);
     }
 }

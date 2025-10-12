@@ -129,13 +129,13 @@ export default function MatchupsTab({ league, selectedMember }: MatchupsTabProps
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="font-bold">
                   {matchup.complete && (matchup.teamA.points)}
                 </TableCell>
-                <TableCell>
+                <TableCell className="font-bold">
                   {matchup.complete && (matchup.teamB.points)}
                 </TableCell>
-                <TableCell className="min-w-10 pl-2 text-center">
+                <TableCell className="min-w-10 pl-2 text-center font-bold">
                   {!matchup.complete ? '--' : <>{matchup.teamA.points > matchup.teamB.points ? 'W' : 'L'}</>}
                 </TableCell>
               </TableRow>

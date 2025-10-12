@@ -38,10 +38,10 @@ class FantasyRosterFormatter
 
         $formatter = new FantasyRosterFormatter($leagueData, $season, $week);
 
-        return $formatter->getFormatted();
+        return $formatter->format();
     }
 
-    public function getFormatted()
+    public function format()
     {
         return $this->leagueData->teams->map(
             fn (ResourceTeamsData $team) => $this->formatTeamRoster($team)
