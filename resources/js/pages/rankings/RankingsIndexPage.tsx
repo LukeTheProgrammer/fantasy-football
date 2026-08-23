@@ -13,15 +13,19 @@ import { PageProps } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import {
+  columnFilteringFeature,
   ColumnFiltersState,
   createColumnHelper,
-  FilterFn,
+  createFilteredRowModel,
+  createSortedRowModel,
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
+  globalFilteringFeature,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_basic,
   SortingState,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { ArrowUpDown, Search } from 'lucide-react';
 import { useState } from 'react';
@@ -52,7 +56,7 @@ function formatADV(adv: number | string | null) {
 }
 
 // Fuzzy filter function for TanStack Table
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+const fuzzyFilter = (row: any, columnId: string, value: any, addMeta: any) => {
   // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value);
 
@@ -64,6 +68,17 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Return if the item should be filtered in/out
   return itemRank.passed;
 };
+
+// Only the features this table uses are registered, so the rest tree shake out.
+const features = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
+  rowSortingFeature,
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
+  filterFns: { fuzzy: fuzzyFilter },
+  sortFns: { alphanumeric: sortFn_alphanumeric, basic: sortFn_basic },
+});
 
 export default function Drafts({ draftRankings, format, formats }: DraftIndexProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -82,9 +97,9 @@ export default function Drafts({ draftRankings, format, formats }: DraftIndexPro
     };
   }
 
-  const columnHelper = createColumnHelper<DraftRanking>();
+  const columnHelper = createColumnHelper<typeof features, DraftRanking>();
 
-  const columns = [
+  const columns = columnHelper.columns([
     columnHelper.accessor((row) => row.player.full_name, {
       id: 'player',
       header: 'Player',
@@ -142,9 +157,10 @@ export default function Drafts({ draftRankings, format, formats }: DraftIndexPro
       },
       cell: (info) => <div className="text-center">${formatADV(info.getValue()) || 0}</div>,
     }),
-  ];
+  ]);
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: draftRankings,
     columns,
     state: {
@@ -152,16 +168,10 @@ export default function Drafts({ draftRankings, format, formats }: DraftIndexPro
       columnFilters,
       globalFilter,
     },
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: fuzzyFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    globalFilterFn: 'fuzzy',
   });
 
   if (draftRankings.length === 0) {
@@ -232,7 +242,7 @@ export default function Drafts({ draftRankings, format, formats }: DraftIndexPro
 
                         return (
                           <TableRow key={row.id} style={style}>
-                            {row.getVisibleCells().map((cell) => (
+                            {row.getAllCells().map((cell) => (
                               <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                             ))}
                           </TableRow>

@@ -5,11 +5,12 @@ use App\Http\Controllers\DraftController;
 use App\Http\Controllers\DraftRankingController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\PlayersController;
-use App\Http\Controllers\PlayerAliasesController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', fn () => Inertia::render('WelcomePage'))->name('home');
+// The app has no public landing page: signed in goes to the dashboard,
+// everyone else goes to the login screen.
+Route::get('/', fn () => redirect()->route(Auth::check() ? 'dashboard' : 'login'))->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

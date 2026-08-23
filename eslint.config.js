@@ -45,8 +45,6 @@ export default [
             'public',
             'bootstrap/ssr',
             'tailwind.config.js',
-            // Upstream shadcn multi-select, kept for reference and linted by its own config.
-            'lib',
             // Root level scratch scripts, not part of the app bundle.
             'temp.js',
             'test-api.js',
