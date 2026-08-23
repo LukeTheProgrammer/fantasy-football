@@ -19,7 +19,7 @@ class DraftController extends Controller
     {
         $user = Auth::user();
 
-        return Inertia::render('drafts/index', [
+        return Inertia::render('drafts/DraftsIndexPage', [
             'drafts' => $user->drafts()
                 ->with(['league.members'])
                 ->orderBy('draft_date', 'desc')
@@ -32,7 +32,7 @@ class DraftController extends Controller
      */
     public function create(League $league)
     {
-        return Inertia::render('drafts/create', [
+        return Inertia::render('drafts/CreateDraftPage', [
             'league' => $league,
         ]);
     }
@@ -53,7 +53,7 @@ class DraftController extends Controller
             ],
         ]);
 
-        return Inertia::render('drafts/show', [
+        return Inertia::render('drafts/ShowDraftPage', [
             'draft' => $draft,
             'seasons' => $this->seasonOptions($draft),
         ]);
@@ -92,7 +92,7 @@ class DraftController extends Controller
                 ->with('error', 'Cannot edit a completed draft');
         }
 
-        return Inertia::render('drafts/edit', [
+        return Inertia::render('drafts/EditDraftPage', [
             'league' => $league,
             'draft' => $draft,
         ]);
@@ -127,7 +127,7 @@ class DraftController extends Controller
             ->with(['player.position', 'player.team'])
             ->get();
 
-        return Inertia::render('drafts/draft-room', [
+        return Inertia::render('drafts/DraftRoomPage', [
             'draft' => $draft,
             'availablePlayers' => $availablePlayers,
         ]);

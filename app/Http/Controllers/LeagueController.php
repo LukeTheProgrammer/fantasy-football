@@ -31,7 +31,7 @@ class LeagueController extends Controller
             })
             ->values();
 
-        return Inertia::render('leagues/index', [
+        return Inertia::render('leagues/LeaguesIndexPage', [
             'leagues' => $leagues,
         ]);
     }
@@ -41,7 +41,7 @@ class LeagueController extends Controller
      */
     public function create()
     {
-        return Inertia::render('leagues/create');
+        return Inertia::render('leagues/CreateLeaguePage');
     }
 
     /**
@@ -63,7 +63,7 @@ class LeagueController extends Controller
             'settings',
         ]);
 
-        return Inertia::render('leagues/show', [
+        return Inertia::render('leagues/ShowLeaguePage', [
             'league' => new LeagueShowResource($league),
             'seasons' => $this->seasonOptions(
                 League::sameLeagueAs($league)->orderByDesc('season')->get()
@@ -93,7 +93,7 @@ class LeagueController extends Controller
     {
         $league->load(['creator', 'settings', 'members.user']);
 
-        return Inertia::render('leagues/edit', [
+        return Inertia::render('leagues/EditLeaguePage', [
             'league' => $league,
         ]);
     }

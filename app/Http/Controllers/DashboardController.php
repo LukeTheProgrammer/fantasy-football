@@ -13,7 +13,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return Inertia::render('dashboard', [
+        return Inertia::render('DashboardPage', [
             'teams' => Team::all(),
         ]);
     }

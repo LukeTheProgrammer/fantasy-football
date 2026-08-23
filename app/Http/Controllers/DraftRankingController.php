@@ -24,7 +24,7 @@ class DraftRankingController extends Controller
             ->orderBy('rank', 'asc')
             ->get();
 
-        return Inertia::render('rankings/index', [
+        return Inertia::render('rankings/RankingsIndexPage', [
             'draftRankings' => $draftRankings ?? [],
         ]);
     }
@@ -34,7 +34,7 @@ class DraftRankingController extends Controller
      */
     public function show(DraftRanking $draftRanking)
     {
-        return Inertia::render('rankings/show', [
+        return Inertia::render('rankings/ShowRankingPage', [
             'draftRanking' => $draftRanking,
         ]);
     }
@@ -44,7 +44,7 @@ class DraftRankingController extends Controller
      */
     public function create()
     {
-        return Inertia::render('rankings/create');
+        return Inertia::render('rankings/CreateRankingPage');
     }
 
     /**
@@ -52,7 +52,7 @@ class DraftRankingController extends Controller
      */
     public function edit(DraftRanking $draftRanking)
     {
-        return Inertia::render('rankings/edit', [
+        return Inertia::render('rankings/EditRankingPage', [
             'draftRanking' => $draftRanking,
         ]);
     }
