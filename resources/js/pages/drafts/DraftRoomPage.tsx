@@ -92,30 +92,26 @@ export default function DraftRoom({ draft, availablePlayers }: DraftIndexProps) 
                       <TableHead>Player</TableHead>
                       <TableHead>Position</TableHead>
                       <TableHead>Team</TableHead>
-                      <TableHead>Avg Rank</TableHead>
-                      <TableHead>Avg Value</TableHead>
-                      <TableHead>FP Ranking</TableHead>
-                      <TableHead>FP Tier</TableHead>
-                      <TableHead>FP ADP</TableHead>
-                      <TableHead>FP ADV</TableHead>
-                      <TableHead>FP ECR vs ADP</TableHead>
+                      <TableHead>Source</TableHead>
+                      <TableHead>PPR</TableHead>
+                      <TableHead>Tier</TableHead>
+                      <TableHead>ADP</TableHead>
+                      <TableHead>ADV</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredPlayers.map((draftRank, i) => (
+                    {filteredPlayers.map((draftRank) => (
                       <TableRow key={draftRank.id}>
                         <TableCell><Checkbox /></TableCell>
-                        <TableCell>{i + 1}</TableCell>
+                        <TableCell>{draftRank.rank}</TableCell>
                         <TableCell>{draftRank.player.full_name}</TableCell>
                         <TableCell><PositionBadge position={draftRank.player.position} /></TableCell>
                         <TableCell>{draftRank.player.team?.abbreviation}</TableCell>
-                        <TableCell>{draftRank.average_rank}</TableCell>
-                        <TableCell>{draftRank.average_value}</TableCell>
-                        <TableCell>{draftRank.fp_standard_ranking}</TableCell>
-                        <TableCell>{draftRank.fp_standard_tier}</TableCell>
-                        <TableCell>{draftRank.fp_standard_adp}</TableCell>
-                        <TableCell>{draftRank.fp_standard_adv}</TableCell>
-                        <TableCell>{draftRank.fp_standard_ecr_vs_adp}</TableCell>
+                        <TableCell>{draftRank.source}</TableCell>
+                        <TableCell>{draftRank.ppr}</TableCell>
+                        <TableCell>{draftRank.tier}</TableCell>
+                        <TableCell>{draftRank.adp}</TableCell>
+                        <TableCell>{draftRank.adv}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

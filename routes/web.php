@@ -29,7 +29,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/create', [DraftController::class, 'create'])->name('create');
         Route::get('/{draft}', [DraftController::class, 'show'])->name('show');
         Route::get('/{draft}/edit', [DraftController::class, 'edit'])->name('edit');
-        Route::get('/{draft}/board', [DraftController::class, 'board'])->name('board');
         Route::get('/{draft}/results', [DraftController::class, 'results'])->name('results');
         Route::get('/{draft}/draft-room', [DraftController::class, 'draftRoom'])->name('draft-room');
     });

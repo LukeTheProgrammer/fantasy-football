@@ -43,5 +43,4 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     // Draft routes
     Route::apiResource('leagues.drafts', DraftController::class);
     Route::post('leagues/{league}/drafts/{draft}/picks', [DraftController::class, 'makePick']);
-    Route::get('leagues/{league}/drafts/{draft}/board', [DraftController::class, 'board']);
 });

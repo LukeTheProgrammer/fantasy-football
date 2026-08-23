@@ -242,7 +242,7 @@ export function AIChat({ className }: AIChatProps) {
 			let aiContent = data.content;
 			let questions: string[] = [];
 
-			let questionsMatch = aiContent.match(/QUESTIONS:\s*(\[[\s\S]*?\])/);
+			const questionsMatch = aiContent.match(/QUESTIONS:\s*(\[[\s\S]*?\])/);
 			if (questionsMatch) {
 				try {
 					questions = JSON.parse(questionsMatch[1]);

@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Draft;
 use App\Models\DraftRanking;
 use App\Models\League;
-use App\Models\Player;
-use Inertia\Inertia;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class DraftController extends Controller
 {
@@ -54,7 +53,7 @@ class DraftController extends Controller
         ]);
 
         return Inertia::render('drafts/ShowDraftPage', [
-            'draft' => $draft,
+            'draft'   => $draft,
             'seasons' => $this->seasonOptions($draft),
         ]);
     }
@@ -71,7 +70,7 @@ class DraftController extends Controller
             ->get()
             ->filter(fn (League $league) => $league->draft !== null)
             ->map(fn (League $league) => [
-                'id' => $league->draft->id,
+                'id'     => $league->draft->id,
                 'season' => $league->season,
             ])
             ->values();
@@ -94,7 +93,7 @@ class DraftController extends Controller
 
         return Inertia::render('drafts/EditDraftPage', [
             'league' => $league,
-            'draft' => $draft,
+            'draft'  => $draft,
         ]);
     }
 
@@ -117,18 +116,16 @@ class DraftController extends Controller
         // Get available players for drafting
         $availablePlayers = DraftRanking::where('season', $draft->league->season)
             ->where(function ($q) {
-                $q->orWhere('average_rank', '>', 0)
-                    ->orWhere('average_value', '>', 0)
-                    ->orWhere('fp_standard_ranking', '>', 0)
-                    ->orWhere('fp_standard_adp', '>', 0)
-                    ->orWhere('fp_ppr_ranking', '>', 0)
-                    ->orWhere('fp_ppr_adp', '>', 0);
+                $q->where('rank', '>', 0)
+                    ->orWhere('adp', '>', 0)
+                    ->orWhere('adv', '>', 0);
             })
             ->with(['player.position', 'player.team'])
+            ->orderBy('rank')
             ->get();
 
         return Inertia::render('drafts/DraftRoomPage', [
-            'draft' => $draft,
+            'draft'            => $draft,
             'availablePlayers' => $availablePlayers,
         ]);
     }
@@ -136,13 +133,10 @@ class DraftController extends Controller
     /**
      * Display the results of a completed draft.
      */
-    public function results(League $league, Draft $draft)
+    public function results(Draft $draft)
     {
-        if ($draft->league_id !== $league->id) {
-            abort(404, 'Draft does not belong to this league');
-        }
-
         $draft->load([
+            'league',
             'picks.leagueMember.user',
             'picks.player.position',
             'picks.player.team',
@@ -155,9 +149,8 @@ class DraftController extends Controller
             ->get()
             ->groupBy('league_member_id');
 
-        return Inertia::render('drafts/results', [
-            'league' => $league,
-            'draft' => $draft,
+        return Inertia::render('drafts/DraftResultsPage', [
+            'draft'       => $draft,
             'teamResults' => $teamResults,
         ]);
     }

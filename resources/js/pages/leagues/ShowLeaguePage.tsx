@@ -98,9 +98,6 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
                 <Button variant="outline">Edit League</Button>
               </Link>
             )}
-            <Link href={route('leagues.index')}>
-              <Button variant="outline">Back to Leagues</Button>
-            </Link>
           </div>
         </div>
 
@@ -118,7 +115,7 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
               </div>
               <div className="flex items-center justify-end space-x-2">
                 <Select value={selectedMemberId} onValueChange={(value) => handleMemberIdChange(value)}>
-                  <SelectTrigger className="w-[16em]">
+                  <SelectTrigger className="w-[20em]">
                     <SelectValue placeholder={`Week ${selectedWeek}`} />
                   </SelectTrigger>
                   <SelectContent>

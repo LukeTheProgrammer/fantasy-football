@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DraftRanking extends Model
+class PlayerRankingAverage extends Model
 {
     use HasFactory;
 
@@ -25,16 +25,16 @@ class DraftRanking extends Model
      */
     protected $casts = [
         'season'    => 'integer',
-        'ranked_at' => 'date',
+        'ranked_on' => 'date',
         'ppr'       => 'decimal:2',
-        'rank'      => 'integer',
-        'tier'      => 'integer',
+        'rank'      => 'decimal:2',
+        'tier'      => 'decimal:2',
         'adp'       => 'decimal:2',
         'adv'       => 'decimal:2',
     ];
 
     /**
-     * Get the player that this ranking belongs to.
+     * Get the player that this average belongs to.
      */
     public function player(): BelongsTo
     {
@@ -42,7 +42,7 @@ class DraftRanking extends Model
     }
 
     /**
-     * Scope a query to only include rankings for a specific season.
+     * Scope a query to only include averages for a specific season.
      */
     public function scopeForSeason(Builder $query, int $season): Builder
     {
@@ -50,11 +50,11 @@ class DraftRanking extends Model
     }
 
     /**
-     * Scope a query to only include rankings from a specific source.
+     * Scope a query to a single scoring format.
      */
-    public function scopeFromSource(Builder $query, string $source): Builder
+    public function scopeForFormat(Builder $query, string $type = 'redraft', float $ppr = 0): Builder
     {
-        return $query->where('source', $source);
+        return $query->where('type', $type)->where('ppr', $ppr);
     }
 
     /**
