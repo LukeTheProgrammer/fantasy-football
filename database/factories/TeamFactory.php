@@ -4,11 +4,12 @@ namespace Database\Factories;
 
 use App\Enums\NFLConferences;
 use App\Enums\NFLDivisions;
+use App\Enums\NFLTeams;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Team>
+ * @extends Factory<Team>
  */
 class TeamFactory extends Factory
 {
@@ -28,10 +29,12 @@ class TeamFactory extends Factory
     {
         $conference = fake()->randomElement(NFLConferences::cases());
         $division = $this->getRandomDivisionForConference($conference);
+        $abb = fake()->randomElement(NFLTeams::cases());
 
         return [
+            'id'           => $abb,
             'espn_id'      => fake()->optional(0.8)->numberBetween(1, 1000),
-            'abbreviation' => fake()->unique()->regexify('[A-Z]{2,3}'),
+            'abbreviation' => $abb,
             'location'     => fake()->city(),
             'name'         => fake()->randomElement([
                 'Bears', 'Bengals', 'Bills', 'Broncos', 'Browns', 'Buccaneers',

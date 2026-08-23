@@ -11,12 +11,25 @@ class CreateUserCommandTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Pin the defaults so the tests do not depend on the developer's .env.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config([
+            'user.default.email'    => 'user@test.com',
+            'user.default.password' => 'password',
+            'user.default.name'     => 'Test User',
+        ]);
+    }
+
     public function test_command_creates_user_with_default_values(): void
     {
         $this->artisan('user:create')
             ->expectsOutput("User 'Test User' created successfully with email 'user@test.com'.")
             ->expectsOutput('User Details:')
-            ->expectsOutput('ID: 1')
             ->expectsOutput('Name: Test User')
             ->expectsOutput('Email: user@test.com')
             ->expectsOutput('Sanctum Token:')

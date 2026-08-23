@@ -1,0 +1,16 @@
+{
+	# Local development only: issue certificates from Caddy's internal CA.
+	local_certs
+	auto_https disable_redirects
+}
+
+{$CADDY_SITE_ADDRESS:laravel.test} {
+	tls internal
+
+	encode zstd gzip
+
+	reverse_proxy laravel.test:80 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+	}
+}

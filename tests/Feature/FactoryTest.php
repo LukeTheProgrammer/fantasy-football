@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\NFLPositions;
 use App\Models\Player;
 use App\Models\Position;
 use App\Models\Team;
@@ -22,7 +23,7 @@ class FactoryTest extends TestCase
             'name'         => $position->name,
         ]);
 
-        $this->assertContains($position->abbreviation, ['QB', 'RB', 'WR', 'TE', 'K', 'DST']);
+        $this->assertContains($position->abbreviation, array_column(NFLPositions::cases(), 'value'));
     }
 
     public function test_team_factory_creates_valid_team(): void

@@ -37,15 +37,18 @@ export interface DraftRanking {
   id: number;
   player_id: number;
   season: number;
+  ranked_at: string;
   type: string;
   source: string | null;
-  ranking: number | null;
+  ppr: string;
+  rank: number | null;
   tier: number | null;
   adp: string | null;
-  value: string | null;
+  adv: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
+  deleted_at: string | null;
   player: Player;
 }
 

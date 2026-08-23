@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('away_member_id')->constrained('league_members')->cascadeOnDelete();
             $table->year('season');
             $table->integer('week')->unsigned();
-            $table->bool('is_complete')->default(false);
+            $table->boolean('is_complete')->default(false);
             $table->decimal('home_score', 8, 2)->nullable();
             $table->decimal('away_score', 8, 2)->nullable();
             $table->decimal('home_projected_score', 8, 2)->nullable();

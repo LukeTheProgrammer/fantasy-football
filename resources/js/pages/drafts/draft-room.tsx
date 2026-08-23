@@ -40,7 +40,7 @@ export default function DraftRoom({ draft, availablePlayers }: DraftIndexProps) 
       return (
         player.full_name.toLowerCase().includes(searchTerm) ||
         player.position_id.toLowerCase().includes(searchTerm) ||
-        player.team_id.toLowerCase().includes(searchTerm)
+        (player.team_id?.toLowerCase().includes(searchTerm) ?? false)
       );
     });
   }, [availablePlayers, filterText]);
@@ -107,8 +107,8 @@ export default function DraftRoom({ draft, availablePlayers }: DraftIndexProps) 
                         <TableCell><Checkbox /></TableCell>
                         <TableCell>{i + 1}</TableCell>
                         <TableCell>{draftRank.player.full_name}</TableCell>
-                        <TableCell><PositionBadge position={draftRank.player.position.abbreviation} /></TableCell>
-                        <TableCell>{draftRank.player.team.abbreviation}</TableCell>
+                        <TableCell><PositionBadge position={draftRank.player.position} /></TableCell>
+                        <TableCell>{draftRank.player.team?.abbreviation}</TableCell>
                         <TableCell>{draftRank.average_rank}</TableCell>
                         <TableCell>{draftRank.average_value}</TableCell>
                         <TableCell>{draftRank.fp_standard_ranking}</TableCell>

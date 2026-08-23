@@ -1,29 +1,29 @@
-import AppLayout from '@/layouts/app-layout';
 import Heading from '@/components/heading';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Head } from '@inertiajs/react';
-import { PageProps } from '@inertiajs/core';
 import { PositionBadge } from '@/components/position-badge';
 import { TeamBadge } from '@/components/team-badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type DraftRanking } from '@/types/models';
+import { PageProps } from '@inertiajs/core';
+import { Head } from '@inertiajs/react';
+import { rankItem } from '@tanstack/match-sorter-utils';
 import {
+  ColumnFiltersState,
   createColumnHelper,
+  FilterFn,
   flexRender,
   getCoreRowModel,
-  getSortedRowModel,
   getFilteredRowModel,
-  useReactTable,
+  getSortedRowModel,
   SortingState,
-  FilterFn,
-  ColumnFiltersState,
+  useReactTable,
 } from '@tanstack/react-table';
-import { rankItem } from '@tanstack/match-sorter-utils';
-import { useState } from 'react';
 import { ArrowUpDown, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -75,83 +75,69 @@ export default function Drafts({ draftRankings }: DraftIndexProps) {
 
   function getRowStyle(lastTier: number, tier: number | null) {
     return {
-      borderTopWidth: (lastTier > 0 && tier && tier !== lastTier) ? 'thick' : 'inherit',
+      borderTopWidth: lastTier > 0 && tier && tier !== lastTier ? 'thick' : 'inherit',
     };
   }
 
   const columnHelper = createColumnHelper<DraftRanking>();
 
   const columns = [
-    columnHelper.accessor(row => row.player.full_name, {
+    columnHelper.accessor((row) => row.player.full_name, {
       id: 'player',
       header: 'Player',
-      cell: info => (
-        <div className="grid grid-cols-4 items-center gap-2 w-full">
+      cell: (info) => (
+        <div className="grid w-full grid-cols-4 items-center gap-2">
           <div className="col-span-2">{info.getValue()}</div>
-          <div className="col-span-1"><PositionBadge position={info.row.original.player.position} /></div>
-          <div className="col-span-1"><TeamBadge team={info.row.original.player.team} /></div>
+          <div className="col-span-1">
+            <PositionBadge position={info.row.original.player.position} />
+          </div>
+          <div className="col-span-1">{info.row.original.player.team && <TeamBadge team={info.row.original.player.team} />}</div>
         </div>
       ),
     }),
     columnHelper.accessor('rank', {
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="w-full justify-center"
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} className="w-full justify-center">
             Rank
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        )
+        );
       },
-      cell: info => <div className="text-center">{info.getValue()}</div>,
+      cell: (info) => <div className="text-center">{info.getValue()}</div>,
     }),
     columnHelper.accessor('tier', {
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="w-full justify-center"
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} className="w-full justify-center">
             Tier
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        )
+        );
       },
-      cell: info => <div className="text-center">{info.getValue()}</div>,
+      cell: (info) => <div className="text-center">{info.getValue()}</div>,
     }),
     columnHelper.accessor('adp', {
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="w-full justify-center"
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} className="w-full justify-center">
             ADP
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        )
+        );
       },
-      cell: info => <div className="text-center">{info.getValue()}</div>,
+      cell: (info) => <div className="text-center">{info.getValue()}</div>,
     }),
     columnHelper.accessor('adv', {
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="w-full justify-center"
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')} className="w-full justify-center">
             ADV
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        )
+        );
       },
-      cell: info => <div className="text-center">${formatADV(info.getValue()) || 0}</div>,
+      cell: (info) => <div className="text-center">${formatADV(info.getValue()) || 0}</div>,
     }),
   ];
 
@@ -181,10 +167,7 @@ export default function Drafts({ draftRankings }: DraftIndexProps) {
         <Head title="Draft Rankings" />
 
         <div className="flex-1 p-8">
-          <Heading
-            title="Draft Rankings"
-            description="View Fantasy Player Rankings"
-          />
+          <Heading title="Draft Rankings" description="View Fantasy Player Rankings" />
 
           <div className="mb-8 rounded-lg border bg-card">
             <div className="border-b p-6 py-12 text-center">
@@ -202,44 +185,31 @@ export default function Drafts({ draftRankings }: DraftIndexProps) {
       <Head title="Draft Rankings" />
 
       <div className="flex-1 p-8">
-        <Heading
-          title="Draft Rankings"
-          description="View Fantasy Player Rankings"
-        />
+        <Heading title="Draft Rankings" description="View Fantasy Player Rankings" />
 
-        <div className="grid grid-cols-1 w-full">
-          <Card className="max-h-[calc(100vh-12rem)] flex flex-col">
+        <div className="grid w-full grid-cols-1">
+          <Card className="flex max-h-[calc(100vh-12rem)] flex-col">
             <CardHeader className="py-0">
               <CardTitle>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <div>Draft Rankings</div>
                   <div className="relative max-w-sm">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search players..."
-                      value={globalFilter ?? ''}
-                      onChange={handleSearchChange}
-                      className="pl-8 max-w-sm"
-                    />
+                    <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="Search players..." value={globalFilter ?? ''} onChange={handleSearchChange} className="max-w-sm pl-8" />
                   </div>
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="py-0 flex-grow overflow-hidden">
+            <CardContent className="flex-grow overflow-hidden py-0">
               <div className="relative">
                 <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 22rem)' }}>
                   <Table>
-                    <TableHeader className="sticky top-0 bg-card z-10 shadow-sm">
+                    <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
                       {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                           {headerGroup.headers.map((header) => (
                             <TableHead key={header.id}>
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
-                                  )}
+                              {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                             </TableHead>
                           ))}
                         </TableRow>
@@ -254,9 +224,7 @@ export default function Drafts({ draftRankings }: DraftIndexProps) {
                         return (
                           <TableRow key={row.id} style={style}>
                             {row.getVisibleCells().map((cell) => (
-                              <TableCell key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                              </TableCell>
+                              <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                             ))}
                           </TableRow>
                         );

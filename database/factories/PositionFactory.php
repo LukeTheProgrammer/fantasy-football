@@ -7,7 +7,7 @@ use App\Models\Position;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Position>
+ * @extends Factory<Position>
  */
 class PositionFactory extends Factory
 {
@@ -17,6 +17,17 @@ class PositionFactory extends Factory
      * @var string
      */
     protected $model = Position::class;
+
+    /**
+     * Keep the string primary key in sync with the abbreviation, including
+     * for states that override it.
+     */
+    public function configure(): static
+    {
+        return $this->afterMaking(function (Position $position) {
+            $position->id = $position->abbreviation;
+        });
+    }
 
     /**
      * Define the model's default state.

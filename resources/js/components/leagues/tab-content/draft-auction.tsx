@@ -1,12 +1,5 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { type LeagueResource } from '@/types/resources';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 
 interface DraftTabProps {
   league: LeagueResource;
@@ -15,7 +8,7 @@ interface DraftTabProps {
 export default function DraftTab({ league }: DraftTabProps) {
   const draft = league.draft;
   const picks = draft?.picks || [];
-  const draftPicks = [...picks].sort((a, b) => b.amount - a.amount);
+  const draftPicks = [...picks].sort((a, b) => Number(b.amount ?? 0) - Number(a.amount ?? 0));
 
   return (
     <Table>
@@ -29,17 +22,15 @@ export default function DraftTab({ league }: DraftTabProps) {
       <TableBody>
         {draftPicks.map((pick) => (
           <TableRow key={pick.id}>
-            <TableCell>${parseInt(pick.amount)}</TableCell>
+            <TableCell>${Number(pick.amount ?? 0)}</TableCell>
             <TableCell>
               <div className="flex items-center justify-start">
-                <div className="w-[4em] flex items-center justify-center">
-                  {pick.player.headshot && (
-                    <img src={pick.player.headshot} alt={pick.player.full_name} className="h-8" />
-                  )}
+                <div className="flex w-[4em] items-center justify-center">
+                  {pick.player.headshot && <img src={pick.player.headshot} alt={pick.player.full_name ?? undefined} className="h-8" />}
                 </div>
-                <p className="pl-2 min-w-[12em] font-bold">{pick?.player?.full_name}</p>
-                <p className="pl-2 min-w-[3em] text-muted-foreground">{pick.player.position_id}</p>
-                <p className="pl-2 min-w-[3em] text-muted-foreground">{pick.player.team_id}</p>
+                <p className="min-w-[12em] pl-2 font-bold">{pick?.player?.full_name}</p>
+                <p className="min-w-[3em] pl-2 text-muted-foreground">{pick.player.position_id}</p>
+                <p className="min-w-[3em] pl-2 text-muted-foreground">{pick.player.team_id}</p>
               </div>
             </TableCell>
             <TableCell>

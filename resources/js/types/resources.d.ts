@@ -1,4 +1,3 @@
-
 export interface LeagueResource {
   id: string;
   name: string;
@@ -157,4 +156,73 @@ export interface NflTeamResource {
   logo: string;
   conference: string;
   division: string;
+}
+
+export interface LeagueDraftResource {
+  id: number;
+  league_id: number;
+  draft_date: string | null;
+  draft_type: string;
+  is_completed: boolean;
+  auction_budget: number | null;
+  current_pick: number | null;
+  current_round: number | null;
+  time_per_pick: number;
+  is_active: boolean;
+
+  picks: LeagueDraftPickResource[];
+}
+
+export interface LeagueDraftPickResource {
+  id: number;
+  draft_id: number;
+  round: number;
+  pick_number: number;
+  overall_pick_number: number;
+  amount: string | null;
+  is_keeper: boolean;
+
+  league_member: LeagueDraftMemberResource;
+  player: LeagueDraftPlayerResource;
+}
+
+export interface LeagueDraftMemberResource {
+  id: number;
+  league_id: number;
+  user_id: number | null;
+  external_id: string | null;
+  team_name: string;
+  owner_name: string | null;
+  team_logo: string | null;
+  is_admin: boolean;
+  is_active: boolean;
+  wins: number;
+  losses: number;
+  ties: number;
+  points_for: string;
+  points_against: string;
+  faab_balance: number;
+}
+
+export interface LeagueDraftPlayerResource {
+  id: number;
+  ulid: string;
+  espn_id: number | null;
+  pfr_id: string | null;
+  fp_id: string | null;
+  position_id: string;
+  team_id: string | null;
+  first_name: string;
+  last_name: string;
+  full_name: string | null;
+  jersey_number: number | null;
+  height: string | null;
+  weight: string | null;
+  college: string | null;
+  draft_year: string | null;
+  draft_round: string | null;
+  draft_pick: string | null;
+  draft_team: string | null;
+  birth_date: string | null;
+  headshot: string | null;
 }

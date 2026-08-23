@@ -13,6 +13,10 @@ class PlayerObserver
     public function creating(Player $player): void
     {
         $player->ulid = $player->ulid || Str::ulid();
+
+        if (empty($player->full_name)) {
+            $player->full_name = trim($player->first_name . ' ' . $player->last_name);
+        }
     }
 
     /**

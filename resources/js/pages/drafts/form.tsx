@@ -11,7 +11,7 @@ import { type League, type Draft } from '@/types/models';
 import { useCallback, useState, useEffect } from 'react';
 
 interface DraftFormProps {
-  initialData?: Draft;
+  initialData?: Partial<Draft>;
   submitEndpoint: string;
   submitMethod: 'post' | 'patch';
   submitButtonText: string;

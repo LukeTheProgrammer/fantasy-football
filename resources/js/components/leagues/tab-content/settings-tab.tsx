@@ -8,7 +8,7 @@ interface SettingsTabProps {
 }
 
 export default function SettingsTab({ league }: SettingsTabProps) {
-  const formatDate = (dateString: string | null) => {
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return 'Not scheduled';
     return new Date(dateString).toLocaleString();
   };
