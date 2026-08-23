@@ -4,15 +4,12 @@ namespace App\Services\Imports;
 
 use App\Enums\Datum;
 use App\Enums\FantasyPlatforms;
-use App\Services\Imports\Drivers\Rankings\FantasyProsRankingsDriver;
-use App\Services\Imports\Drivers\Projections\FantasyProsProjectionsDriver;
 use App\Services\Imports\Drivers\FantasyNFL\EspnDriver;
 use App\Services\Imports\Drivers\NFL\EspnNFLDriver;
 use App\Services\Imports\Drivers\NFL\ProFootballReferenceDriver;
-use App\Services\Imports\Importers\DraftRankingsImporter;
 use App\Services\Imports\Importers\FantasyNFLImporter;
-use App\Services\Imports\Importers\NFLImporter;
-use App\Services\Imports\Importers\ProjectionsImporter;
+use App\Services\Imports\Importers\FantasyProsProjectionsImporter;
+use App\Services\Imports\Importers\FantasyProsRankingsImporter;
 use Exception;
 use Illuminate\Support\Arr;
 
@@ -21,43 +18,16 @@ class ImportService
     public function importDrivers(string $type)
     {
         $drivers = [
-            'draft_rankings' => [
-                Datum::SOURCE_FANTASY_PROS->value => FantasyProsRankingsDriver::class,
-            ],
             'fantasy_nfl' => [
                 FantasyPlatforms::ESPN->value => EspnDriver::class,
             ],
             'nfl' => [
                 FantasyPlatforms::ESPN->value => EspnNFLDriver::class,
-                Datum::SOURCE_PFR->value => ProFootballReferenceDriver::class,
-            ],
-            'projections' => [
-                Datum::SOURCE_FANTASY_PROS->value => FantasyProsProjectionsDriver::class,
+                Datum::SOURCE_PFR->value      => ProFootballReferenceDriver::class,
             ],
         ];
 
         return Arr::get($drivers, $type, []);
-    }
-
-    /**
-     * Draft Rankings Import
-     *
-     * @param string $driver
-     * @param mixed ...$args
-     *
-     * @return DraftRankingsImporter
-     */
-    public function draftRankings(string $driver, ...$args)
-    {
-        $driverClass = Arr::get($this->importDrivers('draft_rankings'), $driver, false);
-
-        if (! $driverClass) {
-            throw new Exception('Invalid driver: ' . $driver);
-        }
-
-        $driver = new $driverClass(...$args);
-
-        return new DraftRankingsImporter($driver);
     }
 
     /**
@@ -70,11 +40,11 @@ class ImportService
      */
     public function fantasyNFL(string|FantasyPlatforms $driver, ...$args)
     {
-        $driver = (! $driver instanceof FantasyPlatforms) ? FantasyPlatforms::from($driver) : $driver;
+        $driver = (!$driver instanceof FantasyPlatforms) ? FantasyPlatforms::from($driver) : $driver;
 
         $driverClass = Arr::get($this->importDrivers('fantasy_nfl'), $driver->value, false);
 
-        if (! $driverClass) {
+        if (!$driverClass) {
             throw new Exception('Invalid driver: ' . $driver);
         }
 
@@ -84,44 +54,26 @@ class ImportService
     }
 
     /**
-     * Projections Import
+     * FantasyPros Projections Import
      *
-     * @param string $driver
-     * @param mixed ...$args
+     * Reads slates the fetch stage already archived, so it takes no driver.
      *
-     * @return ProjectionsImporter
+     * @return FantasyProsProjectionsImporter
      */
-    public function projections(string $driver, ...$args)
+    public function fantasyProsProjections()
     {
-        $driverClass = Arr::get($this->importDrivers('projections'), $driver, false);
-
-        if (! $driverClass) {
-            throw new Exception('Invalid driver: ' . $driver);
-        }
-
-        $driver = new $driverClass(...$args);
-
-        return new ProjectionsImporter($driver);
+        return new FantasyProsProjectionsImporter;
     }
 
     /**
-     * NFL Import
+     * FantasyPros Draft Rankings Import
      *
-     * @param string $driver
-     * @param mixed ...$args
+     * Reads boards the fetch stage already archived, so it takes no driver.
      *
-     * @return NFLImporter
+     * @return FantasyProsRankingsImporter
      */
-    public function nfl(string $driver, ...$args)
+    public function fantasyProsRankings()
     {
-        $driverClass = Arr::get($this->importDrivers('nfl'), $driver, false);
-
-        if (! $driverClass) {
-            throw new Exception('Invalid driver: ' . $driver);
-        }
-
-        $driver = new $driverClass(...$args);
-
-        return new NFLImporter($driver);
+        return new FantasyProsRankingsImporter;
     }
 }

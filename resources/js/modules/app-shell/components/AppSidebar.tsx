@@ -1,37 +1,37 @@
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { AppLogo } from '@/modules/app-shell/components/AppLogo';
 import { NavFooter } from '@/modules/app-shell/components/NavFooter';
 import { NavMain } from '@/modules/app-shell/components/NavMain';
 import { NavUser } from '@/modules/app-shell/components/NavUser';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
-import { AppLogo } from '@/modules/app-shell/components/AppLogo';
+import { BookOpen, ChartNoAxesCombined, Folder, Gauge, Trophy, UserRoundPlus, UsersRound } from 'lucide-react';
 
 const mainNavItems: NavItem[] = [
   {
     title: 'Dashboard',
     href: '/dashboard',
-    icon: LayoutGrid,
+    icon: Gauge,
   },
   {
     title: 'Leagues',
     href: '/leagues',
-    icon: LayoutGrid,
+    icon: Trophy,
   },
   {
     title: 'Drafts',
     href: '/drafts',
-    icon: LayoutGrid,
+    icon: UserRoundPlus,
   },
   {
     title: 'Draft Rankings',
     href: '/rankings',
-    icon: LayoutGrid,
+    icon: ChartNoAxesCombined,
   },
   {
     title: 'Players',
     href: '/players',
-    icon: LayoutGrid,
+    icon: UsersRound,
   },
 ];
 

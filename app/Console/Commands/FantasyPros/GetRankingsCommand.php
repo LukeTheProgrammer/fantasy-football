@@ -2,22 +2,21 @@
 
 namespace App\Console\Commands\FantasyPros;
 
-use App\Enums\FantasyProsSlate;
+use App\Enums\FantasyProsDraftSlate;
 use App\Facades\FantasyPros;
 use Illuminate\Console\Command;
 
-class GetProjectionsCommand extends Command
+class GetRankingsCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'fantasy-pros:projections:get
-        { --slate=*  : Limit to one or more slates, defaults to all }
+    protected $signature = 'fantasy-pros:rankings:get
+        { --slate=*  : Limit to one or more draft boards, defaults to all }
         { --season=  : Season to pull, defaults to the current season }
-        { --week=    : Week to pull, defaults to the current week }
-        { --force    : Pull again even if the slate was already captured today }
+        { --force    : Pull again even if the board was already captured today }
     ';
 
     /**
@@ -25,7 +24,7 @@ class GetProjectionsCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Pull FantasyPros consensus pages into the data archive';
+    protected $description = 'Pull FantasyPros overall draft boards into the data archive';
 
     /**
      * Execute the console command.
@@ -38,10 +37,9 @@ class GetProjectionsCommand extends Command
             return self::FAILURE;
         }
 
-        $projections = FantasyPros::projections()->forcePull((bool) $this->option('force'));
+        $rankings = FantasyPros::rankings()->forcePull((bool) $this->option('force'));
 
         $season = $this->option('season') ? (int) $this->option('season') : null;
-        $week = $this->option('week') ? (int) $this->option('week') : null;
 
         $rows = [];
 
@@ -49,7 +47,7 @@ class GetProjectionsCommand extends Command
         $bar->start();
 
         foreach ($slates as $slate) {
-            $players = $projections->getProjection($slate, $season, $week);
+            $players = $rankings->getRanking($slate, $season);
 
             $rows[] = [$slate->value, $players === false ? 'no data' : count($players) . ' players'];
 
@@ -59,32 +57,32 @@ class GetProjectionsCommand extends Command
         $bar->finish();
         $this->newLine(2);
 
-        $this->table(['Slate', 'Captured'], $rows);
+        $this->table(['Board', 'Captured'], $rows);
 
         return self::SUCCESS;
     }
 
     /**
-     * The slates to pull, all of them unless the command names some.
+     * The boards to pull, all of them unless the command names some.
      *
-     * @return array<int, FantasyProsSlate>|false
+     * @return array<int, FantasyProsDraftSlate>|false
      */
     private function slates()
     {
         $requested = $this->option('slate');
 
         if (empty($requested)) {
-            return FantasyProsSlate::cases();
+            return FantasyProsDraftSlate::cases();
         }
 
         $slates = [];
 
         foreach ($requested as $value) {
-            $slate = FantasyProsSlate::tryFrom($value);
+            $slate = FantasyProsDraftSlate::tryFrom($value);
 
-            if (!$slate instanceof FantasyProsSlate) {
-                $this->error('Unknown slate: ' . $value);
-                $this->line('Available: ' . implode(', ', array_keys(FantasyProsSlate::options())));
+            if (!$slate instanceof FantasyProsDraftSlate) {
+                $this->error('Unknown board: ' . $value);
+                $this->line('Available: ' . implode(', ', array_keys(FantasyProsDraftSlate::options())));
 
                 return false;
             }

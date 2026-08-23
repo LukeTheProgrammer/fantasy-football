@@ -1,12 +1,11 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
 import { Heading } from '@/common/heading/Heading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '@/types';
-import { type BreadcrumbItem } from '@/types';
-import { type Draft, type DraftPick } from '@/types/models';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
+import { AppLayout } from '@/pages/layouts/AppLayout';
+import { PageProps, type BreadcrumbItem } from '@/types';
+import { type Draft, type DraftPick } from '@/types/models';
+import { Head, Link } from '@inertiajs/react';
 
 interface DraftResultsProps extends PageProps {
   draft: Draft;
@@ -48,9 +47,7 @@ export default function DraftResults({ draft, teamResults }: DraftResultsProps) 
             <Card key={leagueMemberId}>
               <CardContent>
                 <div className="mb-4 grid w-full">
-                  <h2 className="text-lg font-semibold">
-                    {picks[0]?.leagueMember?.team_name || 'Unknown Team'}
-                  </h2>
+                  <h2 className="text-lg font-semibold">{picks[0]?.leagueMember?.team_name || 'Unknown Team'}</h2>
                   <p className="text-sm text-muted-foreground">
                     {picks[0]?.leagueMember?.owner_name} &middot; {picks.length} picks
                   </p>
@@ -75,9 +72,7 @@ export default function DraftResults({ draft, teamResults }: DraftResultsProps) 
           ))}
         </div>
 
-        {Object.keys(teamResults).length === 0 && (
-          <p className="text-sm text-muted-foreground">No picks have been made in this draft yet.</p>
-        )}
+        {Object.keys(teamResults).length === 0 && <p className="text-sm text-muted-foreground">No picks have been made in this draft yet.</p>}
       </div>
     </AppLayout>
   );

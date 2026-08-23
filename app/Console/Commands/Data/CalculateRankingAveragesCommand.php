@@ -57,12 +57,13 @@ class CalculateRankingAveragesCommand extends Command
                     'ranked_on' => $date,
                     'type'      => $row->type,
                     'ppr'       => $row->ppr,
+                    'superflex' => $row->superflex,
                     'rank'      => $row->rank,
                     'tier'      => $row->tier,
                     'adp'       => $row->adp,
                     'adv'       => $row->adv,
                 ])->all(),
-                ['player_id', 'season', 'ranked_on', 'type', 'ppr'],
+                ['player_id', 'season', 'ranked_on', 'type', 'ppr', 'superflex'],
                 ['rank', 'tier', 'adp', 'adv']
             );
 
@@ -98,17 +99,19 @@ class CalculateRankingAveragesCommand extends Command
                     ->on('rankings.season', '=', 'latest.season')
                     ->on('rankings.type', '=', 'latest.type')
                     ->on('rankings.ppr', '=', 'latest.ppr')
+                    ->on('rankings.superflex', '=', 'latest.superflex')
                     ->on('rankings.ranked_at', '=', 'latest.ranked_at')
                     // Null safe: source is nullable, and NULL = NULL is never true.
                     ->whereRaw('rankings.source <=> latest.source')
             )
             ->whereNull('rankings.deleted_at')
-            ->groupBy('rankings.player_id', 'rankings.season', 'rankings.type', 'rankings.ppr')
+            ->groupBy('rankings.player_id', 'rankings.season', 'rankings.type', 'rankings.ppr', 'rankings.superflex')
             ->select([
                 'rankings.player_id',
                 'rankings.season',
                 'rankings.type',
                 'rankings.ppr',
+                'rankings.superflex',
             ])
             ->selectRaw('AVG(NULLIF(rankings.`rank`, 0)) as `rank`')
             ->selectRaw('AVG(NULLIF(rankings.tier, 0)) as tier')
@@ -132,8 +135,8 @@ class CalculateRankingAveragesCommand extends Command
             ->whereNull('deleted_at')
             ->whereDate('ranked_at', '<=', $date)
             ->when($season, fn ($query) => $query->where('season', $season))
-            ->groupBy('player_id', 'season', 'type', 'ppr', 'source')
-            ->select(['player_id', 'season', 'type', 'ppr', 'source'])
+            ->groupBy('player_id', 'season', 'type', 'ppr', 'superflex', 'source')
+            ->select(['player_id', 'season', 'type', 'ppr', 'superflex', 'source'])
             ->selectRaw('MAX(ranked_at) as ranked_at');
     }
 }

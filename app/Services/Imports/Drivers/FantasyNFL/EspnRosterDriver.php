@@ -39,7 +39,7 @@ class EspnRosterDriver
     {
         $this->rosters = Data::espn()->getFantasyLeagueRosters($this->league, $this->season);
 
-        if (! $this->rosters instanceof Collection) {
+        if (!$this->rosters instanceof Collection) {
             $this->rosters = collect($this->rosters);
         }
 
@@ -61,7 +61,7 @@ class EspnRosterDriver
 
         $member = $this->league->members->firstWhere('id', $memberId);
 
-        if (! $member instanceof LeagueMember) {
+        if (!$member instanceof LeagueMember) {
             throw new Exception('Member not found: ' . $memberId);
         }
 
@@ -115,8 +115,11 @@ class EspnRosterDriver
                 'player_id' => $player['player_id'],
                 'season'    => $player['season'],
                 'week'      => $player['week'],
+                'source'    => Datum::SOURCE_ESPN->value,
+                'ppr'       => $this->league->settings?->pprValue() ?? 0,
+                'superflex' => (bool) $this->league->settings?->two_qb,
             ], [
-                'espn_projected_points' => $proj,
+                'projected_points' => $proj,
             ]);
         }
     }

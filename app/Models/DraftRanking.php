@@ -27,6 +27,7 @@ class DraftRanking extends Model
         'season'    => 'integer',
         'ranked_at' => 'date',
         'ppr'       => 'decimal:2',
+        'superflex' => 'boolean',
         'rank'      => 'integer',
         'tier'      => 'integer',
         'adp'       => 'decimal:2',
@@ -55,6 +56,40 @@ class DraftRanking extends Model
     public function scopeFromSource(Builder $query, string $source): Builder
     {
         return $query->where('source', $source);
+    }
+
+    /**
+     * Scope a query to one scoring format.
+     */
+    public function scopeForFormat(
+        Builder $query,
+        float $ppr = 0,
+        bool $superflex = false,
+        string $type = 'redraft'
+    ): Builder {
+        return $query->where('type', $type)
+            ->where('ppr', $ppr)
+            ->where('superflex', $superflex);
+    }
+
+    /**
+     * The scoring formats held for a season, as ppr and superflex pairs.
+     */
+    public function scopeAvailableFormats(Builder $query, int $season, string $type = 'redraft'): Builder
+    {
+        return $query->where('season', $season)
+            ->where('type', $type)
+            ->select(['ppr', 'superflex'])
+            ->distinct();
+    }
+
+    /**
+     * Scope a query to the newest rankings held for a season.
+     */
+    public function scopeLatestRanking(Builder $query, int $season): Builder
+    {
+        return $query->where('season', $season)
+            ->where('ranked_at', DraftRanking::where('season', $season)->max('ranked_at'));
     }
 
     /**

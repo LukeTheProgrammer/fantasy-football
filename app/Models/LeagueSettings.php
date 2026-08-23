@@ -53,4 +53,17 @@ class LeagueSettings extends Model
     {
         return $this->belongsTo(League::class);
     }
+
+    /**
+     * Points per reception this league awards, as projections and rankings
+     * express the scoring format.
+     */
+    public function pprValue(): float
+    {
+        return match ($this->ppr) {
+            'ppr'      => 1.0,
+            'half-ppr' => 0.5,
+            default    => 0.0,
+        };
+    }
 }

@@ -33,6 +33,14 @@ export interface DraftPick {
   player: Player;
 }
 
+export interface RankingFormat {
+  key: string;
+  label: string;
+  ppr: number;
+  superflex: boolean;
+  type: string;
+}
+
 export interface DraftRanking {
   id: number;
   player_id: number;
@@ -55,15 +63,21 @@ export interface DraftRanking {
 export interface PlayerProjection {
   id: number;
   player_id: number;
-  nfl_game_id: number;
+  nfl_game_id: number | null;
   season: number;
   week: number;
-  fantasy_points: string;
-  espn_projected_points: string;
-  fp_projected_points: string;
-  fp_position_rank: number;
+  source: string;
+  ppr: string;
+  superflex: boolean;
+  projected_points: string | null;
+  pos_rank: number | null;
+  pos_rank_min: number | null;
+  pos_rank_max: number | null;
+  pos_rank_avg: string | null;
+  pos_rank_std: string | null;
   created_at: string;
   updated_at: string;
+  deleted_at: string | null;
   player: Player;
   nflGame: NflGame;
 }

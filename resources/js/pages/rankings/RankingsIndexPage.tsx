@@ -1,13 +1,14 @@
 import { Heading } from '@/common/heading/Heading';
-import { PositionBadge } from '@/modules/players/components/PositionBadge';
-import { TeamBadge } from '@/modules/nfl-teams/components/TeamBadge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TeamBadge } from '@/modules/nfl-teams/components/TeamBadge';
+import { PositionBadge } from '@/modules/players/components/PositionBadge';
+import { RankingFormatSelect } from '@/modules/rankings/components/RankingFormatSelect';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
-import { type DraftRanking } from '@/types/models';
+import { type DraftRanking, type RankingFormat } from '@/types/models';
 import { PageProps } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
 import { rankItem } from '@tanstack/match-sorter-utils';
@@ -34,6 +35,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface DraftIndexProps extends PageProps {
   draftRankings: DraftRanking[];
+  format: RankingFormat;
+  formats: RankingFormat[];
 }
 
 function formatADV(adv: number | string | null) {
@@ -62,7 +65,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-export default function Drafts({ draftRankings }: DraftIndexProps) {
+export default function Drafts({ draftRankings, format, formats }: DraftIndexProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -167,11 +170,14 @@ export default function Drafts({ draftRankings }: DraftIndexProps) {
         <Head title="Draft Rankings" />
 
         <div className="flex-1 p-8">
-          <Heading title="Draft Rankings" description="View Fantasy Player Rankings" />
+          <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
+            <Heading title="Draft Rankings" description="View Fantasy Player Rankings" />
+            <RankingFormatSelect formats={formats} format={format} routeName="rankings.index" />
+          </div>
 
           <div className="mb-8 rounded-lg border bg-card">
             <div className="border-b p-6 py-12 text-center">
-              <h3 className="mb-2 text-lg font-medium">You haven't imported any rankings yet.</h3>
+              <h3 className="mb-2 text-lg font-medium">No {format.label} rankings have been imported yet.</h3>
               <p className="mb-6 text-gray-500 dark:text-gray-400">Import rankings using the artisan console.</p>
             </div>
           </div>
@@ -185,14 +191,17 @@ export default function Drafts({ draftRankings }: DraftIndexProps) {
       <Head title="Draft Rankings" />
 
       <div className="flex-1 p-8">
-        <Heading title="Draft Rankings" description="View Fantasy Player Rankings" />
+        <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
+          <Heading title="Draft Rankings" description="View Fantasy Player Rankings" />
+          <RankingFormatSelect formats={formats} format={format} routeName="rankings.index" />
+        </div>
 
         <div className="grid w-full grid-cols-1">
           <Card className="flex max-h-[calc(100vh-12rem)] flex-col">
             <CardHeader className="py-0">
               <CardTitle>
                 <div className="flex items-center justify-between">
-                  <div>Draft Rankings</div>
+                  <div>{format.label}</div>
                   <div className="relative max-w-sm">
                     <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
                     <Input placeholder="Search players..." value={globalFilter ?? ''} onChange={handleSearchChange} className="max-w-sm pl-8" />

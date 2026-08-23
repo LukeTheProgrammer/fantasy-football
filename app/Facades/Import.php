@@ -2,11 +2,13 @@
 
 namespace App\Facades;
 
-use App\Services\Imports\Models\DraftRankingsImport;
+use App\Services\Imports\Importers\FantasyProsProjectionsImporter;
+use App\Services\Imports\Importers\FantasyProsRankingsImporter;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static DraftRankingsImport draftRankingsImport(string $driver, ...$args): DraftRankingsImport
+ * @method static FantasyProsProjectionsImporter fantasyProsProjections()
+ * @method static FantasyProsRankingsImporter fantasyProsRankings()
  */
 class Import extends Facade
 {

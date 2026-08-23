@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Datum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,12 +25,16 @@ class PlayerProjection extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'season'                => 'integer',
-        'week'                  => 'integer',
-        'fantasy_points'        => 'decimal:2',
-        'espn_projected_points' => 'decimal:2',
-        'fp_projected_points'   => 'decimal:2',
-        'fp_position_rank'      => 'integer',
+        'season'           => 'integer',
+        'week'             => 'integer',
+        'ppr'              => 'decimal:2',
+        'superflex'        => 'boolean',
+        'projected_points' => 'decimal:2',
+        'pos_rank'         => 'integer',
+        'pos_rank_min'     => 'integer',
+        'pos_rank_max'     => 'integer',
+        'pos_rank_avg'     => 'decimal:2',
+        'pos_rank_std'     => 'decimal:2',
     ];
 
     /* ===[ Relationships ]=== */
@@ -56,7 +61,7 @@ class PlayerProjection extends Model
      * Scope a query by player_id.
      *
      * @param Builder $query
-     * @param integer|string|Player $player
+     * @param int|string|Player $player
      *
      * @return Builder
      */
@@ -69,7 +74,7 @@ class PlayerProjection extends Model
      * Scope a query by nfl_game_id.
      *
      * @param Builder $query
-     * @param integer|string|NFLGame $game
+     * @param int|string|NFLGame $game
      *
      * @return Builder
      */
@@ -86,5 +91,21 @@ class PlayerProjection extends Model
     public function scopeForWeek(Builder $query, int $week): Builder
     {
         return $query->where('week', $week);
+    }
+
+    /**
+     * Scope a query to projections made by one source.
+     */
+    public function scopeFromSource(Builder $query, string|Datum $source): Builder
+    {
+        return $query->where('source', $source instanceof Datum ? $source->value : $source);
+    }
+
+    /**
+     * Scope a query to a single scoring format.
+     */
+    public function scopeForFormat(Builder $query, float $ppr = 0, bool $superflex = false): Builder
+    {
+        return $query->where('ppr', $ppr)->where('superflex', $superflex);
     }
 }

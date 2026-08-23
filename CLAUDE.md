@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A fantasy football draft assistant: Laravel 13 + Inertia + React 19 (TypeScript), Tailwind 4, Vite. It ingests NFL and fantasy-league data from third parties (ESPN, FantasyPros, Pro Football Reference, CBS) via artisan commands, normalizes it into local models, and serves draft tooling (rankings, draft board, draft room) over Inertia pages.
 
+**Single-user by design.** The app is the owner's personal tool, not a multi-tenant product. Prefer the simpler option whenever a choice trades simplicity for multi-user generality: no per-user credential vaults, no tenant scoping, no onboarding flows. Auth exists because Laravel ships with it, not because the app serves an audience. Long-running imports may assume one operator at a terminal.
+
 ## Commands
 
 Everything runs through Sail (see `README.md` for first-time setup, ESPN cookie requirements, and the MySQL socket-lock workaround).

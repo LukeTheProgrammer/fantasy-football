@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\Datum;
 use App\Facades\Data;
 use App\Models\DraftPick;
 use App\Models\LeagueMember;
@@ -34,7 +35,7 @@ class LeagueShowResource extends JsonResource
         $this->playerProjections = PlayerProjection::forSeason($this->season)
             ->get()
             ->groupBy('player_id')
-            ->map(fn ($projections) => $projections->keyBy('week'));
+            ->map(fn ($projections) => $projections->groupBy('week'));
 
         $this->data = Data::source($this->platform);
 
@@ -123,9 +124,9 @@ class LeagueShowResource extends JsonResource
     private function rankName(int|string $rank)
     {
         return match ($rank) {
-            1 => '1st',
-            2 => '2nd',
-            3 => '3rd',
+            1       => '1st',
+            2       => '2nd',
+            3       => '3rd',
             default => $rank . 'th',
         };
     }
@@ -170,22 +171,22 @@ class LeagueShowResource extends JsonResource
 
             $roster->map(function (LeagueMemberRoster $roster) use (&$weekRoster) {
                 $data = [
-                    'id'                    => $roster->id,
-                    'league_member_id'      => $roster->league_member_id,
-                    'player_id'             => $roster->player_id,
-                    'nfl_game_id'           => $roster->nfl_game_id,
-                    'season'                => $roster->season,
-                    'week'                  => $roster->week,
-                    'lineup_slot_id'        => $roster->lineup_slot_id,
-                    'lineup_slot_name'      => $this->data->lineupSlotName($roster->lineup_slot_id),
-                    'position_rank'         => $roster->position_rank,
-                    'overall_rank'          => $roster->overall_rank,
-                    'percent_owned'         => $roster->percent_owned,
-                    'percent_started'       => $roster->percent_started,
-                    'fantasy_points'        => $roster->fantasy_points,
-                    'nfl_game'              => $this->formatNflGame($roster->nflGame),
-                    'player'                => $this->formatPlayer($roster->player),
-                    'player_projection'     => $this->getPlayerProjection($roster->player, $roster->week),
+                    'id'                => $roster->id,
+                    'league_member_id'  => $roster->league_member_id,
+                    'player_id'         => $roster->player_id,
+                    'nfl_game_id'       => $roster->nfl_game_id,
+                    'season'            => $roster->season,
+                    'week'              => $roster->week,
+                    'lineup_slot_id'    => $roster->lineup_slot_id,
+                    'lineup_slot_name'  => $this->data->lineupSlotName($roster->lineup_slot_id),
+                    'position_rank'     => $roster->position_rank,
+                    'overall_rank'      => $roster->overall_rank,
+                    'percent_owned'     => $roster->percent_owned,
+                    'percent_started'   => $roster->percent_started,
+                    'fantasy_points'    => $roster->fantasy_points,
+                    'nfl_game'          => $this->formatNflGame($roster->nflGame),
+                    'player'            => $this->formatPlayer($roster->player),
+                    'player_projection' => $this->getPlayerProjection($roster->player, $roster->week),
                 ];
 
                 $points = Arr::get($data, 'fantasy_points', 0);
@@ -235,99 +236,63 @@ class LeagueShowResource extends JsonResource
 
     private function getPlayerProjection(Player $player, int $week)
     {
-        $projections = $this->playerProjections->get($player->id);
-        $playerProjection = $projections?->get($week);
+        $projections = $this->playerProjections->get($player->id)?->get($week);
 
-        if (! $playerProjection) {
+        if (empty($projections)) {
             return [];
         }
 
-        $data = [
-            'id'          => $playerProjection->id,
-            'player_id'   => $playerProjection->player_id,
-            'nfl_game_id' => $playerProjection->nfl_game_id,
-            'season'      => $playerProjection->season,
-            'week'        => $playerProjection->week,
-            'espn_points' => $playerProjection->espn_projected_points,
+        $consensus = $this->consensusProjection($projections);
+        $espn = $projections->firstWhere('source', Datum::SOURCE_ESPN->value);
+        $projection = $consensus ?? $espn;
 
-            'fp_points'   => $this->firstProjection([
-                $playerProjection->fp_projected_points,
-                $playerProjection->fp_half_projected_points,
-                $playerProjection->fp_2qb_projected_points,
-                $playerProjection->fp_ppr_projected_points,
-            ]),
-            'fp_pos_rank'   => $this->firstProjection([
-                $playerProjection->fp_pos_rank,
-                $playerProjection->fp_half_pos_rank,
-                $playerProjection->fp_2qb_pos_rank,
-                $playerProjection->fp_ppr_pos_rank,
-            ]),
-            'fp_pos_rank_min' => $this->firstProjection([
-                $playerProjection->fp_pos_rank_min,
-                $playerProjection->fp_half_pos_rank_min,
-                $playerProjection->fp_2qb_pos_rank_min,
-                $playerProjection->fp_ppr_pos_rank_min,
-            ]),
-            'fp_pos_rank_max' => $this->firstProjection([
-                $playerProjection->fp_pos_rank_max,
-                $playerProjection->fp_half_pos_rank_max,
-                $playerProjection->fp_2qb_pos_rank_max,
-                $playerProjection->fp_ppr_pos_rank_max,
-            ]),
-            'fp_pos_rank_avg' => $this->firstProjection([
-                $playerProjection->fp_pos_rank_avg,
-                $playerProjection->fp_half_pos_rank_avg,
-                $playerProjection->fp_2qb_pos_rank_avg,
-                $playerProjection->fp_ppr_pos_rank_avg,
-            ]),
-            'fp_pos_rank_std' => $this->firstProjection([
-                $playerProjection->fp_pos_rank_std,
-                $playerProjection->fp_half_pos_rank_std,
-                $playerProjection->fp_2qb_pos_rank_std,
-                $playerProjection->fp_ppr_pos_rank_std,
-            ]),
-
-            'fp_2qb_projected_points' => $playerProjection->fp_2qb_projected_points,
-            'fp_2qb_pos_rank' => $playerProjection->fp_2qb_pos_rank,
-            'fp_2qb_pos_rank_min' => $playerProjection->fp_2qb_pos_rank_min,
-            'fp_2qb_pos_rank_max' => $playerProjection->fp_2qb_pos_rank_max,
-            'fp_2qb_pos_rank_avg' => $playerProjection->fp_2qb_pos_rank_avg,
-            'fp_2qb_pos_rank_std' => $playerProjection->fp_2qb_pos_rank_std,
-
-            'fp_ppr_projected_points' => $playerProjection->fp_ppr_projected_points,
-            'fp_ppr_pos_rank' => $playerProjection->fp_ppr_pos_rank,
-            'fp_ppr_pos_rank_min' => $playerProjection->fp_ppr_pos_rank_min,
-            'fp_ppr_pos_rank_max' => $playerProjection->fp_ppr_pos_rank_max,
-            'fp_ppr_pos_rank_avg' => $playerProjection->fp_ppr_pos_rank_avg,
-            'fp_ppr_pos_rank_std' => $playerProjection->fp_ppr_pos_rank_std,
-
-            'fp_half_projected_points' => $playerProjection->fp_half_projected_points,
-            'fp_half_pos_rank' => $playerProjection->fp_half_pos_rank,
-            'fp_half_pos_rank_min' => $playerProjection->fp_half_pos_rank_min,
-            'fp_half_pos_rank_max' => $playerProjection->fp_half_pos_rank_max,
-            'fp_half_pos_rank_avg' => $playerProjection->fp_half_pos_rank_avg,
-            'fp_half_pos_rank_std' => $playerProjection->fp_half_pos_rank_std,
-
-            'fp_projected_points' => $playerProjection->fp_projected_points,
-            'fp_pos_rank' => $playerProjection->fp_pos_rank,
-            'fp_pos_rank_min' => $playerProjection->fp_pos_rank_min,
-            'fp_pos_rank_max' => $playerProjection->fp_pos_rank_max,
-            'fp_pos_rank_avg' => $playerProjection->fp_pos_rank_avg,
-            'fp_pos_rank_std' => $playerProjection->fp_pos_rank_std,
-        ];
-
-        return $data;
-    }
-
-    private function firstProjection(array $data)
-    {
-        foreach ($data as $proj) {
-            if (! empty($proj) && $proj > 0) {
-                return $proj;
-            }
+        if (!$projection instanceof PlayerProjection) {
+            return [];
         }
 
-        return 0;
+        return [
+            'id'          => $projection->id,
+            'player_id'   => $projection->player_id,
+            'nfl_game_id' => $projection->nfl_game_id,
+            'season'      => $projection->season,
+            'week'        => $projection->week,
+
+            'espn_points' => $espn?->projected_points ?? 0,
+
+            'fp_points'       => $consensus?->projected_points ?? 0,
+            'fp_pos_rank'     => $consensus?->pos_rank ?? 0,
+            'fp_pos_rank_min' => $consensus?->pos_rank_min ?? 0,
+            'fp_pos_rank_max' => $consensus?->pos_rank_max ?? 0,
+            'fp_pos_rank_avg' => $consensus?->pos_rank_avg ?? 0,
+            'fp_pos_rank_std' => $consensus?->pos_rank_std ?? 0,
+        ];
+    }
+
+    /**
+     * The consensus projection scored the way this league scores, falling back
+     * to any consensus projection when that exact format was not imported.
+     */
+    private function consensusProjection(Collection $projections): ?PlayerProjection
+    {
+        $consensus = $projections->where('source', Datum::SOURCE_FANTASY_PROS->value);
+
+        return $consensus->first(fn (PlayerProjection $projection) => (
+            (float) $projection->ppr === $this->scoringPpr() &&
+            $projection->superflex === $this->isSuperflex()
+        )) ?? $consensus->first();
+    }
+
+    /**
+     * Points per reception this league awards.
+     */
+    private function scoringPpr(): float
+    {
+        return $this->settings?->pprValue() ?? 0.0;
+    }
+
+    private function isSuperflex(): bool
+    {
+        return (bool) $this->settings?->two_qb;
     }
 
     private function formatDraftPicks(Collection $picks)
@@ -358,7 +323,7 @@ class LeagueShowResource extends JsonResource
         return [
             'id'           => $game->id,
             'espn_id'      => $game->espn_id,
-            'season'         => $game->season,
+            'season'       => $game->season,
             'week'         => $game->week,
             'starts_at'    => $game->starts_at,
             'day'          => $gameTime->format('D'),

@@ -27,6 +27,7 @@ class PlayerRankingAverage extends Model
         'season'    => 'integer',
         'ranked_on' => 'date',
         'ppr'       => 'decimal:2',
+        'superflex' => 'boolean',
         'rank'      => 'decimal:2',
         'tier'      => 'decimal:2',
         'adp'       => 'decimal:2',
@@ -52,9 +53,15 @@ class PlayerRankingAverage extends Model
     /**
      * Scope a query to a single scoring format.
      */
-    public function scopeForFormat(Builder $query, string $type = 'redraft', float $ppr = 0): Builder
-    {
-        return $query->where('type', $type)->where('ppr', $ppr);
+    public function scopeForFormat(
+        Builder $query,
+        string $type = 'redraft',
+        float $ppr = 0,
+        bool $superflex = false
+    ): Builder {
+        return $query->where('type', $type)
+            ->where('ppr', $ppr)
+            ->where('superflex', $superflex);
     }
 
     /**

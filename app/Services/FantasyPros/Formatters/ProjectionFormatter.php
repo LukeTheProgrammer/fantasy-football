@@ -2,9 +2,8 @@
 
 namespace App\Services\FantasyPros\Formatters;
 
-use App\Facades\Action;
+use App\Facades\Player as PlayerFacade;
 use App\Models\Player;
-use App\Models\PlayerMissing;
 use App\Services\FantasyPros\Data\PlayerData;
 use Illuminate\Support\Collection;
 
@@ -14,7 +13,7 @@ class ProjectionFormatter
 
     public function __construct(protected array|Collection $players, protected int $season, protected int $week)
     {
-        if (! $this->players instanceof Collection) {
+        if (!$this->players instanceof Collection) {
             $this->players = collect($this->players);
         }
     }
@@ -43,7 +42,7 @@ class ProjectionFormatter
     {
         $playerModel = $this->findPlayerModel($player);
 
-        if (! $playerModel instanceof Player) {
+        if (!$playerModel instanceof Player) {
             return;
         }
 
@@ -62,33 +61,11 @@ class ProjectionFormatter
 
     private function findPlayerModel(PlayerData $player): ?Player
     {
-        $playerModel = Player::query()
-            ->where('fp_id', $player->player_id)
-            ->first();
-
-        if (! $playerModel instanceof Player) {
-            $playerModel = Player::query()
-                ->where('full_name', $player->player_name)
-                ->first();
-        }
-
-        if (! $playerModel instanceof Player) {
-            Action::model(PlayerMissing::class)->upsert(
-                data: $player->toArray(),
-                source: get_called_class(),
-            );
-
-            dump([
-                'player' => 'Not Found',
-                'fp_id' => $player->player_id,
-                'player_name' => $player->player_name,
-                'player_position_id' => $player->player_position_id,
-                'player_team_id' => $player->player_team_id,
-            ]);
-
-            return null;
-        }
-
-        return $playerModel;
+        return PlayerFacade::find([
+            'fp_id'       => $player->player_id,
+            'full_name'   => $player->player_name,
+            'position_id' => $player->player_position_id,
+            'team_id'     => $player->player_team_id,
+        ], ['source' => static::class]);
     }
 }

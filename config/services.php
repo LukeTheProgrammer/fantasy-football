@@ -15,10 +15,10 @@ return [
     */
 
     'espn' => [
-        'default_s2' => env('ESPN_DEFAULT_S2'),
-        'default_swid' => env('ESPN_DEFAULT_SWID'),
+        'default_s2'        => env('ESPN_DEFAULT_S2'),
+        'default_swid'      => env('ESPN_DEFAULT_SWID'),
         'default_league_id' => env('ESPN_DEFAULT_LEAGUE_ID'),
-        'retry_limit' => env('ESPN_RETRY_LIMIT', 2),
+        'retry_limit'       => env('ESPN_RETRY_LIMIT', 2),
     ],
 
     'postmark' => [
@@ -33,6 +33,12 @@ return [
 
     'resend' => [
         'key' => env('RESEND_KEY'),
+    ],
+
+    'fantasy_pros' => [
+        'key'      => env('FP_KEY'),
+        'base_url' => env('FP_BASE_URL', 'https://api.fantasypros.com/public/v2/json'),
+        'mcp_url'  => env('FP_MCP_URL', 'https://api.fantasypros.com/mcp'),
     ],
 
     'slack' => [

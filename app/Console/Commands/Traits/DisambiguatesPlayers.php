@@ -8,6 +8,8 @@ use App\Models\PlayerAlias;
 use App\Models\Position;
 use App\Models\Team;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 
@@ -22,8 +24,8 @@ trait DisambiguatesPlayers
     ): Player|bool {
         $this->disambiguator = [
             'playerName' => $playerName,
-            'position' => $position,
-            'team' => $team,
+            'position'   => $position,
+            'team'       => $team,
         ];
 
         $player = $this->findPlayerByFullName($playerName);
@@ -42,6 +44,7 @@ trait DisambiguatesPlayers
 
         if ($player instanceof Player) {
             $this->savePlayerAlias($player, $playerName);
+
             return $this->returnPlayer($player);
         }
 
@@ -58,6 +61,7 @@ trait DisambiguatesPlayers
 
         if ($playerQuery->count() > 1) {
             $players = $playerQuery->get();
+
             return $this->selectPlayerFromList($fullName, $players);
         }
 
@@ -79,13 +83,17 @@ trait DisambiguatesPlayers
 
             if ($aliasModel->player instanceof Player) {
                 return $aliasModel->player;
-            } else {
-                dd($aliasModel->toArray());
             }
+
+            // Alias points at a player that no longer exists.
+            Log::warning('Orphaned player alias', $aliasModel->toArray());
+
+            return false;
         }
 
         if ($queryCount > 1) {
             $aliases = $aliasQuery->get();
+
             return $this->selectPlayerAliasFromList($alias, $aliases);
         }
 
@@ -99,8 +107,8 @@ trait DisambiguatesPlayers
         }
 
         $playerQuery = Player::query()
-            ->when($position !== null, fn($q) => $q->where('position_id', '=', $position->id))
-            ->when($team !== null, fn($q) => $q->where('team_id', '=', $team->id));
+            ->when($position !== null, fn ($q) => $q->where('position_id', '=', $position->id))
+            ->when($team !== null, fn ($q) => $q->where('team_id', '=', $team->id));
 
         $queryCount = $playerQuery->count();
 
@@ -110,6 +118,7 @@ trait DisambiguatesPlayers
 
         if ($queryCount > 1) {
             $players = $playerQuery->get();
+
             return $this->selectPlayerFromList($playerName, $players);
         }
 
@@ -118,12 +127,12 @@ trait DisambiguatesPlayers
 
     public function selectPlayerFromList(string $playerName, Collection $players): Player|bool
     {
-        if (! $this->input->isInteractive()) {
+        if (!$this->input->isInteractive()) {
             return false;
         }
 
         $options = $players->mapWithKeys(function ($player) {
-            $label = implode (' ', [
+            $label = implode(' ', [
                 $player->full_name,
                 $player->position->id,
                 $player->team->id,
@@ -153,12 +162,12 @@ trait DisambiguatesPlayers
 
     public function selectPlayerAliasFromList(string $playerName, Collection $aliases): Player|bool
     {
-        if (! $this->input->isInteractive()) {
+        if (!$this->input->isInteractive()) {
             return false;
         }
 
         $options = $aliases->map(function ($alias) {
-            $label = implode (' ', [
+            $label = implode(' ', [
                 $alias->name,
                 $alias->position->id,
                 $alias->team->id,
