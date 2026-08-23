@@ -1,16 +1,9 @@
+import { c } from '@/common/helpers/conv';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MemberTabHeader } from '@/modules/leagues/components/tabs/MemberTabHeader';
 import { TeamAvatar } from '@/modules/leagues/components/TeamAvatar';
-import { c } from '@/common/helpers/conv';
 import { type LeagueMatchupResource, type LeagueMemberResource, type LeagueResource, type LeagueTeamResource } from '@/types/resources';
 import { useMemo } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 
 interface MatchupsTabProps {
   league: LeagueResource;
@@ -39,7 +32,6 @@ export function MatchupsTab({ league, selectedMember }: MatchupsTabProps) {
       return { matchups: [] as Matchup[] };
     }
 
-
     const leagueMatchups: LeagueMatchupResource[] = [];
     const matchups: Matchup[] = [];
 
@@ -56,7 +48,6 @@ export function MatchupsTab({ league, selectedMember }: MatchupsTabProps) {
     });
 
     leagueMatchups.sort((a, b) => a.week - b.week);
-
 
     leagueMatchups.map((m) => {
       const homeTeam = m.home_team.id === selectedMember.id ? 'teamA' : 'teamB';
@@ -124,17 +115,13 @@ export function MatchupsTab({ league, selectedMember }: MatchupsTabProps) {
                     <div>
                       <p>
                         <span className="font-bold">{matchup.teamB.team.team_name}</span>
-                        <span className="text-muted-foreground pl-2">{matchup.teamB.team.owner_name}</span>
+                        <span className="pl-2 text-muted-foreground">{matchup.teamB.team.owner_name}</span>
                       </p>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="font-bold">
-                  {matchup.complete && (matchup.teamA.points)}
-                </TableCell>
-                <TableCell className="font-bold">
-                  {matchup.complete && (matchup.teamB.points)}
-                </TableCell>
+                <TableCell className="font-bold">{matchup.complete && matchup.teamA.points}</TableCell>
+                <TableCell className="font-bold">{matchup.complete && matchup.teamB.points}</TableCell>
                 <TableCell className="min-w-10 pl-2 text-center font-bold">
                   {!matchup.complete ? '--' : <>{matchup.teamA.points > matchup.teamB.points ? 'W' : 'L'}</>}
                 </TableCell>

@@ -1,15 +1,8 @@
-import { TeamAvatar } from '@/modules/leagues/components/TeamAvatar';
-import { useMemo } from 'react';
-import { type LeagueResource, type LeagueMemberResource } from '@/types/resources';
 import { rankName } from '@/common/helpers/rankName';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TeamAvatar } from '@/modules/leagues/components/TeamAvatar';
+import { type LeagueMemberResource, type LeagueResource } from '@/types/resources';
+import { useMemo } from 'react';
 
 interface StandingsTabProps {
   league: LeagueResource;
@@ -48,9 +41,8 @@ export function StandingsTab({ league }: StandingsTabProps) {
   }, [league.members]);
 
   return (
-    <div className="w-full p-4 mb-8 rounded-lg border bg-card">
-
-      <div className="w-full flex items-center justify-start mb-6">
+    <div className="mb-8 w-full rounded-lg border bg-card p-4">
+      <div className="mb-6 flex w-full items-center justify-start">
         <h4 className="text-lg font-semibold">Standings</h4>
       </div>
 
@@ -67,25 +59,23 @@ export function StandingsTab({ league }: StandingsTabProps) {
         <TableBody>
           {standings.map((standings, k) => (
             <TableRow key={k}>
-              <TableCell>
-                {rankName(k + 1)}
-              </TableCell>
+              <TableCell>{rankName(k + 1)}</TableCell>
               <TableCell>
                 <div className="flex items-center justify-start space-x-2">
                   <TeamAvatar member={standings.member} />
                   <div className="ml-2">
                     <span className="text-lg font-bold">{standings.member.team_name}</span>
-                    <span className="text-xs text-muted-foreground pl-2">{standings.member.owner_name}</span>
+                    <span className="pl-2 text-xs text-muted-foreground">{standings.member.owner_name}</span>
                   </div>
                 </div>
               </TableCell>
               <TableCell>
                 <span className="text-lg font-extrabold">{standings.pointsFor}</span>
-                <span className="text-xs text-muted-foreground pl-2"> ({standings.pfRank})</span>
+                <span className="pl-2 text-xs text-muted-foreground"> ({standings.pfRank})</span>
               </TableCell>
               <TableCell>
                 <span className="text-lg font-extrabold">{standings.pointsAgainst}</span>
-                <span className="text-xs text-muted-foreground pl-2"> ({standings.paRank})</span>
+                <span className="pl-2 text-xs text-muted-foreground"> ({standings.paRank})</span>
               </TableCell>
               <TableCell>
                 <span className="text-lg font-extrabold">

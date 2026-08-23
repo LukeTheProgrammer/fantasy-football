@@ -1,15 +1,12 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
-import { Heading } from '@/common/heading/Heading';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import { type PlayerAlias } from '@/types/models';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { FormDialog } from '@/common/form-dialog/FormDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { FormDialog } from '@/common/form-dialog/FormDialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AliasForm, type AliasFormData } from '@/modules/players/components/AliasForm';
-import { useState, useMemo, useEffect } from 'react';
+import { type BreadcrumbItem } from '@/types';
+import { type PlayerAlias } from '@/types/models';
 import axios from 'axios';
+import { useEffect, useMemo, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -41,11 +38,7 @@ export function PlayerAliases() {
       const updatedAlias = response.data;
 
       // Update the aliases data in state
-      setAliasesData(prevAliases =>
-        prevAliases.map(alias =>
-          alias.id === updatedAlias.id ? updatedAlias : alias
-        )
-      );
+      setAliasesData((prevAliases) => prevAliases.map((alias) => (alias.id === updatedAlias.id ? updatedAlias : alias)));
 
       setIsEditDialogOpen(false);
     } catch (error) {
@@ -63,11 +56,12 @@ export function PlayerAliases() {
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(alias =>
-        alias.name.toLowerCase().includes(query) ||
-        alias.player?.full_name.toLowerCase().includes(query) ||
-        alias.player?.position?.name.toLowerCase().includes(query) ||
-        alias.player?.team?.name.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (alias) =>
+          alias.name.toLowerCase().includes(query) ||
+          alias.player?.full_name.toLowerCase().includes(query) ||
+          alias.player?.position?.name.toLowerCase().includes(query) ||
+          alias.player?.team?.name.toLowerCase().includes(query),
       );
     }
 
@@ -113,7 +107,7 @@ export function PlayerAliases() {
   }, [searchQuery]);
   return (
     <div className="rounded-lg border bg-card p-6">
-      <div className="flex justify-between items-center gap-6 mb-6">
+      <div className="mb-6 flex items-center justify-between gap-6">
         <h2>Player Aliases</h2>
         <Input
           type="search"
@@ -128,17 +122,13 @@ export function PlayerAliases() {
         {isLoading ? (
           <div className="py-12 text-center">
             <h3 className="mb-2 text-lg font-medium">Loading aliases...</h3>
-            <p className="text-gray-500 dark:text-gray-400">
-              Please wait while we fetch the player aliases.
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">Please wait while we fetch the player aliases.</p>
           </div>
         ) : currentAliases.length === 0 ? (
           <div className="py-12 text-center">
             <h3 className="mb-2 text-lg font-medium">No aliases found</h3>
             <p className="text-gray-500 dark:text-gray-400">
-              {!searchQuery.trim()
-                ? 'There are currently no player aliases in the database.'
-                : 'No aliases found for the search query.'}
+              {!searchQuery.trim() ? 'There are currently no player aliases in the database.' : 'No aliases found for the search query.'}
             </p>
           </div>
         ) : (
@@ -183,18 +173,13 @@ export function PlayerAliases() {
 
         {/* Pagination Controls */}
         {totalAliases > aliasesPerPage && (
-          <div className="flex items-center justify-between mt-6">
+          <div className="mt-6 flex items-center justify-between">
             <div className="text-sm text-gray-500 dark:text-gray-400">
               Showing {startIndex + 1} to {Math.min(endIndex, totalAliases)} of {totalAliases} aliases
             </div>
 
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
+              <Button variant="outline" size="sm" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
                 Previous
               </Button>
 
@@ -214,10 +199,10 @@ export function PlayerAliases() {
                   return (
                     <Button
                       key={pageNumber}
-                      variant={currentPage === pageNumber ? "default" : "outline"}
+                      variant={currentPage === pageNumber ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setCurrentPage(pageNumber)}
-                      className="w-8 h-8 p-0"
+                      className="h-8 w-8 p-0"
                     >
                       {pageNumber}
                     </Button>
@@ -228,7 +213,7 @@ export function PlayerAliases() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
               >
                 Next
@@ -250,11 +235,15 @@ export function PlayerAliases() {
         <AliasForm
           formData={editForm}
           onChange={setEditForm}
-          playerInfo={selectedAlias?.player ? {
-            full_name: selectedAlias.player.full_name,
-            position: selectedAlias.player.position_id,
-            team: selectedAlias.player.team_id
-          } : undefined}
+          playerInfo={
+            selectedAlias?.player
+              ? {
+                  full_name: selectedAlias.player.full_name,
+                  position: selectedAlias.player.position_id,
+                  team: selectedAlias.player.team_id,
+                }
+              : undefined
+          }
         />
       </FormDialog>
     </div>

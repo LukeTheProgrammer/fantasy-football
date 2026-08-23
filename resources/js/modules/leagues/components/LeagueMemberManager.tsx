@@ -6,8 +6,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Shield } from 'lucide-react';
-import { toast } from 'sonner';
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 // Import the LeagueMember type from models.d.ts
 import { type LeagueMember } from '@/types/models';
@@ -78,7 +78,7 @@ export function LeagueMemberManager({ members, maxTeams, onMembersChange }: Leag
       toast('Draft position updated successfully');
 
       // Update the member in the list
-      onMembersChange(members.map((m) => (m.id === selectedMember.id ? response.data as LeagueMember : m)));
+      onMembersChange(members.map((m) => (m.id === selectedMember.id ? (response.data as LeagueMember) : m)));
 
       setDraftPositionDialogOpen(false);
     } catch (err: unknown) {
@@ -106,30 +106,28 @@ export function LeagueMemberManager({ members, maxTeams, onMembersChange }: Leag
       </div>
 
       {/* IDK why I had to do it this way, but it wasn't working otherwise */}
-      <div className={teamGridCols ? `grid gap-4 grid-cols-${teamColumns}` : 'grid gap-4 grid-cols-3'}>
+      <div className={teamGridCols ? `grid gap-4 grid-cols-${teamColumns}` : 'grid grid-cols-3 gap-4'}>
         {members.map((member) => (
           <div key={member.id} className="col-span-1 flex items-center justify-between rounded-md border p-3">
-            <div className="flex items-center justify-between w-full">
+            <div className="flex w-full items-center justify-between">
               <div className="grow-0">
                 <Avatar>
                   {member.team_logo ? <AvatarImage src={member.team_logo} alt={member.team_name} /> : null}
                   <AvatarFallback>{member.team_name.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
               </div>
-              <div className="grow-1 grid grid-cols-4 pl-2">
+              <div className="grid grow-1 grid-cols-4 pl-2">
                 <div className="col-span-3">
                   <p className="font-medium">{member.team_name}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {member.user?.name}
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{member.user?.name}</p>
                 </div>
                 <div className="col-span-1 flex items-start justify-end">
-                    {member.is_admin && (
-                      <Badge variant="outline" className="ml-2">
-                        <Shield size={12} className="mr-1" />
-                        Admin
-                      </Badge>
-                    )}
+                  {member.is_admin && (
+                    <Badge variant="outline" className="ml-2">
+                      <Shield size={12} className="mr-1" />
+                      Admin
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>

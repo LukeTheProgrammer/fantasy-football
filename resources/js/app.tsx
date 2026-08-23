@@ -3,10 +3,10 @@ import '../css/app.css';
 // Import Axios configuration
 import '@/common/helpers/axios';
 
+import { initializeTheme } from '@/common/appearance/useAppearance';
 import { createInertiaApp, type ResolvedComponent } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
-import { initializeTheme } from '@/common/appearance/useAppearance';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

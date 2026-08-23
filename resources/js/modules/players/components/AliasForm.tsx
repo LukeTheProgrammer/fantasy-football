@@ -1,8 +1,8 @@
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
 
 interface AliasFormData {
   name: string;
@@ -36,7 +36,7 @@ export function AliasForm({ formData, onChange, playerInfo }: AliasFormProps) {
   const handleInputChange = (field: keyof AliasFormData, value: string) => {
     const updatedData = {
       ...formData,
-      [field]: value
+      [field]: value,
     };
 
     console.log(updatedData);
@@ -50,7 +50,7 @@ export function AliasForm({ formData, onChange, playerInfo }: AliasFormProps) {
     setIsSearching(true);
     try {
       const response = await axios.post('/api/players/search', {
-        search: searchQuery
+        search: searchQuery,
       });
       setSearchResults(response.data);
       setShowResults(true);
@@ -65,7 +65,7 @@ export function AliasForm({ formData, onChange, playerInfo }: AliasFormProps) {
   const handleSelectPlayer = (player: Player) => {
     const updatedData = {
       ...formData,
-      player_id: player.id.toString()
+      player_id: player.id.toString(),
     };
     onChange(updatedData);
     setSelectedPlayer(player);
@@ -85,18 +85,13 @@ export function AliasForm({ formData, onChange, playerInfo }: AliasFormProps) {
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
         <Label htmlFor="alias-name">Alias Name</Label>
-        <Input
-          id="alias-name"
-          value={formData.name}
-          onChange={(e) => handleInputChange('name', e.target.value)}
-          placeholder="Enter alias name..."
-        />
+        <Input id="alias-name" value={formData.name} onChange={(e) => handleInputChange('name', e.target.value)} placeholder="Enter alias name..." />
       </div>
 
       {playerInfo && (
         <div className="grid gap-2">
           <Label>Current Player</Label>
-          <div className="text-sm text-gray-600 dark:text-gray-400 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+          <div className="rounded-md bg-gray-50 p-3 text-sm text-gray-600 dark:bg-gray-800 dark:text-gray-400">
             {playerInfo.full_name} {playerInfo.position} {playerInfo.team}
           </div>
         </div>
@@ -112,22 +107,15 @@ export function AliasForm({ formData, onChange, playerInfo }: AliasFormProps) {
             placeholder="Search for a player..."
             className="flex-1"
           />
-          <Button
-            type="button"
-            onClick={handleSearch}
-            disabled={isSearching || !searchQuery.trim()}
-            variant="outline"
-          >
+          <Button type="button" onClick={handleSearch} disabled={isSearching || !searchQuery.trim()} variant="outline">
             {isSearching ? 'Searching...' : 'Search'}
           </Button>
         </div>
 
         {showResults && (
-          <div className="mt-2 border rounded-md max-h-48 overflow-y-auto">
+          <div className="mt-2 max-h-48 overflow-y-auto rounded-md border">
             {searchResults.length === 0 ? (
-              <div className="p-3 text-sm text-gray-500 dark:text-gray-400">
-                No players found for "{searchQuery}"
-              </div>
+              <div className="p-3 text-sm text-gray-500 dark:text-gray-400">No players found for "{searchQuery}"</div>
             ) : (
               <div className="divide-y">
                 {searchResults.map((player) => (
@@ -135,7 +123,7 @@ export function AliasForm({ formData, onChange, playerInfo }: AliasFormProps) {
                     key={player.id}
                     type="button"
                     onClick={() => handleSelectPlayer(player)}
-                    className="w-full p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    className="w-full p-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <div className="font-medium">{player.full_name}</div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -152,9 +140,9 @@ export function AliasForm({ formData, onChange, playerInfo }: AliasFormProps) {
       {selectedPlayer && (
         <div className="grid gap-2">
           <Label>New Player</Label>
-          <div className="text-sm text-green-700 dark:text-green-400 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+          <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-4 w-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               <span className="font-medium">Selected:</span>

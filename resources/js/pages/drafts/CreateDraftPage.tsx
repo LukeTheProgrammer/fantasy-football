@@ -1,9 +1,8 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
 import { Heading } from '@/common/heading/Heading';
 import { DraftForm } from '@/pages/drafts/components/DraftForm';
-import { Head } from '@inertiajs/react';
+import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
-
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -17,16 +16,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CreateDraft() {
-
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create Draft" />
 
       <div className="flex-1 p-8">
-        <Heading
-          title="Create a New Fantasy Draft"
-          description="Set up your new fantasy football draft with custom settings"
-        />
+        <Heading title="Create a New Fantasy Draft" description="Set up your new fantasy football draft with custom settings" />
 
         <DraftForm
           submitEndpoint="/api/drafts"

@@ -1,7 +1,7 @@
 import { Heading } from '@/common/heading/Heading';
+import { cn } from '@/common/helpers/cn';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/common/helpers/cn';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';

@@ -1,9 +1,3 @@
-import axios from 'axios';
-import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useEffect, useState } from 'react';
-
 interface Team {
   id: number;
   team_name: string;
@@ -12,12 +6,11 @@ interface Team {
 }
 
 interface TeamsProps {
-  leagueId: string|number;
+  leagueId: string | number;
 }
 
 export function TeamsTable({ leagueId }: TeamsProps) {
   // const [teams, setTeams] = useState<Team[]>([]);
-
   // useEffect(() => {
   //   const fetchDrafts = () => {
   //     axios
@@ -29,10 +22,8 @@ export function TeamsTable({ leagueId }: TeamsProps) {
   //         console.error(error);
   //       });
   //   };
-
   //   fetchDrafts();
   // }, [leagueId]);
-
   // if (drafts.length === 0) {
   //   return (
   //     <div className="py-12 text-center">
@@ -44,7 +35,6 @@ export function TeamsTable({ leagueId }: TeamsProps) {
   //     </div>
   //   );
   // }
-
   // return (
   //   <Table>
   //     <TableHeader>

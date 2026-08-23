@@ -60,7 +60,7 @@ export function RosterPositionsEditor({ positions, onChange }: RosterPositionsEd
       <div>
         <Label htmlFor="add-position">Add Position</Label>
         <div className="mt-4 flex items-center justify-between gap-2">
-          <div className="grow-1 w-full px-0">
+          <div className="w-full grow-1 px-0">
             <Select value={selectedPosition} onValueChange={setSelectedPosition}>
               <SelectTrigger id="add-position">
                 <SelectValue placeholder="Select position" />
@@ -92,9 +92,9 @@ export function RosterPositionsEditor({ positions, onChange }: RosterPositionsEd
           {positions.length === 0 ? (
             <p className="w-full py-4 text-center text-sm text-gray-500 dark:text-gray-400">No positions added yet. Add positions below.</p>
           ) : (
-            <div className="flex flex-col justify-start items-center w-full">
+            <div className="flex w-full flex-col items-center justify-start">
               {positions.map((position, index) => (
-                <div key={`${position}-${index}`} className="flex items-center justify-center gap-2 w-full">
+                <div key={`${position}-${index}`} className="flex w-full items-center justify-center gap-2">
                   <Badge variant="secondary" className="mb-2 flex items-center gap-1 px-2 py-1">
                     <span style={{ minWidth: '5em' }}>{position}</span>
                     <div className="ml-1 flex items-center">

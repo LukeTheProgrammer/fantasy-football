@@ -1,12 +1,11 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
 import { Heading } from '@/common/heading/Heading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { PageProps } from '@/types';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
-import { type BreadcrumbItem, type SharedData } from '@/types';
+import { AppLayout } from '@/pages/layouts/AppLayout';
+import { PageProps, type BreadcrumbItem, type SharedData } from '@/types';
 import { type Draft, type DraftPick } from '@/types/models';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 interface DraftShowProps extends PageProps {
   draft: Draft;
@@ -31,13 +30,16 @@ export default function ShowDraft({ draft }: DraftShowProps) {
   const { auth } = usePage<SharedData>().props;
   const userId = auth.user.id;
 
-  const draftPicksByRound = draft.picks.reduce((acc, draftPick) => {
-    if (!acc[draftPick.round]) {
-      acc[draftPick.round] = [];
-    }
-    acc[draftPick.round].push(draftPick);
-    return acc;
-  }, {} as Record<number, DraftPick[]>);
+  const draftPicksByRound = draft.picks.reduce(
+    (acc, draftPick) => {
+      if (!acc[draftPick.round]) {
+        acc[draftPick.round] = [];
+      }
+      acc[draftPick.round].push(draftPick);
+      return acc;
+    },
+    {} as Record<number, DraftPick[]>,
+  );
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -46,9 +48,7 @@ export default function ShowDraft({ draft }: DraftShowProps) {
       <div className="flex-1 p-8">
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
           <div>
-            <Heading
-              title={`${draft.league.name} ${draft.league.season}`}
-            />
+            <Heading title={`${draft.league.name} ${draft.league.season}`} />
           </div>
           <div className="mt-4 flex space-x-2 md:mt-0">
             {isUserDraftAdmin(draft, userId) && (
@@ -67,7 +67,9 @@ export default function ShowDraft({ draft }: DraftShowProps) {
           <Card>
             <CardContent className="space-y-4">
               <div className="mb-8 grid w-full">
-                <h2 className="text-lg font-semibold">{draft.league.name} {draft.league.season} Draft</h2>
+                <h2 className="text-lg font-semibold">
+                  {draft.league.name} {draft.league.season} Draft
+                </h2>
                 <p className="text-sm text-muted-foreground">Information about your fantasy football draft.</p>
               </div>
 
@@ -101,12 +103,8 @@ export default function ShowDraft({ draft }: DraftShowProps) {
                 {draftPicks.map((pick) => (
                   <div key={pick.id} className="mb-4 grid w-full">
                     <p className="text-sm text-muted-foreground">Pick #{pick.pick_number}</p>
-                    <h3 className="text-md font-semibold">
-                      {pick.player ? `${pick.player.first_name}  ${pick.player.last_name}` : 'Not selected'}
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      {pick.leagueMember?.team_name || 'Unknown Team'}
-                    </p>
+                    <h3 className="text-md font-semibold">{pick.player ? `${pick.player.first_name}  ${pick.player.last_name}` : 'Not selected'}</h3>
+                    <p className="text-xs text-muted-foreground">{pick.leagueMember?.team_name || 'Unknown Team'}</p>
                   </div>
                 ))}
               </CardContent>

@@ -1,9 +1,8 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
 import { Heading } from '@/common/heading/Heading';
 import { LeagueForm } from '@/modules/leagues/components/LeagueForm';
-import { Head } from '@inertiajs/react';
+import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
-import { router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -17,7 +16,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CreateLeague() {
-
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create League" />

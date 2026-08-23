@@ -1,14 +1,14 @@
-import { type PlayerMissing, type Player } from '@/types/models';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PlayerForm, type PlayerFormData } from '@/modules/players/components/PlayerForm';
-import { useState, useMemo, useEffect } from 'react';
+import { type Player, type PlayerMissing } from '@/types/models';
 import axios from 'axios';
+import { useEffect, useMemo, useState } from 'react';
 
 export function MissingPlayers() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,20 +55,16 @@ export function MissingPlayers() {
     fetchMissingPlayers();
   }, []);
 
-
   const filteredPlayers = useMemo(() => {
     if (!searchTerm) return missingPlayersData;
 
-    return missingPlayersData.filter(player => {
-      const sourceData = typeof player.source_data === 'string'
-        ? JSON.parse(player.source_data)
-        : player.source_data;
+    return missingPlayersData.filter((player) => {
+      const sourceData = typeof player.source_data === 'string' ? JSON.parse(player.source_data) : player.source_data;
 
       const playerName = sourceData?.player_name || '';
       const sourceClass = player.source_class || '';
 
-      return playerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-             sourceClass.toLowerCase().includes(searchTerm.toLowerCase());
+      return playerName.toLowerCase().includes(searchTerm.toLowerCase()) || sourceClass.toLowerCase().includes(searchTerm.toLowerCase());
     });
   }, [missingPlayersData, searchTerm]);
 
@@ -173,9 +169,7 @@ export function MissingPlayers() {
       await axios.delete(`/api/players-missing/${selectedPlayer.id}`);
 
       // Remove the player from local state
-      setMissingPlayersData(prevPlayers =>
-        prevPlayers.filter(player => player.id !== selectedPlayer.id)
-      );
+      setMissingPlayersData((prevPlayers) => prevPlayers.filter((player) => player.id !== selectedPlayer.id));
 
       setDialogOpen(false);
     } catch (error) {
@@ -201,9 +195,7 @@ export function MissingPlayers() {
       await axios.delete(`/api/players-missing/${selectedPlayer.id}`);
 
       // Remove the player from local state
-      setMissingPlayersData(prevPlayers =>
-        prevPlayers.filter(player => player.id !== selectedPlayer.id)
-      );
+      setMissingPlayersData((prevPlayers) => prevPlayers.filter((player) => player.id !== selectedPlayer.id));
 
       setDialogOpen(false);
     } catch (error) {
@@ -221,9 +213,7 @@ export function MissingPlayers() {
       await axios.delete(`/api/players-missing/${selectedPlayer.id}`);
 
       // Remove the player from local state
-      setMissingPlayersData(prevPlayers =>
-        prevPlayers.filter(player => player.id !== selectedPlayer.id)
-      );
+      setMissingPlayersData((prevPlayers) => prevPlayers.filter((player) => player.id !== selectedPlayer.id));
 
       setDialogOpen(false);
     } catch (error) {
@@ -259,7 +249,7 @@ export function MissingPlayers() {
 
   return (
     <div className="rounded-lg border bg-card p-6">
-      <div className="flex justify-between items-center gap-6 mb-6">
+      <div className="mb-6 flex items-center justify-between gap-6">
         <h2>Missing Players</h2>
         <Input
           type="search"
@@ -274,131 +264,116 @@ export function MissingPlayers() {
         {isLoadingData ? (
           <div className="py-12 text-center">
             <h3 className="mb-2 text-lg font-medium">Loading missing players...</h3>
-            <p className="text-gray-500 dark:text-gray-400">
-              Please wait while we fetch the missing players data.
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">Please wait while we fetch the missing players data.</p>
           </div>
         ) : currentPlayers.length === 0 ? (
-            <div className="py-12 text-center">
-              <h3 className="mb-2 text-lg font-medium">
-                {searchTerm ? 'No matching players found' : 'No players not found'}
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400">
-                {searchTerm
-                  ? 'Try adjusting your search terms.'
-                  : 'All players have been successfully matched.'}
-              </p>
+          <div className="py-12 text-center">
+            <h3 className="mb-2 text-lg font-medium">{searchTerm ? 'No matching players found' : 'No players not found'}</h3>
+            <p className="text-gray-500 dark:text-gray-400">
+              {searchTerm ? 'Try adjusting your search terms.' : 'All players have been successfully matched.'}
+            </p>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Source</TableHead>
+                <TableHead>Data</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentPlayers.map((playerMissing) => {
+                const sourceData = getSourceData(playerMissing.source_data);
+                const sourceJson = JSON.stringify(sourceData);
+                const source = sourceJson.slice(0, 150) + (sourceJson.length > 150 ? '...' : '');
+
+                return (
+                  <TableRow key={playerMissing.id}>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {playerMissing.source_class?.split('\\').pop() || playerMissing.source_class}
+                    </TableCell>
+                    <TableCell>{source}</TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="sm" onClick={() => handlePlayerClick(playerMissing)}>
+                        Handle
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPlayers > playersPerPage && (
+          <div className="mt-6 flex items-center justify-between">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Showing {startIndex + 1} to {Math.min(endIndex, totalPlayers)} of {totalPlayers} missing players
             </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Data</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {currentPlayers.map((playerMissing) => {
-                  const sourceData = getSourceData(playerMissing.source_data);
-                  const sourceJson = JSON.stringify(sourceData);
-                  const source = sourceJson.slice(0, 150) + (sourceJson.length > 150 ? '...' : '');
+
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+                Previous
+              </Button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNumber;
+                  if (totalPages <= 5) {
+                    pageNumber = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNumber = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNumber = totalPages - 4 + i;
+                  } else {
+                    pageNumber = currentPage - 2 + i;
+                  }
 
                   return (
-                    <TableRow key={playerMissing.id}>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {playerMissing.source_class?.split('\\').pop() || playerMissing.source_class}
-                      </TableCell>
-                      <TableCell>{source}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handlePlayerClick(playerMissing)}
-                        >
-                          Handle
-                        </Button>
-                      </TableCell>
-                    </TableRow>
+                    <Button
+                      key={pageNumber}
+                      variant={currentPage === pageNumber ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setCurrentPage(pageNumber)}
+                      className="h-8 w-8 p-0"
+                    >
+                      {pageNumber}
+                    </Button>
                   );
                 })}
-              </TableBody>
-            </Table>
-          )}
-
-          {/* Pagination Controls */}
-          {totalPlayers > playersPerPage && (
-            <div className="flex items-center justify-between mt-6">
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Showing {startIndex + 1} to {Math.min(endIndex, totalPlayers)} of {totalPlayers} missing players
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </Button>
-
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNumber;
-                    if (totalPages <= 5) {
-                      pageNumber = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNumber = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNumber = totalPages - 4 + i;
-                    } else {
-                      pageNumber = currentPage - 2 + i;
-                    }
-
-                    return (
-                      <Button
-                        key={pageNumber}
-                        variant={currentPage === pageNumber ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setCurrentPage(pageNumber)}
-                        className="w-8 h-8 p-0"
-                      >
-                        {pageNumber}
-                      </Button>
-                    );
-                  })}
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                >
-                  Next
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+      </div>
 
-        {/* Handle Player Dialog */}
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
-            <DialogHeader>
-              <DialogTitle>Handle Player Not Found</DialogTitle>
-            </DialogHeader>
+      {/* Handle Player Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col">
+          <DialogHeader>
+            <DialogTitle>Handle Player Not Found</DialogTitle>
+          </DialogHeader>
 
-            <div className="flex-1 overflow-y-auto max-h-[60vh] pr-2">
-              {selectedPlayer && (
-                <div className="space-y-6">
+          <div className="max-h-[60vh] flex-1 overflow-y-auto pr-2">
+            {selectedPlayer && (
+              <div className="space-y-6">
                 {/* Player Info */}
-                <div className="rounded-lg border p-4 bg-muted/50">
-                  <h4 className="font-medium mb-2">Player Information</h4>
-                  <div className="gap-2 text-sm max-h-[10vh] overflow-y-auto">
+                <div className="rounded-lg border bg-muted/50 p-4">
+                  <h4 className="mb-2 font-medium">Player Information</h4>
+                  <div className="max-h-[10vh] gap-2 overflow-y-auto text-sm">
                     {Object.entries(selectedPlayer.source_data).map(([key, value]) => (
-                      <div key={key} className="flex justify-start items-center gap-2">
-                        <p className="text-muted-foreground w-[5rem]">{key}:</p>
+                      <div key={key} className="flex items-center justify-start gap-2">
+                        <p className="w-[5rem] text-muted-foreground">{key}:</p>
                         <p className="font-medium">{trunc(value, 30)}</p>
                       </div>
                     ))}
@@ -417,18 +392,12 @@ export function MissingPlayers() {
                     </TabsList>
 
                     <TabsContent value="create" className="space-y-3">
-                      <PlayerForm
-                        formData={createPlayerForm}
-                        onChange={setCreatePlayerForm}
-                        config={{ showOptionalFields: false }}
-                      />
+                      <PlayerForm formData={createPlayerForm} onChange={setCreatePlayerForm} config={{ showOptionalFields: false }} />
                     </TabsContent>
 
                     <TabsContent value="alias" className="space-y-3">
-                      <div className="p-4 bg-muted/50 rounded-lg">
-                        <p className="text-sm text-muted-foreground">
-                          This will create an alias linking the import data to an existing player.
-                        </p>
+                      <div className="rounded-lg bg-muted/50 p-4">
+                        <p className="text-sm text-muted-foreground">This will create an alias linking the import data to an existing player.</p>
                       </div>
 
                       <div className="space-y-3">
@@ -458,7 +427,7 @@ export function MissingPlayers() {
                     </TabsContent>
 
                     <TabsContent value="ignore" className="space-y-3">
-                      <div className="p-4 bg-muted/50 rounded-lg">
+                      <div className="rounded-lg bg-muted/50 p-4">
                         <p className="text-sm text-muted-foreground">
                           This will permanently delete this missing player record without taking any action.
                         </p>
@@ -468,21 +437,18 @@ export function MissingPlayers() {
                 </div>
               </div>
             )}
-            </div>
+          </div>
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={isLoading}>
-                Cancel
-              </Button>
-              <Button
-                onClick={handleAction}
-                disabled={!actionType || (actionType === 'alias' && !selectedExistingPlayer) || isLoading}
-              >
-                {isLoading ? 'Processing...' : 'Execute'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Button onClick={handleAction} disabled={!actionType || (actionType === 'alias' && !selectedExistingPlayer) || isLoading}>
+              {isLoading ? 'Processing...' : 'Execute'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

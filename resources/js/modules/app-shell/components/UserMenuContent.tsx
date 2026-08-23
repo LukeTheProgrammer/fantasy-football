@@ -1,6 +1,6 @@
+import { useMobileNavigation } from '@/common/hooks/useMobileNavigation';
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { UserInfo } from '@/modules/app-shell/components/UserInfo';
-import { useMobileNavigation } from '@/common/hooks/useMobileNavigation';
 import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import { LogOut, Settings } from 'lucide-react';

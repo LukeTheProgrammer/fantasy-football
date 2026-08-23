@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ReactNode } from 'react';
 
 interface FormDialogProps {
   open: boolean;
@@ -29,7 +29,7 @@ export function FormDialog({
   cancelLabel = 'Cancel',
   maxWidth = 'sm:max-w-[500px]',
   isLoading = false,
-  saveDisabled = false
+  saveDisabled = false,
 }: FormDialogProps) {
   const handleCancel = () => {
     if (onCancel) {
@@ -48,25 +48,16 @@ export function FormDialog({
       <DialogContent className={maxWidth}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          {description && (
-            <DialogDescription>{description}</DialogDescription>
-          )}
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
         {children}
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={handleCancel}
-            disabled={isLoading}
-          >
+          <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
             {cancelLabel}
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isLoading || saveDisabled}
-          >
+          <Button onClick={handleSave} disabled={isLoading || saveDisabled}>
             {isLoading ? 'Saving...' : saveLabel}
           </Button>
         </DialogFooter>

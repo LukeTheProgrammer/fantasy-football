@@ -1,15 +1,15 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
 import { Heading } from '@/common/heading/Heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { PageProps } from '@inertiajs/core';
-import { Plus } from 'lucide-react';
 import { getLeagueUserMember } from '@/modules/leagues/helpers/getLeagueUserMember';
 import { isUserLeagueAdmin } from '@/modules/leagues/helpers/isUserLeagueAdmin';
+import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type League } from '@/types/models';
+import { PageProps } from '@inertiajs/core';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -34,7 +34,7 @@ export default function Leagues({ leagues }: LeagueIndexProps) {
         <Heading
           title="My Fantasy Leagues"
           description="Manage and track your fantasy football leagues"
-          rightContent={(
+          rightContent={
             <Link href="/leagues/create">
               <Button size="lg" variant="secondary" className="cursor-pointer">
                 <span className="flex justify-between">
@@ -43,7 +43,7 @@ export default function Leagues({ leagues }: LeagueIndexProps) {
                 </span>
               </Button>
             </Link>
-          )}
+          }
         />
 
         {leagues.length === 0 ? (
@@ -69,11 +69,7 @@ export default function Leagues({ leagues }: LeagueIndexProps) {
                       </Badge>
                     )}
                     {league?.draft?.draft_type === 'auction' ? 'Auction Draft' : 'Snake Draft'}
-                    {league.seasons && league.seasons.length > 1 && (
-                      <span className="ml-2">
-                        • {league.seasons.length} seasons
-                      </span>
-                    )}
+                    {league.seasons && league.seasons.length > 1 && <span className="ml-2">• {league.seasons.length} seasons</span>}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

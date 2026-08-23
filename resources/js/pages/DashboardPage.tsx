@@ -1,14 +1,14 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
 import { Heading } from '@/common/heading/Heading';
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { Play, Plus, Search, Star, Trophy } from 'lucide-react';
-import { Head, Link } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
-import { useEffect, useState } from 'react';
 import { type League } from '@/types/models';
+import { Head, Link } from '@inertiajs/react';
+import axios from 'axios';
+import { Play, Plus, Search, Star, Trophy } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -43,7 +43,7 @@ export default function Dashboard() {
         <Heading
           title="My Fantasy Leagues"
           description="Manage and track your fantasy football leagues"
-          rightContent={(
+          rightContent={
             <Link href="/leagues/create">
               <Button size="lg" variant="secondary" className="cursor-pointer">
                 <span className="flex justify-between">
@@ -52,7 +52,7 @@ export default function Dashboard() {
                 </span>
               </Button>
             </Link>
-          )}
+          }
         />
 
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">

@@ -1,9 +1,9 @@
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/common/helpers/cn';
+import { Badge } from '@/components/ui/badge';
 import { type Position } from '@/types/models';
 
 interface PositionBadgeProps {
-    position: Position;
+  position: Position;
 }
 
 export function PositionBadge({ position }: PositionBadgeProps) {
@@ -27,13 +27,8 @@ export function PositionBadge({ position }: PositionBadgeProps) {
   };
 
   return (
-    <Badge className={cn(
-      'px-2 py-1 text-xs font-medium',
-      getPositionColor(position.abbreviation)
-    )}>
-      <div className="size-6 flex items-center justify-center">
-        {position.abbreviation}
-      </div>
+    <Badge className={cn('px-2 py-1 text-xs font-medium', getPositionColor(position.abbreviation))}>
+      <div className="flex size-6 items-center justify-center">{position.abbreviation}</div>
     </Badge>
   );
 }

@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Link } from '@inertiajs/react';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 interface Draft {
@@ -26,7 +26,7 @@ interface Draft {
 }
 
 interface DraftsProps {
-  leagueId: string|number;
+  leagueId: string | number;
 }
 
 export function DraftsTable({ leagueId }: DraftsProps) {

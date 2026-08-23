@@ -1,15 +1,15 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
 import { Heading } from '@/common/heading/Heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { PageProps } from '@inertiajs/core';
-import { Plus } from 'lucide-react';
-import { type BreadcrumbItem, type SharedData } from '@/types';
-import { type Draft } from '@/types/models';
 import { getDraftUserMember } from '@/modules/drafts/helpers/getDraftUserMember';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
+import { AppLayout } from '@/pages/layouts/AppLayout';
+import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type Draft } from '@/types/models';
+import { PageProps } from '@inertiajs/core';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Drafts',
@@ -33,7 +33,7 @@ export default function Drafts({ drafts }: DraftIndexProps) {
         <Heading
           title="My Fantasy Drafts"
           description="Manage and track your fantasy football drafts"
-          rightContent={(
+          rightContent={
             <Link href="/drafts/create">
               <Button size="lg" variant="secondary" className="cursor-pointer">
                 <span className="flex justify-between">
@@ -42,7 +42,7 @@ export default function Drafts({ drafts }: DraftIndexProps) {
                 </span>
               </Button>
             </Link>
-          )}
+          }
         />
 
         {drafts.length === 0 ? (
@@ -60,7 +60,9 @@ export default function Drafts({ drafts }: DraftIndexProps) {
             {drafts.map((draft) => (
               <Card key={draft.id} className="overflow-hidden">
                 <CardHeader>
-                  <CardTitle>{draft.league.name} {draft.league.season}</CardTitle>
+                  <CardTitle>
+                    {draft.league.name} {draft.league.season}
+                  </CardTitle>
                   <CardDescription>
                     {isUserDraftAdmin(draft, userId) && (
                       <Badge variant="outline" className="mr-2">

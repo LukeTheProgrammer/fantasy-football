@@ -1,6 +1,6 @@
-import { router } from '@inertiajs/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { type SeasonOption } from '@/types/models';
+import { router } from '@inertiajs/react';
 
 interface SeasonSelectProps {
   seasons: SeasonOption[];

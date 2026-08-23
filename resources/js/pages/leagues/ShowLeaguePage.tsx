@@ -1,26 +1,19 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
-import { DraftTab } from '@/modules/leagues/components/tabs/DraftTab';
 import { Heading } from '@/common/heading/Heading';
-import { RostersTab } from '@/modules/leagues/components/tabs/RostersTab';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SeasonSelect } from '@/modules/leagues/components/SeasonSelect';
+import { DraftTab } from '@/modules/leagues/components/tabs/DraftTab';
+import { MatchupsTab } from '@/modules/leagues/components/tabs/MatchupsTab';
+import { RostersTab } from '@/modules/leagues/components/tabs/RostersTab';
 import { SettingsTab } from '@/modules/leagues/components/tabs/SettingsTab';
 import { StandingsTab } from '@/modules/leagues/components/tabs/StandingsTab';
-import { MatchupsTab } from '@/modules/leagues/components/tabs/MatchupsTab';
-import { Button } from '@/components/ui/button';
-import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '@/types';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { type BreadcrumbItem } from '@/types';
-import { type LeagueResource , type LeagueMemberResource } from '@/types/resources';
+import { AppLayout } from '@/pages/layouts/AppLayout';
+import { PageProps, type BreadcrumbItem } from '@/types';
 import { type SeasonOption } from '@/types/models';
-import { useState, useEffect } from 'react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { type LeagueMemberResource, type LeagueResource } from '@/types/resources';
+import { Head, Link } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -56,7 +49,7 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
 
   useEffect(() => {
     if (league.members.length > 0 && selectedMemberId) {
-      const lm = league.members.find(m => m.id.toString() === selectedMemberId) || league.members[0];
+      const lm = league.members.find((m) => m.id.toString() === selectedMemberId) || league.members[0];
       setSelectedMember(lm);
     }
   }, [league.members, selectedMemberId]);
@@ -76,8 +69,8 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
   };
 
   const getWeeks = (): string[] => {
-    return Object.keys(league.matchups).map(m => `Week ${m}`);
-  }
+    return Object.keys(league.matchups).map((m) => `Week ${m}`);
+  };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -86,10 +79,7 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
       <div className="flex-1 p-8">
         <div className="mb-2 flex flex-col items-start justify-between md:flex-row">
           <div>
-            <Heading
-              title={league.name}
-              description={`${league.platform} • ${league.team_count} teams`}
-            />
+            <Heading title={league.name} description={`${league.platform} • ${league.team_count} teams`} />
           </div>
           <div className="mt-4 flex items-center space-x-2 md:mt-0">
             <SeasonSelect seasons={seasons} season={league.season} routeName="leagues.show" />
@@ -103,14 +93,24 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
 
         <div className="mb-2">
           <Tabs defaultValue="rosters">
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2 flex items-center justify-between">
               <div className="flex items-center">
                 <TabsList>
-                  <TabsTrigger className="w-[7rem]" value="rosters">Rosters</TabsTrigger>
-                  <TabsTrigger className="w-[7rem]" value="matchups">Matchups</TabsTrigger>
-                  <TabsTrigger className="w-[7rem]" value="standings">Standings</TabsTrigger>
-                  <TabsTrigger className="w-[7rem]" value="settings">Settings</TabsTrigger>
-                  <TabsTrigger className="w-[7rem]" value="draft">Draft</TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="rosters">
+                    Rosters
+                  </TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="matchups">
+                    Matchups
+                  </TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="standings">
+                    Standings
+                  </TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="settings">
+                    Settings
+                  </TabsTrigger>
+                  <TabsTrigger className="w-[7rem]" value="draft">
+                    Draft
+                  </TabsTrigger>
                 </TabsList>
               </div>
               <div className="flex items-center justify-end space-x-2">
@@ -142,11 +142,7 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
               </div>
             </div>
             <TabsContent value="rosters">
-              <RostersTab
-                league={league}
-                selectedMember={selectedMember}
-                selectedWeek={selectedWeek}
-              />
+              <RostersTab league={league} selectedMember={selectedMember} selectedWeek={selectedWeek} />
             </TabsContent>
             <TabsContent value="matchups">
               <MatchupsTab league={league} selectedMember={selectedMember} />

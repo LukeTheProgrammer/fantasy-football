@@ -1,4 +1,3 @@
-import { AppLogoIcon } from '@/modules/app-shell/components/AppLogoIcon';
 import { Blender } from 'lucide-react';
 
 export function AppLogo() {

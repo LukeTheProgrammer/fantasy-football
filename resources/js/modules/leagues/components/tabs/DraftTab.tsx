@@ -1,6 +1,6 @@
+import { Button } from '@/components/ui/button';
 import { DraftAuction } from '@/modules/leagues/components/tabs/DraftAuction';
 import { DraftSnake } from '@/modules/leagues/components/tabs/DraftSnake';
-import { Button } from '@/components/ui/button';
 import { type LeagueResource } from '@/types/resources';
 import { Link } from '@inertiajs/react';
 

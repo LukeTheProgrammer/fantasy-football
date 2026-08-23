@@ -1,10 +1,10 @@
-import { AppLayout } from '@/pages/layouts/AppLayout';
 import { Heading } from '@/common/heading/Heading';
 import { DraftForm } from '@/pages/drafts/components/DraftForm';
-import { Head } from '@inertiajs/react';
-import { PageProps } from '@inertiajs/core';
+import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
 import { type Draft } from '@/types/models';
+import { PageProps } from '@inertiajs/core';
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {

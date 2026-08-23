@@ -1,10 +1,10 @@
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X, Plus } from 'lucide-react';
-import { positions } from '@/modules/players/constants/positions';
 import { teams } from '@/modules/nfl-teams/constants/teams';
+import { positions } from '@/modules/players/constants/positions';
+import { Plus, X } from 'lucide-react';
 
 interface PlayerAlias {
   name: string;
@@ -39,7 +39,7 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
   const handleInputChange = (field: keyof PlayerFormData, value: string) => {
     const updatedData = {
       ...formData,
-      [field]: value
+      [field]: value,
     };
 
     // Automatically calculate full_name when first_name or last_name changes
@@ -55,7 +55,7 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
   const handleAddAlias = () => {
     const updatedData = {
       ...formData,
-      aliases: [...formData.aliases, { name: '' }]
+      aliases: [...formData.aliases, { name: '' }],
     };
     onChange(updatedData);
   };
@@ -65,7 +65,7 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
     updatedAliases[index] = { name };
     const updatedData = {
       ...formData,
-      aliases: updatedAliases
+      aliases: updatedAliases,
     };
     onChange(updatedData);
   };
@@ -74,7 +74,7 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
     const updatedAliases = formData.aliases.filter((_, i) => i !== index);
     const updatedData = {
       ...formData,
-      aliases: updatedAliases
+      aliases: updatedAliases,
     };
     onChange(updatedData);
   };
@@ -84,19 +84,11 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
           <Label htmlFor="first_name">First Name</Label>
-          <Input
-            id="first_name"
-            value={formData.first_name}
-            onChange={(e) => handleInputChange('first_name', e.target.value)}
-          />
+          <Input id="first_name" value={formData.first_name} onChange={(e) => handleInputChange('first_name', e.target.value)} />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="last_name">Last Name</Label>
-          <Input
-            id="last_name"
-            value={formData.last_name}
-            onChange={(e) => handleInputChange('last_name', e.target.value)}
-          />
+          <Input id="last_name" value={formData.last_name} onChange={(e) => handleInputChange('last_name', e.target.value)} />
         </div>
       </div>
 
@@ -136,7 +128,6 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
 
       {showOptionalFields && (
         <>
-
           <div className="grid gap-2">
             <Label htmlFor="jersey_number">Jersey Number</Label>
             <Input
@@ -159,22 +150,13 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
             </div>
             <div className="grid gap-2">
               <Label htmlFor="weight">Weight</Label>
-              <Input
-                id="weight"
-                value={formData.weight}
-                onChange={(e) => handleInputChange('weight', e.target.value)}
-                placeholder="e.g., 215"
-              />
+              <Input id="weight" value={formData.weight} onChange={(e) => handleInputChange('weight', e.target.value)} placeholder="e.g., 215" />
             </div>
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="college">College</Label>
-            <Input
-              id="college"
-              value={formData.college}
-              onChange={(e) => handleInputChange('college', e.target.value)}
-            />
+            <Input id="college" value={formData.college} onChange={(e) => handleInputChange('college', e.target.value)} />
           </div>
 
           <div className="grid gap-2">
@@ -190,13 +172,7 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
               <Label>Aliases</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddAlias}
-                className="flex items-center gap-1"
-              >
+              <Button type="button" variant="outline" size="sm" onClick={handleAddAlias} className="flex items-center gap-1">
                 <Plus className="h-4 w-4" />
                 Add Alias
               </Button>
@@ -236,4 +212,4 @@ export function PlayerForm({ formData, onChange, config = {} }: PlayerFormProps)
   );
 }
 
-export type { PlayerFormData, PlayerFormConfig };
+export type { PlayerFormConfig, PlayerFormData };

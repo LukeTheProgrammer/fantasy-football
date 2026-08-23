@@ -1,14 +1,14 @@
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { type Draft, type League } from '@/types/models';
 import { router } from '@inertiajs/react';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { type League, type Draft } from '@/types/models';
-import { useCallback, useState, useEffect } from 'react';
 
 interface DraftFormProps {
   initialData?: Partial<Draft>;
@@ -31,19 +31,21 @@ export function RankingForm({
   redirectPath,
   onSuccess,
 }: DraftFormProps) {
-  const [data, setData] = useState<Partial<Draft>>(initialData || {
-    id: 0,
-    league_id: 0,
-    draft_date: '',
-    draft_type: 'snake',
-    is_completed: false,
-    auction_budget: 200,
-    current_pick: 0,
-    current_round: 0,
-    time_per_pick: 60,
-    is_active: false,
-    league: undefined
-  });
+  const [data, setData] = useState<Partial<Draft>>(
+    initialData || {
+      id: 0,
+      league_id: 0,
+      draft_date: '',
+      draft_type: 'snake',
+      is_completed: false,
+      auction_budget: 200,
+      current_pick: 0,
+      current_round: 0,
+      time_per_pick: 60,
+      is_active: false,
+      league: undefined,
+    },
+  );
   const [leagues, setLeagues] = useState<League[]>([]);
   const [loadingLeagues, setLoadingLeagues] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -68,36 +70,39 @@ export function RankingForm({
   }, []);
 
   // Handle form submission
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    setProcessing(true);
-    setValidationErrors({});
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setProcessing(true);
+      setValidationErrors({});
 
-    try {
-      const response = await axios({
-        method: submitMethod,
-        url: submitEndpoint,
-        data,
-      });
+      try {
+        const response = await axios({
+          method: submitMethod,
+          url: submitEndpoint,
+          data,
+        });
 
-      toast.success(successMessage);
+        toast.success(successMessage);
 
-      if (onSuccess) {
-        onSuccess(response.data);
-      } else {
-        router.visit(redirectPath);
+        if (onSuccess) {
+          onSuccess(response.data);
+        } else {
+          router.visit(redirectPath);
+        }
+      } catch (error: any) {
+        if (error.response?.status === 422) {
+          setValidationErrors(error.response.data.errors || {});
+          toast.error('Please fix the validation errors.');
+        } else {
+          toast.error('An error occurred. Please try again.');
+        }
+      } finally {
+        setProcessing(false);
       }
-    } catch (error: any) {
-      if (error.response?.status === 422) {
-        setValidationErrors(error.response.data.errors || {});
-        toast.error('Please fix the validation errors.');
-      } else {
-        toast.error('An error occurred. Please try again.');
-      }
-    } finally {
-      setProcessing(false);
-    }
-  }, [data, submitMethod, submitEndpoint, successMessage, redirectPath, onSuccess]);
+    },
+    [data, submitMethod, submitEndpoint, successMessage, redirectPath, onSuccess],
+  );
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -127,7 +132,7 @@ export function RankingForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card>
           <CardContent>
             <div className="mb-6">
@@ -153,7 +158,7 @@ export function RankingForm({
                   </SelectTrigger>
                   <SelectContent>
                     {loadingLeagues ? (
-                      <div className="p-2 flex items-center justify-center">
+                      <div className="flex items-center justify-center p-2">
                         <Skeleton className="h-5 w-full" />
                       </div>
                     ) : (
@@ -165,17 +170,12 @@ export function RankingForm({
                     )}
                   </SelectContent>
                 </Select>
-                {validationErrors.league_id && (
-                  <p className="text-sm text-red-500 mt-1">{validationErrors.league_id}</p>
-                )}
+                {validationErrors.league_id && <p className="mt-1 text-sm text-red-500">{validationErrors.league_id}</p>}
               </div>
 
               <div>
                 <Label htmlFor="draft_type">Draft Type</Label>
-                <Select
-                  value={data.draft_type}
-                  onValueChange={(value) => handleSelectChange('draft_type', value)}
-                >
+                <Select value={data.draft_type} onValueChange={(value) => handleSelectChange('draft_type', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select draft type" />
                   </SelectTrigger>
@@ -185,24 +185,13 @@ export function RankingForm({
                     <SelectItem value="linear">Linear</SelectItem>
                   </SelectContent>
                 </Select>
-                {validationErrors.draft_type && (
-                  <p className="text-sm text-red-500 mt-1">{validationErrors.draft_type}</p>
-                )}
+                {validationErrors.draft_type && <p className="mt-1 text-sm text-red-500">{validationErrors.draft_type}</p>}
               </div>
 
               <div>
                 <Label htmlFor="draft_date">Draft Date & Time</Label>
-                <Input
-                  id="draft_date"
-                  name="draft_date"
-                  type="datetime-local"
-                  value={data.draft_date}
-                  onChange={handleChange}
-                  className="w-full"
-                />
-                {validationErrors.draft_date && (
-                  <p className="text-sm text-red-500 mt-1">{validationErrors.draft_date}</p>
-                )}
+                <Input id="draft_date" name="draft_date" type="datetime-local" value={data.draft_date} onChange={handleChange} className="w-full" />
+                {validationErrors.draft_date && <p className="mt-1 text-sm text-red-500">{validationErrors.draft_date}</p>}
               </div>
 
               <div>
@@ -216,9 +205,7 @@ export function RankingForm({
                   onChange={handleChange}
                   className="w-full"
                 />
-                {validationErrors.time_per_pick && (
-                  <p className="text-sm text-red-500 mt-1">{validationErrors.time_per_pick}</p>
-                )}
+                {validationErrors.time_per_pick && <p className="mt-1 text-sm text-red-500">{validationErrors.time_per_pick}</p>}
               </div>
             </div>
           </CardContent>

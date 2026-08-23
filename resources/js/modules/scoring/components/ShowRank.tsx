@@ -11,11 +11,12 @@ export function ShowRank({ value, prepend, append }: ShowRankProps) {
 
   if (val > 0) {
     return (
-      <span> {prepend ? prepend : ''} {val} {append ? append : ''} </span>
+      <span>
+        {' '}
+        {prepend ? prepend : ''} {val} {append ? append : ''}{' '}
+      </span>
     );
   }
 
-  return (
-    <span className="w-full text-center text-muted-foreground"> -- </span>
-  );
+  return <span className="w-full text-center text-muted-foreground"> -- </span>;
 }

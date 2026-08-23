@@ -1,4 +1,6 @@
 import { Breadcrumbs } from '@/common/breadcrumbs/Breadcrumbs';
+import { cn } from '@/common/helpers/cn';
+import { useInitials } from '@/common/hooks/useInitials';
 import { Icon } from '@/common/icon/Icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -6,14 +8,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/compon
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { AppLogo } from '@/modules/app-shell/components/AppLogo';
+import { AppLogoIcon } from '@/modules/app-shell/components/AppLogoIcon';
 import { UserMenuContent } from '@/modules/app-shell/components/UserMenuContent';
-import { useInitials } from '@/common/hooks/useInitials';
-import { cn } from '@/common/helpers/cn';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
-import { AppLogo } from '@/modules/app-shell/components/AppLogo';
-import { AppLogoIcon } from '@/modules/app-shell/components/AppLogoIcon';
 
 const mainNavItems: NavItem[] = [
   {

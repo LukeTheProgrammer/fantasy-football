@@ -1,16 +1,6 @@
 // Utility converter class.
 
-export type ConvType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'date'
-  | 'array'
-  | 'object'
-  | 'null'
-  | 'undefined'
-  | 'bigint'
-  | 'symbol';
+export type ConvType = 'string' | 'number' | 'boolean' | 'date' | 'array' | 'object' | 'null' | 'undefined' | 'bigint' | 'symbol';
 
 export class Conv {
   private readonly original: unknown;
