@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -73,6 +74,18 @@ class League extends Model
     public function settings(): HasOne
     {
         return $this->hasOne(LeagueSettings::class);
+    }
+
+    /* ===[ Scopes ]=== */
+
+    /**
+     * The same league across every season. A league is identified by its
+     * platform and platform id; the season is what makes each row distinct.
+     */
+    public function scopeSameLeagueAs(Builder $query, League $league): Builder
+    {
+        return $query->where('platform', $league->platform)
+            ->where('platform_id', $league->platform_id);
     }
 
     /* ===[ Helpers ]=== */

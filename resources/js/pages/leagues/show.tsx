@@ -2,6 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import DraftTab from '@/components/leagues/tab-content/draft-tab';
 import Heading from '@/components/heading';
 import RostersTab from '@/components/leagues/tab-content/rosters-tab';
+import SeasonSelect from '@/components/leagues/season-select';
 import SettingsTab from '@/components/leagues/tab-content/settings-tab';
 import StandingsTab from '@/components/leagues/tab-content/standings-tab';
 import MatchupsTab from '@/components/leagues/tab-content/matchups-tab';
@@ -11,6 +12,7 @@ import { PageProps } from '@/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { type BreadcrumbItem } from '@/types';
 import { type LeagueResource , type LeagueMemberResource } from '@/types/resources';
+import { type SeasonOption } from '@/types/models';
 import { useState, useEffect } from 'react';
 import {
   Select,
@@ -37,9 +39,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface LeagueShowProps extends PageProps {
   league: LeagueResource;
+  seasons: SeasonOption[];
 }
 
-export default function ShowLeague({ league }: LeagueShowProps) {
+export default function ShowLeague({ league, seasons }: LeagueShowProps) {
   const [selectedMemberId, setSelectedMemberId] = useState<string>('');
   const [selectedMember, setSelectedMember] = useState<LeagueMemberResource | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<string>(league.week ? `Week ${league.week}` : 'Week 1');
@@ -88,7 +91,8 @@ export default function ShowLeague({ league }: LeagueShowProps) {
               description={`${league.platform} • ${league.team_count} teams`}
             />
           </div>
-          <div className="mt-4 flex space-x-2 md:mt-0">
+          <div className="mt-4 flex items-center space-x-2 md:mt-0">
+            <SeasonSelect seasons={seasons} season={league.season} routeName="leagues.show" />
             {league.is_admin && (
               <Link href={route('leagues.edit', league.id)}>
                 <Button variant="outline">Edit League</Button>

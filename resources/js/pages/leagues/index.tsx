@@ -68,6 +68,11 @@ export default function Leagues({ leagues }: LeagueIndexProps) {
                       </Badge>
                     )}
                     {league?.draft?.draft_type === 'auction' ? 'Auction Draft' : 'Snake Draft'}
+                    {league.seasons && league.seasons.length > 1 && (
+                      <span className="ml-2">
+                        • {league.seasons.length} seasons
+                      </span>
+                    )}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -78,6 +83,8 @@ export default function Leagues({ leagues }: LeagueIndexProps) {
                     <span>
                       {league.members?.length || 'N/A'} / {league.team_count} teams
                     </span>
+                    <span className="mx-2">•</span>
+                    <span>{league.season} season</span>
                   </div>
                 </CardContent>
                 <CardFooter>

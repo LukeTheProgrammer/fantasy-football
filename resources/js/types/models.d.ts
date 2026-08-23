@@ -68,6 +68,11 @@ export interface PlayerProjection {
   nflGame: NflGame;
 }
 
+export interface SeasonOption {
+  id: number;
+  season: number;
+}
+
 export interface League {
   id: number;
   created_by_user_id: number;
@@ -90,6 +95,7 @@ export interface League {
   members: LeagueMember[];
   matchups: LeagueMatchup[];
   settings: LeagueSettings;
+  seasons?: SeasonOption[];
 }
 
 export interface LeagueMember {

@@ -7,6 +7,7 @@ use App\Models\DraftRanking;
 use App\Models\League;
 use App\Models\Player;
 use Inertia\Inertia;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class DraftController extends Controller
@@ -54,7 +55,26 @@ class DraftController extends Controller
 
         return Inertia::render('drafts/show', [
             'draft' => $draft,
+            'seasons' => $this->seasonOptions($draft),
         ]);
+    }
+
+    /**
+     * The seasons this league has drafted, newest first, each pointing at the
+     * draft for that season. Seasons with no draft row are omitted.
+     */
+    private function seasonOptions(Draft $draft): Collection
+    {
+        return League::sameLeagueAs($draft->league)
+            ->with('draft')
+            ->orderByDesc('season')
+            ->get()
+            ->filter(fn (League $league) => $league->draft !== null)
+            ->map(fn (League $league) => [
+                'id' => $league->draft->id,
+                'season' => $league->season,
+            ])
+            ->values();
     }
 
     /**
