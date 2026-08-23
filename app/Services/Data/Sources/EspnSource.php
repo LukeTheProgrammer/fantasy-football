@@ -18,7 +18,7 @@ class EspnSource extends BaseSource
 {
     /* ===[ GETTERS ]=== */
 
-    public function getFantasyLeague(?League $league = null, array|CredentialsData|null $credentials = null)
+    public function getFantasyLeague(?League $league = null, array|CredentialsData|null $credentials = null, int|string|null $season = null)
     {
         if (null === $league && null === $credentials) {
             throw new InvalidArgumentException('League or credentials must be provided');
@@ -27,7 +27,8 @@ class EspnSource extends BaseSource
         return Espn::dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
             ->getFantasyLeague(
-                ($league instanceof League) ? $league->credentials : $credentials
+                ($league instanceof League) ? $league->credentials : $credentials,
+                $season
             );
     }
 

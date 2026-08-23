@@ -44,10 +44,11 @@ class NflTeam extends BaseResourceCollection
         return $resource->fetch();
     }
 
-    public function getRoster(Team|NFLTeams|int|string $team)
+    public function getRoster(Team|NFLTeams|int|string $team, int|string|null $season = null)
     {
         $resource = new GetRoster($team);
 
+        $resource->season = $season;
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
 

@@ -46,7 +46,9 @@ class GetSchedule extends NFLResource
 
         $response = $this->get($url, $this->query([
             'season' => $this->season,
-            'seasonType' => '2',
+            // Lowercase: ESPN ignores 'seasonType' and falls back to whatever
+            // season type is currently in progress, which is preseason in August.
+            'seasontype' => '2',
         ]));
 
         return $this->returnResponse($response);

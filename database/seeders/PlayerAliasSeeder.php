@@ -11,57 +11,61 @@ class PlayerAliasSeeder extends Seeder
 {
     public function run(): void
     {
-        // $path = database_path('data/player_aliases.json');
-        // $json = file_get_contents($path);
-        // $aliases = json_decode($json, true);
+        $path = database_path('data/player_aliases.json');
 
-        // foreach ($aliases as $alias) {
-        //     $player = null;
+        if (! file_exists($path)) {
+            return;
+        }
 
-        //     $espnId = Arr::get($alias, 'player_espn_id');
+        $aliases = json_decode(file_get_contents($path), true) ?? [];
 
-        //     if ($espnId) {
-        //         $player = Player::espnId($espnId)->first();
-        //     }
+        foreach ($aliases as $alias) {
+            $player = $this->resolvePlayer($alias);
 
-        //     if (! $player instanceof Player) {
-        //         $pfrId = Arr::get($alias, 'player_pfr_id');
+            if (! $player instanceof Player) {
+                $this->command?->warn('No player for alias: ' . Arr::get($alias, 'name'));
+                continue;
+            }
 
-        //         if ($pfrId) {
-        //             $player = Player::pfrId($pfrId)->first();
-        //         }
-        //     }
+            PlayerAlias::updateOrCreate(
+                [
+                    'player_ulid' => $player->ulid,
+                    'name' => Arr::get($alias, 'name'),
+                ],
+                [
+                    'last_checked_at' => Arr::get($alias, 'last_checked_at'),
+                ],
+            );
+        }
+    }
 
-        //     if (! $player instanceof Player) {
-        //         $fpId = Arr::get($alias, 'player_fp_id');
+    /**
+     * ULIDs are regenerated on a fresh player import, so the platform IDs are
+     * the only stable crosswalk. ULID is the last resort.
+     */
+    private function resolvePlayer(array $alias): ?Player
+    {
+        $lookups = [
+            'player_espn_id' => fn ($value) => Player::espnId($value)->first(),
+            'player_pfr_id' => fn ($value) => Player::pfrId($value)->first(),
+            'player_fp_id' => fn ($value) => Player::fpId($value)->first(),
+            'player_ulid' => fn ($value) => Player::where('ulid', '=', $value)->first(),
+        ];
 
-        //         if ($fpId) {
-        //             $player = Player::fpId($fpId)->first();
-        //         }
-        //     }
+        foreach ($lookups as $key => $lookup) {
+            $value = Arr::get($alias, $key);
 
-        //     if (! $player instanceof Player) {
-        //         $ulid = Arr::get($alias, 'player_ulid');
+            if (! $value) {
+                continue;
+            }
 
-        //         if ($ulid) {
-        //             $player = Player::where('ulid', '=', $ulid)->first();
-        //         }
-        //     }
+            $player = $lookup($value);
 
-        //     if (! $player instanceof Player) {
-        //         dump('Player not found for alias: ' . json_encode($alias));
-        //         continue;
-        //     }
+            if ($player instanceof Player) {
+                return $player;
+            }
+        }
 
-        //     PlayerAlias::updateOrCreate(
-        //         [
-        //             'player_ulid' => $player->ulid,
-        //             'name' => Arr::get($alias, 'name'),
-        //         ],
-        //         [
-        //             'last_checked_at' => Arr::get($alias, 'last_checked_at'),
-        //         ],
-        //     );
-        // }
+        return null;
     }
 }

@@ -26,10 +26,11 @@ class FantasyNFL extends BaseResourceCollection
         return $resource->fetch();
     }
 
-    public function getLeague(array|CredentialsData $credentials)
+    public function getLeague(array|CredentialsData $credentials, int|string|null $season = null)
     {
         $resource = new GetLeague($credentials);
 
+        $resource->season = $season;
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
 

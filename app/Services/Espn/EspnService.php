@@ -118,13 +118,13 @@ class EspnService
             ->getPlayers($team, $page);
     }
 
-    public function getNFLTeamRoster(Team $team)
+    public function getNFLTeamRoster(Team $team, int|string|null $season = null)
     {
         $resource = new NFLTeam();
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getRoster($team);
+            ->getRoster($team, $season);
     }
 
     public function getNFLTeamData(Team $team)
@@ -149,13 +149,13 @@ class EspnService
             ->getDraftRecap($credentials, $opts);
     }
 
-    public function getFantasyLeague(array|CredentialsData $credentials)
+    public function getFantasyLeague(array|CredentialsData $credentials, int|string|null $season = null)
     {
         $resource = new FantasyNFL($credentials);
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
-            ->getLeague($credentials);
+            ->getLeague($credentials, $season);
     }
 
     public function getFantasyMatchup(array|CredentialsData $credentials, array $opts = [])

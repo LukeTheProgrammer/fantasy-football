@@ -68,7 +68,7 @@ class DraftController extends Controller
 
         // Don't allow editing completed drafts
         if ($draft->is_completed) {
-            return redirect()->route('leagues.drafts.show', [$league, $draft])
+            return redirect()->route('drafts.show', $draft)
                 ->with('error', 'Cannot edit a completed draft');
         }
 

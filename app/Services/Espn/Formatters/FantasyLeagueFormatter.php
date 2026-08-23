@@ -63,6 +63,14 @@ class FantasyLeagueFormatter
         $this->formatScheduleData();
     }
 
+    /**
+     * The season the payload itself reports, falling back to the current year.
+     */
+    private function season(): int
+    {
+        return $this->league->seasonId ?? (int) date('Y');
+    }
+
     private function formatLeagueData()
     {
         /** @var SettingsSettingsData $settings */
@@ -70,8 +78,8 @@ class FantasyLeagueFormatter
 
         $this->data['league'] = [
             'name'        => $settings->name,
-            'season'      => date('Y'),
-            'slug'        => 'espn-' . Str::slug($settings->name),
+            'season'      => $this->season(),
+            'slug'        => 'espn-' . Str::slug($settings->name) . '-' . $this->season(),
             'description' => null,
             'platform'    => FantasyPlatforms::ESPN->value,
             'team_count'  => $settings->size,
@@ -171,7 +179,7 @@ class FantasyLeagueFormatter
             $this->data['schedules'][] = [
                 'home_member_id' => $schedule->home->teamId,
                 'away_member_id' => $schedule->away->teamId,
-                'season' => 2025,
+                'season' => $this->season(),
                 'week' => $schedule->matchupPeriodId,
                 'home_score' => $schedule->home->totalPoints,
                 'away_score' => $schedule->away->totalPoints,

@@ -16,7 +16,7 @@ abstract class NFLTeamResource extends BaseResource
 {
     public ?ApiVersions $apiVersion = ApiVersions::V2;
 
-    public ?ApiYears $apiYear = ApiYears::Y_2025;
+    public ?ApiYears $apiYear = ApiYears::Y_2026;
 
     public ?Apis $api = Apis::SPORTS_CORE;
 

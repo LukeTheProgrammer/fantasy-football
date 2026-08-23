@@ -63,6 +63,6 @@ class DraftRankingController extends Controller
     public function destroy(DraftRanking $draftRanking)
     {
         $draftRanking->delete();
-        return redirect()->route('rankings/index');
+        return redirect()->route('rankings.index');
     }
 }

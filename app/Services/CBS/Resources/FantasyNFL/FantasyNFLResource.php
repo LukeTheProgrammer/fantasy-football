@@ -16,7 +16,7 @@ abstract class FantasyNFLResource extends BaseResource
 {
     public ?ApiVersions $apiVersion = ApiVersions::V3;
 
-    public ?ApiYears $apiYear = ApiYears::Y_2025;
+    public ?ApiYears $apiYear = ApiYears::Y_2026;
 
     public ?Apis $api = Apis::LM_READS;
 

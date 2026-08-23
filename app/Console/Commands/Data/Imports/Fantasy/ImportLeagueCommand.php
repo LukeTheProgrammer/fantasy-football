@@ -124,6 +124,7 @@ class ImportLeagueCommand extends Command
             'league_id' => null,
             's2' => null,
             'swid' => null,
+            'season' => $this->option('season') ?: null,
         ];
 
         if ($this->league instanceof League) {
@@ -131,6 +132,7 @@ class ImportLeagueCommand extends Command
             $data['league_id']          = $this->league->credentials['leagueId'];
             $data['s2']                 = $this->league->credentials['s2'];
             $data['swid']               = $this->league->credentials['swid'];
+            $data['season']             = $data['season'] ?? $this->league->season;
 
         } else {
             $data['created_by_user_id'] = $this->creator->id;

@@ -8,6 +8,8 @@ use Illuminate\Http\Client\Response;
 
 class GetLeague extends FantasyNFLResource
 {
+    public int|string|null $season = null;
+
     public function setCacheFilePath()
     {
         $dirs = [
@@ -17,6 +19,7 @@ class GetLeague extends FantasyNFLResource
 
         $file = [
             'league',
+            $this->season ?? $this->apiYear->value,
             date('Y-m-d'),
         ];
 
@@ -26,7 +29,7 @@ class GetLeague extends FantasyNFLResource
 
     public function sendRequest()
     {
-        $url = $this->buildUrl([]);
+        $url = $this->buildUrl([], null, $this->season ? (int) $this->season : null);
 
         $response = $this->get($url, null, $this->cookies);
 

@@ -24,6 +24,13 @@ class EspnNFLDriver extends BaseNFLDriver
                 Action::model(PlayerMissing::class)->upsert(
                     $player,
                     get_called_class(),
+                    [
+                        'unique_id_key' => 'espn_id',
+                        'unique_id_value' => $player['id'] ?? null,
+                        'name' => $player['name'] ?? null,
+                        'position_id' => $player['position'] ?? null,
+                        'team_id' => $team->id,
+                    ],
                 );
                 continue;
             }

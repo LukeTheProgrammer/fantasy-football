@@ -32,7 +32,7 @@ class ImportRostersCommand extends Command
      */
     public function handle()
     {
-        $season = $this->argument('season') ?? select('Season', [2025, 2024], Season::current()->first()->id);
+        $season = $this->argument('season') ?? select('Season', [2026, 2025, 2024], Season::current()->first()->id);
 
         Team::noFA()->get()->each(function (Team $team) use ($season) {
             $this->info('Importing ' . $season . ' Roster for ' . $team->id);

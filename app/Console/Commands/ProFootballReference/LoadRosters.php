@@ -45,7 +45,7 @@ class LoadRosters extends Command
      */
     public function handle()
     {
-        $this->season = $this->argument('season') ?? select('Season?', [2025, 2024], 2025);
+        $this->season = $this->argument('season') ?? select('Season?', [2026, 2025, 2024], 2026);
 
         if ($this->option('all')) {
             Team::noFA()->get()->each(fn (Team $team) => $this->loadRoster($team));

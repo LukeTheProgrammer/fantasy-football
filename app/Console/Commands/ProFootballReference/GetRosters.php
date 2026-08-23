@@ -34,7 +34,7 @@ class GetRosters extends Command
      */
     public function handle()
     {
-        $season = $this->argument('season') ?? select('Season?', [2025, 2024], 2025);
+        $season = $this->argument('season') ?? select('Season?', [2026, 2025, 2024], 2026);
 
         if ($this->option('all')) {
             foreach (NFLTeams::cases() as $team) {

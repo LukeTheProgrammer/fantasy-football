@@ -7,6 +7,7 @@ use App\Models\Team;
 use App\Traits\LoadsJsonFiles;
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class NFLRosters
@@ -53,10 +54,12 @@ class NFLRosters
         //
     }
 
-    public function getTeamRoster(string|NFLTeams|Team $team)
+    /**
+     * The espn.com roster page now answers scrapes with a 202 bot challenge,
+     * so this reads the site API instead. The returned shape is unchanged.
+     */
+    public function getTeamRoster(string|NFLTeams|Team $team, int|string|null $season = null)
     {
-        $teamRoute = null;
-
         if (! $team instanceof Team) {
             $team  = Team::find(($team instanceof NFLTeams) ? $team->value : $team);
         }
@@ -65,45 +68,27 @@ class NFLRosters
             throw new Exception('Team not found: ' . json_encode($team));
         }
 
-        $teamRoute = Arr::get(static::TEAMS, $team->id);
+        $season = $season ?? (int) date('Y');
 
-        if (empty($teamRoute)) {
-            throw new Exception('Team Route not found: ' . json_encode($team));
-        }
-
-        $cacheFileParams = [date('Y'), $team->id];
+        $cacheFileParams = [$season, $team->id];
 
         if ($cache = $this->getCache($cacheFileParams)) {
             return $cache;
         }
 
-        $url = 'https://www.espn.com/nfl/team/roster/_/name/' . $teamRoute;
+        $url = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/'
+            . $team->espn_id . '/roster';
 
-        $response = Http::withHeaders([
-            'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
-            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        ])->get($url);
+        $response = Http::get($url, ['season' => $season]);
 
         if (! $response->ok()) {
             throw new Exception('Failed to fetch URL: ' . $url . ' (status ' . $response->status() . ')');
         }
 
-        $html = $response->body();
-
-        if ($html === '' || $html === null) {
-            throw new Exception('Received empty response from URL: ' . $url);
-        }
-
-        $groupsJson = $this->extractGroupsJson($html);
-
-        if ($groupsJson === null) {
-            throw new Exception('Could not locate roster groups JSON within the HTML.');
-        }
-
-        $groups = json_decode($groupsJson, true);
+        $groups = Arr::get($response->json(), 'athletes');
 
         if (! is_array($groups)) {
-            throw new Exception('Failed to decode roster groups JSON.');
+            throw new Exception('No roster groups in response for ' . $team->id . ' (' . $season . ').');
         }
 
         $players = $this->collectPlayersFromGroups($groups);
@@ -193,28 +178,47 @@ class NFLRosters
      * @param array $groups
      * @return array<int, array<string, mixed>>
      */
+    /**
+     * The API returns an ISO timestamp where the roster page gave m/d/y.
+     */
+    protected function formatBirthDate(?string $date): ?string
+    {
+        if (empty($date)) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($date)->format('m/d/y');
+        } catch (Exception) {
+            return null;
+        }
+    }
+
     protected function collectPlayersFromGroups(array $groups): array
     {
         $players = [];
         foreach ($groups as $group) {
-            if (!isset($group['athletes']) || !is_array($group['athletes'])) {
+            // The API nests players under 'items'; the old roster page used 'athletes'.
+            $athletes = $group['items'] ?? $group['athletes'] ?? null;
+
+            if (! is_array($athletes)) {
                 continue;
             }
-            foreach ($group['athletes'] as $athlete) {
+            foreach ($athletes as $athlete) {
                 if (!is_array($athlete)) {
                     continue;
                 }
                 $players[] = [
-                    'id'        => $athlete['id']        ?? null,
-                    'name'      => $athlete['name']      ?? ($athlete['shortName'] ?? null),
-                    'position'  => $athlete['position']  ?? null,
-                    'jersey'    => $athlete['jersey']    ?? null,
-                    'age'       => $athlete['age']       ?? null,
-                    'height'    => $athlete['height']    ?? null,
-                    'weight'    => $athlete['weight']    ?? null,
-                    'birthDate' => $athlete['birthDate'] ?? null,
-                    'headshot'  => $athlete['headshot']  ?? null,
-                    'group'     => $group['name']        ?? null,
+                    'id'        => $athlete['id'] ?? null,
+                    'name'      => $athlete['fullName'] ?? ($athlete['displayName'] ?? null),
+                    'position'  => Arr::get($athlete, 'position.abbreviation'),
+                    'jersey'    => $athlete['jersey'] ?? null,
+                    'age'       => $athlete['age'] ?? null,
+                    'height'    => $athlete['displayHeight'] ?? null,
+                    'weight'    => $athlete['displayWeight'] ?? null,
+                    'birthDate' => $this->formatBirthDate($athlete['dateOfBirth'] ?? null),
+                    'headshot'  => Arr::get($athlete, 'headshot.href'),
+                    'group'     => $group['position'] ?? ($group['name'] ?? null),
                 ];
             }
         }

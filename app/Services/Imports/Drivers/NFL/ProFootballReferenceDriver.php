@@ -32,6 +32,13 @@ class ProFootballReferenceDriver extends BaseNFLDriver
                 Action::model(PlayerMissing::class)->upsert(
                     $player,
                     get_called_class(),
+                    [
+                        'unique_id_key' => 'pfr_id',
+                        'unique_id_value' => $player['pfr_id'] ?? null,
+                        'name' => $player['full_name'] ?? null,
+                        'position_id' => $player['position'] ?? null,
+                        'team_id' => $team->id,
+                    ],
                 );
                 continue;
             }

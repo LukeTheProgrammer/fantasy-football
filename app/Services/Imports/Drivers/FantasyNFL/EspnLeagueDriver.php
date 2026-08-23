@@ -53,7 +53,8 @@ class EspnLeagueDriver
     private function loadData()
     {
         $this->leagueData = Data::espn()->getFantasyLeague(
-            credentials: $this->credentials
+            credentials: $this->credentials,
+            season: Arr::get($this->metaData, 'season')
         );
     }
 
@@ -65,10 +66,13 @@ class EspnLeagueDriver
         $leagueData['platform_id'] = $this->credentials->leagueId;
         $leagueData['credentials'] = $this->credentials;
 
+        // Season is part of the key: ESPN reuses a league id year over year, so
+        // without it a new season overwrites the previous season's league row.
         $league = League::updateOrCreate(
             [
                 'platform' => $leagueData['platform'],
                 'platform_id' => $leagueData['platform_id'],
+                'season' => $leagueData['season'],
             ],
             $leagueData,
         );
@@ -162,6 +166,11 @@ class EspnLeagueDriver
     private function createMatchups(League $league)
     {
         foreach ($this->leagueData['schedules'] as $matchup) {
+            // A playoff bye has no opponent, so one side of the matchup is null.
+            if (empty($matchup['home_member_id']) || empty($matchup['away_member_id'])) {
+                continue;
+            }
+
             $homeMember = LeagueMember::forLeague($league)->forExtId($matchup['home_member_id'])->first();
             $awayMember = LeagueMember::forLeague($league)->forExtId($matchup['away_member_id'])->first();
 

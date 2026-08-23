@@ -16,5 +16,9 @@ class ScheduleSeeder extends Seeder
         Artisan::call('import:nfl:schedule', [
             'season' => 2025,
         ]);
+
+        Artisan::call('import:nfl:schedule', [
+            'season' => 2026,
+        ]);
     }
 }

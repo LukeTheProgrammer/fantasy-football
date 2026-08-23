@@ -8,6 +8,8 @@ use Exception;
 
 class GetRoster extends NFLTeamResource
 {
+    public int|string|null $season = null;
+
     public function setCacheFilePath()
     {
         $dirs = ['rosters'];
@@ -15,6 +17,7 @@ class GetRoster extends NFLTeamResource
         $file = [
             'team',
             $this->teamId,
+            $this->season ?? $this->apiYear->value,
             $this->dataFormat,
         ];
 
@@ -32,7 +35,7 @@ class GetRoster extends NFLTeamResource
             throw new Exception('Team not found for espn id: ' . $this->teamId);
         }
 
-        $data = $scraper->getTeamRoster($team);
+        $data = $scraper->getTeamRoster($team, $this->season ?? $this->apiYear->value);
 
         return $this->returnResponse($data);
     }

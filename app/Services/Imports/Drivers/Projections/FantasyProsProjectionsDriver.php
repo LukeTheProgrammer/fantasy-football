@@ -202,7 +202,13 @@ class FantasyProsProjectionsDriver extends BaseProjectionsDriver
 
         if (! $player instanceof Player) {
             $this->addError('Player Not Found', $data, []);
-            Action::model(PlayerMissing::class)->upsert($data, get_called_class());
+            Action::model(PlayerMissing::class)->upsert($data, get_called_class(), [
+                'unique_id_key' => 'fp_id',
+                'unique_id_value' => Arr::get($data, 'player_id'),
+                'name' => Arr::get($data, 'player_name'),
+                'position_id' => Arr::get($data, 'player_position_id'),
+                'team_id' => Arr::get($data, 'player_team_id'),
+            ]);
             return null;
         }
 
