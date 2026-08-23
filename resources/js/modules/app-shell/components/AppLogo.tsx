@@ -1,13 +1,13 @@
-import { Blender } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 export function AppLogo() {
   return (
     <>
       <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-        <Blender />
+        <Star className="size-5 fill-current text-white dark:text-black" />
       </div>
       <div className="ml-1 grid flex-1 text-left text-sm">
-        <span className="mb-0.5 truncate leading-tight font-semibold">Laravel Starter Kit</span>
+        <span className="mb-0.5 truncate leading-tight font-semibold">Fantasy Football</span>
       </div>
     </>
   );

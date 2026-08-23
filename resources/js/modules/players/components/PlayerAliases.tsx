@@ -3,17 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AliasForm, type AliasFormData } from '@/modules/players/components/AliasForm';
-import { type BreadcrumbItem } from '@/types';
 import { type PlayerAlias } from '@/types/models';
 import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
-
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'NFL Player Aliases',
-    href: '/players/aliases',
-  },
-];
 
 export function PlayerAliases() {
   const [searchQuery, setSearchQuery] = useState<string>('');

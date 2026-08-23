@@ -39,7 +39,18 @@ export default [
         },
     },
     {
-        ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'tailwind.config.js'],
+        ignores: [
+            'vendor',
+            'node_modules',
+            'public',
+            'bootstrap/ssr',
+            'tailwind.config.js',
+            // Upstream shadcn multi-select, kept for reference and linted by its own config.
+            'lib',
+            // Root level scratch scripts, not part of the app bundle.
+            'temp.js',
+            'test-api.js',
+        ],
     },
     prettier, // Turn off all rules that might conflict with Prettier
 ];

@@ -21,7 +21,9 @@ interface LeagueMemberManagerProps {
 export function LeagueMemberManager({ members, maxTeams, onMembersChange }: LeagueMemberManagerProps) {
   // Only keeping the state variables needed for the visible UI
   const [draftPositionDialogOpen, setDraftPositionDialogOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<LeagueMember | null>(null);
+  // No setter: the dialog opener below is still commented out, so nothing
+  // selects a member yet.
+  const [selectedMember] = useState<LeagueMember | null>(null);
   const [draftPosition, setDraftPosition] = useState<number | null>(null);
   const [draftPositionError, setDraftPositionError] = useState<string>('');
   const [updatingDraftPosition, setUpdatingDraftPosition] = useState(false);
