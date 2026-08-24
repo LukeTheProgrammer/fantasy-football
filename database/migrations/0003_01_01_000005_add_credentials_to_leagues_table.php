@@ -12,14 +12,11 @@ return new class extends Migration
      * The platform credentials a league was imported with, kept on the league
      * so a later sync can repeat the pull without being handed the cookies
      * again. Nullable because a league created by hand has none.
-     *
-     * Text rather than json: the model encrypts these, and a ciphertext string
-     * is not valid json.
      */
     public function up(): void
     {
         Schema::table('leagues', function (Blueprint $table) {
-            $table->text('credentials')->nullable()->after('is_active');
+            $table->json('credentials')->nullable()->after('is_active');
         });
     }
 
