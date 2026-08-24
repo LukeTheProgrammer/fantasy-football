@@ -5,6 +5,7 @@ namespace App\Console\Commands\Data\Clean;
 use App\Models\Player;
 use App\Models\PlayerAlias;
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 
@@ -30,6 +31,7 @@ class CleanPlayerAliasesCommand extends Command
             $alias->update([
                 'last_checked_at' => now(),
             ]);
+
             return;
         }
 
@@ -43,11 +45,12 @@ class CleanPlayerAliasesCommand extends Command
 
         if ($selected === '_DEL_') {
             $alias->delete();
+
             return;
         }
 
         $alias->update([
-            'player_id' => $selected,
+            'player_ulid'     => $selected,
             'last_checked_at' => now(),
         ]);
     }
@@ -62,7 +65,7 @@ class CleanPlayerAliasesCommand extends Command
         $nameParts = explode(' ', $alias->name);
         $opts = [
             '_NULL_' => 'None',
-            '_DEL_' => 'Delete',
+            '_DEL_'  => 'Delete',
         ];
 
         foreach ($nameParts as $part) {
@@ -71,26 +74,26 @@ class CleanPlayerAliasesCommand extends Command
             }
 
             Player::where('last_name', '=', $part)->get()->each(function ($player) use (&$opts) {
-                if (! isset($opts[$player->id])) {
-                    $opts[$player->id] = $this->playerLabel($player);
+                if (!isset($opts[$player->ulid])) {
+                    $opts[$player->ulid] = $this->playerLabel($player);
                 }
             });
 
             Player::where('first_name', '=', $part)->get()->each(function ($player) use (&$opts) {
-                if (! isset($opts[$player->id])) {
-                    $opts[$player->id] = $this->playerLabel($player);
+                if (!isset($opts[$player->ulid])) {
+                    $opts[$player->ulid] = $this->playerLabel($player);
                 }
             });
 
             Player::nameLike($part)->get()->each(function ($player) use (&$opts) {
-                if (! isset($opts[$player->id])) {
-                    $opts[$player->id] = $this->playerLabel($player);
+                if (!isset($opts[$player->ulid])) {
+                    $opts[$player->ulid] = $this->playerLabel($player);
                 }
             });
 
             Player::forTeam($alias->player->team_id)->forPosition($alias->player->position_id)->get()->each(function ($player) use (&$opts) {
-                if (! isset($opts[$player->id])) {
-                    $opts[$player->id] = $this->playerLabel($player);
+                if (!isset($opts[$player->ulid])) {
+                    $opts[$player->ulid] = $this->playerLabel($player);
                 }
             });
         }
