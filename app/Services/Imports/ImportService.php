@@ -10,6 +10,7 @@ use App\Services\Imports\Drivers\NFL\ProFootballReferenceDriver;
 use App\Services\Imports\Importers\FantasyNFLImporter;
 use App\Services\Imports\Importers\FantasyProsProjectionsImporter;
 use App\Services\Imports\Importers\FantasyProsRankingsImporter;
+use App\Services\Imports\Importers\NFLImporter;
 use Exception;
 use Illuminate\Support\Arr;
 
@@ -51,6 +52,27 @@ class ImportService
         $driver = new $driverClass(...$args);
 
         return new FantasyNFLImporter($driver);
+    }
+
+    /**
+     * NFL Import
+     *
+     * @param string $driver
+     * @param mixed ...$args
+     *
+     * @return NFLImporter
+     */
+    public function nfl(string|FantasyPlatforms|Datum $driver, ...$args)
+    {
+        $driver = ($driver instanceof FantasyPlatforms || $driver instanceof Datum) ? $driver->value : $driver;
+
+        $driverClass = Arr::get($this->importDrivers('nfl'), $driver, false);
+
+        if (!$driverClass) {
+            throw new Exception('Invalid driver: ' . $driver);
+        }
+
+        return new NFLImporter(new $driverClass(...$args));
     }
 
     /**

@@ -13,7 +13,8 @@ class ResetAppCommand extends Command
      * @var string
      */
     protected $signature = 'app:reset
-        { season? : Season }';
+        { season? : Season }
+    ';
 
     /**
      * The console command description.
