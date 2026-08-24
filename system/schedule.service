@@ -1,0 +1,11 @@
+[Unit]
+Description=fantasy-football scheduler
+
+[Service]
+Type=oneshot
+User=www-data
+WorkingDirectory=/var/www/html/fantasy-football
+ExecStart=/usr/bin/php /var/www/html/fantasy-football/artisan schedule:run
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ff-schedule

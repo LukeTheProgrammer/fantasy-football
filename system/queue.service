@@ -1,0 +1,44 @@
+[Unit]
+Description=fantasy-football queue worker
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html/fantasy-football
+
+# --max-time recycles the worker every hour so a long-lived process cannot hold
+# stale code or leaked memory; systemd restarts it immediately.
+ExecStart=/usr/bin/php /var/www/html/fantasy-football/artisan queue:work \
+    --queue=default \
+    --sleep=3 \
+    --tries=3 \
+    --backoff=30 \
+    --max-time=3600 \
+    --max-jobs=1000
+
+# `queue:restart` and --max-time both exit 0, so always restart, but never
+# faster than once a second or a boot-time failure becomes a spin.
+Restart=always
+RestartSec=1
+
+# Give a job in flight time to finish before the worker is killed. Must exceed
+# the longest job timeout (ImportFantasyProsRankingsJob is 600s).
+TimeoutStopSec=660
+KillSignal=SIGTERM
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ff-queue
+
+# Hardening: the worker only ever needs to read the app and write storage.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/www/html/fantasy-football/storage /var/www/html/fantasy-football/bootstrap/cache
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the fantasy-football scheduler every minute
+
+[Timer]
+OnCalendar=*:0/1
+AccuracySec=1s
+Persistent=false
+Unit=ff-schedule.service
+
+[Install]
+WantedBy=timers.target
