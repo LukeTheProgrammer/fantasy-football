@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Enums\NFLPositions;
 use App\Models\Player;
 use App\Models\Position;
 use App\Models\Team;
+use Database\Factories\PlayerFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,33 +13,25 @@ class FactoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_position_factory_creates_valid_position(): void
+    public function test_positions_are_seeded_rather_than_generated(): void
     {
-        $position = Position::factory()->create();
+        $this->assertSame(17, Position::count());
 
-        $this->assertDatabaseHas('positions', [
-            'id'           => $position->id,
-            'abbreviation' => $position->abbreviation,
-            'name'         => $position->name,
-        ]);
-
-        $this->assertContains($position->abbreviation, array_column(NFLPositions::cases(), 'value'));
+        foreach (PlayerFactory::FANTASY_POSITIONS as $abbreviation) {
+            $this->assertDatabaseHas('positions', ['id' => $abbreviation, 'abbreviation' => $abbreviation]);
+        }
     }
 
-    public function test_team_factory_creates_valid_team(): void
+    public function test_teams_are_seeded_rather_than_generated(): void
     {
-        $team = Team::factory()->create();
+        $this->assertSame(33, Team::count());
 
         $this->assertDatabaseHas('teams', [
-            'id'           => $team->id,
-            'abbreviation' => $team->abbreviation,
-            'location'     => $team->location,
-            'name'         => $team->name,
-            'conference'   => $team->conference,
-            'division'     => $team->division,
+            'id'         => 'KC',
+            'location'   => 'Kansas City',
+            'name'       => 'Chiefs',
+            'conference' => 'AFC',
         ]);
-
-        $this->assertContains($team->conference, ['AFC', 'NFC']);
     }
 
     public function test_player_factory_creates_valid_player(): void
@@ -53,28 +45,8 @@ class FactoryTest extends TestCase
             'position_id' => $player->position_id,
         ]);
 
-        $this->assertNotNull($player->position);
         $this->assertInstanceOf(Position::class, $player->position);
-    }
-
-    public function test_position_specific_factories_work(): void
-    {
-        $qb = Position::factory()->quarterback()->create();
-        $rb = Position::factory()->runningBack()->create();
-        $wr = Position::factory()->wideReceiver()->create();
-
-        $this->assertEquals('QB', $qb->abbreviation);
-        $this->assertEquals('RB', $rb->abbreviation);
-        $this->assertEquals('WR', $wr->abbreviation);
-    }
-
-    public function test_team_conference_factories_work(): void
-    {
-        $afcTeam = Team::factory()->afc()->create();
-        $nfcTeam = Team::factory()->nfc()->create();
-
-        $this->assertEquals('AFC', $afcTeam->conference);
-        $this->assertEquals('NFC', $nfcTeam->conference);
+        $this->assertContains($player->position_id, PlayerFactory::FANTASY_POSITIONS);
     }
 
     public function test_player_position_factories_work(): void
@@ -84,6 +56,21 @@ class FactoryTest extends TestCase
 
         $this->assertEquals('QB', $qb->position->abbreviation);
         $this->assertEquals('RB', $rb->position->abbreviation);
+    }
+
+    public function test_players_reuse_the_seeded_positions(): void
+    {
+        // Forty players repeat positions many times over. Because positions are
+        // reference rows rather than generated ones, that is a lookup rather
+        // than a duplicate key error.
+        $players = Player::factory()->count(40)->create();
+
+        $this->assertCount(40, $players);
+        $this->assertSame(17, Position::count());
+        $this->assertSame(
+            $players->pluck('position_id')->unique()->count(),
+            Position::whereIn('id', $players->pluck('position_id')->unique())->count(),
+        );
     }
 
     public function test_player_accessors_work(): void
@@ -98,10 +85,7 @@ class FactoryTest extends TestCase
 
     public function test_team_accessors_work(): void
     {
-        $team = Team::factory()->create([
-            'location' => 'New York',
-            'name'     => 'Giants',
-        ]);
+        $team = Team::find('NYG');
 
         $this->assertEquals('New York Giants', $team->full_name);
     }

@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Enums\NFLPositions;
 use App\Models\Player;
-use App\Models\Position;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Player>
+ * @extends Factory<Player>
  */
 class PlayerFactory extends Factory
 {
@@ -19,6 +19,14 @@ class PlayerFactory extends Factory
     protected $model = Player::class;
 
     /**
+     * The positions fantasy rosters are built from, which is what a test player
+     * should almost always be.
+     *
+     * @var array<int, string>
+     */
+    public const FANTASY_POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K', 'DST'];
+
+    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
@@ -26,8 +34,10 @@ class PlayerFactory extends Factory
     public function definition(): array
     {
         return [
-            'espn_id'     => fake()->optional(0.8)->numberBetween(1000000, 9999999),
-            'position_id' => Position::factory(),
+            'espn_id' => fake()->optional(0.8)->numberBetween(1000000, 9999999),
+            // Positions are seeded reference data, so a player references one
+            // rather than inventing it.
+            'position_id' => fake()->randomElement(self::FANTASY_POSITIONS),
             'first_name'  => fake()->firstNameMale(),
             'last_name'   => fake()->lastName(),
             'height'      => fake()->optional(0.9)->randomElement(['5\'10"', '5\'11"', '6\'0"', '6\'1"', '6\'2"', '6\'3"', '6\'4"', '6\'5"', '6\'6"', '6\'7"']),
@@ -57,42 +67,42 @@ class PlayerFactory extends Factory
     public function quarterback(): static
     {
         return $this->state(fn (array $attributes) => [
-            'position_id' => Position::factory()->quarterback(),
+            'position_id' => NFLPositions::QB->value,
         ]);
     }
 
     public function runningBack(): static
     {
         return $this->state(fn (array $attributes) => [
-            'position_id' => Position::factory()->runningBack(),
+            'position_id' => NFLPositions::RB->value,
         ]);
     }
 
     public function wideReceiver(): static
     {
         return $this->state(fn (array $attributes) => [
-            'position_id' => Position::factory()->wideReceiver(),
+            'position_id' => NFLPositions::WR->value,
         ]);
     }
 
     public function tightEnd(): static
     {
         return $this->state(fn (array $attributes) => [
-            'position_id' => Position::factory()->tightEnd(),
+            'position_id' => NFLPositions::TE->value,
         ]);
     }
 
     public function kicker(): static
     {
         return $this->state(fn (array $attributes) => [
-            'position_id' => Position::factory()->kicker(),
+            'position_id' => NFLPositions::K->value,
         ]);
     }
 
     public function defense(): static
     {
         return $this->state(fn (array $attributes) => [
-            'position_id' => Position::factory()->defense(),
+            'position_id' => NFLPositions::DST->value,
         ]);
     }
 

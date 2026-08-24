@@ -149,10 +149,16 @@ class DraftController extends Controller
      */
     private function auctionDraftRoom(Draft $draft)
     {
+        // The budget is personal, so it only exists when the signed in user
+        // actually has a team in this league.
+        $member = $draft->league->members->firstWhere('user_id', Auth::id());
+
         return Inertia::render('drafts/AuctionDraftRoomPage', [
             'draft'   => $draft,
             'players' => AuctionFacade::cheatSheet($draft),
             'teams'   => AuctionFacade::teams($draft),
+            'rosters' => AuctionFacade::rosters($draft),
+            'budget'  => $member ? AuctionFacade::budget($draft, $member) : null,
         ]);
     }
 

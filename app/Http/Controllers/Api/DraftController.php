@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Facades\Action;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DraftCreateRequest;
-use App\Http\Requests\DraftUpdateRequest;
 use App\Http\Requests\DraftPickCreateRequest;
+use App\Http\Requests\DraftUpdateRequest;
 use App\Models\Draft;
 use App\Models\DraftPick;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\Player;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 
 class DraftController extends Controller
@@ -36,12 +33,12 @@ class DraftController extends Controller
         $validated = $request->validated();
 
         $draft = $league->draft()->create([
-            'draft_date' => Arr::get($validated, 'draft_date'),
-            'draft_type' => Arr::get($validated, 'draft_type'),
+            'draft_date'     => Arr::get($validated, 'draft_date'),
+            'draft_type'     => Arr::get($validated, 'draft_type'),
             'auction_budget' => Arr::get($validated, 'auction_budget') ?? null,
-            'time_per_pick' => Arr::get($validated, 'time_per_pick') ?? 90,
-            'is_active' => false,
-            'is_completed' => false,
+            'time_per_pick'  => Arr::get($validated, 'time_per_pick') ?? 90,
+            'is_active'      => false,
+            'is_completed'   => false,
         ]);
 
         // Generate draft order
@@ -145,11 +142,11 @@ class DraftController extends Controller
 
         // Update the pick with the player
         $currentPick->update([
-            'player_id' => $validated['player_id'],
-            'amount' => $draft->draft_type === 'auction' ? $validated['amount'] : null,
-            'is_keeper' => $validated['is_keeper'] ?? false,
+            'player_id'          => $validated['player_id'],
+            'amount'             => $draft->draft_type === 'auction' ? $validated['amount'] : null,
+            'is_keeper'          => $validated['is_keeper'] ?? false,
             'previous_year_cost' => $validated['previous_year_cost'] ?? null,
-            'pick_time' => now(),
+            'pick_time'          => now(),
         ]);
 
         // Move to the next pick
@@ -160,14 +157,14 @@ class DraftController extends Controller
 
         if ($nextPick) {
             $draft->update([
-                'current_pick' => $nextPick->pick_number,
+                'current_pick'  => $nextPick->pick_number,
                 'current_round' => $nextPick->round,
             ]);
         } else {
             // Draft is complete
             $draft->update([
                 'is_completed' => true,
-                'is_active' => false,
+                'is_active'    => false,
             ]);
         }
 
@@ -202,7 +199,7 @@ class DraftController extends Controller
 
         // Set the current pick
         $draft->update([
-            'current_pick' => 1,
+            'current_pick'  => 1,
             'current_round' => 1,
         ]);
     }
@@ -223,10 +220,10 @@ class DraftController extends Controller
 
             foreach ($roundMemberIds as $index => $memberId) {
                 DraftPick::create([
-                    'draft_id' => $draft->id,
+                    'draft_id'         => $draft->id,
                     'league_member_id' => $memberId,
-                    'pick_number' => $pickNumber++,
-                    'round' => $round,
+                    'pick_number'      => $pickNumber++,
+                    'round'            => $round,
                 ]);
             }
         }
@@ -245,10 +242,10 @@ class DraftController extends Controller
         foreach ($memberIds as $memberId) {
             for ($i = 0; $i < $rosterSize; $i++) {
                 DraftPick::create([
-                    'draft_id' => $draft->id,
+                    'draft_id'         => $draft->id,
                     'league_member_id' => $memberId,
-                    'pick_number' => $pickNumber++,
-                    'round' => $i + 1,
+                    'pick_number'      => $pickNumber++,
+                    'round'            => $i + 1,
                 ]);
             }
         }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
 
 class LeagueUpdateRequest extends FormRequest
 {
@@ -69,13 +69,13 @@ class LeagueUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'team_count.required' => 'The number of teams is required.',
-            'team_count.min' => 'The league must have at least 2 teams.',
-            'team_count.max' => 'The league cannot have more than 32 teams.',
+            'team_count.required'                => 'The number of teams is required.',
+            'team_count.min'                     => 'The league must have at least 2 teams.',
+            'team_count.max'                     => 'The league cannot have more than 32 teams.',
             'settings.roster_positions.required' => 'Roster positions are required.',
-            'settings.roster_positions.array' => 'Roster positions must be an array.',
-            'settings.starters_count.min' => 'At least one starter is required.',
-            'settings.roster_size.min' => 'Roster size must be at least 1.',
+            'settings.roster_positions.array'    => 'Roster positions must be an array.',
+            'settings.starters_count.min'        => 'At least one starter is required.',
+            'settings.roster_size.min'           => 'Roster size must be at least 1.',
         ];
     }
 }

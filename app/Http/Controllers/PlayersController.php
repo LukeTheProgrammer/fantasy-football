@@ -15,8 +15,8 @@ class PlayersController extends Controller
     public function index()
     {
         return Inertia::render('players/PlayersIndexPage', [
-            'players' => Player::with(['aliases', 'position', 'team'])->orderBy('full_name')->get(),
-            'teams' => Team::noFA()->orderBy('location')->get(),
+            'players'   => Player::with(['aliases', 'position', 'team'])->orderBy('full_name')->get(),
+            'teams'     => Team::noFA()->orderBy('location')->get(),
             'positions' => Position::orderBy('name')->get(),
         ]);
     }

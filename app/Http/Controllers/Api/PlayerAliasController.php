@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerAliasCreateRequest;
 use App\Http\Requests\PlayerAliasUpdateRequest;
 use App\Models\PlayerAlias;
-use Illuminate\Http\Request;
 
 class PlayerAliasController extends Controller
 {

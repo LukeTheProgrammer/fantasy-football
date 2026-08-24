@@ -3,9 +3,12 @@
 namespace App\Services\Auction;
 
 use App\Models\Draft;
+use App\Models\LeagueMember;
+use App\Services\Auction\Actions\BuildBudgetAction;
 use App\Services\Auction\Actions\BuildCheatSheetAction;
 use App\Services\Auction\Actions\CalculateMarketValuesAction;
 use App\Services\Auction\Actions\CalculateProjectedValuesAction;
+use App\Services\Auction\Actions\SlotRostersAction;
 use App\Services\Auction\Actions\SummariseTeamsAction;
 use Illuminate\Support\Collection;
 
@@ -47,6 +50,25 @@ class AuctionService
     public function projectedValues(Draft $draft): Collection
     {
         return (new CalculateProjectedValuesAction)->run($draft);
+    }
+
+    /**
+     * One team's spending plan beside what it has actually spent.
+     *
+     * @return array<string, mixed>
+     */
+    public function budget(Draft $draft, LeagueMember $member): array
+    {
+        return (new BuildBudgetAction)->run($draft, $member);
+    }
+
+    /**
+     * Each team's picks placed into the roster the league is configured for,
+     * keyed by league member id.
+     */
+    public function rosters(Draft $draft): Collection
+    {
+        return (new SlotRostersAction)->run($draft);
     }
 
     /**

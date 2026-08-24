@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Draft;
+use App\Models\DraftBudget;
 use App\Models\DraftPick;
 use App\Models\League;
 use App\Models\LeagueMember;
@@ -72,6 +73,60 @@ class AuctionDraftRoomTest extends TestCase
                 ->has('teams', 1)
                 ->where('teams.0.remaining', 200)
                 ->where('teams.0.max_bid', 198));
+    }
+
+    public function test_picks_are_slotted_into_the_league_roster(): void
+    {
+        $quarterback = Player::factory()->quarterback()->create();
+        $runningBack = Player::factory()->runningBack()->create();
+
+        // The cheaper player is recorded first to prove slotting is driven by
+        // price rather than the order picks were entered.
+        $this->actingAs($this->user)->post(route('drafts.picks.store', $this->draft), [
+            'player_id'        => $runningBack->id,
+            'league_member_id' => $this->member->id,
+            'amount'           => 5,
+        ]);
+
+        $this->actingAs($this->user)->post(route('drafts.picks.store', $this->draft), [
+            'player_id'        => $quarterback->id,
+            'league_member_id' => $this->member->id,
+            'amount'           => 50,
+        ]);
+
+        $this->actingAs($this->user)
+            ->get(route('drafts.draft-room', $this->draft))
+            ->assertInertia(fn ($page) => $page
+                ->has('rosters.' . $this->member->id, 3)
+                ->where('rosters.' . $this->member->id . '.0.label', 'QB')
+                ->where('rosters.' . $this->member->id . '.0.player.full_name', $quarterback->full_name)
+                ->where('rosters.' . $this->member->id . '.1.label', 'RB')
+                ->where('rosters.' . $this->member->id . '.1.player.full_name', $runningBack->full_name)
+                ->where('rosters.' . $this->member->id . '.2.label', 'BE')
+                ->where('rosters.' . $this->member->id . '.2.player', null));
+    }
+
+    public function test_a_player_with_no_slot_of_his_own_falls_to_the_bench(): void
+    {
+        $first = Player::factory()->quarterback()->create();
+        $second = Player::factory()->quarterback()->create();
+
+        foreach ([[$first, 40], [$second, 10]] as [$player, $amount]) {
+            $this->actingAs($this->user)->post(route('drafts.picks.store', $this->draft), [
+                'player_id'        => $player->id,
+                'league_member_id' => $this->member->id,
+                'amount'           => $amount,
+            ]);
+        }
+
+        // The roster has one QB spot, so the cheaper quarterback benches.
+        $this->actingAs($this->user)
+            ->get(route('drafts.draft-room', $this->draft))
+            ->assertInertia(fn ($page) => $page
+                ->where('rosters.' . $this->member->id . '.0.player.full_name', $first->full_name)
+                ->where('rosters.' . $this->member->id . '.1.player', null)
+                ->where('rosters.' . $this->member->id . '.2.label', 'BE')
+                ->where('rosters.' . $this->member->id . '.2.player.full_name', $second->full_name));
     }
 
     public function test_a_sale_is_recorded_against_the_team_that_bought_the_player(): void
@@ -258,5 +313,93 @@ class AuctionDraftRoomTest extends TestCase
             ->assertForbidden();
 
         $this->assertSame(0, DraftPick::where('draft_id', $this->draft->id)->count());
+    }
+
+    public function test_the_budget_covers_every_starting_slot_plus_a_bench_pool(): void
+    {
+        $this->actingAs($this->user)
+            ->get(route('drafts.draft-room', $this->draft))
+            ->assertInertia(fn ($page) => $page
+                // Two starters in the template, then the pooled bench row.
+                ->has('budget.rows', 3)
+                ->where('budget.rows.0.label', 'QB')
+                ->where('budget.rows.1.label', 'RB')
+                ->where('budget.rows.2.label', 'Bench (1)')
+                ->where('budget.budget', 200)
+                ->where('budget.planned', 0)
+                ->where('budget.unplanned', 200));
+    }
+
+    public function test_a_budget_can_be_saved_and_read_back(): void
+    {
+        $this->actingAs($this->user)
+            ->put(route('drafts.budget.update', $this->draft), [
+                'allocations' => ['0' => 90, '1' => 60, 'bench' => 10],
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('draft_budgets', [
+            'draft_id'         => $this->draft->id,
+            'league_member_id' => $this->member->id,
+        ]);
+
+        $this->actingAs($this->user)
+            ->get(route('drafts.draft-room', $this->draft))
+            ->assertInertia(fn ($page) => $page
+                ->where('budget.rows.0.planned', 90)
+                ->where('budget.rows.2.planned', 10)
+                ->where('budget.planned', 160)
+                ->where('budget.unplanned', 40));
+    }
+
+    public function test_the_budget_reports_the_difference_against_what_was_spent(): void
+    {
+        $player = Player::factory()->quarterback()->create();
+
+        $this->actingAs($this->user)->put(route('drafts.budget.update', $this->draft), [
+            'allocations' => ['0' => 40],
+        ]);
+
+        $this->actingAs($this->user)->post(route('drafts.picks.store', $this->draft), [
+            'player_id'        => $player->id,
+            'league_member_id' => $this->member->id,
+            'amount'           => 55,
+        ]);
+
+        $this->actingAs($this->user)
+            ->get(route('drafts.draft-room', $this->draft))
+            ->assertInertia(fn ($page) => $page
+                ->where('budget.rows.0.actual', 55)
+                // Planned 40 against 55 spent: fifteen dollars over.
+                ->where('budget.rows.0.difference', -15)
+                ->where('budget.actual', 55)
+                ->where('budget.remaining', 145));
+    }
+
+    public function test_saving_a_budget_replaces_the_previous_plan(): void
+    {
+        $this->actingAs($this->user)->put(route('drafts.budget.update', $this->draft), [
+            'allocations' => ['0' => 90, '1' => 60],
+        ]);
+
+        $this->actingAs($this->user)->put(route('drafts.budget.update', $this->draft), [
+            'allocations' => ['0' => 25, '1' => null],
+        ]);
+
+        $budget = DraftBudget::where('draft_id', $this->draft->id)->firstOrFail();
+
+        $this->assertSame(['0' => 25], $budget->allocations);
+        $this->assertSame(1, DraftBudget::where('draft_id', $this->draft->id)->count());
+    }
+
+    public function test_someone_without_a_team_cannot_save_a_budget(): void
+    {
+        $outsider = User::factory()->create();
+
+        $this->actingAs($outsider)
+            ->put(route('drafts.budget.update', $this->draft), ['allocations' => ['0' => 10]])
+            ->assertForbidden();
+
+        $this->assertSame(0, DraftBudget::count());
     }
 }

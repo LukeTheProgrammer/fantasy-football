@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class LeagueController extends Controller
@@ -47,7 +46,7 @@ class LeagueController extends Controller
         $league = League::with(['settings', 'members.user'])->findOrFail($id);
 
         // Check if user is a member of this league
-        if (! $league->userIsMember(Auth::user()) && ! $league->is_public) {
+        if (!$league->userIsMember(Auth::user()) && !$league->is_public) {
             return response()->json(['message' => 'You do not have access to this league'], 403);
         }
 

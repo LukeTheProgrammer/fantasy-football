@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuctionPickController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DraftBudgetController;
 use App\Http\Controllers\DraftController;
 use App\Http\Controllers\DraftRankingController;
 use App\Http\Controllers\LeagueController;
@@ -36,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Recording what the room sees: an auction sale, or undoing one.
         Route::post('/{draft}/picks', [AuctionPickController::class, 'store'])->name('picks.store');
+        Route::put('/{draft}/budget', [DraftBudgetController::class, 'update'])->name('budget.update');
         Route::patch('/{draft}/picks/{pick}', [AuctionPickController::class, 'update'])->name('picks.update');
         Route::delete('/{draft}/picks/{pick}', [AuctionPickController::class, 'destroy'])->name('picks.destroy');
     });

@@ -14,6 +14,7 @@ class DraftUpdateRequest extends FormRequest
     public function authorize(): bool
     {
         $league = $this->route('league');
+
         return $this->user()->can('update', $league);
     }
 
@@ -25,11 +26,11 @@ class DraftUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'draft_date' => ['date', 'after:now'],
-            'draft_type' => [Rule::in(['snake', 'auction'])],
+            'draft_date'     => ['date', 'after:now'],
+            'draft_type'     => [Rule::in(['snake', 'auction'])],
             'auction_budget' => ['required_if:draft_type,auction', 'nullable', 'integer', 'min:1', 'max:1000'],
-            'time_per_pick' => ['integer', 'min:10', 'max:600'],
-            'is_active' => ['boolean'],
+            'time_per_pick'  => ['integer', 'min:10', 'max:600'],
+            'is_active'      => ['boolean'],
         ];
     }
 }

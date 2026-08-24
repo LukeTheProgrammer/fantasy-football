@@ -1,11 +1,14 @@
 import { Heading } from '@/common/heading/Heading';
+import { Button } from '@/components/ui/button';
+import { BudgetPlan } from '@/modules/drafts/components/BudgetPlan';
 import { DraftPicks } from '@/modules/drafts/components/DraftPicks';
 import { NominatedPlayer } from '@/modules/drafts/components/NominatedPlayer';
 import { PlayerBoard } from '@/modules/drafts/components/PlayerBoard';
 import { TeamBudgets } from '@/modules/drafts/components/TeamBudgets';
+import { TeamRoster } from '@/modules/drafts/components/TeamRoster';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
-import { type AuctionPlayer, type AuctionTeam, type Draft } from '@/types/models';
+import { type AuctionBudget, type AuctionPlayer, type AuctionTeam, type Draft, type RosterSlot } from '@/types/models';
 import { PageProps } from '@inertiajs/core';
 import { Head, router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
@@ -14,6 +17,10 @@ interface AuctionDraftRoomProps extends PageProps {
   draft: Draft;
   players: AuctionPlayer[];
   teams: AuctionTeam[];
+  /** Roster slots per league member id. */
+  rosters: Record<string, RosterSlot[]>;
+  /** The signed in user's own plan, when they have a team in this league. */
+  budget: AuctionBudget | null;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -27,11 +34,13 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function AuctionDraftRoom({ draft, players, teams }: AuctionDraftRoomProps) {
+export default function AuctionDraftRoom({ draft, players, teams, rosters, budget }: AuctionDraftRoomProps) {
   const [search, setSearch] = useState('');
   const [position, setPosition] = useState<string | null>(null);
   const [nominatedId, setNominatedId] = useState<number | null>(null);
   const [showPicked, setShowPicked] = useState(false);
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const [showBudget, setShowBudget] = useState(false);
 
   const available = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -63,6 +72,8 @@ export default function AuctionDraftRoom({ draft, players, teams }: AuctionDraft
 
   const teamsById = useMemo(() => new Map(teams.map((team) => [team.id, team])), [teams]);
 
+  const selectedTeam = selectedTeamId !== null ? (teamsById.get(selectedTeamId) ?? null) : null;
+
   const handleUndo = (pickId: number) => {
     router.delete(route('drafts.picks.destroy', [draft.id, pickId]), { preserveScroll: true });
   };
@@ -83,7 +94,14 @@ export default function AuctionDraftRoom({ draft, players, teams }: AuctionDraft
             nominated player as a bar over the board and the pick list. */}
         <div className="grid h-[calc(100vh-14rem)] grid-cols-[1fr_3fr_2fr] grid-rows-[auto_1fr] gap-4">
           <div className="row-span-2 min-h-0 overflow-auto pr-1">
-            <TeamBudgets teams={teams} />
+            <TeamBudgets
+              teams={teams}
+              selectedTeamId={selectedTeamId}
+              onSelect={(teamId) => {
+                setShowBudget(false);
+                setSelectedTeamId(selectedTeamId === teamId ? null : teamId);
+              }}
+            />
           </div>
 
           <div className="col-span-2 h-[6.5rem]">
@@ -110,7 +128,44 @@ export default function AuctionDraftRoom({ draft, players, teams }: AuctionDraft
             onShowPickedChange={setShowPicked}
           />
 
-          <DraftPicks players={picks} teams={teams} teamsById={teamsById} draftId={draft.id} onUndo={handleUndo} />
+          {/* One column, three jobs: your own plan, a team's roster while you
+              size up a bid, and the running list of picks otherwise. */}
+          <div className="flex min-h-0 flex-col gap-2">
+            {budget && (
+              <div className="flex gap-1">
+                <Button
+                  size="sm"
+                  variant={showBudget ? 'default' : 'outline'}
+                  onClick={() => {
+                    setShowBudget(true);
+                    setSelectedTeamId(null);
+                  }}
+                >
+                  My budget
+                </Button>
+                <Button
+                  size="sm"
+                  variant={!showBudget && !selectedTeam ? 'default' : 'outline'}
+                  onClick={() => {
+                    setShowBudget(false);
+                    setSelectedTeamId(null);
+                  }}
+                >
+                  Picks
+                </Button>
+              </div>
+            )}
+
+            <div className="min-h-0 flex-1">
+              {showBudget && budget ? (
+                <BudgetPlan budget={budget} draftId={draft.id} />
+              ) : selectedTeam ? (
+                <TeamRoster team={selectedTeam} slots={rosters[String(selectedTeam.id)] ?? []} onClose={() => setSelectedTeamId(null)} />
+              ) : (
+                <DraftPicks players={picks} teams={teams} teamsById={teamsById} draftId={draft.id} onUndo={handleUndo} />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </AppLayout>

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
 
 class LeagueCreateRequest extends FormRequest
 {
@@ -23,7 +23,7 @@ class LeagueCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'platform'       => ['required', 'string', 'in:espn,cbs'],
+            'platform' => ['required', 'string', 'in:espn,cbs'],
 
             // ESPN
             'espn_league_id' => ['requiredIf:platform,espn', 'numeric'],

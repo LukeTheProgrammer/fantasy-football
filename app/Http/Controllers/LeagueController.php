@@ -52,8 +52,8 @@ class LeagueController extends Controller
         $league->load([
             'creator',
             'draft.picks' => ['leagueMember', 'player'],
-            'matchups' => ['homeTeam', 'awayTeam'],
-            'members' => [
+            'matchups'    => ['homeTeam', 'awayTeam'],
+            'members'     => [
                 'rosters' => [
                     'nflGame',
                     'player',
@@ -64,7 +64,7 @@ class LeagueController extends Controller
         ]);
 
         return Inertia::render('leagues/ShowLeaguePage', [
-            'league' => new LeagueShowResource($league),
+            'league'  => new LeagueShowResource($league),
             'seasons' => $this->seasonOptions(
                 League::sameLeagueAs($league)->orderByDesc('season')->get()
             ),
@@ -80,7 +80,7 @@ class LeagueController extends Controller
         return $leagues
             ->sortByDesc('season')
             ->map(fn (League $league) => [
-                'id' => $league->id,
+                'id'     => $league->id,
                 'season' => $league->season,
             ])
             ->values();

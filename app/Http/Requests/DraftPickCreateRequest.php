@@ -14,6 +14,7 @@ class DraftPickCreateRequest extends FormRequest
     public function authorize(): bool
     {
         $league = $this->route('league');
+
         return $this->user()->can('update', $league);
     }
 
@@ -34,8 +35,8 @@ class DraftPickCreateRequest extends FormRequest
                     return $query->where('draft_id', $draft->id);
                 }),
             ],
-            'amount' => ['required_if:draft_type,auction', 'nullable', 'numeric', 'min:1'],
-            'is_keeper' => ['boolean'],
+            'amount'             => ['required_if:draft_type,auction', 'nullable', 'numeric', 'min:1'],
+            'is_keeper'          => ['boolean'],
             'previous_year_cost' => ['nullable', 'numeric', 'min:0'],
         ];
     }

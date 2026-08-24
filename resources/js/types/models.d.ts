@@ -50,6 +50,41 @@ export interface AuctionPlayer {
   season: number;
 }
 
+export interface RosterSlotPlayer {
+  player_id: number;
+  pick_id: number;
+  full_name: string | null;
+  position_id: string | null;
+  team_id: string | null;
+  amount: number;
+}
+
+export interface RosterSlot {
+  index: number;
+  slot: string;
+  label: string;
+  is_starter: boolean;
+  player: RosterSlotPlayer | null;
+}
+
+export interface BudgetRow {
+  key: string;
+  label: string;
+  planned: number | null;
+  actual: number | null;
+  difference: number | null;
+  filled_by: string | null;
+}
+
+export interface AuctionBudget {
+  rows: BudgetRow[];
+  budget: number;
+  planned: number;
+  unplanned: number;
+  actual: number;
+  remaining: number;
+}
+
 export interface AuctionTeam {
   id: number;
   team_name: string;
