@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Auction as AuctionFacade;
 use App\Models\Draft;
 use App\Models\DraftRanking;
 use App\Models\League;
@@ -103,6 +104,7 @@ class DraftController extends Controller
     public function draftRoom(Draft $draft)
     {
         $draft->load([
+            'league.settings',
             'league.members.user',
             'picks' => [
                 'leagueMember.user',
@@ -112,6 +114,12 @@ class DraftController extends Controller
                 ],
             ],
         ]);
+
+        // An auction board and a snake board are different tools, so they are
+        // different pages rather than one page with branches inside it.
+        if ($draft->draft_type === 'auction') {
+            return $this->auctionDraftRoom($draft);
+        }
 
         // The newest rankings in a single scoring format, so a player appears
         // once rather than once per format.
@@ -132,6 +140,19 @@ class DraftController extends Controller
         return Inertia::render('drafts/DraftRoomPage', [
             'draft'            => $draft,
             'availablePlayers' => $availablePlayers,
+        ]);
+    }
+
+    /**
+     * The auction cheat sheet: every rankable player with both value estimates,
+     * and what each team can still spend.
+     */
+    private function auctionDraftRoom(Draft $draft)
+    {
+        return Inertia::render('drafts/AuctionDraftRoomPage', [
+            'draft'   => $draft,
+            'players' => AuctionFacade::cheatSheet($draft),
+            'teams'   => AuctionFacade::teams($draft),
         ]);
     }
 

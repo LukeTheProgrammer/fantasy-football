@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Draft;
 use App\Models\League;
+use App\Policies\DraftPolicy;
 use App\Policies\LeaguePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
+        Draft::class  => DraftPolicy::class,
         League::class => LeaguePolicy::class,
     ];
 

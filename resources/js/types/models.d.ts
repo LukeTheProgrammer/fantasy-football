@@ -33,6 +33,34 @@ export interface DraftPick {
   player: Player;
 }
 
+export interface AuctionPlayer {
+  player_id: number;
+  full_name: string | null;
+  position_id: string;
+  team_id: string | null;
+  rank: number | null;
+  tier: number | null;
+  projected_points: number | null;
+  market_value: number | null;
+  projected_value: number | null;
+  previous_price: number | null;
+  drafted_by: number | null;
+  drafted_for: number | null;
+  pick_id: number | null;
+  season: number;
+}
+
+export interface AuctionTeam {
+  id: number;
+  team_name: string;
+  owner_name: string | null;
+  spent: number;
+  remaining: number;
+  filled: number;
+  open_spots: number;
+  max_bid: number;
+}
+
 export interface RankingFormat {
   key: string;
   label: string;

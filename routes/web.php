@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuctionPickController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DraftController;
 use App\Http\Controllers\DraftRankingController;
@@ -32,6 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{draft}/edit', [DraftController::class, 'edit'])->name('edit');
         Route::get('/{draft}/results', [DraftController::class, 'results'])->name('results');
         Route::get('/{draft}/draft-room', [DraftController::class, 'draftRoom'])->name('draft-room');
+
+        // Recording what the room sees: an auction sale, or undoing one.
+        Route::post('/{draft}/picks', [AuctionPickController::class, 'store'])->name('picks.store');
+        Route::delete('/{draft}/picks/{pick}', [AuctionPickController::class, 'destroy'])->name('picks.destroy');
     });
 
     // DraftRanking model

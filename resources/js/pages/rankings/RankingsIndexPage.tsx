@@ -221,36 +221,34 @@ export default function Drafts({ draftRankings, format, formats }: DraftIndexPro
             </CardHeader>
             <CardContent className="flex-grow overflow-hidden py-0">
               <div className="relative">
-                <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 22rem)' }}>
-                  <Table>
-                    <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
-                      {table.getHeaderGroups().map((headerGroup) => (
-                        <TableRow key={headerGroup.id}>
-                          {headerGroup.headers.map((header) => (
-                            <TableHead key={header.id}>
-                              {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                            </TableHead>
+                <Table containerClassName="max-h-[calc(100vh-22rem)] overflow-auto">
+                  <TableHeader className="sticky top-0 z-10 bg-card shadow-sm [&_th]:bg-card">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows.map((row) => {
+                      const currentTier = row.original.tier;
+                      const style = getRowStyle(lastTier, currentTier);
+                      lastTier = currentTier !== null ? currentTier : lastTier;
+
+                      return (
+                        <TableRow key={row.id} style={style}>
+                          {row.getAllCells().map((cell) => (
+                            <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                           ))}
                         </TableRow>
-                      ))}
-                    </TableHeader>
-                    <TableBody>
-                      {table.getRowModel().rows.map((row) => {
-                        const currentTier = row.original.tier;
-                        const style = getRowStyle(lastTier, currentTier);
-                        lastTier = currentTier !== null ? currentTier : lastTier;
-
-                        return (
-                          <TableRow key={row.id} style={style}>
-                            {row.getAllCells().map((cell) => (
-                              <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                            ))}
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </div>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>

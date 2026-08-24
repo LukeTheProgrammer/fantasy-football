@@ -3,10 +3,13 @@ import { Badge } from '@/components/ui/badge';
 import { type Position } from '@/types/models';
 
 interface PositionBadgeProps {
-  position: Position;
+  /** A position record, or just its abbreviation. */
+  position: Position | string;
 }
 
 export function PositionBadge({ position }: PositionBadgeProps) {
+  const abbreviation = typeof position === 'string' ? position : position.abbreviation;
+
   const getPositionColor = (pos: string) => {
     switch (pos.toUpperCase()) {
       case 'QB':
@@ -27,8 +30,8 @@ export function PositionBadge({ position }: PositionBadgeProps) {
   };
 
   return (
-    <Badge className={cn('px-2 py-1 text-xs font-medium', getPositionColor(position.abbreviation))}>
-      <div className="flex size-6 items-center justify-center">{position.abbreviation}</div>
+    <Badge className={cn('px-2 py-1 text-xs font-medium', getPositionColor(abbreviation))}>
+      <div className="flex size-6 items-center justify-center">{abbreviation}</div>
     </Badge>
   );
 }
