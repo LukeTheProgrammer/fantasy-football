@@ -28,7 +28,6 @@ return new class extends Migration
             $table->boolean('is_public')->default(true);
             $table->string('join_code')->nullable()->unique();
             $table->boolean('is_active')->default(true);
-            $table->json('credentials')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
