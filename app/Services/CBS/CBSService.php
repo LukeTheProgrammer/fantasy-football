@@ -7,12 +7,28 @@ use App\Services\CBS\Data\FantasyNFL\CredentialsData;
 use App\Services\CBS\Formatters\FantasyLineupFormatter;
 use App\Services\CBS\Resources\FantasyNFL;
 use App\Services\CBS\Resources\OwnersResource;
+use App\Services\CBS\Resources\RosterGridResource;
+use App\Services\CBS\Resources\TeamsResource;
 use App\Traits\HasDataFormats;
 use Illuminate\Support\Collection;
 
 class CBSService
 {
     use HasDataFormats;
+
+    public function getTeams(array $credentials)
+    {
+        $resource = new TeamsResource($credentials);
+
+        return $resource->fetch();
+    }
+
+    public function getRosters(array $credentials)
+    {
+        $resource = new RosterGridResource($credentials);
+
+        return $resource->fetch();
+    }
 
     public function getFantasyDraft(array|CredentialsData $credentials, array $opts = [])
     {

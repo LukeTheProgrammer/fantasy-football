@@ -11,21 +11,21 @@ use Illuminate\Support\Facades\Log;
 trait MakesHttpRequests
 {
     /**
-     * Undocumented variable
+     * Metadata for logging.
      *
      * @var array
      */
     public array $currentRequest = [];
 
     /**
-     * Undocumented variable
+     * Default cookies.
      *
      * @var array
      */
     public array $defaultCookies = [];
 
     /**
-     * Undocumented variable
+     * Default headers.
      *
      * @var array
      */
@@ -34,21 +34,21 @@ trait MakesHttpRequests
     ];
 
     /**
-     * Undocumented variable
+     * Default query parameters.
      *
      * @var array
      */
     public array $defaultQuery = [];
 
     /**
-     * Undocumented variable
+     * Cookie domain.
      *
      * @var string
      */
     public ?string $cookieDomain = null;
 
     /**
-     * Undocumented variable
+     * Retry limit.
      *
      * @var int
      */

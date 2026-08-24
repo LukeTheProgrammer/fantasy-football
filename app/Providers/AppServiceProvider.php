@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\Actions\ActionService;
 use App\Services\Auction\AuctionService;
+use App\Services\CBS\CBSService;
 use App\Services\Data\DataService;
 use App\Services\Espn\EspnService;
 use App\Services\FantasyPros\FantasyProsService;
@@ -19,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public $bindings = [
         'Action'               => ActionService::class,
         'Auction'              => AuctionService::class,
+        'CBS'                  => CBSService::class,
         'Data'                 => DataService::class,
         'Espn'                 => EspnService::class,
         'FantasyPros'          => FantasyProsService::class,

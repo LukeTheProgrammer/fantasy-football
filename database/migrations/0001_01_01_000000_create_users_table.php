@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->json('espn_credentials')->nullable();
+            $table->json('cbs_credentials')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
