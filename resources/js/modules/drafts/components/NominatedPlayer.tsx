@@ -12,7 +12,7 @@ interface NominatedPlayerProps {
   player: AuctionPlayer | null;
   teams: AuctionTeam[];
   draftId: number;
-  onSold?: () => void;
+  onPicked?: () => void;
 }
 
 function Stat({ label, value, muted = false }: { label: string; value: string | number | null; muted?: boolean }) {
@@ -26,12 +26,12 @@ function Stat({ label, value, muted = false }: { label: string; value: string | 
 
 /**
  * The player currently up for bidding, with both value estimates and the form
- * that records what he actually sold for.
+ * that records what he actually went for.
  *
  * Laid out as a bar across the top of the room: identity, then the numbers,
- * then the sale, reading left to right in the order the auction happens.
+ * then the pick, reading left to right in the order the auction happens.
  */
-export function NominatedPlayer({ player, teams, draftId, onSold }: NominatedPlayerProps) {
+export function NominatedPlayer({ player, teams, draftId, onPicked }: NominatedPlayerProps) {
   // The page remounts this component per nomination, so form state starts
   // fresh for each player without an effect to reset it.
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -57,7 +57,7 @@ export function NominatedPlayer({ player, teams, draftId, onSold }: NominatedPla
       preserveScroll: true,
       onSuccess: () => {
         reset('amount');
-        onSold?.();
+        onPicked?.();
       },
     });
   };
@@ -66,7 +66,7 @@ export function NominatedPlayer({ player, teams, draftId, onSold }: NominatedPla
 
   return (
     <Card className="h-full">
-      <CardContent className="h-full grid grid-cols-3 gap-2">
+      <CardContent className="grid h-full grid-cols-3 gap-2">
         <div className="">
           <div className="flex items-start justify-start gap-3">
             <div className="pt-1">
@@ -92,10 +92,10 @@ export function NominatedPlayer({ player, teams, draftId, onSold }: NominatedPla
           </div>
         </div>
 
-        <div className=" flex justify-end">
+        <div className="flex justify-end">
           <form onSubmit={handleSubmit} className="flex items-center gap-2">
             <div className="w-48">
-              <label className="sr-only">Sold to</label>
+              <label className="sr-only">Picked by</label>
               <Select value={String(data.league_member_id)} onValueChange={(value) => setData('league_member_id', value)}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select team" />
@@ -123,7 +123,7 @@ export function NominatedPlayer({ player, teams, draftId, onSold }: NominatedPla
             </div>
 
             <Button type="submit" disabled={processing || !data.league_member_id || !data.amount}>
-              Sold
+              Pick
             </Button>
           </form>
           {Object.values(errors).length > 0 && <p className="shrink-0 text-sm text-destructive">{Object.values(errors)[0]}</p>}

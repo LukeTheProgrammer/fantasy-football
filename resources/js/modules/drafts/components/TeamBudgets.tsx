@@ -14,17 +14,20 @@ interface TeamBudgetsProps {
  * Sits beside the board rather than above it, so the whole league fits on
  * screen without pushing players out of view. That is why the cards are dense:
  * the dollar figures stay large, everything else gives up its space.
+ *
+ * The cards share the column's height evenly. Once the league outgrows the
+ * space, the rows stop stretching and the column scrolls instead.
  */
 export function TeamBudgets({ teams, selectedTeamId, onSelect }: TeamBudgetsProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="grid h-full auto-rows-fr gap-1">
       {teams.map((team) => (
         <button
           key={team.id}
           type="button"
           onClick={() => onSelect?.(team.id)}
           className={cn(
-            'rounded-lg border bg-card px-2 py-1.5 text-left transition-colors hover:border-primary/60',
+            'flex flex-col justify-center rounded-lg border bg-card px-2 py-1.5 text-left transition-colors hover:border-primary/60',
             selectedTeamId === team.id && 'border-primary ring-1 ring-primary',
             team.open_spots === 0 && 'opacity-60',
           )}

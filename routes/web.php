@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Recording what the room sees: an auction sale, or undoing one.
         Route::post('/{draft}/picks', [AuctionPickController::class, 'store'])->name('picks.store');
+        Route::patch('/{draft}/picks/{pick}', [AuctionPickController::class, 'update'])->name('picks.update');
         Route::delete('/{draft}/picks/{pick}', [AuctionPickController::class, 'destroy'])->name('picks.destroy');
     });
 

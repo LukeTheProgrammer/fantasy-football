@@ -147,6 +147,84 @@ class AuctionDraftRoomTest extends TestCase
             ->assertSessionHasErrors('amount');
     }
 
+    public function test_a_sale_can_be_corrected(): void
+    {
+        $player = Player::factory()->create();
+
+        $other = LeagueMember::create([
+            'league_id' => $this->league->id,
+            'team_name' => 'Other Team',
+            'is_admin'  => false,
+        ]);
+
+        $this->actingAs($this->user)->post(route('drafts.picks.store', $this->draft), [
+            'player_id'        => $player->id,
+            'league_member_id' => $this->member->id,
+            'amount'           => 42,
+        ]);
+
+        $pick = DraftPick::where('draft_id', $this->draft->id)->firstOrFail();
+
+        $this->actingAs($this->user)
+            ->patch(route('drafts.picks.update', [$this->draft, $pick]), [
+                'league_member_id' => $other->id,
+                'amount'           => 17,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('draft_picks', [
+            'id'               => $pick->id,
+            'player_id'        => $player->id,
+            'league_member_id' => $other->id,
+            'amount'           => 17,
+        ]);
+    }
+
+    public function test_a_corrected_sale_still_cannot_exceed_the_budget(): void
+    {
+        $player = Player::factory()->create();
+
+        $this->actingAs($this->user)->post(route('drafts.picks.store', $this->draft), [
+            'player_id'        => $player->id,
+            'league_member_id' => $this->member->id,
+            'amount'           => 42,
+        ]);
+
+        $pick = DraftPick::where('draft_id', $this->draft->id)->firstOrFail();
+
+        $this->actingAs($this->user)
+            ->patch(route('drafts.picks.update', [$this->draft, $pick]), [
+                'league_member_id' => $this->member->id,
+                'amount'           => 201,
+            ])
+            ->assertSessionHasErrors('amount');
+
+        $this->assertDatabaseHas('draft_picks', ['id' => $pick->id, 'amount' => 42]);
+    }
+
+    public function test_someone_outside_the_league_cannot_correct_a_sale(): void
+    {
+        $outsider = User::factory()->create();
+        $player = Player::factory()->create();
+
+        $this->actingAs($this->user)->post(route('drafts.picks.store', $this->draft), [
+            'player_id'        => $player->id,
+            'league_member_id' => $this->member->id,
+            'amount'           => 42,
+        ]);
+
+        $pick = DraftPick::where('draft_id', $this->draft->id)->firstOrFail();
+
+        $this->actingAs($outsider)
+            ->patch(route('drafts.picks.update', [$this->draft, $pick]), [
+                'league_member_id' => $this->member->id,
+                'amount'           => 5,
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('draft_picks', ['id' => $pick->id, 'amount' => 42]);
+    }
+
     public function test_a_sale_can_be_undone(): void
     {
         $player = Player::factory()->create();

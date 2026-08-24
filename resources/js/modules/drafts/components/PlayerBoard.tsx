@@ -22,8 +22,8 @@ interface PlayerBoardProps {
   onSearchChange: (search: string) => void;
   position: string | null;
   onPositionChange: (position: string | null) => void;
-  showSold: boolean;
-  onShowSoldChange: (showSold: boolean) => void;
+  showPicked: boolean;
+  onShowPickedChange: (showPicked: boolean) => void;
 }
 
 /**
@@ -41,8 +41,8 @@ export function PlayerBoard({
   onSearchChange,
   position,
   onPositionChange,
-  showSold,
-  onShowSoldChange,
+  showPicked,
+  onShowPickedChange,
 }: PlayerBoardProps) {
   return (
     <Card className="flex h-full min-h-0 flex-col">
@@ -63,8 +63,8 @@ export function PlayerBoard({
                   {pos}
                 </Button>
               ))}
-              <Button size="sm" variant={showSold ? 'default' : 'outline'} onClick={() => onShowSoldChange(!showSold)}>
-                Show sold
+              <Button size="sm" variant={showPicked ? 'default' : 'outline'} onClick={() => onShowPickedChange(!showPicked)}>
+                Show picked
               </Button>
             </div>
             <div className="relative max-w-xs flex-1">

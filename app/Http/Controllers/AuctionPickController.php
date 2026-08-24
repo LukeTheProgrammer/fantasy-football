@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AuctionPickStoreRequest;
+use App\Http\Requests\AuctionPickUpdateRequest;
 use App\Models\Draft;
 use App\Models\DraftPick;
 use Illuminate\Http\RedirectResponse;
@@ -30,6 +31,20 @@ class AuctionPickController extends Controller
         ]);
 
         return back()->with('success', 'Sold.');
+    }
+
+    /**
+     * Correct the team or the price on a sale already recorded.
+     */
+    public function update(AuctionPickUpdateRequest $request, Draft $draft, DraftPick $pick): RedirectResponse
+    {
+        if ($pick->draft_id !== $draft->id) {
+            abort(404, 'Pick does not belong to this draft');
+        }
+
+        $pick->update($request->validated());
+
+        return back()->with('success', 'Sale updated.');
     }
 
     /**
