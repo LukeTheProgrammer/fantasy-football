@@ -23,12 +23,15 @@ class LeagueCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'platform' => ['required', 'string', 'in:espn,cbs'],
+            'platform'    => ['required', 'string', 'in:espn,cbs'],
+            'credentials' => ['required', 'array'],
 
-            // ESPN
-            'espn_league_id' => ['requiredIf:platform,espn', 'numeric'],
-            'espn_s2'        => ['requiredIf:platform,espn', 'string'],
-            'espn_swid'      => ['requiredIf:platform,espn', 'string'],
+            // Credentials are stored as one json object, so each platform
+            // validates only the keys it authenticates with.
+            'credentials.leagueId' => ['required', 'numeric'],
+            'credentials.s2'       => ['required_if:platform,espn', 'string'],
+            'credentials.swid'     => ['required_if:platform,espn', 'string'],
+            'credentials.token'    => ['required_if:platform,cbs', 'string'],
         ];
     }
 }

@@ -150,6 +150,24 @@ export interface SeasonOption {
   season: number;
 }
 
+/**
+ * The platform credentials a league was imported with, as stored on the league
+ * row. Each platform authenticates differently, so the shapes do not overlap
+ * beyond the league id.
+ */
+export interface EspnCredentials {
+  leagueId: number | string;
+  s2: string;
+  swid: string;
+}
+
+export interface CbsCredentials {
+  leagueId: number | string;
+  token: string;
+}
+
+export type LeagueCredentials = EspnCredentials | CbsCredentials;
+
 export interface League {
   id: number;
   created_by_user_id: number;
@@ -163,7 +181,7 @@ export interface League {
   is_public: boolean;
   is_active: boolean;
   draft_date: string | null;
-  credentials: any[] | null;
+  credentials: LeagueCredentials | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;

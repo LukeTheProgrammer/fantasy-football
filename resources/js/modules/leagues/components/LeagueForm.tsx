@@ -1,43 +1,31 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
+import { CbsCredentialFields } from '@/modules/leagues/components/credentials/CbsCredentialFields';
+import { type Platform, PLATFORMS, credentialsFromLeague, platformOf } from '@/modules/leagues/components/credentials/credentials';
+import { EspnCredentialFields } from '@/modules/leagues/components/credentials/EspnCredentialFields';
+import { type CbsCredentials, type EspnCredentials, type League } from '@/types/models';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
-interface LeagueFormData {
-  platform: string;
-  espn_league_id: string | number;
-  espn_s2: string;
-  espn_swid: string;
-}
-
 interface LeagueFormProps {
-  initialData?: LeagueFormData;
+  /** The league being edited. Absent when creating one. */
+  league?: League;
   submitEndpoint: string;
   submitMethod: 'post' | 'patch';
   submitButtonText: string;
   processingButtonText: string;
   successMessage: string;
   redirectPath: string;
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: League) => void;
 }
 
-const defaultFormData: LeagueFormData = {
-  platform: 'espn',
-  espn_league_id: '',
-  espn_s2:
-    'AECFlzzeJ8XDumpNnipkrOUpZKHLnOYHmY%2BgRgwol3DvlUBavY%2BFumaCzcBxUQ%2Brg1h9HJRWWI%2FoY1qs%2BcqohAJ%2FzozkV5QIs6AHhUwhfrCOk4vzIQlrLNQIeN1N6T0LPpOw4hZmnRhpRy21%2F9xMn6dSozcElj28tJwZCj8zajnhLDgXjJ92ei6R5BEvPVKXpt%2F0azG8EpOmDPeq%2BSWxaZg74rnQJ8PfmUkVmz3c4k%2FXw4RHbNC3cslndrGNflUxkgq20blEIEpKqbAwCztCKnDRyuKt0b5pVYkXJFPJnkl5wg%3D%3D',
-  espn_swid: '{D5956E6B-2C41-428B-9E26-67AC379841B0}',
-};
-
 export function LeagueForm({
-  initialData,
+  league,
   submitEndpoint,
   submitMethod,
   submitButtonText,
@@ -46,24 +34,34 @@ export function LeagueForm({
   redirectPath,
   onSuccess,
 }: LeagueFormProps) {
-  const [data, setData] = useState<LeagueFormData>(initialData || defaultFormData);
+  const [platform, setPlatform] = useState<Platform>(platformOf(league));
+  const [credentials, setCredentials] = useState(() => credentialsFromLeague(platformOf(league), league));
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState(false);
 
-  // Handle form submission
+  // Credentials do not carry between platforms, so switching starts the new
+  // platform's fields blank rather than half filled with the old one's.
+  const changePlatform = useCallback(
+    (value: string) => {
+      const next = value as Platform;
+
+      setPlatform(next);
+      setCredentials(credentialsFromLeague(next, league));
+    },
+    [league],
+  );
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
       setProcessing(true);
       setErrors({});
-      setValidationErrors({});
 
       try {
         const response = await axios({
           method: submitMethod,
           url: submitEndpoint,
-          data,
+          data: { platform, credentials },
         });
 
         toast.success(successMessage);
@@ -73,9 +71,9 @@ export function LeagueForm({
         } else {
           router.visit(redirectPath);
         }
-      } catch (error: any) {
-        if (error.response?.status === 422) {
-          setValidationErrors(error.response.data.errors || {});
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response?.status === 422) {
+          setErrors(error.response.data.errors || {});
           toast.error('Please fix the validation errors.');
         } else {
           toast.error('An error occurred. Please try again.');
@@ -84,7 +82,7 @@ export function LeagueForm({
         setProcessing(false);
       }
     },
-    [data, submitMethod, submitEndpoint, successMessage, redirectPath, onSuccess],
+    [platform, credentials, submitMethod, submitEndpoint, successMessage, redirectPath, onSuccess],
   );
 
   return (
@@ -103,71 +101,27 @@ export function LeagueForm({
                   League Platform
                 </Label>
                 <div className="mt-2">
-                  <Select value={data.platform} onValueChange={(value) => setData((prev) => ({ ...prev, platform: value }))}>
+                  <Select value={platform} onValueChange={changePlatform}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a platform" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="espn">ESPN</SelectItem>
-                      <SelectItem value="cbs" disabled>
-                        CBS
-                      </SelectItem>
+                      {PLATFORMS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                  {(errors.platform || validationErrors.platform) && (
-                    <p className="mt-1 text-sm text-red-500">{errors.platform || validationErrors.platform}</p>
-                  )}
+                  {errors.platform && <p className="mt-1 text-sm text-red-500">{errors.platform}</p>}
                 </div>
                 <Separator />
               </div>
 
-              {data.platform === 'espn' && (
-                <div className="mt-6 space-y-4">
-                  <div>
-                    <Label htmlFor="espn-league-id">ESPN League ID</Label>
-                    <div className="mt-2">
-                      <Input
-                        id="espn-league-id"
-                        value={data.espn_league_id}
-                        onChange={(e) => setData((prev) => ({ ...prev, espn_league_id: e.target.value }))}
-                        className="mt-1"
-                      />
-                      {(errors.espn_league_id || validationErrors.espn_league_id) && (
-                        <p className="mt-1 text-sm text-red-500">{errors.espn_league_id || validationErrors.espn_league_id}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="espn-swid">ESPN SWID Cookie</Label>
-                    <div className="mt-2">
-                      <Input
-                        id="espn-swid"
-                        value={data.espn_swid}
-                        onChange={(e) => setData((prev) => ({ ...prev, espn_swid: e.target.value }))}
-                        className="mt-1"
-                      />
-                      {(errors.espn_swid || validationErrors.espn_swid) && (
-                        <p className="mt-1 text-sm text-red-500">{errors.espn_swid || validationErrors.espn_swid}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="espn-s2">ESPN S2 Cookie</Label>
-                    <div className="mt-2">
-                      <Textarea
-                        id="espn-s2"
-                        value={data.espn_s2}
-                        onChange={(e) => setData((prev) => ({ ...prev, espn_s2: e.target.value }))}
-                        className="mt-1"
-                      />
-                      {(errors.espn_s2 || validationErrors.espn_s2) && (
-                        <p className="mt-1 text-sm text-red-500">{errors.espn_s2 || validationErrors.espn_s2}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              {platform === 'espn' ? (
+                <EspnCredentialFields credentials={credentials as EspnCredentials} onChange={setCredentials} errors={errors} />
+              ) : (
+                <CbsCredentialFields credentials={credentials as CbsCredentials} onChange={setCredentials} errors={errors} />
               )}
             </div>
           </CardContent>

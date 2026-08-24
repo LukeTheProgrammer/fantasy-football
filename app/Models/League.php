@@ -31,7 +31,7 @@ class League extends Model
         'is_public'   => 'boolean',
         'is_active'   => 'boolean',
         'draft_date'  => 'datetime',
-        'credentials' => 'array',
+        'credentials' => 'encrypted:array',
     ];
 
     /* ===[ Relationships ]=== */

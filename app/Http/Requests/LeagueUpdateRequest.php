@@ -29,6 +29,15 @@ class LeagueUpdateRequest extends FormRequest
             'is_public'   => ['sometimes', 'boolean'],
             'draft_type'  => ['sometimes', 'string', 'in:snake,auction'],
             'draft_date'  => ['sometimes', 'nullable', 'date'],
+            'platform'    => ['sometimes', 'string', 'in:espn,cbs'],
+
+            // Credentials are one json object, replaced wholesale rather than
+            // merged, so a rotated cookie cannot leave a stale one behind.
+            'credentials'          => ['sometimes', 'array'],
+            'credentials.leagueId' => ['required_with:credentials', 'numeric'],
+            'credentials.s2'       => ['sometimes', 'string'],
+            'credentials.swid'     => ['sometimes', 'string'],
+            'credentials.token'    => ['sometimes', 'string'],
 
             // League settings validation
             'settings.roster_positions' => ['sometimes', 'array'],

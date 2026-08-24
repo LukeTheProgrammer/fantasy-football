@@ -5,8 +5,8 @@ namespace App\Actions\Models\Leagues;
 use App\Enums\FantasyPlatforms;
 use App\Facades\Action;
 use App\Facades\Data;
-use App\Models\League;
 use App\Models\Draft;
+use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
 use App\Models\User;
@@ -31,6 +31,7 @@ class LeagueCreateAction
             'is_public'          => Arr::get($data, 'is_public'),
             'join_code'          => Str::upper(Str::random(8)),
             'is_active'          => true,
+            'credentials'        => Arr::get($data, 'credentials'),
         ]);
 
         $this->createLeagueSettings($league, $data);
@@ -46,9 +47,9 @@ class LeagueCreateAction
     {
         return Data::espn()->importFantasyLeague([
             'created_by_user_id' => $creator->id,
-            'league_id'          => Arr::get($data, 'espn_league_id'),
-            's2'                 => Arr::get($data, 'espn_s2'),
-            'swid'               => Arr::get($data, 'espn_swid'),
+            'league_id'          => Arr::get($data, 'credentials.leagueId'),
+            's2'                 => Arr::get($data, 'credentials.s2'),
+            'swid'               => Arr::get($data, 'credentials.swid'),
         ]);
     }
 
@@ -80,7 +81,7 @@ class LeagueCreateAction
         for ($i = 0; $i < $league->team_count; $i++) {
             $userArg = ($i === 0) ? $user : null;
             Action::model(LeagueMember::class)->create($league, $userArg, [
-                'team_name' => ($i === 0) ? $user->name . "'s Team" : "Team " . ($i + 1),
+                'team_name' => ($i === 0) ? $user->name . "'s Team" : 'Team ' . ($i + 1),
                 'is_admin'  => $i === 0,
             ]);
         }
@@ -89,9 +90,9 @@ class LeagueCreateAction
     private function createDraft(League $league): void
     {
         Action::model(Draft::class)->create($league, [
-            'draft_type'       => 'snake',
-            'draft_date'       => null,
-            'is_active'        => true,
+            'draft_type' => 'snake',
+            'draft_date' => null,
+            'is_active'  => true,
         ]);
     }
 }

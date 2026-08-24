@@ -103,21 +103,17 @@ class LeagueController extends Controller
 
         $league = Action::model(League::class)->update(
             league: $league,
-            data: array_filter(Arr::only($validated, [
-                'name',
-                'description',
-                'team_count',
-                'is_public',
-                'join_code',
-                'draft_type',
-                'draft_date',
-                'is_active',
-            ])),
+            // Not array_filter: false and 0 are legitimate values here, and
+            // filtering them out makes a league impossible to deactivate or
+            // make private. Validation already decided what is allowed.
+            data: $validated,
         );
 
         Action::model(LeagueSettings::class)->update(
             settings: $league->settings,
-            data: array_filter(Arr::get($validated, 'settings', [])),
+            // Likewise: 0.0 is a real scoring value, as in a league that does
+            // not score receptions.
+            data: Arr::get($validated, 'settings', []),
         );
 
         foreach (Arr::get($validated, 'members', []) as $memberData) {

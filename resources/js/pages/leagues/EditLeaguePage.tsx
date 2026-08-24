@@ -26,14 +26,6 @@ interface EditLeagueProps extends PageProps {
 }
 
 export default function EditLeague({ league }: EditLeagueProps) {
-  // Map League to LeagueFormData (for platform credentials)
-  const formData = {
-    platform: league.platform || 'espn',
-    espn_league_id: league.credentials?.find((cred: any) => cred.key === 'espn_league_id')?.value || '',
-    espn_s2: league.credentials?.find((cred: any) => cred.key === 'espn_s2')?.value || '',
-    espn_swid: league.credentials?.find((cred: any) => cred.key === 'espn_swid')?.value || '',
-  };
-
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Edit League" />
@@ -42,8 +34,8 @@ export default function EditLeague({ league }: EditLeagueProps) {
         <Heading title="Edit League Credentials" description="Update your league's platform connection settings" />
 
         <LeagueForm
-          initialData={formData}
-          submitEndpoint={`/api/leagues/${league.id}/credentials`}
+          league={league}
+          submitEndpoint={`/api/leagues/${league.id}`}
           submitMethod="patch"
           submitButtonText="Update"
           processingButtonText="Updating..."
