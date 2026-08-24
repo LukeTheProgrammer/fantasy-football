@@ -45,7 +45,7 @@ export function PlayerBoard({
   onShowSoldChange,
 }: PlayerBoardProps) {
   return (
-    <Card className="flex max-h-[calc(100vh-14rem)] flex-col">
+    <Card className="flex h-full min-h-0 flex-col">
       <CardHeader className="py-0">
         <CardTitle>
           <div className="flex flex-wrap items-center justify-between gap-2">

@@ -79,9 +79,21 @@ export default function AuctionDraftRoom({ draft, players, teams }: AuctionDraft
           </p>
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-[12rem_2fr_1fr]">
-          <div className="max-h-[calc(100vh-13rem)] overflow-auto pr-1">
+        {/* Desktop only: one fixed height row, budgets down the left, the
+            nominated player as a bar over the board and the sold list. */}
+        <div className="grid h-[calc(100vh-14rem)] grid-cols-[1fr_3fr_2fr] grid-rows-[auto_1fr] gap-4">
+          <div className="row-span-2 min-h-0 overflow-auto pr-1">
             <TeamBudgets teams={teams} />
+          </div>
+
+          <div className="col-span-2 h-[6.5rem]">
+            <NominatedPlayer
+              key={nominated?.player_id ?? 'none'}
+              player={nominated}
+              teams={teams}
+              draftId={draft.id}
+              onSold={() => setNominatedId(null)}
+            />
           </div>
 
           <PlayerBoard
@@ -98,17 +110,7 @@ export default function AuctionDraftRoom({ draft, players, teams }: AuctionDraft
             onShowSoldChange={setShowSold}
           />
 
-          <div className="space-y-4">
-            <NominatedPlayer
-              key={nominated?.player_id ?? 'none'}
-              player={nominated}
-              teams={teams}
-              draftId={draft.id}
-              onSold={() => setNominatedId(null)}
-            />
-
-            <SoldPlayers players={sold} teamsById={teamsById} onUndo={handleUndo} />
-          </div>
+          <SoldPlayers players={sold} teamsById={teamsById} onUndo={handleUndo} />
         </div>
       </div>
     </AppLayout>

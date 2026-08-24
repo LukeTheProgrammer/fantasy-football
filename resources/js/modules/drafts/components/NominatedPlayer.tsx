@@ -6,6 +6,7 @@ import { PositionBadge } from '@/modules/players/components/PositionBadge';
 import { type AuctionPlayer, type AuctionTeam } from '@/types/models';
 import { useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
+import { money } from '../helpers/money';
 
 interface NominatedPlayerProps {
   player: AuctionPlayer | null;
@@ -16,9 +17,9 @@ interface NominatedPlayerProps {
 
 function Stat({ label, value, muted = false }: { label: string; value: string | number | null; muted?: boolean }) {
   return (
-    <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={muted ? 'text-lg font-semibold text-muted-foreground tabular-nums' : 'text-lg font-semibold tabular-nums'}>{value ?? '—'}</p>
+    <div className="text-center">
+      <p className="text-xs whitespace-nowrap text-muted-foreground">{label}</p>
+      <p className={muted ? 'text-xl font-semibold text-muted-foreground tabular-nums' : 'text-xl font-semibold tabular-nums'}>{value ?? '—'}</p>
     </div>
   );
 }
@@ -26,6 +27,9 @@ function Stat({ label, value, muted = false }: { label: string; value: string | 
 /**
  * The player currently up for bidding, with both value estimates and the form
  * that records what he actually sold for.
+ *
+ * Laid out as a bar across the top of the room: identity, then the numbers,
+ * then the sale, reading left to right in the order the auction happens.
  */
 export function NominatedPlayer({ player, teams, draftId, onSold }: NominatedPlayerProps) {
   // The page remounts this component per nomination, so form state starts
@@ -38,8 +42,8 @@ export function NominatedPlayer({ player, teams, draftId, onSold }: NominatedPla
 
   if (!player) {
     return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
+      <Card className="h-full">
+        <CardContent className="flex h-full items-center justify-center py-6 text-sm text-muted-foreground">
           Select a player from the board to put him up for bidding.
         </CardContent>
       </Card>
@@ -61,71 +65,69 @@ export function NominatedPlayer({ player, teams, draftId, onSold }: NominatedPla
   const disagreement = player.market_value !== null && player.projected_value !== null ? player.projected_value - player.market_value : null;
 
   return (
-    <Card>
-      <CardContent className="space-y-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="truncate text-2xl font-bold">{player.full_name}</h2>
-            <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+    <Card className="h-full">
+      <CardContent className="h-full grid grid-cols-3 gap-2">
+        <div className="">
+          <div className="flex items-start justify-start gap-3">
+            <div className="pt-1">
               <PositionBadge position={player.position_id} />
-              <span>{player.team_id}</span>
-              <span>&middot;</span>
-              <span>
-                Rank {player.rank} &middot; Tier {player.tier ?? '—'}
-              </span>
+            </div>
+            <div>
+              <h2 className="truncate text-2xl leading-tight font-bold">{player.full_name}</h2>
+              <div className="mt-1 flex items-center justify-start gap-4 text-sm text-muted-foreground">
+                <span>{player.team_id}</span>
+                <span>Rank {player.rank}</span>
+                <span>Tier {player.tier ?? '—'}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/40 p-3 md:grid-cols-3">
-          <Stat label="Market est." value={player.market_value !== null ? `$${player.market_value}` : null} />
-          <Stat label="Projected est." value={player.projected_value !== null ? `$${player.projected_value}` : null} />
-          <Stat label={`${player.season - 1} price`} value={player.previous_price !== null ? `$${player.previous_price}` : null} muted />
+        <div>
+          <div className="flex items-center justify-between rounded-lg border bg-muted/40 px-4 py-2">
+            <Stat label="Market" value={player.market_value !== null ? `$${player.market_value}` : null} />
+            <Stat label="Projected" value={player.projected_value !== null ? `$${player.projected_value}` : null} />
+            <Stat label="Diff" value={money(disagreement)} muted />
+            <Stat label={`${player.season - 1}`} value={player.previous_price !== null ? `$${player.previous_price}` : null} muted />
+          </div>
         </div>
 
-        {disagreement !== null && Math.abs(disagreement) >= 5 && (
-          <p className="text-xs text-muted-foreground">
-            {disagreement > 0
-              ? `Projections say he is worth $${disagreement} more than this league usually pays at rank ${player.rank}.`
-              : `This league usually pays $${Math.abs(disagreement)} more at rank ${player.rank} than his projection justifies.`}
-          </p>
-        )}
+        <div className=" flex justify-end">
+          <form onSubmit={handleSubmit} className="flex items-center gap-2">
+            <div className="w-48">
+              <label className="sr-only">Sold to</label>
+              <Select value={String(data.league_member_id)} onValueChange={(value) => setData('league_member_id', value)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select team" />
+                </SelectTrigger>
+                <SelectContent>
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={String(team.id)} disabled={team.open_spots === 0}>
+                      {team.team_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-2">
-          <div className="min-w-[12rem] flex-1">
-            <label className="mb-1 block text-xs text-muted-foreground">Sold to</label>
-            <Select value={String(data.league_member_id)} onValueChange={(value) => setData('league_member_id', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select team" />
-              </SelectTrigger>
-              <SelectContent>
-                {teams.map((team) => (
-                  <SelectItem key={team.id} value={String(team.id)} disabled={team.open_spots === 0}>
-                    {team.team_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="w-24">
+              <label className="sr-only">Amount</label>
+              <Input
+                type="number"
+                min={1}
+                inputMode="numeric"
+                placeholder="$"
+                value={data.amount}
+                onChange={(event) => setData('amount', event.target.value)}
+              />
+            </div>
 
-          <div className="w-28">
-            <label className="mb-1 block text-xs text-muted-foreground">Amount</label>
-            <Input
-              type="number"
-              min={1}
-              inputMode="numeric"
-              placeholder="$"
-              value={data.amount}
-              onChange={(event) => setData('amount', event.target.value)}
-            />
-          </div>
-
-          <Button type="submit" disabled={processing || !data.league_member_id || !data.amount}>
-            Sold
-          </Button>
-        </form>
-
-        {Object.values(errors).length > 0 && <p className="text-sm text-destructive">{Object.values(errors)[0]}</p>}
+            <Button type="submit" disabled={processing || !data.league_member_id || !data.amount}>
+              Sold
+            </Button>
+          </form>
+          {Object.values(errors).length > 0 && <p className="shrink-0 text-sm text-destructive">{Object.values(errors)[0]}</p>}
+        </div>
       </CardContent>
     </Card>
   );

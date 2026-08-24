@@ -30,12 +30,8 @@ export function TeamBudgets({ teams, selectedTeamId, onSelect }: TeamBudgetsProp
           )}
         >
           <div className="flex items-baseline justify-between">
-            <p className="truncate text-[11px] leading-tight font-semibold">
-              {team.team_name}
-            </p>
-            <p className="text-[10px] leading-tight text-muted-foreground tabular-nums text-right">
-              ${team.max_bid}
-            </p>
+            <p className="truncate text-[11px] leading-tight font-semibold">{team.team_name}</p>
+            <p className="text-right text-[10px] leading-tight text-muted-foreground tabular-nums">${team.max_bid}</p>
           </div>
           <div className="mt-0.5 flex items-baseline justify-between">
             <div>
