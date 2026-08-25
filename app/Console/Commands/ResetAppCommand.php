@@ -50,8 +50,8 @@ class ResetAppCommand extends Command
         $this->info('Importing Fantasy Roster');
         $this->call('import:fantasy:roster', ['leagueId' => 1, 'season' => $season]);
 
-        $this->info('Importing NFL Projections');
-        $this->call('import:fantasy:projections', ['season' => $season]);
+        $this->info('Importing FantasyPros NFL Projections');
+        $this->call('fantasy-pros:daily', ['season' => $season]);
 
         return Command::SUCCESS;
     }
