@@ -122,6 +122,19 @@ class RankingsResource extends BaseResource
     }
 
     /**
+     * Whether today's capture of a board is already on disk.
+     *
+     * A board that reads back without this being true is being served from an
+     * older capture, which for a source that keeps no archive of its own means
+     * the day was missed rather than pulled.
+     */
+    public function capturedToday(string|FantasyProsDraftSlate $slate, ?int $season = null): bool
+    {
+        return $this->archive($season ?? $this->currentSeason)
+            ->capturedToday($this->slate($slate)->value);
+    }
+
+    /**
      * The capture dates held for a season, newest first.
      */
     public function captures(?int $season = null)

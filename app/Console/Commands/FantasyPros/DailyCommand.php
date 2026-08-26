@@ -3,6 +3,8 @@
 namespace App\Console\Commands\FantasyPros;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class DailyCommand extends Command
 {
@@ -35,6 +37,12 @@ class DailyCommand extends Command
         $season = $this->option('season');
         $week = $this->option('week');
 
+        if (!$this->option('force') && Cache::get($this->marker($season, $week))) {
+            $this->info('Today\'s FantasyPros run already completed, nothing to do.');
+
+            return self::SUCCESS;
+        }
+
         $seasonOption = $season ? ['--season' => $season] : [];
         $weekOption = $week ? ['--week' => $week] : [];
         $forceOption = $this->option('force') ? ['--force' => true] : [];
@@ -58,9 +66,28 @@ class DailyCommand extends Command
             }
         }
 
+        Cache::put($this->marker($season, $week), true, Carbon::tomorrow());
+
         $this->newLine();
         $this->info('FantasyPros daily run complete.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * The key marking a completed run for a day.
+     *
+     * Only a run where every stage succeeded sets it, so the hourly schedule
+     * keeps retrying a day that failed partway and stops once it lands. It
+     * expires at midnight, which is what makes the next day run again.
+     */
+    private function marker(?string $season, ?string $week): string
+    {
+        return implode(':', [
+            'fantasy-pros:daily',
+            Carbon::today()->toDateString(),
+            $season ?? 'current',
+            $week ?? 'current',
+        ]);
     }
 }

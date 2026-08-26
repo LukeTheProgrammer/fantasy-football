@@ -42,6 +42,7 @@ class GetRankingsCommand extends Command
         $season = $this->option('season') ? (int) $this->option('season') : null;
 
         $rows = [];
+        $missed = [];
 
         $bar = $this->output->createProgressBar(count($slates));
         $bar->start();
@@ -49,7 +50,17 @@ class GetRankingsCommand extends Command
         foreach ($slates as $slate) {
             $players = $rankings->getRanking($slate, $season);
 
-            $rows[] = [$slate->value, $players === false ? 'no data' : count($players) . ' players'];
+            $capturedToday = $rankings->capturedToday($slate, $season);
+
+            if (!$capturedToday) {
+                $missed[] = $slate->value;
+            }
+
+            $rows[] = [
+                $slate->value,
+                $players === false ? 'no data' : count($players) . ' players',
+                $capturedToday ? 'today' : 'STALE',
+            ];
 
             $bar->advance();
         }
@@ -57,7 +68,14 @@ class GetRankingsCommand extends Command
         $bar->finish();
         $this->newLine(2);
 
-        $this->table(['Board', 'Captured'], $rows);
+        $this->table(['Board', 'Rows', 'Capture'], $rows);
+
+        if (!empty($missed)) {
+            $this->error('No capture landed today for: ' . implode(', ', $missed));
+            $this->line('FantasyPros keeps no archive, so these days cannot be pulled later.');
+
+            return self::FAILURE;
+        }
 
         return self::SUCCESS;
     }
