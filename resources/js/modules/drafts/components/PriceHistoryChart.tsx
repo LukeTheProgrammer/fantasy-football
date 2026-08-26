@@ -22,7 +22,7 @@ interface PricePoint {
 
 const chartConfig = {
   paid: { label: 'Paid', color: 'var(--primary)' },
-  projected: { label: 'Market estimate', color: 'var(--primary)' },
+  projected: { label: 'League estimate', color: 'var(--primary)' },
 } satisfies ChartConfig;
 
 /**
@@ -47,7 +47,7 @@ export function PriceHistoryChart({ prices, estimate, season }: PriceHistoryChar
       team: price.team,
       share: price.amount && price.top ? Math.round((price.amount / price.top) * 100) : null,
     })),
-    { season, paid: null, projected: estimate, team: 'Market estimate', share: null },
+    { season, paid: null, projected: estimate, team: 'League estimate', share: null },
   ];
 
   // The dashed leg starts at the last price actually paid, so the two lines

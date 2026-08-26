@@ -90,16 +90,14 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
                 {player.full_name}
               </DialogTitle>
               <DialogDescription>
-                {[
-                  player.team_id,
-                  bio?.bye_week ? `Bye ${bio.bye_week}` : null,
-                  bio?.age ? `Age ${bio.age}` : null,
-                  bio?.height,
-                  bio?.weight,
-                  bio?.college,
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
+                <div className="mt-2 flex items-center justify-start gap-2">
+                  <span className="pr-2">{player.team_id}</span>
+                  <span className="pr-2">Bye {bio?.bye_week ? bio.bye_week : '-'}</span>
+                  <span className="pr-2">Age {bio?.age ? bio.age : '-'}</span>
+                  <span className="pr-2">{bio?.height}</span>
+                  <span className="pr-2">{bio?.weight}</span>
+                  <span className="pr-2">{bio?.college}</span>
+                </div>
               </DialogDescription>
             </div>
           </div>
@@ -113,11 +111,11 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
           <div className="space-y-5">
             <div className="grid grid-cols-4 gap-2">
               <Figure
-                label="Market"
+                label="League"
                 value={money(valuation?.market_value ?? null)}
                 hint={valuation?.budget_share ? `${valuation.budget_share}% of a budget` : null}
               />
-              <Figure label="Projected" value={money(valuation?.projected_value ?? null)} hint={`${valuation?.projected_points ?? '—'} pts`} />
+              <Figure label="VAR" value={money(valuation?.projected_value ?? null)} hint={`${valuation?.projected_points ?? '—'} pts`} />
               <Figure label="Overall rank" value={valuation?.rank ? `#${valuation.rank}` : '—'} hint={`Tier ${valuation?.tier ?? '—'}`} />
               <Figure
                 label={`${player.position_id} left`}

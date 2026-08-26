@@ -69,7 +69,7 @@ export default function ShowDraft({ draft, seasons }: DraftShowProps) {
           {/* League Details Card */}
           <Card>
             <CardContent className="space-y-4">
-              <div className="mb-8 w-full flex items-center justify-between">
+              <div className="mb-8 flex w-full items-center justify-between">
                 <div>
                   <h2 className="text-lg font-semibold">
                     {draft.league.name} {draft.league.season} Draft FUCK

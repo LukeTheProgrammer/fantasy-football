@@ -83,8 +83,8 @@ export function PlayerBoard({
               <TableHead className="w-12 text-center">Rank</TableHead>
               <TableHead>Player</TableHead>
               <TableHead className="w-12 text-center">Tier</TableHead>
-              <TableHead className="w-20 text-center">Market</TableHead>
-              <TableHead className="w-20 text-center">Projected</TableHead>
+              <TableHead className="w-20 text-center">League</TableHead>
+              <TableHead className="w-20 text-center">VAR</TableHead>
               <TableHead className="w-20 text-center">{season - 1}</TableHead>
             </TableRow>
           </TableHeader>
