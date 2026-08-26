@@ -46,7 +46,7 @@ class ImportService
         $driverClass = Arr::get($this->importDrivers('fantasy_nfl'), $driver->value, false);
 
         if (!$driverClass) {
-            throw new Exception('Invalid driver: ' . $driver);
+            throw new Exception('Invalid driver: ' . $driver->value);
         }
 
         $driver = new $driverClass(...$args);

@@ -147,11 +147,7 @@ class ProjectionsResource extends BaseResource
             return true;
         }
 
-        if ($archive->capturedToday($slate->value)) {
-            return false;
-        }
-
-        return !$archive->has($slate->value);
+        return !$archive->capturedToday($slate->value);
     }
 
     private function archive(int $season, int $week): DataArchive
