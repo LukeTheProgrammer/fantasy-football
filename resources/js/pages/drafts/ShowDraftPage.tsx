@@ -54,6 +54,9 @@ export default function ShowDraft({ draft, seasons }: DraftShowProps) {
           </div>
           <div className="mt-4 flex items-center space-x-2 md:mt-0">
             <SeasonSelect seasons={seasons} season={draft.league.season} routeName="drafts.show" />
+            <Link href={route('drafts.draft-room', draft.id)}>
+              <Button>Draft Room</Button>
+            </Link>
             {isUserDraftAdmin(draft, userId) && (
               <Link href={route('drafts.edit', draft.id)}>
                 <Button variant="outline">Edit Draft</Button>
