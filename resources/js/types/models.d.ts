@@ -38,6 +38,7 @@ export interface AuctionPlayer {
   full_name: string | null;
   position_id: string;
   team_id: string | null;
+  headshot: string | null;
   rank: number | null;
   tier: number | null;
   projected_points: number | null;
@@ -48,6 +49,58 @@ export interface AuctionPlayer {
   drafted_for: number | null;
   pick_id: number | null;
   season: number;
+}
+
+export interface PlayerPrice {
+  season: number;
+  amount: number | null;
+  team: string | null;
+  /** The highest price paid in that auction, for scale. */
+  top: number;
+}
+
+export interface PlayerProfile {
+  player: {
+    id: number;
+    full_name: string | null;
+    position: string | null;
+    team: string | null;
+    jersey: number | null;
+    height: string | null;
+    weight: string | null;
+    college: string | null;
+    headshot: string | null;
+    age: number | null;
+    bye_week: number | null;
+  };
+  valuation: {
+    rank: number | null;
+    tier: number | null;
+    projected_points: number | null;
+    market_value: number | null;
+    projected_value: number | null;
+    drafted_for: number | null;
+    budget_share: number | null;
+  };
+  prices: PlayerPrice[];
+  consensus: {
+    pos_rank: number;
+    min: number | null;
+    max: number | null;
+    average: number | null;
+    std: number | null;
+  } | null;
+  position: {
+    rank: number | null;
+    tier_left: number | null;
+    next: {
+      player_id: number;
+      full_name: string | null;
+      rank: number | null;
+      tier: number | null;
+      market_value: number | null;
+    }[];
+  };
 }
 
 export interface RosterSlotPlayer {

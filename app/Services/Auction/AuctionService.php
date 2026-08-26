@@ -4,8 +4,10 @@ namespace App\Services\Auction;
 
 use App\Models\Draft;
 use App\Models\LeagueMember;
+use App\Models\Player;
 use App\Services\Auction\Actions\BuildBudgetAction;
 use App\Services\Auction\Actions\BuildCheatSheetAction;
+use App\Services\Auction\Actions\BuildPlayerProfileAction;
 use App\Services\Auction\Actions\CalculateMarketValuesAction;
 use App\Services\Auction\Actions\CalculateProjectedValuesAction;
 use App\Services\Auction\Actions\SlotRostersAction;
@@ -77,5 +79,15 @@ class AuctionService
     public function teams(Draft $draft): Collection
     {
         return (new SummariseTeamsAction)->run($draft);
+    }
+
+    /**
+     * One player's full history and context, for the dialog behind his name.
+     *
+     * @return array<string, mixed>
+     */
+    public function playerProfile(Draft $draft, Player $player): array
+    {
+        return (new BuildPlayerProfileAction)->run($draft, $player);
     }
 }

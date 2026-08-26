@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuctionPickController;
+use App\Http\Controllers\AuctionPlayerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DraftBudgetController;
 use App\Http\Controllers\DraftController;
@@ -34,6 +35,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{draft}/edit', [DraftController::class, 'edit'])->name('edit');
         Route::get('/{draft}/results', [DraftController::class, 'results'])->name('results');
         Route::get('/{draft}/draft-room', [DraftController::class, 'draftRoom'])->name('draft-room');
+
+        // Everything known about one player, for the dialog in the room.
+        Route::get('/{draft}/players/{player}', [AuctionPlayerController::class, 'show'])->name('players.show');
 
         // Recording what the room sees: an auction sale, or undoing one.
         Route::post('/{draft}/picks', [AuctionPickController::class, 'store'])->name('picks.store');

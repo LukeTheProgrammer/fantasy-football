@@ -7,6 +7,7 @@ import { type AuctionPlayer, type AuctionTeam } from '@/types/models';
 import { useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
 import { money } from '../helpers/money';
+import { PlayerDialog } from './PlayerDialog';
 
 interface NominatedPlayerProps {
   player: AuctionPlayer | null;
@@ -69,11 +70,12 @@ export function NominatedPlayer({ player, teams, draftId, onPicked }: NominatedP
       <CardContent className="grid h-full grid-cols-3 gap-2">
         <div className="">
           <div className="flex items-start justify-start gap-3">
+            {player.headshot && <img src={player.headshot} alt="" className="size-14 shrink-0 rounded-full bg-muted object-cover" />}
             <div className="pt-1">
               <PositionBadge position={player.position_id} />
             </div>
             <div>
-              <h2 className="truncate text-2xl leading-tight font-bold">{player.full_name}</h2>
+              <PlayerDialog player={player} draftId={draftId} />
               <div className="mt-1 flex items-center justify-start gap-4 text-sm text-muted-foreground">
                 <span>{player.team_id}</span>
                 <span>Rank {player.rank}</span>

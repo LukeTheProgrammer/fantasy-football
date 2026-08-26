@@ -49,6 +49,7 @@ class BuildCheatSheetAction
                 'full_name'        => $player?->full_name,
                 'position_id'      => $player?->position_id,
                 'team_id'          => $player?->team_id,
+                'headshot'         => $player?->headshot,
                 'rank'             => $ranking->rank,
                 'tier'             => $ranking->tier,
                 'projected_points' => $projectedPoints->get($ranking->player_id),
@@ -94,7 +95,7 @@ class BuildCheatSheetAction
             ->latestRanking($season)
             ->forFormat($format[0], $format[1])
             ->where('rank', '>', 0)
-            ->with(['player:id,full_name,position_id,team_id'])
+            ->with(['player:id,full_name,position_id,team_id,headshot'])
             ->orderBy('rank')
             ->get();
     }
