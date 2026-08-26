@@ -39,7 +39,6 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::post('leagues/join', [LeagueController::class, 'join']);
     Route::patch('league-members/{id}/draft-position', [LeagueMemberController::class, 'updateDraftPosition']);
 
-
     // Draft routes
     Route::apiResource('leagues.drafts', DraftController::class);
     Route::post('leagues/{league}/drafts/{draft}/picks', [DraftController::class, 'makePick']);

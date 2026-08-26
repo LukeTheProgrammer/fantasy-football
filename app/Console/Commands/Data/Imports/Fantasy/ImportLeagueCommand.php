@@ -8,6 +8,7 @@ use App\Models\League;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -121,24 +122,24 @@ class ImportLeagueCommand extends Command
     {
         $data = [
             'created_by_user_id' => null,
-            'league_id' => null,
-            's2' => null,
-            'swid' => null,
-            'season' => $this->option('season') ?: null,
+            'league_id'          => null,
+            's2'                 => null,
+            'swid'               => null,
+            'season'             => $this->option('season') ?: null,
         ];
 
         if ($this->league instanceof League) {
             $data['created_by_user_id'] = $this->league->creator->id;
-            $data['league_id']          = $this->league->credentials['leagueId'];
-            $data['s2']                 = $this->league->credentials['s2'];
-            $data['swid']               = $this->league->credentials['swid'];
-            $data['season']             = $data['season'] ?? $this->league->season;
+            $data['league_id'] = $this->league->credentials['leagueId'];
+            $data['s2'] = $this->league->credentials['s2'];
+            $data['swid'] = $this->league->credentials['swid'];
+            $data['season'] = $data['season'] ?? $this->league->season;
 
         } else {
             $data['created_by_user_id'] = $this->creator->id;
-            $data['league_id']          = intval($this->option('platform-id') ?? text('League ID', 'League ID', config('services.espn.default_league_id')));
-            $data['s2']                 = $this->option('espn-s2') ?? text('S2', 'S2', config('services.espn.default_s2'));
-            $data['swid']               = $this->option('espn-swid') ?? text('SWID', 'SWID', config('services.espn.default_swid'));
+            $data['league_id'] = intval($this->option('platform-id') ?? text('League ID', 'League ID', config('services.espn.default_league_id')));
+            $data['s2'] = $this->option('espn-s2') ?? text('S2', 'S2', config('services.espn.default_s2'));
+            $data['swid'] = $this->option('espn-swid') ?? text('SWID', 'SWID', config('services.espn.default_swid'));
         }
 
         $this->info('Importing ESPN League ' . $data['league_id'] . ' for user ' . $data['created_by_user_id']);

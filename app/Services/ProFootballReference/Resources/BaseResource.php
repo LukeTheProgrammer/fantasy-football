@@ -17,7 +17,7 @@ abstract class BaseResource
     {
         $filePath = $this->getCacheFilePath($params);
 
-        if (! file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             return false;
         }
 

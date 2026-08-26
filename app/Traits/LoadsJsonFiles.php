@@ -8,7 +8,7 @@ trait LoadsJsonFiles
 {
     public function loadJsonFile(string $filePath): array
     {
-        if (! file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             return [];
         }
 

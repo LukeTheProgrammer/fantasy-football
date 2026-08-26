@@ -2,10 +2,8 @@
 
 namespace App\Services\Imports\Drivers\NFL;
 
-use App\Enums\Datum;
 use App\Facades\Action;
 use App\Facades\Data;
-use App\Models\NflGame;
 use App\Models\Player;
 use App\Models\PlayerMissing;
 use App\Models\PlayerTeam;
@@ -20,7 +18,7 @@ class ProFootballReferenceDriver extends BaseNFLDriver
         foreach ($roster as $player) {
             $playerModel = Player::pfrId($player['pfr_id'])->first();
 
-            if (! $playerModel instanceof Player) {
+            if (!$playerModel instanceof Player) {
                 $q = Player::where('full_name', '=', $player['full_name']);
 
                 if ($q->count() === 1) {
@@ -28,18 +26,19 @@ class ProFootballReferenceDriver extends BaseNFLDriver
                 }
             }
 
-            if (! $playerModel instanceof Player) {
+            if (!$playerModel instanceof Player) {
                 Action::model(PlayerMissing::class)->upsert(
                     $player,
                     get_called_class(),
                     [
-                        'unique_id_key' => 'pfr_id',
+                        'unique_id_key'   => 'pfr_id',
                         'unique_id_value' => $player['pfr_id'] ?? null,
-                        'name' => $player['full_name'] ?? null,
-                        'position_id' => $player['position'] ?? null,
-                        'team_id' => $team->id,
+                        'name'            => $player['full_name'] ?? null,
+                        'position_id'     => $player['position'] ?? null,
+                        'team_id'         => $team->id,
                     ],
                 );
+
                 continue;
             }
 

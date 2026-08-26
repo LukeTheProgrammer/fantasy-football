@@ -23,13 +23,13 @@ class TeamSeeder extends Seeder
             $team = Team::updateOrCreate(
                 ['id' => Arr::get($team, 'abbreviation')],
                 [
-                    'espn_id'       => Arr::get($team, 'espn_id'),
-                    'abbreviation'  => Arr::get($team, 'abbreviation'),
-                    'location'      => Arr::get($team, 'location'),
-                    'name'          => Arr::get($team, 'name'),
-                    'conference'    => Arr::get($team, 'conference'),
-                    'division'      => Arr::get($team, 'division'),
-                    'logo'          => Arr::get($team, 'logo'),
+                    'espn_id'      => Arr::get($team, 'espn_id'),
+                    'abbreviation' => Arr::get($team, 'abbreviation'),
+                    'location'     => Arr::get($team, 'location'),
+                    'name'         => Arr::get($team, 'name'),
+                    'conference'   => Arr::get($team, 'conference'),
+                    'division'     => Arr::get($team, 'division'),
+                    'logo'         => Arr::get($team, 'logo'),
                 ]
             );
 

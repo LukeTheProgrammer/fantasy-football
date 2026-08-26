@@ -79,13 +79,13 @@ class LoadTeamRosters extends Command
 
         $teamId = $this->team->espn_id;
 
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $this->info('Loading players for ' . $this->team->id . ' [' . $teamId . ']' . PHP_EOL);
         }
 
         $path = storage_path('data/espn/nfl/team-rosters/team-roster-' . $teamId . '.json');
 
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             $this->error('Roster file does not exist: ' . $path);
             $this->call('espn:nfl:get:team-rosters', ['espn_team_id' => $teamId]);
         }
@@ -99,7 +99,7 @@ class LoadTeamRosters extends Command
 
         $roster = json_decode($data, true);
 
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $bar = $this->output->createProgressBar(1);
             $bar->start();
         }
@@ -108,18 +108,18 @@ class LoadTeamRosters extends Command
             foreach (Arr::get($positions, 'items', []) as $ii => $player) {
                 $pos = $this->positions->get(Arr::get($player, 'position.abbreviation'));
 
-                if (! $pos instanceof Position) {
+                if (!$pos instanceof Position) {
                     continue;
                 }
 
                 $this->upsert($player, $pos);
-                if (! $this->option('quiet')) {
+                if (!$this->option('quiet')) {
                     $bar->advance();
                 }
             }
         }
 
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $bar->finish();
             echo PHP_EOL . PHP_EOL;
         }

@@ -3,7 +3,6 @@
 namespace App\Services\Espn;
 
 use App\Enums\NFLPositions;
-use App\Enums\NFLTeams;
 use Illuminate\Support\Arr;
 
 class EspnConstants
@@ -63,28 +62,28 @@ class EspnConstants
     // ESPN => LeagueSettings Model
     public const SCORING_MAP = [
         // Passing
-        'passingYards'            => 'passing_points_per_yard',
-        'passingTouchdowns'       => 'passing_td_points',
-        'passingInterceptions'    => 'interception_points',
+        'passingYards'         => 'passing_points_per_yard',
+        'passingTouchdowns'    => 'passing_td_points',
+        'passingInterceptions' => 'interception_points',
 
         // Rushing
-        'rushingYards'            => 'rushing_points_per_yard',
-        'rushingTouchdowns'       => 'rushing_td_points',
+        'rushingYards'      => 'rushing_points_per_yard',
+        'rushingTouchdowns' => 'rushing_td_points',
 
         // Receiving
-        'receivingYards'          => 'receiving_points_per_yard',
-        'receivingTouchdowns'     => 'receiving_td_points',
-        'receivingReceptions'     => 'reception_points',
+        'receivingYards'      => 'receiving_points_per_yard',
+        'receivingTouchdowns' => 'receiving_td_points',
+        'receivingReceptions' => 'reception_points',
 
         // Misc
-        'lostFumbles'             => 'fumble_lost_points',
-        '2PtConversions'          => 'two_point_conversion_points',
+        'lostFumbles'    => 'fumble_lost_points',
+        '2PtConversions' => 'two_point_conversion_points',
 
         // Kicking
-        'fieldGoal0To39'          => 'field_goal_0_39_points',
-        'fieldGoal40To49'         => 'field_goal_40_49_points',
-        'fieldGoal50Plus'         => 'field_goal_50_plus_points',
-        'extraPoint'              => 'extra_point_points',
+        'fieldGoal0To39'  => 'field_goal_0_39_points',
+        'fieldGoal40To49' => 'field_goal_40_49_points',
+        'fieldGoal50Plus' => 'field_goal_50_plus_points',
+        'extraPoint'      => 'extra_point_points',
 
         // DST
         'defenseSacks'            => 'defense_sack_points',
@@ -256,7 +255,7 @@ class EspnConstants
         125 => 'defensive45PlusPointsAllowed', // PA46
 
         127 => 'defensiveYardsAllowed', // YA
-        128 => 'defensiveLessThan100YardsAllowed', #YA100
+        128 => 'defensiveLessThan100YardsAllowed', // YA100
         129 => 'defensive100To199YardsAllowed', // YA199
         130 => 'defensive200To299YardsAllowed', // YA299
         131 => 'defensive300To349YardsAllowed', // YA349
@@ -273,15 +272,15 @@ class EspnConstants
         141 => 'puntsInsideThe20', // PT20
         142 => 'blockedPunts', // PTB
         145 => 'puntTouchbacks', // PTTB
-        146 => 'puntFairCatches', #PTFC
+        146 => 'puntFairCatches', // PTFC
         147 => 'puntAverage',
         148 => 'puntAverage44.0+', // PTA44
-        149 => 'puntAverage42.0-43.9', #PTA42
-        150 => 'puntAverage40.0-41.9', #PTA40
-        151 => 'puntAverage38.0-39.9', #PTA38
-        152 => 'puntAverage36.0-37.9', #PTA36
-        153 => 'puntAverage34.0-35.9', #PTA34
-        154 => 'puntAverage33.9AndUnder', #PTA33
+        149 => 'puntAverage42.0-43.9', // PTA42
+        150 => 'puntAverage40.0-41.9', // PTA40
+        151 => 'puntAverage38.0-39.9', // PTA38
+        152 => 'puntAverage36.0-37.9', // PTA36
+        153 => 'puntAverage34.0-35.9', // PTA34
+        154 => 'puntAverage33.9AndUnder', // PTA33
 
         // Head Coach Stats
         155 => 'teamWin', // TW

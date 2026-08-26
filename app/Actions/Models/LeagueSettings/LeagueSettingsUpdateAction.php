@@ -2,7 +2,6 @@
 
 namespace App\Actions\Models\LeagueSettings;
 
-use App\Models\League;
 use App\Models\LeagueSettings;
 use Illuminate\Support\Arr;
 

@@ -38,11 +38,11 @@ class SeasonSeeder extends Seeder
             Week::updateOrCreate(
                 [
                     'season_id' => $season->id,
-                    'week' => $week,
+                    'week'      => $week,
                 ],
                 [
                     'starts_at' => $first?->starts_at,
-                    'ends_at' => $last?->starts_at,
+                    'ends_at'   => $last?->starts_at,
                 ]
             );
         }
@@ -58,7 +58,7 @@ class SeasonSeeder extends Seeder
 
         $current = Season::where('is_current', true)->first();
 
-        if (! $current instanceof Season) {
+        if (!$current instanceof Season) {
             return;
         }
 

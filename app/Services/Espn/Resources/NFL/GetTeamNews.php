@@ -6,7 +6,7 @@ use App\Models\Team;
 
 class GetTeamNews extends NFLResource
 {
-    public Team|null $team = null;
+    public ?Team $team = null;
 
     public function setCacheFilePath()
     {

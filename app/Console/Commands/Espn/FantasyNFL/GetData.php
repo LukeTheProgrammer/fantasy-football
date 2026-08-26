@@ -43,8 +43,8 @@ class GetData extends Command
 
         $fantasyNFL = Espn::fantasyNFL([
             'leagueId' => $this->leagueId,
-            's2' => $this->option('s2') ?? config('services.espn.default_s2'),
-            'swid' => $this->option('swid') ?? config('services.espn.default_swid'),
+            's2'       => $this->option('s2') ?? config('services.espn.default_s2'),
+            'swid'     => $this->option('swid') ?? config('services.espn.default_swid'),
         ]);
 
         if ($this->option('raw')) {
@@ -100,7 +100,7 @@ class GetData extends Command
 
     protected function setOutputPath()
     {
-        $parts = ['data','espn','ffl'];
+        $parts = ['data', 'espn', 'ffl'];
 
         if ($this->option('raw')) {
             $parts[] = 'raw';
@@ -128,7 +128,7 @@ class GetData extends Command
         $path = $this->filePath($key);
         $dirPath = dirname($path);
 
-        if ($this->option('custom') && ! is_dir($dirPath)) {
+        if ($this->option('custom') && !is_dir($dirPath)) {
             Log::debug('Creating Dir', [__CLASS__, $dirPath]);
             mkdir($dirPath, 0775, true);
         }

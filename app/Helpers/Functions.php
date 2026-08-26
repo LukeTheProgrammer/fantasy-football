@@ -1,6 +1,6 @@
 <?php
 
-if (! function_exists('stripMultipleSlashes')) {
+if (!function_exists('stripMultipleSlashes')) {
     /**
      * Find and replace any series of two or more consecutive slashes.
      * Exceptions for http:// and https://.

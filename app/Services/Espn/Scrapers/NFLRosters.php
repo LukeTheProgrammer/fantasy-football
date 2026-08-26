@@ -60,11 +60,11 @@ class NFLRosters
      */
     public function getTeamRoster(string|NFLTeams|Team $team, int|string|null $season = null)
     {
-        if (! $team instanceof Team) {
-            $team  = Team::find(($team instanceof NFLTeams) ? $team->value : $team);
+        if (!$team instanceof Team) {
+            $team = Team::find(($team instanceof NFLTeams) ? $team->value : $team);
         }
 
-        if (! $team instanceof Team) {
+        if (!$team instanceof Team) {
             throw new Exception('Team not found: ' . json_encode($team));
         }
 
@@ -81,13 +81,13 @@ class NFLRosters
 
         $response = Http::get($url, ['season' => $season]);
 
-        if (! $response->ok()) {
+        if (!$response->ok()) {
             throw new Exception('Failed to fetch URL: ' . $url . ' (status ' . $response->status() . ')');
         }
 
         $groups = Arr::get($response->json(), 'athletes');
 
-        if (! is_array($groups)) {
+        if (!is_array($groups)) {
             throw new Exception('No roster groups in response for ' . $team->id . ' (' . $season . ').');
         }
 
@@ -150,10 +150,12 @@ class NFLRosters
                 } elseif ($ch === '"') {
                     $inString = false;
                 }
+
                 continue;
             } else {
                 if ($ch === '"') {
                     $inString = true;
+
                     continue;
                 }
                 if ($ch === '[') {
@@ -163,6 +165,7 @@ class NFLRosters
                     if ($depth === 0) {
                         // Extract substring including brackets
                         $json = substr($html, $openBracketPos, $i - $openBracketPos + 1);
+
                         return $json;
                     }
                 }
@@ -176,6 +179,7 @@ class NFLRosters
      * Flatten players from groups into a simple list of associative arrays.
      *
      * @param array $groups
+     *
      * @return array<int, array<string, mixed>>
      */
     /**
@@ -201,7 +205,7 @@ class NFLRosters
             // The API nests players under 'items'; the old roster page used 'athletes'.
             $athletes = $group['items'] ?? $group['athletes'] ?? null;
 
-            if (! is_array($athletes)) {
+            if (!is_array($athletes)) {
                 continue;
             }
             foreach ($athletes as $athlete) {

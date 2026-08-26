@@ -83,7 +83,7 @@ class LeagueMember extends Model
      * Local scope method for filtering by league.
      *
      * @param Builder $query
-     * @param integer|string|League $league
+     * @param int|string|League $league
      *
      * @return Builder
      */
@@ -96,7 +96,7 @@ class LeagueMember extends Model
      * Local scope method for filtering by external id.
      *
      * @param Builder $query
-     * @param integer|string $extId
+     * @param int|string $extId
      *
      * @return Builder
      */

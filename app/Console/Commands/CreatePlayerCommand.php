@@ -7,6 +7,7 @@ use App\Models\Player;
 use App\Models\Position;
 use App\Models\Team;
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -35,10 +36,10 @@ class CreatePlayerCommand extends Command
         $teams = Team::all()->pluck('id', 'id');
 
         $data = [
-            'position_id' => select('Position', $positions),
-            'team_id' => select('Team', $teams),
-            'first_name' => text('First Name'),
-            'last_name' => text('Last Name'),
+            'position_id'   => select('Position', $positions),
+            'team_id'       => select('Team', $teams),
+            'first_name'    => text('First Name'),
+            'last_name'     => text('Last Name'),
             'jersey_number' => text('Jersey Number', ''),
         ];
 

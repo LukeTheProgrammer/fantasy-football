@@ -7,7 +7,7 @@ use Exception;
 
 class GetRoster extends NFLResource
 {
-    public Team|null $team = null;
+    public ?Team $team = null;
 
     public function validate()
     {

@@ -11,9 +11,10 @@ use App\Services\FantasyPros\Formatters\ProjectionFormatter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+
 use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\select;
 use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\select;
 
 class CleanPlayersNotFoundCommand extends Command
 {
@@ -169,7 +170,7 @@ class CleanPlayersNotFoundCommand extends Command
 
             PlayerAlias::create([
                 'player_id' => $player->id,
-                'name' => $name,
+                'name'      => $name,
             ]);
         }
     }
@@ -186,9 +187,9 @@ class CleanPlayersNotFoundCommand extends Command
         ]);
 
         $teamId = match (Arr::get($data, 'player_team_id')) {
-            'ARI' => NFLTeams::ARI->value,
-            'JAC' => NFLTeams::JAX->value,
-            'WAS' => NFLTeams::WSH->value,
+            'ARI'   => NFLTeams::ARI->value,
+            'JAC'   => NFLTeams::JAX->value,
+            'WAS'   => NFLTeams::WSH->value,
             default => NFLTeams::from(Arr::get($data, 'player_team_id'))->value,
         };
 
@@ -208,6 +209,7 @@ class CleanPlayersNotFoundCommand extends Command
                 $this->resolvePlayerMissing($pn, $player, [
                     'fp_id' => $playerData['fp_id'],
                 ]);
+
                 return;
             }
         }
@@ -219,6 +221,7 @@ class CleanPlayersNotFoundCommand extends Command
                 $this->resolvePlayerMissing($pn, $player, [
                     'fp_id' => $playerData['fp_id'],
                 ]);
+
                 return;
             }
         }
@@ -233,6 +236,7 @@ class CleanPlayersNotFoundCommand extends Command
                     $this->resolvePlayerMissing($pn, $player, [
                         'fp_id' => $playerData['fp_id'],
                     ]);
+
                     return;
                 }
             }
@@ -244,6 +248,7 @@ class CleanPlayersNotFoundCommand extends Command
                     $this->resolvePlayerMissing($pn, $player, [
                         'fp_id' => $playerData['fp_id'],
                     ]);
+
                     return;
                 }
             }
@@ -266,7 +271,7 @@ class CleanPlayersNotFoundCommand extends Command
 
     private function resolvePlayerMissing(PlayerMissing $pn, Player $player, array $update)
     {
-        if (! empty($update)) {
+        if (!empty($update)) {
             $player->update($update);
         }
 

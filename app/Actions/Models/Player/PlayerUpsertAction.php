@@ -8,7 +8,6 @@ use App\Models\Player;
 use App\Models\PlayerAlias;
 use App\Models\PlayerTeam;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class PlayerUpsertAction
 {
@@ -20,7 +19,7 @@ class PlayerUpsertAction
 
         if ($player instanceof Player) {
             $player->update($data);
-        } else{
+        } else {
             $player = Player::create($data);
         }
 
@@ -33,9 +32,21 @@ class PlayerUpsertAction
 
     private function findPlayer(array $data = []): ?Player
     {
+        // The NFL's own id is the strongest key any source carries, so it is
+        // tried before the ids that belong to one site.
+        $gsisId = Arr::get($data, 'gsis_id');
+
+        if (!empty($gsisId)) {
+            $gsisQuery = Player::gsisId($gsisId);
+
+            if ($gsisQuery->count() === 1) {
+                return $gsisQuery->first();
+            }
+        }
+
         $espnId = Arr::get($data, 'espn_id');
 
-        if (! empty($espnId)) {
+        if (!empty($espnId)) {
             $espnQuery = Player::espnId($espnId);
 
             if ($espnQuery->count() === 1) {
@@ -45,7 +56,7 @@ class PlayerUpsertAction
 
         $pfrId = Arr::get($data, 'pfr_id');
 
-        if (! empty($pfrId)) {
+        if (!empty($pfrId)) {
             $pfrQuery = Player::pfrId($pfrId);
 
             if ($pfrQuery->count() === 1) {
@@ -55,7 +66,7 @@ class PlayerUpsertAction
 
         $fpId = Arr::get($data, 'fp_id');
 
-        if (! empty($fpId)) {
+        if (!empty($fpId)) {
             $fpQuery = Player::fpId($fpId);
 
             if ($fpQuery->count() === 1) {
@@ -93,6 +104,7 @@ class PlayerUpsertAction
             'espn_id'       => Arr::get($data, 'espn_id'),
             'pfr_id'        => Arr::get($data, 'pfr_id'),
             'fp_id'         => Arr::get($data, 'fp_id'),
+            'gsis_id'       => Arr::get($data, 'gsis_id'),
             'position_id'   => Arr::get($data, 'position_id'),
             'team_id'       => Arr::get($data, 'team_id'),
             'first_name'    => Arr::get($data, 'first_name'),

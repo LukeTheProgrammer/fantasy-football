@@ -2,7 +2,6 @@
 
 namespace App\Services\Imports\Drivers\NFL;
 
-use App\Enums\Datum;
 use App\Facades\Action;
 use App\Facades\Data;
 use App\Models\NflGame;
@@ -20,18 +19,19 @@ class EspnNFLDriver extends BaseNFLDriver
         foreach ($roster as $player) {
             $playerModel = Player::espnId($player['id'])->first();
 
-            if (! $playerModel instanceof Player) {
+            if (!$playerModel instanceof Player) {
                 Action::model(PlayerMissing::class)->upsert(
                     $player,
                     get_called_class(),
                     [
-                        'unique_id_key' => 'espn_id',
+                        'unique_id_key'   => 'espn_id',
                         'unique_id_value' => $player['id'] ?? null,
-                        'name' => $player['name'] ?? null,
-                        'position_id' => $player['position'] ?? null,
-                        'team_id' => $team->id,
+                        'name'            => $player['name'] ?? null,
+                        'position_id'     => $player['position'] ?? null,
+                        'team_id'         => $team->id,
                     ],
                 );
+
                 continue;
             }
 
@@ -64,11 +64,11 @@ class EspnNFLDriver extends BaseNFLDriver
             }
 
             NflGame::updateOrCreate([
-                'week' => $week,
-                'season' => $season,
+                'week'         => $week,
+                'season'       => $season,
                 'home_team_id' => $team->id,
                 'away_team_id' => null,
-                'is_bye' => true,
+                'is_bye'       => true,
                 'is_completed' => true,
             ]);
 

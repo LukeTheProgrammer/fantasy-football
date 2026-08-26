@@ -55,7 +55,7 @@ class LeagueMatchup extends Model
      * Local scope method for filtering by league.
      *
      * @param Builder $query
-     * @param integer|string|League $league
+     * @param int|string|League $league
      *
      * @return Builder
      */

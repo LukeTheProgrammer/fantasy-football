@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Data\Imports;
 
+use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use App\Models\Team;
 
 class LoadTeamsCommand extends Command
 {
@@ -36,7 +36,7 @@ class LoadTeamsCommand extends Command
 
         foreach ($teams as $team) {
             Team::updateOrCreate(
-                [ 'id' => Arr::get($team, 'abbreviation') ],
+                ['id' => Arr::get($team, 'abbreviation')],
                 $team,
             );
             $bar->advance();

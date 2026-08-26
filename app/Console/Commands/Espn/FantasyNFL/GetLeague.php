@@ -34,8 +34,8 @@ class GetLeague extends Command
 
         $fantasyNFL = Espn::fantasyNFL([
             'leagueId' => $leagueId,
-            's2' => $this->option('s2') ?? config('services.espn.default_s2'),
-            'swid' => $this->option('swid') ?? config('services.espn.default_swid'),
+            's2'       => $this->option('s2') ?? config('services.espn.default_s2'),
+            'swid'     => $this->option('swid') ?? config('services.espn.default_swid'),
         ]);
 
         $fantasyNFL->getLeague();

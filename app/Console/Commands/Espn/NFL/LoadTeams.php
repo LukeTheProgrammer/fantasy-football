@@ -2,13 +2,10 @@
 
 namespace App\Console\Commands\Espn\NFL;
 
-use App\Facades\Action;
 use App\Models\Player;
-use App\Models\Position;
 use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class LoadTeams extends Command
@@ -48,7 +45,7 @@ class LoadTeams extends Command
     {
         $path = storage_path('data/espn/nfl/teams.json');
 
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             $this->error('Roster file does not exist: ' . $path);
             $this->call('espn:nfl:get:teams');
         }
@@ -75,14 +72,14 @@ class LoadTeams extends Command
 
     protected function upsert(?array $data = null): ?Team
     {
-        if (! $data) {
+        if (!$data) {
             return null;
         }
 
         $logos = Arr::get($data, 'logos', []);
 
         return Team::updateOrCreate(
-            [ 'id' => Arr::get($data, 'abbreviation') ],
+            ['id' => Arr::get($data, 'abbreviation')],
             [
                 'espn_id'      => Arr::get($data, 'id'),
                 'abbreviation' => Arr::get($data, 'abbreviation'),

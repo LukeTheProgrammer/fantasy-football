@@ -3,8 +3,8 @@
 namespace App\Services\Espn\Extractors;
 
 use App\Services\Espn\Data\NFL\Schedule\ScheduleResourceData;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 
 class NFLScheduleExtractor
 {

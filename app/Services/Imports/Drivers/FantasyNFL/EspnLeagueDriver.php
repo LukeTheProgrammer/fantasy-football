@@ -5,8 +5,8 @@ namespace App\Services\Imports\Drivers\FantasyNFL;
 use App\Facades\Data;
 use App\Models\DraftPick;
 use App\Models\League;
-use App\Models\LeagueMember;
 use App\Models\LeagueMatchup;
+use App\Models\LeagueMember;
 use App\Models\Player;
 use App\Models\User;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
@@ -28,11 +28,11 @@ class EspnLeagueDriver
 
         $this->credentials = CredentialsData::from([
             'leagueId' => Arr::get($metaData, 'league_id'),
-            's2' => Arr::get($metaData, 's2'),
-            'swid' => Arr::get($metaData, 'swid'),
+            's2'       => Arr::get($metaData, 's2'),
+            'swid'     => Arr::get($metaData, 'swid'),
         ]);
 
-        if (! $this->credentials instanceof CredentialsData) {
+        if (!$this->credentials instanceof CredentialsData) {
             throw new InvalidArgumentException('Invalid credentials');
         }
     }
@@ -70,9 +70,9 @@ class EspnLeagueDriver
         // without it a new season overwrites the previous season's league row.
         $league = League::updateOrCreate(
             [
-                'platform' => $leagueData['platform'],
+                'platform'    => $leagueData['platform'],
                 'platform_id' => $leagueData['platform_id'],
-                'season' => $leagueData['season'],
+                'season'      => $leagueData['season'],
             ],
             $leagueData,
         );
@@ -115,7 +115,7 @@ class EspnLeagueDriver
         foreach ($this->leagueData['roster'] as $roster) {
             $member = $members->get($roster['team_id']);
 
-            if (! $member instanceof LeagueMember) {
+            if (!$member instanceof LeagueMember) {
                 continue;
             }
         }
@@ -133,30 +133,32 @@ class EspnLeagueDriver
         foreach ($this->leagueData['draftPicks'] as $pick) {
             $member = LeagueMember::forLeague($league)->forExtId($pick['league_member_id'])->first();
 
-            if (! $member instanceof LeagueMember) {
+            if (!$member instanceof LeagueMember) {
                 Log::error('Member not found for draft pick', $pick);
+
                 continue;
             }
 
             $player = Player::espnId($pick['player_id'])->first();
 
-            if (! $player instanceof Player) {
+            if (!$player instanceof Player) {
                 Log::error('Player not found for draft pick', $pick);
+
                 continue;
             }
 
             $find = [
-                'draft_id' => $draft->id,
+                'draft_id'         => $draft->id,
                 'league_member_id' => $member->id,
-                'player_id' => $player->id,
+                'player_id'        => $player->id,
             ];
 
             $update = [
-                'round' => $pick['round'],
-                'pick_number' => $pick['pick_number'],
+                'round'               => $pick['round'],
+                'pick_number'         => $pick['pick_number'],
                 'overall_pick_number' => $pick['overall_pick_number'],
-                'amount' => $pick['amount'],
-                'is_keeper' => $pick['is_keeper'],
+                'amount'              => $pick['amount'],
+                'is_keeper'           => $pick['is_keeper'],
             ];
 
             DraftPick::updateOrCreate($find, $update);
@@ -174,27 +176,29 @@ class EspnLeagueDriver
             $homeMember = LeagueMember::forLeague($league)->forExtId($matchup['home_member_id'])->first();
             $awayMember = LeagueMember::forLeague($league)->forExtId($matchup['away_member_id'])->first();
 
-            if (! $homeMember instanceof LeagueMember) {
+            if (!$homeMember instanceof LeagueMember) {
                 Log::error('Member not found for home team id', $matchup);
+
                 continue;
             }
 
-            if (! $awayMember instanceof LeagueMember) {
+            if (!$awayMember instanceof LeagueMember) {
                 Log::error('Member not found for away team id', $matchup);
+
                 continue;
             }
 
             $find = [
-                'league_id' => $league->id,
-                'season' => $matchup['season'],
-                'week' => $matchup['week'],
+                'league_id'      => $league->id,
+                'season'         => $matchup['season'],
+                'week'           => $matchup['week'],
                 'home_member_id' => $homeMember->id,
                 'away_member_id' => $awayMember->id,
             ];
 
             $update = array_filter([
-                'home_score' => Arr::get($matchup, 'home_score'),
-                'away_score' => Arr::get($matchup, 'away_score'),
+                'home_score'           => Arr::get($matchup, 'home_score'),
+                'away_score'           => Arr::get($matchup, 'away_score'),
                 'home_projected_score' => Arr::get($matchup, 'home_projected_score'),
                 'away_projected_score' => Arr::get($matchup, 'away_projected_score'),
             ]);

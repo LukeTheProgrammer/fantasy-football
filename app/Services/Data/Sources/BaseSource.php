@@ -22,7 +22,6 @@ abstract class BaseSource
      * the data somewhere within the app for later use without
      * needing to re-pull the data.
      */
-
     public function getFantasyDraftRankings()
     {
         return null;
@@ -56,7 +55,6 @@ abstract class BaseSource
     /**
      * Import methods are to import data pulled by the get methods.
      */
-
     public function importFantasyDraftRankings()
     {
         return null;
@@ -100,7 +98,6 @@ abstract class BaseSource
     /**
      * Data formatting helper methods.
      */
-
     public function sortFantasyLineup(League $league, array|Collection $roster)
     {
         return $roster;

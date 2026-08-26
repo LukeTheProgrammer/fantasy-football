@@ -88,6 +88,32 @@ This project aims to create a web application that assists users during their fa
 - [ ] Implement data filtering and search UI
 - [ ] Add export functionality
 
+### 4b. Historical NFL Player and Team Data
+#### Source
+- [x] Evaluate Pro Football Reference — **blocked**, sits behind a Cloudflare challenge that 403s every HTTP client
+- [x] Adopt nflverse (nflfastR's open data) as the NFL stats source: CSV releases on GitHub, no key, no rate limit
+
+#### Database & Models
+- [x] Recreate `player_stats_weekly` keyed to a season, week, game, team and opponent, with a unique key for upserts
+- [x] Recreate `player_stats_yearly`, stored from its own file so it can be checked against the weekly rows
+- [x] Add `gsis_id` to players and `nflverse_id` / `pfr_id` to games, so a player and a game are recognisable across sources
+- [x] Give `player_teams` a season, so a player's history is not overwritten by importing a past roster
+- [x] Create `PlayerStatWeekly` / `PlayerStatYearly` models, factories and upsert actions
+- [ ] Team level stats (points allowed, sacks, takeaways) for DST scoring — the data is in the same files, not yet imported
+- [ ] Snap counts — published as a separate nflverse release, columns already in place
+
+#### Data Import
+- [x] `import:nfl:players` — the player universe with cross-source ids
+- [x] `import:nfl:games` — schedule including the postseason
+- [x] `import:nfl:stats` — weekly lines and season totals
+- [x] `nfl:stats:status` — coverage report and internal agreement checks
+- [x] Load 2021-2025
+- [ ] Load 1999-2020
+
+#### Known Gaps
+- [ ] Three duplicate player rows predate this work (`Andy Borregales`, `Jalen Moreno-Cropper`, `John Parker Romo`); the importer reports them rather than merging
+- [ ] `PlayerUpsertAction` still carries its own player matching cascade alongside `PlayerFinder`
+
 ### 5. Real-Time Draft Suggestions
 #### Core Logic
 - [ ] Implement draft strategy algorithm

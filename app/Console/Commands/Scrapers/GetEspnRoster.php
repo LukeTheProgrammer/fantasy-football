@@ -5,9 +5,9 @@ namespace App\Console\Commands\Scrapers;
 use App\Enums\Datum;
 use App\Facades\Action;
 use App\Facades\Scraper;
-use App\Models\Position;
 use App\Models\Player;
 use App\Models\PlayerTeam;
+use App\Models\Position;
 use App\Services\Espn\EspnConstants;
 use App\Services\Scrapers\Resources\Espn;
 use Illuminate\Console\Command;
@@ -64,14 +64,14 @@ class GetEspnRoster extends Command
 
     private function getRoster(string $teamName)
     {
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $this->info("Loading rosters for {$teamName}");
         }
 
         $scraper = Scraper::scraper(Datum::SOURCE_ESPN->value);
         $data = $scraper->getTeamRoster($teamName);
 
-        if (! is_array($data['roster'])) {
+        if (!is_array($data['roster'])) {
             dd($data);
         }
 
@@ -84,18 +84,18 @@ class GetEspnRoster extends Command
             $lastName = substr($fullName, $si + 1);
 
             $espnPos = Arr::get($player, 'position');
-            if (! $espnPos) {
+            if (!$espnPos) {
                 continue;
             }
 
             $ffPos = Arr::get(EspnConstants::POSITION_MAP, $espnPos);
-            if (! $ffPos) {
+            if (!$ffPos) {
                 continue;
             }
 
             $pos = $this->positions->get($ffPos->value);
 
-            if (! $pos instanceof Position) {
+            if (!$pos instanceof Position) {
                 $this->error('Position not found.');
                 dd($player);
             }

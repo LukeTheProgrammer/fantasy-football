@@ -3,9 +3,9 @@
 namespace App\Services\Espn\Resources;
 
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
+use App\Services\Espn\Resources\FantasyNFL\GetDraftRecap;
 use App\Services\Espn\Resources\FantasyNFL\GetLeague;
 use App\Services\Espn\Resources\FantasyNFL\GetMatchup;
-use App\Services\Espn\Resources\FantasyNFL\GetDraftRecap;
 use App\Services\Espn\Resources\FantasyNFL\GetRoster;
 use App\Services\Espn\Resources\FantasyNFL\GetSettings;
 use App\Services\Espn\Resources\FantasyNFL\GetStandings;

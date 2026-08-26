@@ -4,11 +4,12 @@ namespace App\Console\Commands\Espn\FantasyNFL;
 
 use App\Facades\Espn;
 use App\Models\League;
-use App\Models\NflGame;
 use App\Models\LeagueMember;
+use App\Models\NflGame;
 use App\Services\Espn\Resources\FantasyNFL;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+
 use function Laravel\Prompts\select;
 
 class GetRosters extends Command
@@ -121,12 +122,12 @@ class GetRosters extends Command
                 $playerId = Arr::get($player, 'id', false);
                 $stats = Arr::get($player, 'stats', []);
 
-                if (! $playerId) {
+                if (!$playerId) {
                     dd('Da FUCK?', $player);
                 }
 
                 foreach ($stats as $stat) {
-                    if (! isset($data[$playerId])) {
+                    if (!isset($data[$playerId])) {
                         $data[$playerId] = [
                             'league_member_id'      => $member->id,
                             'player_id'             => $playerId,
@@ -154,10 +155,10 @@ class GetRosters extends Command
 
     private function processStat(array $stat, array $data = [])
     {
-        $gameId  = intval(Arr::get($stat, 'externalId', false));
-        $season    = intval(Arr::get($stat, 'seasonId', false));
-        $week    = intval(Arr::get($stat, 'scoringPeriodId', false));
-        $points  = floatVal(Arr::get($stat, 'appliedTotal', 0));
+        $gameId = intval(Arr::get($stat, 'externalId', false));
+        $season = intval(Arr::get($stat, 'seasonId', false));
+        $week = intval(Arr::get($stat, 'scoringPeriodId', false));
+        $points = floatval(Arr::get($stat, 'appliedTotal', 0));
 
         $isWeek = $week == $this->week;
         $isProjection = Arr::get($stat, 'statSourceId', false) === 1;

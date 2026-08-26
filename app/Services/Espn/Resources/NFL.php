@@ -22,7 +22,7 @@ class NFL extends BaseResourceCollection
      */
     public function getTeamNews(Team $team)
     {
-        $resource = new GetTeamNews();
+        $resource = new GetTeamNews;
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
@@ -40,7 +40,7 @@ class NFL extends BaseResourceCollection
      */
     public function getScoreboard()
     {
-        $resource = new GetScoreboard();
+        $resource = new GetScoreboard;
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
@@ -57,7 +57,7 @@ class NFL extends BaseResourceCollection
      */
     public function getEventSummary(int|string $eventId)
     {
-        $resource = new GetEventSummary();
+        $resource = new GetEventSummary;
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
@@ -76,7 +76,7 @@ class NFL extends BaseResourceCollection
      */
     public function getTeam(?Team $team = null)
     {
-        $resource = new GetTeam();
+        $resource = new GetTeam;
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
@@ -94,7 +94,7 @@ class NFL extends BaseResourceCollection
      */
     public function getRoster(Team $team)
     {
-        $resource = new GetRoster();
+        $resource = new GetRoster;
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
@@ -112,7 +112,7 @@ class NFL extends BaseResourceCollection
      */
     public function getSchedule(Team $team, int $season)
     {
-        $resource = new GetSchedule();
+        $resource = new GetSchedule;
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
@@ -132,12 +132,11 @@ class NFL extends BaseResourceCollection
      */
     public function getLeaders()
     {
-        $resource = new GetLeaders();
+        $resource = new GetLeaders;
 
         $resource->forcePull($this->forcePull);
         $resource->dataFormat($this->dataFormat);
 
         return $resource->fetch();
     }
-
 }

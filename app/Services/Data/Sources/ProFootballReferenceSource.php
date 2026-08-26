@@ -9,18 +9,14 @@ use App\Models\Team;
 
 class ProFootballReferenceSource extends BaseSource
 {
-
     /* ===[ GETTERS ]=== */
-
 
     public function getNFLRosters(Team $team, int $season)
     {
         return ProFootballReference::getRoster($team, $season);
     }
 
-
     /* ===[ IMPORTERS ]=== */
-
 
     public function importNFLRosters(Team $team, int $season)
     {

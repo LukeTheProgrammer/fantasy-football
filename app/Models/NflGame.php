@@ -26,7 +26,7 @@ class NflGame extends Model
      */
     protected $casts = [
         'season' => 'integer',
-        'week' => 'integer',
+        'week'   => 'integer',
     ];
 
     /* ===[ Relationships ]=== */

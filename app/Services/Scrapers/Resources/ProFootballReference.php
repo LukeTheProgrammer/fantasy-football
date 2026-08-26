@@ -59,11 +59,11 @@ class ProFootballReference extends BaseScraperResource
 
         $teamKey = Arr::get(self::TEAMS, $this->team->abbreviation);
 
-        if (! $teamKey) {
+        if (!$teamKey) {
             throw new Exception('Invalid team abbreviation: ' . $teamAbb);
         }
 
-        $url = "https://www.pro-football-reference.com/teams/{$teamKey}/{$season}_roster.htm"; //#roster
+        $url = "https://www.pro-football-reference.com/teams/{$teamKey}/{$season}_roster.htm"; // #roster
 
         $response = Http::get($url);
 
@@ -98,49 +98,53 @@ class ProFootballReference extends BaseScraperResource
         }
 
         // Load table HTML fragment into DOM
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
         libxml_use_internal_errors(true);
         $loaded = $dom->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . $tableHtml);
         libxml_clear_errors();
-        if (! $loaded) {
+        if (!$loaded) {
             return [];
         }
 
         $xpath = new \DOMXPath($dom);
         $rows = $xpath->query("//table[@id='roster']//tbody/tr");
-        if (! $rows || $rows->length === 0) {
+        if (!$rows || $rows->length === 0) {
             return [];
         }
 
         $players = [];
         foreach ($rows as $tr) {
-            if (! $tr instanceof \DOMElement) {
+            if (!$tr instanceof \DOMElement) {
                 continue;
             }
 
             $getText = function (?\DOMElement $el): ?string {
-                if (! $el) return null;
+                if (!$el) {
+                    return null;
+                }
+
                 return trim(preg_replace('/\s+/', ' ', $el->textContent ?? '')) ?: null;
             };
 
             $queryOne = function (string $q) use ($xpath, $tr): ?\DOMElement {
                 $n = $xpath->query($q, $tr);
+
                 return ($n && $n->length > 0) ? $n->item(0) : null;
             };
 
-            $numberEl  = $queryOne(".//th[@data-stat='uniform_number']");
-            $playerEl  = $queryOne(".//td[@data-stat='player']");
-            $ageEl     = $queryOne(".//td[@data-stat='age']");
-            $posEl     = $queryOne(".//td[@data-stat='pos']");
-            $gEl       = $queryOne(".//td[@data-stat='g']");
-            $gsEl      = $queryOne(".//td[@data-stat='gs']");
-            $wtEl      = $queryOne(".//td[@data-stat='weight']");
-            $htEl      = $queryOne(".//td[@data-stat='height']");
+            $numberEl = $queryOne(".//th[@data-stat='uniform_number']");
+            $playerEl = $queryOne(".//td[@data-stat='player']");
+            $ageEl = $queryOne(".//td[@data-stat='age']");
+            $posEl = $queryOne(".//td[@data-stat='pos']");
+            $gEl = $queryOne(".//td[@data-stat='g']");
+            $gsEl = $queryOne(".//td[@data-stat='gs']");
+            $wtEl = $queryOne(".//td[@data-stat='weight']");
+            $htEl = $queryOne(".//td[@data-stat='height']");
             $collegeEl = $queryOne(".//td[@data-stat='college_id']");
-            $bdEl      = $queryOne(".//td[@data-stat='birth_date_mod']");
-            $expEl     = $queryOne(".//td[@data-stat='experience']");
-            $avEl      = $queryOne(".//td[@data-stat='av']");
-            $draftEl   = $queryOne(".//td[@data-stat='draft_info']");
+            $bdEl = $queryOne(".//td[@data-stat='birth_date_mod']");
+            $expEl = $queryOne(".//td[@data-stat='experience']");
+            $avEl = $queryOne(".//td[@data-stat='av']");
+            $draftEl = $queryOne(".//td[@data-stat='draft_info']");
 
             // Pull additional identifiers from attributes
             $pfrId = null; // Often in data-append-csv on the player cell
@@ -162,21 +166,21 @@ class ProFootballReference extends BaseScraperResource
             }
 
             $players[] = [
-                'number'      => $getText($numberEl),
-                'name'        => $getText($playerEl),
-                'age'         => ($t = $getText($ageEl)) !== null ? (int)$t : null,
-                'position'    => $getText($posEl),
-                'games'       => ($t = $getText($gEl)) !== null && $t !== '' ? (int)$t : null,
-                'games_started'=> ($t = $getText($gsEl)) !== null && $t !== '' ? (int)$t : null,
-                'weight'      => ($t = $getText($wtEl)) !== null ? (int)$t : null,
-                'height'      => $getText($htEl), // e.g., 6-1
-                'college'     => $getText($collegeEl),
-                'birth_date'  => $getText($bdEl),
-                'experience'  => $getText($expEl),
-                'av'          => ($t = $getText($avEl)) !== null && $t !== '' ? (int)$t : null,
-                'draft_info'  => $getText($draftEl),
-                'pfr_id'      => $pfrId,
-                'player_url'  => $playerUrl,
+                'number'        => $getText($numberEl),
+                'name'          => $getText($playerEl),
+                'age'           => ($t = $getText($ageEl)) !== null ? (int) $t : null,
+                'position'      => $getText($posEl),
+                'games'         => ($t = $getText($gEl)) !== null && $t !== '' ? (int) $t : null,
+                'games_started' => ($t = $getText($gsEl)) !== null && $t !== '' ? (int) $t : null,
+                'weight'        => ($t = $getText($wtEl)) !== null ? (int) $t : null,
+                'height'        => $getText($htEl), // e.g., 6-1
+                'college'       => $getText($collegeEl),
+                'birth_date'    => $getText($bdEl),
+                'experience'    => $getText($expEl),
+                'av'            => ($t = $getText($avEl)) !== null && $t !== '' ? (int) $t : null,
+                'draft_info'    => $getText($draftEl),
+                'pfr_id'        => $pfrId,
+                'player_url'    => $playerUrl,
             ];
         }
 
@@ -204,6 +208,7 @@ class ProFootballReference extends BaseScraperResource
                 } else {
                     $fragment = $commentContent;
                 }
+
                 return $fragment;
             }
         }
@@ -216,7 +221,7 @@ class ProFootballReference extends BaseScraperResource
         return array_filter(array_map(function (array $player) {
             $pos = $this->positions->get(Arr::get($player, 'position'));
 
-            if (! $pos instanceof Position) {
+            if (!$pos instanceof Position) {
                 return null;
             }
 

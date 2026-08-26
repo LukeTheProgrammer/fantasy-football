@@ -58,7 +58,7 @@ trait UsesCacheFiles
         return false;
 
         $hasCache = (
-            ! empty($this->cacheFilePath) &&
+            !empty($this->cacheFilePath) &&
             file_exists($this->cacheFilePath)
         );
 
@@ -98,8 +98,8 @@ trait UsesCacheFiles
         foreach ($parts as $part) {
             $dir .= stripMultipleSlashes($ds . $part);
 
-            if (! is_dir($dir)) {
-                if (! mkdir($dir, 0777, true)) {
+            if (!is_dir($dir)) {
+                if (!mkdir($dir, 0777, true)) {
                     Log::error('Failed to create directory: ' . $dir);
                 }
             }

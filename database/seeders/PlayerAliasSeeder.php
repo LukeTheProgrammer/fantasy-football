@@ -13,7 +13,7 @@ class PlayerAliasSeeder extends Seeder
     {
         $path = database_path('data/player_aliases.json');
 
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             return;
         }
 
@@ -22,15 +22,16 @@ class PlayerAliasSeeder extends Seeder
         foreach ($aliases as $alias) {
             $player = $this->resolvePlayer($alias);
 
-            if (! $player instanceof Player) {
+            if (!$player instanceof Player) {
                 $this->command?->warn('No player for alias: ' . Arr::get($alias, 'name'));
+
                 continue;
             }
 
             PlayerAlias::updateOrCreate(
                 [
                     'player_ulid' => $player->ulid,
-                    'name' => Arr::get($alias, 'name'),
+                    'name'        => Arr::get($alias, 'name'),
                 ],
                 [
                     'last_checked_at' => Arr::get($alias, 'last_checked_at'),
@@ -47,15 +48,15 @@ class PlayerAliasSeeder extends Seeder
     {
         $lookups = [
             'player_espn_id' => fn ($value) => Player::espnId($value)->first(),
-            'player_pfr_id' => fn ($value) => Player::pfrId($value)->first(),
-            'player_fp_id' => fn ($value) => Player::fpId($value)->first(),
-            'player_ulid' => fn ($value) => Player::where('ulid', '=', $value)->first(),
+            'player_pfr_id'  => fn ($value) => Player::pfrId($value)->first(),
+            'player_fp_id'   => fn ($value) => Player::fpId($value)->first(),
+            'player_ulid'    => fn ($value) => Player::where('ulid', '=', $value)->first(),
         ];
 
         foreach ($lookups as $key => $lookup) {
             $value = Arr::get($alias, $key);
 
-            if (! $value) {
+            if (!$value) {
                 continue;
             }
 

@@ -15,7 +15,7 @@ trait HasDataFormats
     {
         $format = ($format instanceof Datum) ? $format->value : $format;
 
-        if (! in_array($format, Datum::FORMATS)) {
+        if (!in_array($format, Datum::FORMATS)) {
             throw new Exception('Invalid format: ' . $format);
         }
 

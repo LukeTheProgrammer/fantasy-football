@@ -101,7 +101,7 @@ trait MakesHttpRequests
     {
         $http = Http::withHeaders($this->headers($headers));
 
-        if (! empty($this->cookieDomain) && ! empty($this->cookies($cookies))) {
+        if (!empty($this->cookieDomain) && !empty($this->cookies($cookies))) {
             $http->withCookies($this->cookies($cookies), $this->cookieDomain);
         }
 
@@ -115,7 +115,7 @@ trait MakesHttpRequests
 
         $http->retry(
             $this->retryLimit,
-            fn (int $attempt) => $attempt * 100,
+            fn (int $attempt)        => $attempt * 100,
             fn (RequestException $e) => $this->canRetry($e),
         );
 

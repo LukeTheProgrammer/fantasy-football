@@ -30,7 +30,7 @@ class ResetFantasyLeaguesCommand extends Command
      * @var array<string, int>
      */
     private array $leagues = [
-        'Milhaven' => 691509,
+        'Milhaven'  => 691509,
         'HawkHorns' => 61235367,
     ];
 
@@ -47,13 +47,13 @@ class ResetFantasyLeaguesCommand extends Command
             $this->info("Importing {$name} ({$platformId}) for {$season}");
 
             $this->call('import:fantasy:league', [
-                '--create' => true,
-                '--creator-id' => 1,
-                '--season' => $season,
-                '--platform' => 'ESPN',
+                '--create'      => true,
+                '--creator-id'  => 1,
+                '--season'      => $season,
+                '--platform'    => 'ESPN',
                 '--platform-id' => $platformId,
-                '--espn-s2' => config('services.espn.default_s2'),
-                '--espn-swid' => config('services.espn.default_swid'),
+                '--espn-s2'     => config('services.espn.default_s2'),
+                '--espn-swid'   => config('services.espn.default_swid'),
             ]);
 
             $league = League::query()
@@ -61,14 +61,15 @@ class ResetFantasyLeaguesCommand extends Command
                 ->where('season', $season)
                 ->first();
 
-            if (! $league instanceof League) {
+            if (!$league instanceof League) {
                 $this->error("Import did not create {$name} for {$season}, skipping its roster.");
+
                 continue;
             }
 
             $this->call('import:fantasy:roster', [
                 'leagueId' => $league->id,
-                'season' => $season,
+                'season'   => $season,
             ]);
         }
 
@@ -86,14 +87,14 @@ class ResetFantasyLeaguesCommand extends Command
         $leagues = League::withTrashed();
         $rankings = DraftRanking::query();
 
-        if (! $this->option('all')) {
+        if (!$this->option('all')) {
             $leagues->where('season', $season);
             $rankings->where('season', $season);
         }
 
         $count = $leagues->count();
 
-        if ($count > 0 && ! $this->confirm("Delete {$count} league(s) and their drafts, rosters and matchups?", true)) {
+        if ($count > 0 && !$this->confirm("Delete {$count} league(s) and their drafts, rosters and matchups?", true)) {
             return;
         }
 

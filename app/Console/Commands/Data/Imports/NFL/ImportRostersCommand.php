@@ -3,9 +3,10 @@
 namespace App\Console\Commands\Data\Imports\NFL;
 
 use App\Facades\Data;
-use App\Models\Team;
 use App\Models\Season;
+use App\Models\Team;
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\select;
 
 class ImportRostersCommand extends Command

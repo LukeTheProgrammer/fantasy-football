@@ -23,6 +23,7 @@ class PlayerFinder
      * @var array<string, string>
      */
     public const ID_COLUMNS = [
+        'gsis_id' => 'gsis_id',
         'fp_id'   => 'fp_id',
         'espn_id' => 'espn_id',
         'pfr_id'  => 'pfr_id',

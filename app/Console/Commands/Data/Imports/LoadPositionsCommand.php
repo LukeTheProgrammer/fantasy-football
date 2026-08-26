@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Data\Imports;
 
+use App\Models\Position;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use App\Models\Position;
 
 class LoadPositionsCommand extends Command
 {
@@ -36,7 +36,7 @@ class LoadPositionsCommand extends Command
 
         foreach ($positions as $position) {
             Position::updateOrCreate(
-                [ 'id' => Arr::get($position, 'abbreviation') ],
+                ['id' => Arr::get($position, 'abbreviation')],
                 $position,
             );
             $bar->advance();

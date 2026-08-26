@@ -11,7 +11,7 @@ class ProjectionsSeeder extends Seeder
     {
         Artisan::call('import:nfl:projections', [
             'season' => 2026,
-            'week' => 1,
+            'week'   => 1,
         ]);
     }
 }

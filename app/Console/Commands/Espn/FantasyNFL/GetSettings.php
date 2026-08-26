@@ -4,8 +4,6 @@ namespace App\Console\Commands\Espn\FantasyNFL;
 
 use App\Facades\Espn;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
-use App\Services\Espn\Data\FantasyNFL\ResourceSettingsData;
 
 class GetSettings extends Command
 {
@@ -36,8 +34,8 @@ class GetSettings extends Command
 
         $fantasyNFL = Espn::fantasyNFL([
             'leagueId' => $leagueId,
-            's2' => $this->option('s2') ?? config('services.espn.default_s2'),
-            'swid' => $this->option('swid') ?? config('services.espn.default_swid'),
+            's2'       => $this->option('s2') ?? config('services.espn.default_s2'),
+            'swid'     => $this->option('swid') ?? config('services.espn.default_swid'),
         ]);
 
         $settings = $fantasyNFL->getSettings();

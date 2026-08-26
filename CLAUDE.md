@@ -44,7 +44,7 @@ Data import entry points (all under `app/Console/Commands`):
 
 ### Facade → Service → Resource
 
-Every external integration and internal domain is reached through a facade in `app/Facades` (`Espn`, `FantasyPros`, `ProFootballReference`, `Scraper`, `Import`, `Data`, `Player`, `Action`). Facades are bound to services by name in `AppServiceProvider::$bindings`. **Never reference a class under `app/Services` directly from a controller, command, or model — go through the facade.**
+Every external integration and internal domain is reached through a facade in `app/Facades` (`Espn`, `FantasyPros`, `Nflverse`, `ProFootballReference`, `Scraper`, `Import`, `Data`, `Player`, `Action`, `Auction`). Facades are bound to services by name in `AppServiceProvider::$bindings`. **Never reference a class under `app/Services` directly from a controller, command, or model — go through the facade.**
 
 Inside a vendor service (e.g. `app/Services/Espn`):
 
@@ -53,6 +53,23 @@ Inside a vendor service (e.g. `app/Services/Espn`):
 - `Extractors/` then `Formatters/` — the two stages that turn a raw API payload into app-shaped data.
 
 `HasDataFormats` gives every resource a `dataFormat()` of `raw`, `extracted`, or `formatted` (see the `Datum` enum) plus `forcePull()`. Responses are cached to files under `storage` by `UsesCacheFiles`; `forcePull(true)` bypasses that cache. When adding an endpoint, implement all three format stages, not just `formatted`.
+
+### NFL stats and the player universe
+
+Historical NFL data comes from **nflverse**, the open data project behind nflfastR, published as one CSV per season on GitHub releases. `app/Services/Nflverse` reads three of them: `players.csv` (every player, with the `gsis_id`, `pfr_id` and `espn_id` for the same man side by side), `games.csv` (every game, with each source's id for it), and `stats_player_{week,reg,post}_{season}.csv`.
+
+- The **`gsis_id` is the identity key**. A stat line resolves to a player by `gsis_id` alone and never by name — three different men called Josh Johnson took a snap in 2021.
+- Season totals are imported from their own file rather than summed from weekly rows, so the two can be checked against each other. `nfl:stats:status {season}` does exactly that, and is the way to prove a season imported correctly.
+- Files are archived through `DataArchive`; a finished season is downloaded once and read from disk forever after.
+
+Pro Football Reference is **no longer reachable** — it sits behind a Cloudflare challenge that returns 403 to any HTTP client, so `app/Services/ProFootballReference` and the PFR scraper cannot fetch. Its data still arrives via the `pfr_id` on players and games.
+
+```bash
+./vendor/bin/sail artisan import:nfl:players          # the player universe, with cross-source ids
+./vendor/bin/sail artisan import:nfl:games 2025       # schedule, including the postseason
+./vendor/bin/sail artisan import:nfl:stats 2025       # weekly lines and season totals
+./vendor/bin/sail artisan nfl:stats:status 2025       # coverage and internal agreement
+```
 
 ### Imports (driver pattern)
 

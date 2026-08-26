@@ -45,7 +45,7 @@ class DumpPlayersCommand extends Command
 
         $query->each(function ($player) use (&$data, $bar) {
             $a = array_merge(
-                [ 'ulid' => $player->ulid ],
+                ['ulid' => $player->ulid],
                 Arr::except($player->toArray(), ['id', 'ulid', 'created_at', 'updated_at', 'deleted_at'])
             );
 
@@ -74,7 +74,7 @@ class DumpPlayersCommand extends Command
         $query->with('player')->each(function ($playerAlias) use (&$data, $bar) {
             $p = $playerAlias->player;
 
-            if (! $p instanceof Player) {
+            if (!$p instanceof Player) {
                 $this->warn("Orphaned alias, no player for ulid {$playerAlias->player_ulid}: {$playerAlias->name}");
                 $bar->advance();
 
@@ -83,10 +83,10 @@ class DumpPlayersCommand extends Command
 
             $pa = array_merge(
                 [
-                    'player_ulid' => $p->ulid,
+                    'player_ulid'    => $p->ulid,
                     'player_espn_id' => $p->espn_id,
-                    'player_pfr_id' => $p->pfr_id,
-                    'player_fp_id' => $p->fp_id,
+                    'player_pfr_id'  => $p->pfr_id,
+                    'player_fp_id'   => $p->fp_id,
                 ],
                 Arr::only($playerAlias->toArray(), ['name', 'last_checked_at'])
             );

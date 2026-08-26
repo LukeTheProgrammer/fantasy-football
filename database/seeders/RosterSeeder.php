@@ -4,10 +4,10 @@ namespace Database\Seeders;
 
 use App\Enums\NFLPositions;
 use App\Facades\Action;
-use App\Models\Position;
-use App\Models\Team;
 use App\Models\Player;
 use App\Models\PlayerTeam;
+use App\Models\Position;
+use App\Models\Team;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 
@@ -27,7 +27,7 @@ class RosterSeeder extends Seeder
         Team::noFA()->get()->each(function (Team $team) use ($dst) {
             $player = Player::espnId($team->espn_id)->forPosition($dst)->first();
 
-            if (! $player instanceof Player) {
+            if (!$player instanceof Player) {
                 dd([
                     $team->toArray(),
                     $dst->toArray(),
@@ -49,7 +49,7 @@ class RosterSeeder extends Seeder
     private function pfr()
     {
         Artisan::call('import:nfl:roster', [
-            'season'  => 2025,
+            'season' => 2025,
         ]);
     }
 }

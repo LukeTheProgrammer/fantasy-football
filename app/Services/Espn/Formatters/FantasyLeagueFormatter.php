@@ -34,7 +34,7 @@ class FantasyLeagueFormatter
 
     public static function from(array|ResourceLeagueData $data)
     {
-        if (! $data instanceof ResourceLeagueData) {
+        if (!$data instanceof ResourceLeagueData) {
             $data = ResourceLeagueData::from($data);
         }
 
@@ -179,10 +179,10 @@ class FantasyLeagueFormatter
             $this->data['schedules'][] = [
                 'home_member_id' => $schedule->home->teamId,
                 'away_member_id' => $schedule->away->teamId,
-                'season' => $this->season(),
-                'week' => $schedule->matchupPeriodId,
-                'home_score' => $schedule->home->totalPoints,
-                'away_score' => $schedule->away->totalPoints,
+                'season'         => $this->season(),
+                'week'           => $schedule->matchupPeriodId,
+                'home_score'     => $schedule->home->totalPoints,
+                'away_score'     => $schedule->away->totalPoints,
             ];
         });
     }
@@ -227,13 +227,13 @@ class FantasyLeagueFormatter
     /**
      * Api timestamps are in ms.
      *
-     * @param integer|null $timestamp
+     * @param int|null $timestamp
      *
      * @return Carbon|null
      */
     private function getDate(?int $timestamp): ?Carbon
     {
-        return ($timestamp) ? Carbon::parse($timestamp/1000) : null;
+        return ($timestamp) ? Carbon::parse($timestamp / 1000) : null;
     }
 
     private function isTwoQb(): bool

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+
 use function Laravel\Prompts\select;
 
 class MakeEpicCheatSheet extends Command
@@ -40,14 +41,14 @@ class MakeEpicCheatSheet extends Command
     {
         return [
             'Available' => 'Y',
-            'Player' => Arr::get($player, 'PLAYER NAME'),
-            'Team' => Arr::get($player, 'TEAM'),
-            'Pos' => preg_replace('/\d/', '', Arr::get($player, 'POS')),
-            'D Rank' => '',
-            'D Pos' => '',
-            'R Rank' => '',
-            'R Pos' => '',
-            'keeper' => '',
+            'Player'    => Arr::get($player, 'PLAYER NAME'),
+            'Team'      => Arr::get($player, 'TEAM'),
+            'Pos'       => preg_replace('/\d/', '', Arr::get($player, 'POS')),
+            'D Rank'    => '',
+            'D Pos'     => '',
+            'R Rank'    => '',
+            'R Pos'     => '',
+            'keeper'    => '',
         ];
     }
 
@@ -70,7 +71,7 @@ class MakeEpicCheatSheet extends Command
                 $player = array_combine($headers, $line);
                 $pn = Arr::get($player, 'PLAYER NAME');
 
-                if (! isset($this->data[$pn])) {
+                if (!isset($this->data[$pn])) {
                     $this->data[$pn] = $this->newPlayer($player);
                 }
 
@@ -105,7 +106,7 @@ class MakeEpicCheatSheet extends Command
                 $player = array_combine($headers, $line);
                 $pn = Arr::get($player, 'PLAYER NAME');
 
-                if (! isset($this->data[$pn])) {
+                if (!isset($this->data[$pn])) {
                     $this->data[$pn] = $this->newPlayer($player);
                 }
 
@@ -131,6 +132,7 @@ class MakeEpicCheatSheet extends Command
             foreach ($line as $i => $name) {
                 if ($i === 0) {
                     $this->info('Processing ' . $name);
+
                     continue;
                 }
 
@@ -172,6 +174,7 @@ class MakeEpicCheatSheet extends Command
 
                 if ($selection === 'none') {
                     $this->error('No player found for ' . $name);
+
                     continue;
                 }
 
@@ -196,7 +199,7 @@ class MakeEpicCheatSheet extends Command
         $headers = false;
 
         foreach ($this->data as $player) {
-            if (! $headers) {
+            if (!$headers) {
                 // fputcsv($fp, array_keys($player));
                 $headers = true;
             }

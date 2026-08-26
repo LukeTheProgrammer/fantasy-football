@@ -29,7 +29,6 @@ class GetTeam extends Command
      * Execute the console command.
      */
     public function handle()
-
     {
         if ($this->option('all')) {
             Team::noFA()->get()->each(

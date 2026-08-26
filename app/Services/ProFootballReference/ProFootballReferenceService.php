@@ -9,6 +9,6 @@ class ProFootballReferenceService
 {
     public function getRoster(Team $team, int $season): array
     {
-        return (new RostersResource())->getTeamRoster($team, $season);
+        return (new RostersResource)->getTeamRoster($team, $season);
     }
 }

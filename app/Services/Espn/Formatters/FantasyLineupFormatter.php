@@ -35,7 +35,7 @@ class FantasyLineupFormatter
         foreach ($positions as $position) {
             // Get the integer ID for this position
             $positionId = $this->positionIds[$position] ?? null;
-            
+
             if ($positionId === null) {
                 continue; // Skip if position not found in mapping
             }
@@ -45,10 +45,10 @@ class FantasyLineupFormatter
                 if (isset($player['lineup_slot_id']) && $player['lineup_slot_id'] == $positionId) {
                     // Add player to lineup
                     $lineup[] = $player;
-                    
+
                     // Remove player from roster so they can't be used again
                     unset($roster[$index]);
-                    
+
                     // Break to only get the first matching player for this position
                     break;
                 }

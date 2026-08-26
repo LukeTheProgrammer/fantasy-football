@@ -3,9 +3,9 @@
 namespace App\Services\Espn\Resources\NFL;
 
 use App\Models\Team;
-use Exception;
 use App\Services\Espn\Extractors\NFLScheduleExtractor;
 use App\Services\Espn\Formatters\NFLScheduleFormatter;
+use Exception;
 use Illuminate\Http\Client\Response;
 
 class GetSchedule extends NFLResource

@@ -2,8 +2,8 @@
 
 namespace App\Services\FantasyPros\Data;
 
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Casts\Cast;
+use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Support\Creation\CreationContext;
 use Spatie\LaravelData\Support\DataProperty;
 

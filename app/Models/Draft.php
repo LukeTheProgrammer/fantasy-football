@@ -24,11 +24,11 @@ class Draft extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'draft_date' => 'datetime',
-        'is_completed' => 'boolean',
-        'is_active' => 'boolean',
+        'draft_date'     => 'datetime',
+        'is_completed'   => 'boolean',
+        'is_active'      => 'boolean',
         'auction_budget' => 'integer',
-        'time_per_pick' => 'integer',
+        'time_per_pick'  => 'integer',
     ];
 
     /**

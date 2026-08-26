@@ -13,6 +13,7 @@ use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 
 class LoadRosters extends Command
@@ -64,7 +65,7 @@ class LoadRosters extends Command
 
     private function loadRoster(Team $team)
     {
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $this->info('Pulling rosters for ' . $team->id);
         }
 
@@ -79,7 +80,7 @@ class LoadRosters extends Command
     {
         $player = $this->findPlayer($playerData, $team);
 
-        if (! $player instanceof Player) {
+        if (!$player instanceof Player) {
             return;
         }
 

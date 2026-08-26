@@ -52,7 +52,7 @@ class LineupSlotCountsData extends BaseData
         return array_sum(
             array_filter(
                 $this->toArray(),
-                fn($v, $k) => $v > 0 && ! in_array($k, self::BENCH_POSITIONS),
+                fn ($v, $k) => $v > 0 && !in_array($k, self::BENCH_POSITIONS),
                 ARRAY_FILTER_USE_BOTH
             )
         );
@@ -63,7 +63,7 @@ class LineupSlotCountsData extends BaseData
         return array_sum(
             array_filter(
                 $this->toArray(),
-                fn($v, $k) => $v > 0 && in_array($k, self::BENCH_POSITIONS),
+                fn ($v, $k) => $v > 0 && in_array($k, self::BENCH_POSITIONS),
                 ARRAY_FILTER_USE_BOTH
             )
         );

@@ -2,9 +2,9 @@
 
 namespace App\Facades;
 
+use App\Services\Espn\Resources\FantasyNFL;
 use App\Services\Espn\Resources\NFL;
 use App\Services\Espn\Resources\NflTeam;
-use App\Services\Espn\Resources\FantasyNFL;
 use Illuminate\Support\Facades\Facade;
 
 /**

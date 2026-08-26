@@ -48,6 +48,7 @@ class PlayerAlias extends Model
     public function scopeNameLike(Builder $query, string $name): Builder
     {
         $like = '%' . $name . '%';
+
         return $query->where('name', 'like', $like);
     }
 }

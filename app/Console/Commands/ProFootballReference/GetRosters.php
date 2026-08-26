@@ -6,6 +6,7 @@ use App\Enums\NFLTeams;
 use App\Facades\ProFootballReference;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 
 class GetRosters extends Command
@@ -38,7 +39,7 @@ class GetRosters extends Command
 
         if ($this->option('all')) {
             foreach (NFLTeams::cases() as $team) {
-                if (! $this->option('quiet')) {
+                if (!$this->option('quiet')) {
                     $this->info('Pulling rosters for ' . $team->value);
                 }
 
@@ -52,7 +53,7 @@ class GetRosters extends Command
 
         $team = NFLTeams::from(Str::upper($teamSelection));
 
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $this->info('Pulling rosters for ' . $team->value);
         }
 

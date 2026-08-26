@@ -24,12 +24,12 @@ class DraftPick extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'pick_number' => 'integer',
-        'round' => 'integer',
-        'amount' => 'decimal:2',
-        'is_keeper' => 'boolean',
+        'pick_number'        => 'integer',
+        'round'              => 'integer',
+        'amount'             => 'decimal:2',
+        'is_keeper'          => 'boolean',
         'previous_year_cost' => 'decimal:2',
-        'pick_time' => 'datetime',
+        'pick_time'          => 'datetime',
     ];
 
     /* ===[ Relationships ]=== */

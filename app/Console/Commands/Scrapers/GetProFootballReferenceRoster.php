@@ -16,6 +16,7 @@ use App\Services\Scrapers\Resources\ProFootballReference;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 
@@ -55,7 +56,7 @@ class GetProFootballReferenceRoster extends Command
 
         if ($this->option('all')) {
             foreach (NFLTeams::cases() as $teamAbb) {
-                if (! $this->option('quiet')) {
+                if (!$this->option('quiet')) {
                     $this->info('Pulling rosters for ' . $teamAbb->value);
                 }
 
@@ -63,6 +64,7 @@ class GetProFootballReferenceRoster extends Command
 
                 if (empty($roster)) {
                     $this->error('No data found for ' . $teamAbb->value);
+
                     continue;
                 }
 
@@ -75,13 +77,13 @@ class GetProFootballReferenceRoster extends Command
 
             $teamAbb = NFLTeams::from(Str::upper($teamSelection));
 
-            if (! $this->option('quiet')) {
+            if (!$this->option('quiet')) {
                 $this->info('Pulling rosters for ' . $teamAbb->value);
             }
 
             $data = $this->getData($season, $teamAbb->value);
 
-            if (! empty($data)) {
+            if (!empty($data)) {
                 $this->processData($data, $teamAbb->value);
                 $this->saveData($data, $season, $teamAbb->value);
             }
@@ -104,7 +106,7 @@ class GetProFootballReferenceRoster extends Command
                 dd($path);
             }
 
-            if (! empty($data)) {
+            if (!empty($data)) {
                 return $data;
             }
         }
@@ -126,6 +128,7 @@ class GetProFootballReferenceRoster extends Command
             } catch (AmbiguousPlayerException $e) {
                 if ($this->option('quiet')) {
                     report($e);
+
                     continue;
                 }
 
@@ -161,7 +164,7 @@ class GetProFootballReferenceRoster extends Command
             Team::find(Arr::get($data, 'team_id')),
         );
 
-        if (! $player instanceof Player) {
+        if (!$player instanceof Player) {
             $this->info('Player not found ' . $data['full_name']);
 
             if (confirm('Create player?')) {
@@ -176,22 +179,22 @@ class GetProFootballReferenceRoster extends Command
     {
         $id = Arr::get($data, 'position_id');
 
-        return match($id) {
-            1  => NFLPositions::QB->value,
-            2  => NFLPositions::WR->value,
-            3  => NFLPositions::RB->value,
-            4  => NFLPositions::TE->value,
-            5  => NFLPositions::K->value,
-            7  => NFLPositions::C->value,
-            8  => NFLPositions::OT->value,
-            9  => NFLPositions::G->value,
-            10 => NFLPositions::LB->value,
-            11 => NFLPositions::DE->value,
-            12 => NFLPositions::S->value,
-            13 => NFLPositions::DT->value,
-            14 => NFLPositions::CB->value,
-            15 => NFLPositions::LS->value,
-            16 => NFLPositions::P->value,
+        return match ($id) {
+            1       => NFLPositions::QB->value,
+            2       => NFLPositions::WR->value,
+            3       => NFLPositions::RB->value,
+            4       => NFLPositions::TE->value,
+            5       => NFLPositions::K->value,
+            7       => NFLPositions::C->value,
+            8       => NFLPositions::OT->value,
+            9       => NFLPositions::G->value,
+            10      => NFLPositions::LB->value,
+            11      => NFLPositions::DE->value,
+            12      => NFLPositions::S->value,
+            13      => NFLPositions::DT->value,
+            14      => NFLPositions::CB->value,
+            15      => NFLPositions::LS->value,
+            16      => NFLPositions::P->value,
             default => NFLPositions::QB->value,
         };
     }

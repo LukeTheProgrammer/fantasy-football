@@ -5,14 +5,13 @@ namespace App\Services\Espn\Resources;
 use App\Enums\Datum;
 use App\Enums\NFLTeams;
 use App\Models\Team;
+use App\Services\Espn\Enums\Apis;
 use App\Services\Espn\Enums\ApiVersions;
 use App\Services\Espn\Enums\ApiYears;
-use App\Services\Espn\Enums\Apis;
 use App\Services\Espn\Enums\Games;
 use App\Services\Espn\Enums\Leagues;
 use App\Services\Espn\Enums\Sports;
 use App\Services\Espn\EspnConstants;
-use App\Services\Espn\EspnService;
 use App\Traits\HasDataFormats;
 use App\Traits\LoadsJsonFiles;
 use App\Traits\MakesHttpRequests;
@@ -95,7 +94,7 @@ abstract class BaseResource
 
         $this->setCacheFilePath();
 
-        if (! $this->forcePull && $cache = $this->getCache()) {
+        if (!$this->forcePull && $cache = $this->getCache()) {
             return $cache;
         }
 
@@ -114,20 +113,22 @@ abstract class BaseResource
     {
         if ($team instanceof NFLTeams) {
             $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $team->value);
+
             return;
         }
 
         if ($team instanceof Team) {
             $this->teamId = Arr::get(EspnConstants::TEAM_ID_MAP, $team->id);
+
             return;
         }
 
         $teamId = NFLTeams::from($team);
 
-        if (! $teamId instanceof NFLTeams) {
+        if (!$teamId instanceof NFLTeams) {
             $nflTeam = Team::forEspnId($team)->first();
 
-            if (! $nflTeam instanceof Team) {
+            if (!$nflTeam instanceof Team) {
                 throw new InvalidArgumentException('Team not found: ' . $team);
             }
 
@@ -182,8 +183,5 @@ abstract class BaseResource
         return (is_array($response)) ? $response : $response->json();
     }
 
-    public function validate()
-    {
-        return;
-    }
+    public function validate() {}
 }

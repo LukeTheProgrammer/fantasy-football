@@ -8,6 +8,6 @@ class Scrapers extends BaseResource
 {
     public function getRoster(string $teamName)
     {
-        return (new NFLRosters())->get($teamName);
+        return (new NFLRosters)->get($teamName);
     }
 }

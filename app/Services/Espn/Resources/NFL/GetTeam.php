@@ -6,15 +6,15 @@ use App\Models\Team;
 
 class GetTeam extends NFLResource
 {
-    public Team|null $team = null;
+    public ?Team $team = null;
 
     public function setCacheFilePath()
     {
         $dirs = ['teams'];
 
         $file = [
-            (null !== $this->team->espn_id) ? 'team' : 'teams',
-            (null !== $this->team->espn_id) ? $this->team->espn_id : null,
+            ($this->team->espn_id !== null) ? 'team' : 'teams',
+            ($this->team->espn_id !== null) ? $this->team->espn_id : null,
             $this->dataFormat,
         ];
 
@@ -26,7 +26,7 @@ class GetTeam extends NFLResource
     {
         $url = $this->buildUrl('teams');
 
-        if (null !== $this->team->espn_id) {
+        if ($this->team->espn_id !== null) {
             $url .= '/' . $this->team->espn_id;
         }
 

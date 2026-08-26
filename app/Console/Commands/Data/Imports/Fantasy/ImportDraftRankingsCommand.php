@@ -4,7 +4,6 @@ namespace App\Console\Commands\Data\Imports\Fantasy;
 
 use App\Facades\Data;
 use Illuminate\Console\Command;
-use function Laravel\Prompts\select;
 
 class ImportDraftRankingsCommand extends Command
 {

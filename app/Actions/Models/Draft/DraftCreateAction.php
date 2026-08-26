@@ -5,7 +5,6 @@ namespace App\Actions\Models\Draft;
 use App\Models\Draft;
 use App\Models\DraftPick;
 use App\Models\League;
-use App\Models\LeagueMember;
 use Illuminate\Support\Arr;
 
 class DraftCreateAction

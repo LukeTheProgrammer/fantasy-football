@@ -7,10 +7,12 @@ use App\Enums\FantasyPlatforms;
 use App\Services\Imports\Drivers\FantasyNFL\EspnDriver;
 use App\Services\Imports\Drivers\NFL\EspnNFLDriver;
 use App\Services\Imports\Drivers\NFL\ProFootballReferenceDriver;
+use App\Services\Imports\Drivers\NFLStats\NflverseDriver;
 use App\Services\Imports\Importers\FantasyNFLImporter;
 use App\Services\Imports\Importers\FantasyProsProjectionsImporter;
 use App\Services\Imports\Importers\FantasyProsRankingsImporter;
 use App\Services\Imports\Importers\NFLImporter;
+use App\Services\Imports\Importers\NFLStatsImporter;
 use Exception;
 use Illuminate\Support\Arr;
 
@@ -21,6 +23,9 @@ class ImportService
         $drivers = [
             'fantasy_nfl' => [
                 FantasyPlatforms::ESPN->value => EspnDriver::class,
+            ],
+            'nfl_stats' => [
+                Datum::SOURCE_NFLVERSE->value => NflverseDriver::class,
             ],
             'nfl' => [
                 FantasyPlatforms::ESPN->value => EspnNFLDriver::class,
@@ -73,6 +78,24 @@ class ImportService
         }
 
         return new NFLImporter(new $driverClass(...$args));
+    }
+
+    /**
+     * NFL Player, Schedule and Stats Import
+     *
+     * @param mixed ...$args
+     */
+    public function nflStats(string|Datum $driver, ...$args): NFLStatsImporter
+    {
+        $driver = ($driver instanceof Datum) ? $driver->value : $driver;
+
+        $driverClass = Arr::get($this->importDrivers('nfl_stats'), $driver, false);
+
+        if (!$driverClass) {
+            throw new Exception('Invalid driver: ' . $driver);
+        }
+
+        return new NFLStatsImporter(new $driverClass(...$args));
     }
 
     /**

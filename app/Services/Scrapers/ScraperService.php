@@ -14,8 +14,8 @@ class ScraperService
     public function resources(string $type)
     {
         $resources = [
-            Datum::SOURCE_ESPN->value                   => Espn::class,
-            Datum::SOURCE_PFR->value => ProFootballReference::class,
+            Datum::SOURCE_ESPN->value => Espn::class,
+            Datum::SOURCE_PFR->value  => ProFootballReference::class,
         ];
 
         return Arr::get($resources, $type, []);
@@ -33,7 +33,7 @@ class ScraperService
     {
         $resourceClass = $this->resources($resource);
 
-        if (! $resourceClass) {
+        if (!$resourceClass) {
             throw new Exception('Invalid resource: ' . $resource);
         }
 

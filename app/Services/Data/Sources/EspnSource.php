@@ -3,16 +3,15 @@
 namespace App\Services\Data\Sources;
 
 use App\Enums\FantasyPlatforms;
-use App\Enums\NFLTeams;
 use App\Facades\Espn;
 use App\Facades\Import;
 use App\Models\League;
 use App\Models\Team;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use App\Services\Espn\EspnConstants;
-use InvalidArgumentException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 
 class EspnSource extends BaseSource
 {
@@ -20,7 +19,7 @@ class EspnSource extends BaseSource
 
     public function getFantasyLeague(?League $league = null, array|CredentialsData|null $credentials = null, int|string|null $season = null)
     {
-        if (null === $league && null === $credentials) {
+        if ($league === null && $credentials === null) {
             throw new InvalidArgumentException('League or credentials must be provided');
         }
 
@@ -45,7 +44,7 @@ class EspnSource extends BaseSource
                     ->forcePull($this->forcePull)
                     ->getFantasyRoster($league->credentials, [
                         'teamId' => $member->external_id,
-                        'week' => $week,
+                        'week'   => $week,
                         'season' => $season,
                     ]);
 

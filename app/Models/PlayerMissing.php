@@ -13,12 +13,12 @@ class PlayerMissing extends Model
     use SoftDeletes;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected $table = 'players_missing';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected $guarded = [];
 

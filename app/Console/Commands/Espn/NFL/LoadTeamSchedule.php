@@ -7,8 +7,8 @@ use App\Models\Team;
 use App\Services\Espn\Data\NFL\EventData;
 use App\Services\Espn\Data\NFL\ResourceTeamScheduleData;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 
 class LoadTeamSchedule extends Command
@@ -71,11 +71,11 @@ class LoadTeamSchedule extends Command
         $team = Team::where('espn_id', '=', $this->teamId)->first();
         $path = $this->getFilePath();
 
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $this->info('Loading Schedule for ' . $team->abbreviation . ' [' . $this->teamId . '] ' . $path . PHP_EOL);
         }
 
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             $this->error('Schedule file does not exist: ' . $path);
             $this->call('espn:nfl:get:team-schedule', ['espn_team_id' => $this->teamId, '--raw' => true]);
         }
@@ -91,7 +91,7 @@ class LoadTeamSchedule extends Command
             'nfl',
             'team-schedules',
             $this->option('raw') ? 'raw' : 'formatted',
-            'team-schedule-' . $this->teamId . '-' . $this->season . '.json'
+            'team-schedule-' . $this->teamId . '-' . $this->season . '.json',
         ];
 
         return storage_path(implode('/', $parts));
@@ -104,15 +104,15 @@ class LoadTeamSchedule extends Command
 
         $schedule = ResourceTeamScheduleData::from($scheduleData);
 
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $bar = $this->output->createProgressBar($schedule->events->count());
             $bar->start();
         } else {
             $bar = null;
         }
 
-        $schedule->events->each(function (EventData $event) use ($bar, $schedule) {
-            if (! $this->option('quiet')) {
+        $schedule->events->each(function (EventData $event) use ($bar) {
+            if (!$this->option('quiet')) {
                 $bar->advance();
             }
 
@@ -129,9 +129,9 @@ class LoadTeamSchedule extends Command
                 'espn_id'      => $event->id,
                 'home_team_id' => Team::forEspnId($homeTeam->team->id)->first()->id,
                 'away_team_id' => Team::forEspnId($awayTeam->team->id)->first()->id,
-                'season'         => $event->season->season,
+                'season'       => $event->season->season,
                 'week'         => $event->week->number,
-                'starts_at'   => $event->date,
+                'starts_at'    => $event->date,
                 'home_score'   => $homeTeam->score->value,
                 'away_score'   => $awayTeam->score->value,
                 'is_completed' => $competition->status->type->completed ?? false,
@@ -139,7 +139,7 @@ class LoadTeamSchedule extends Command
             ]);
         });
 
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $bar->finish();
             echo PHP_EOL . PHP_EOL;
         }

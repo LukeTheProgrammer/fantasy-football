@@ -35,7 +35,7 @@ class DataService
     {
         $sourceClass = $this->sources($source);
 
-        if (! $sourceClass) {
+        if (!$sourceClass) {
             throw new Exception('Invalid source: ' . $source);
         }
 

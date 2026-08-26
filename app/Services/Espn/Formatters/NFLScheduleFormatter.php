@@ -2,11 +2,9 @@
 
 namespace App\Services\Espn\Formatters;
 
-use App\Models\Player;
-use App\Models\NflGame;
 use App\Models\Team;
-use App\Services\Espn\Data\NFL\Schedule\ScheduleResourceData;
 use App\Services\Espn\Data\NFL\Schedule\EventData;
+use App\Services\Espn\Data\NFL\Schedule\ScheduleResourceData;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +20,7 @@ class NFLScheduleFormatter
 
     public static function from(array|ScheduleResourceData $data)
     {
-        if (! $data instanceof ScheduleResourceData) {
+        if (!$data instanceof ScheduleResourceData) {
             $data = ScheduleResourceData::from($data);
         }
 
@@ -58,8 +56,9 @@ class NFLScheduleFormatter
         $competition->competitors->each(function ($competitor) use (&$data) {
             $team = $this->teams->get($competitor->team->id);
 
-            if (! $team instanceof Team) {
+            if (!$team instanceof Team) {
                 Log::error('Team not found', $competitor->toArray());
+
                 return true;
             }
 

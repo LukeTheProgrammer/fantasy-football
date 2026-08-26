@@ -2,8 +2,8 @@
 
 namespace App\Services\Espn\Formatters;
 
-use App\Models\Player;
 use App\Models\NflGame;
+use App\Models\Player;
 use App\Services\Espn\Data\FantasyNFL\PlayerStatsData;
 use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
 use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
@@ -30,9 +30,8 @@ class FantasyRosterFormatter
         array|ResourceLeagueData $leagueData,
         int $season,
         int $week
-    )
-    {
-        if (! $leagueData instanceof ResourceLeagueData) {
+    ) {
+        if (!$leagueData instanceof ResourceLeagueData) {
             $leagueData = ResourceLeagueData::from($leagueData);
         }
 
@@ -70,11 +69,11 @@ class FantasyRosterFormatter
 
         $playerModel = Player::espnId($playerId)->first();
 
-        if (! $playerModel instanceof Player) {
+        if (!$playerModel instanceof Player) {
             dump('Player Not Found ' . json_encode([
-                'id' => $player->id,
+                'id'       => $player->id,
                 'playerId' => $playerId,
-                'name' => $player->fullName,
+                'name'     => $player->fullName,
             ]));
 
             return null;
@@ -106,8 +105,8 @@ class FantasyRosterFormatter
     {
         $gameId = intval($stat->externalId);
         $season = intval($stat->seasonId);
-        $week   = intval($stat->scoringPeriodId);
-        $points = floatVal($stat->appliedTotal);
+        $week = intval($stat->scoringPeriodId);
+        $points = floatval($stat->appliedTotal);
 
         $isWeek = $week == $this->week;
         $isProjection = $stat->statSourceId === 1;

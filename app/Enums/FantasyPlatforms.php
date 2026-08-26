@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 
 enum FantasyPlatforms: string
 {
-    case CBS  = 'CBS';
+    case CBS = 'CBS';
     case ESPN = 'ESPN';
 
     public static function options(): Collection

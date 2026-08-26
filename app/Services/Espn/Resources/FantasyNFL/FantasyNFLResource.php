@@ -30,7 +30,7 @@ abstract class FantasyNFLResource extends BaseResource
 
     public function __construct(public array|CredentialsData $credentials)
     {
-        if (! $credentials instanceof CredentialsData) {
+        if (!$credentials instanceof CredentialsData) {
             $this->credentials = CredentialsData::from($credentials);
         }
 

@@ -5,6 +5,7 @@ namespace App\Console\Commands\Espn\FantasyNFL;
 use App\Facades\Espn;
 use App\Models\League;
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\select;
 
 class GetMatchup extends Command
@@ -33,7 +34,7 @@ class GetMatchup extends Command
     {
         $leagueId = $this->argument('league_id');
 
-        if (! $leagueId) {
+        if (!$leagueId) {
             $leagueId = select('League ID', League::all()->pluck('name', 'id')->toArray());
         }
 

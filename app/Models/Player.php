@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Observers\PlayerObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
 #[ObservedBy(PlayerObserver::class)]
 class Player extends Model
@@ -21,14 +21,14 @@ class Player extends Model
     use SoftDeletes;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected $guarded = [
         'ulid',
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected $casts = [
         'birth_date' => 'datetime',
@@ -93,13 +93,29 @@ class Player extends Model
         return $this->hasMany(PlayerTeam::class);
     }
 
+    /**
+     * Get the weekly stat lines for this player.
+     */
+    public function weeklyStats(): HasMany
+    {
+        return $this->hasMany(PlayerStatWeekly::class);
+    }
+
+    /**
+     * Get the season stat lines for this player.
+     */
+    public function seasonStats(): HasMany
+    {
+        return $this->hasMany(PlayerStatYearly::class);
+    }
+
     /* ===[ Scopes ]=== */
 
     /**
      * Scope a query by position_id.
      *
      * @param Builder $query
-     * @param integer|string|Position $position
+     * @param int|string|Position $position
      *
      * @return Builder
      */
@@ -112,7 +128,7 @@ class Player extends Model
      * Scope a query by team_id.
      *
      * @param Builder $query
-     * @param integer|string|Team $team
+     * @param int|string|Team $team
      *
      * @return Builder
      */
@@ -127,7 +143,7 @@ class Player extends Model
      * Scope a query to only include players with the given ESPN ID.
      *
      * @param Builder $query
-     * @param integer|string $espnId
+     * @param int|string $espnId
      *
      * @return Builder
      */
@@ -140,7 +156,7 @@ class Player extends Model
      * Scope a query to only include players with the given Pro-Football-Reference ID.
      *
      * @param Builder $query
-     * @param integer|string $pfrId
+     * @param int|string $pfrId
      *
      * @return Builder
      */
@@ -150,10 +166,18 @@ class Player extends Model
     }
 
     /**
+     * Scope a query to only include players with the given NFL gsis ID.
+     */
+    public function scopeGsisId(Builder $query, string $gsisId): Builder
+    {
+        return $query->where('gsis_id', $gsisId);
+    }
+
+    /**
      * Scope a query to only include players with the given FantasyPros ID.
      *
      * @param Builder $query
-     * @param integer|string $fpId
+     * @param int|string $fpId
      *
      * @return Builder
      */

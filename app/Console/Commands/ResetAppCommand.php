@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Week;
 use Illuminate\Console\Command;
 
 class ResetAppCommand extends Command
@@ -33,8 +32,8 @@ class ResetAppCommand extends Command
         $this->warn('This drops EVERY table, players and player aliases included.');
         $this->warn('Aliases are only restored from database/data/player_aliases.json.');
 
-        if (! $this->confirm('Run data:dump:players first? Answer no only if the dump is already current.', true)) {
-            if (! $this->confirm('Continue without a fresh dump and risk losing alias work?', false)) {
+        if (!$this->confirm('Run data:dump:players first? Answer no only if the dump is already current.', true)) {
+            if (!$this->confirm('Continue without a fresh dump and risk losing alias work?', false)) {
                 return Command::FAILURE;
             }
         } else {

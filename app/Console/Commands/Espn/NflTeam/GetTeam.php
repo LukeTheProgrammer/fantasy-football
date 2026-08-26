@@ -43,7 +43,7 @@ class GetTeam extends Command
         if ($teamId) {
             $team = Team::forEspnId($teamId)->first();
 
-            if (! $team instanceof Team) {
+            if (!$team instanceof Team) {
                 $this->error("Team not found: $teamId");
 
                 return Command::FAILURE;

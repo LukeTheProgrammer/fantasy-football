@@ -13,6 +13,7 @@ use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 
 class LoadNflRosters extends Command
@@ -59,7 +60,7 @@ class LoadNflRosters extends Command
 
         $team = Team::forAbbreviation($teamId)->first();
 
-        if (! $this->option('quiet')) {
+        if (!$this->option('quiet')) {
             $this->info('Pulling rosters for ' . $team->value);
         }
 
@@ -75,11 +76,11 @@ class LoadNflRosters extends Command
         foreach ($roster as $player) {
             $playerModel = Player::espnId($player['id'])->first();
 
-            if (! $playerModel instanceof Player) {
+            if (!$playerModel instanceof Player) {
                 $pos = Position::find(Arr::get($player, 'position'));
                 $playerModel = $this->disambiguatePlayer($player['name'], $pos, $team);
 
-                if (! $playerModel instanceof Player) {
+                if (!$playerModel instanceof Player) {
                     continue;
                 }
             }

@@ -10,7 +10,7 @@ use Spatie\LaravelData\Support\DataProperty;
 
 class CarbonCast implements Cast
 {
-    public function cast(DataProperty $property, mixed $value, array $properties, CreationContext $context): Carbon|null
+    public function cast(DataProperty $property, mixed $value, array $properties, CreationContext $context): ?Carbon
     {
         if ($value instanceof Carbon) {
             return $value;

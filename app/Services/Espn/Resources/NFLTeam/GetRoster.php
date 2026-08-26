@@ -27,11 +27,11 @@ class GetRoster extends NFLTeamResource
 
     public function sendRequest()
     {
-        $scraper = new NFLRosters();
+        $scraper = new NFLRosters;
 
         $team = Team::forEspnId($this->teamId)->first();
 
-        if (! $team instanceof Team) {
+        if (!$team instanceof Team) {
             throw new Exception('Team not found for espn id: ' . $this->teamId);
         }
 

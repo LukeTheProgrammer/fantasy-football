@@ -20,13 +20,11 @@ class EspnService
 {
     use HasDataFormats;
 
-
     /* ===[ NFL ]=== */
-
 
     public function getNFLTeamNews(Team $team)
     {
-        $resource = new NFL();
+        $resource = new NFL;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -35,7 +33,7 @@ class EspnService
 
     public function getNFLScoreboard()
     {
-        $resource = new NFL();
+        $resource = new NFL;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -44,7 +42,7 @@ class EspnService
 
     public function getNFLEventSummary(int|string $eventId)
     {
-        $resource = new NFL();
+        $resource = new NFL;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -53,7 +51,7 @@ class EspnService
 
     public function getNFLTeam(?Team $team = null)
     {
-        $resource = new NFL();
+        $resource = new NFL;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -62,7 +60,7 @@ class EspnService
 
     public function getNFLRoster(?Team $team = null)
     {
-        $resource = new NFL();
+        $resource = new NFL;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -71,7 +69,7 @@ class EspnService
 
     public function getNFLSchedule(Team $team, int $season)
     {
-        $resource = new NFL();
+        $resource = new NFL;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -80,20 +78,18 @@ class EspnService
 
     public function getNFLLeaders()
     {
-        $resource = new NFL();
+        $resource = new NFL;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
             ->getLeaders();
     }
 
-
     /* ===[ NFL Team ]=== */
-
 
     public function getNFLTeamDepthChart(Team $team)
     {
-        $resource = new NFLTeam();
+        $resource = new NflTeam;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -102,7 +98,7 @@ class EspnService
 
     public function getNFLTeamEvents(Team $team)
     {
-        $resource = new NFLTeam();
+        $resource = new NflTeam;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -111,7 +107,7 @@ class EspnService
 
     public function getNFLPlayers(Team $team, int $page = 1)
     {
-        $resource = new NFLTeam();
+        $resource = new NflTeam;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -120,7 +116,7 @@ class EspnService
 
     public function getNFLTeamRoster(Team $team, int|string|null $season = null)
     {
-        $resource = new NFLTeam();
+        $resource = new NflTeam;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
@@ -129,16 +125,14 @@ class EspnService
 
     public function getNFLTeamData(Team $team)
     {
-        $resource = new NFLTeam();
+        $resource = new NflTeam;
 
         return $resource->dataFormat($this->dataFormat)
             ->forcePull($this->forcePull)
             ->getTeam($team);
     }
 
-
     /* ===[ Fantasy NFL ]=== */
-
 
     public function getFantasyDraft(array|CredentialsData $credentials, array $opts = [])
     {

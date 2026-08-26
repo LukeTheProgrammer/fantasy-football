@@ -3,14 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\DraftRanking;
-use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\multiselect;
-use function Laravel\Prompts\select;
 
 class MakeMilhavenCheatSheet extends Command
 {
@@ -43,15 +37,15 @@ class MakeMilhavenCheatSheet extends Command
     public function newItem()
     {
         return [
-            'rank' => null,
+            'rank'   => null,
             'player' => null,
-            'team' => null,
-            'pos' => null,
-            'tier' => null,
-            'posRk' => null,
-            'adv' => null,
+            'team'   => null,
+            'pos'    => null,
+            'tier'   => null,
+            'posRk'  => null,
+            'adv'    => null,
             'actual' => 0,
-            'value' => 0,
+            'value'  => 0,
         ];
     }
 
@@ -86,7 +80,7 @@ class MakeMilhavenCheatSheet extends Command
         $q->lazy()->each(function ($ranking) use ($bar) {
             $pid = $ranking->player_id;
 
-            if (! isset($this->data[$pid])) {
+            if (!isset($this->data[$pid])) {
                 $this->data[$pid] = $this->newItem();
                 $this->data[$pid]['player'] = $ranking->player->full_name;
                 $this->data[$pid]['team'] = $ranking->player->team->abbreviation;
@@ -119,7 +113,7 @@ class MakeMilhavenCheatSheet extends Command
         $headers = false;
 
         foreach ($this->data as $player) {
-            if (! $headers) {
+            if (!$headers) {
                 // fputcsv($fp, array_keys($player));
                 $headers = true;
             }

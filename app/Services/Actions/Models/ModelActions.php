@@ -5,14 +5,16 @@ namespace App\Services\Actions\Models;
 use App\Actions\Models\Draft\DraftCreateAction;
 use App\Actions\Models\LeagueMembers\LeagueMemberCreateAction;
 use App\Actions\Models\LeagueMembers\LeagueMemberUpdateAction;
-use App\Actions\Models\LeagueSettings\LeagueSettingsCreateAction;
-use App\Actions\Models\LeagueSettings\LeagueSettingsUpdateAction;
 use App\Actions\Models\Leagues\LeagueCreateAction;
 use App\Actions\Models\Leagues\LeagueUpdateAction;
+use App\Actions\Models\LeagueSettings\LeagueSettingsCreateAction;
+use App\Actions\Models\LeagueSettings\LeagueSettingsUpdateAction;
 use App\Actions\Models\Player\PlayerCreateAction;
 use App\Actions\Models\Player\PlayerUpdateAction;
 use App\Actions\Models\Player\PlayerUpsertAction;
 use App\Actions\Models\PlayerMissing\PlayerMissingUpsertAction;
+use App\Actions\Models\PlayerStatWeekly\PlayerStatWeeklyUpsertAction;
+use App\Actions\Models\PlayerStatYearly\PlayerStatYearlyUpsertAction;
 use App\Actions\Models\PlayerTeam\PlayerTeamUpsertAction;
 use App\Models\Draft;
 use App\Models\League;
@@ -20,6 +22,8 @@ use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
 use App\Models\Player;
 use App\Models\PlayerMissing;
+use App\Models\PlayerStatWeekly;
+use App\Models\PlayerStatYearly;
 use App\Models\PlayerTeam;
 use Exception;
 use Illuminate\Support\Arr;
@@ -50,6 +54,12 @@ class ModelActions
         PlayerMissing::class => [
             'upsert' => PlayerMissingUpsertAction::class,
         ],
+        PlayerStatWeekly::class => [
+            'upsert' => PlayerStatWeeklyUpsertAction::class,
+        ],
+        PlayerStatYearly::class => [
+            'upsert' => PlayerStatYearlyUpsertAction::class,
+        ],
         PlayerTeam::class => [
             'upsert' => PlayerTeamUpsertAction::class,
         ],
@@ -65,7 +75,7 @@ class ModelActions
         $actions = Arr::get($this->registry, $this->modelClassName);
         $action = Arr::get($actions, 'create', false);
 
-        if (! $action) {
+        if (!$action) {
             throw new Exception('There is no create method registered for ' . $this->modelClassName);
         }
 
@@ -77,7 +87,7 @@ class ModelActions
         $actions = Arr::get($this->registry, $this->modelClassName);
         $action = Arr::get($actions, 'update', false);
 
-        if (! $action) {
+        if (!$action) {
             throw new Exception('There is no update method registered for ' . $this->modelClassName);
         }
 
@@ -89,7 +99,7 @@ class ModelActions
         $actions = Arr::get($this->registry, $this->modelClassName);
         $action = Arr::get($actions, 'upsert', false);
 
-        if (! $action) {
+        if (!$action) {
             throw new Exception('There is no upsert method registered for ' . $this->modelClassName);
         }
 
