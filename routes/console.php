@@ -26,3 +26,18 @@ Schedule::command('fantasy-pros:daily')
     ->hourly()
     ->withoutOverlapping()
     ->onOneServer();
+
+/*
+ * ESPN's board is an average over its own leagues, so it moves slowly and a
+ * capture a day is plenty. It runs hourly for the same reason the FantasyPros
+ * pull does — this machine is not always up at any fixed minute — and the
+ * command no-ops once the day is stored, so the extra invocations cost one
+ * query each.
+ *
+ * It is offset ten minutes past the hour so it follows the FantasyPros pull
+ * rather than competing with it.
+ */
+Schedule::command('espn:rankings:import')
+    ->hourlyAt(10)
+    ->withoutOverlapping()
+    ->onOneServer();

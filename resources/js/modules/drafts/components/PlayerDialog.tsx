@@ -109,13 +109,14 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
 
         {profile && (
           <div className="space-y-5">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-5 gap-2">
               <Figure
                 label="League"
                 value={money(valuation?.market_value ?? null)}
                 hint={valuation?.budget_share ? `${valuation.budget_share}% of a budget` : null}
               />
               <Figure label="VAR" value={money(valuation?.projected_value ?? null)} hint={`${valuation?.projected_points ?? '—'} pts`} />
+              <Figure label="ADV" value={money(valuation?.adv ?? null)} hint="platform average" />
               <Figure label="Overall rank" value={valuation?.rank ? `#${valuation.rank}` : '—'} hint={`Tier ${valuation?.tier ?? '—'}`} />
               <Figure
                 label={`${player.position_id} left`}

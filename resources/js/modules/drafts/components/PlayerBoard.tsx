@@ -85,6 +85,7 @@ export function PlayerBoard({
               <TableHead className="w-12 text-center">Tier</TableHead>
               <TableHead className="w-20 text-center">League</TableHead>
               <TableHead className="w-20 text-center">VAR</TableHead>
+              <TableHead className="w-20 text-center">ADV</TableHead>
               <TableHead className="w-20 text-center">{season - 1}</TableHead>
             </TableRow>
           </TableHeader>
@@ -111,6 +112,7 @@ export function PlayerBoard({
                 <TableCell className="text-center tabular-nums">{player.tier ?? '—'}</TableCell>
                 <TableCell className="text-center font-medium tabular-nums">{money(player.market_value)}</TableCell>
                 <TableCell className="text-center font-medium tabular-nums">{money(player.projected_value)}</TableCell>
+                <TableCell className="text-center text-muted-foreground tabular-nums">{money(player.adv)}</TableCell>
                 <TableCell className="text-center text-muted-foreground tabular-nums">{money(player.previous_price)}</TableCell>
               </TableRow>
             ))}

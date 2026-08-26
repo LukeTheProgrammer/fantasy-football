@@ -44,6 +44,8 @@ export interface AuctionPlayer {
   projected_points: number | null;
   market_value: number | null;
   projected_value: number | null;
+  /** Average auction value across the wider platform, stored unadjusted. */
+  adv: number | null;
   previous_price: number | null;
   drafted_by: number | null;
   drafted_for: number | null;
@@ -79,6 +81,7 @@ export interface PlayerProfile {
     projected_points: number | null;
     market_value: number | null;
     projected_value: number | null;
+    adv: number | null;
     drafted_for: number | null;
     budget_share: number | null;
   };

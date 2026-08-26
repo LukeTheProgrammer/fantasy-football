@@ -99,6 +99,7 @@ class BuildPlayerProfileAction
             'projected_points' => $row['projected_points'] ?? null,
             'market_value'     => $market,
             'projected_value'  => $row['projected_value'] ?? null,
+            'adv'              => $row['adv'] ?? null,
             'drafted_for'      => $row['drafted_for'] ?? null,
             // What the market price costs out of one team's whole budget, which
             // is the number that actually decides whether a bid is affordable.

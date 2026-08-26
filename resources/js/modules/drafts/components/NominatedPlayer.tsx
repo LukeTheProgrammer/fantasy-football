@@ -89,6 +89,7 @@ export function NominatedPlayer({ player, teams, draftId, onPicked }: NominatedP
           <div className="flex items-center justify-between rounded-lg border bg-muted/40 px-4 py-2">
             <Stat label="League" value={player.market_value !== null ? `$${player.market_value}` : null} />
             <Stat label="VAR" value={player.projected_value !== null ? `$${player.projected_value}` : null} />
+            <Stat label="ADV" value={player.adv !== null ? `$${player.adv}` : null} muted />
             <Stat label="Diff" value={money(disagreement)} muted />
           </div>
         </div>

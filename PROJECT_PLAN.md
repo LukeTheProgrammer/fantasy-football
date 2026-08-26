@@ -70,6 +70,8 @@ This project aims to create a web application that assists users during their fa
 - [x] Implement FantasyPros rankings import Command
 - [x] Implement auction value calculations
 - [x] Import Milhaven league history: 2023, 2024, 2025 auctions, 190 picks each
+- [x] Average Draft Value (ADV) and ADP from ESPN's player pool into `draft_rankings` under its own source, captured daily on the scheduler
+- [ ] FantasyPros auction values as a second ADV source (their calculator loads data client side, so it needs a new parser)
 
 ### 4. Historical League Auction Data
 #### Data Import

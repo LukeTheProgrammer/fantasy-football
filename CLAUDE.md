@@ -71,6 +71,16 @@ Pro Football Reference is **no longer reachable** — it sits behind a Cloudflar
 ./vendor/bin/sail artisan nfl:stats:status 2025       # coverage and internal agreement
 ```
 
+### Auction values
+
+Three independent estimates sit on the draft board, and the disagreement between them is the point:
+
+- **League** (`CalculateMarketValuesAction`) — last auction's prices sorted high to low, read off by this year's rank. A price curve for *this* league; it has no opinion about the player.
+- **VAR** (`CalculateProjectedValuesAction`) — points above replacement, spread across the league's biddable budget.
+- **ADV** (`draft_rankings`, `source = ESPN`) — ESPN's average auction value across its own leagues, pulled daily by `espn:rankings:import` and **stored unadjusted**. ESPN quotes a $200 budget, which matches this league, but its values come from single-QB leagues — in a superflex league they read low at quarterback on purpose. Never scale them silently.
+
+ESPN's board lives in `draft_rankings` beside the FantasyPros ones: same table, different `source`, which is what the unique key `(player_id, season, ranked_at, type, source, ppr, superflex)` keeps apart. Its `rank` is derived from ESPN's ADP order, and one row per day means a player's value can be tracked through the summer.
+
 ### Player identity
 
 Every source spells names differently and only some carry an id, so resolution goes through `Player::find()` (`app/Services/Player/Resources/PlayerFinder.php`): source id, then exact name, then the **normalised** name, then aliases, then name plus position and team. Each step accepts a match only when exactly one row comes back — an ambiguous name records a `players_missing` row rather than guessing.

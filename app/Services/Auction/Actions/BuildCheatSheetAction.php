@@ -31,6 +31,7 @@ class BuildCheatSheetAction
         $projectedValues = (new CalculateProjectedValuesAction)->run($draft);
         $previousPrices = $this->previousPrices($draft);
         $projectedPoints = $this->projectedPoints($draft);
+        $averageValues = $this->averageDraftValues($draft);
         $drafted = $draft->picks->keyBy('player_id');
 
         return $rankings->map(function (DraftRanking $ranking) use (
@@ -38,6 +39,7 @@ class BuildCheatSheetAction
             $projectedValues,
             $previousPrices,
             $projectedPoints,
+            $averageValues,
             $drafted,
             $league
         ) {
@@ -56,6 +58,7 @@ class BuildCheatSheetAction
                 'market_value'     => $marketValues->get($ranking->rank),
                 'projected_value'  => $projectedValues->get($ranking->player_id),
                 'previous_price'   => $previousPrices->get($ranking->player_id),
+                'adv'              => $averageValues->get($ranking->player_id),
                 'drafted_by'       => $pick?->league_member_id,
                 'drafted_for'      => $pick ? (int) $pick->amount : null,
                 'pick_id'          => $pick?->id,
@@ -117,6 +120,31 @@ class BuildCheatSheetAction
             ->whereNotNull('player_id')
             ->get()
             ->mapWithKeys(fn (DraftPick $pick) => [$pick->player_id => (int) $pick->amount]);
+    }
+
+    /**
+     * What the wider market pays for each player, from ESPN's newest board for
+     * this season.
+     *
+     * Stored exactly as the source publishes it, so a superflex league reads a
+     * single quarterback league's prices at the position and should know it.
+     *
+     * @return Collection<int, float> Keyed by player id.
+     */
+    private function averageDraftValues(Draft $draft): Collection
+    {
+        $season = $draft->league->season;
+
+        return DraftRanking::query()
+            ->where('season', $season)
+            ->fromSource(Datum::SOURCE_ESPN->value)
+            ->where('ranked_at', DraftRanking::query()
+                ->where('season', $season)
+                ->fromSource(Datum::SOURCE_ESPN->value)
+                ->max('ranked_at'))
+            ->where('adv', '>', 0)
+            ->pluck('adv', 'player_id')
+            ->map(fn ($value) => round((float) $value));
     }
 
     /**

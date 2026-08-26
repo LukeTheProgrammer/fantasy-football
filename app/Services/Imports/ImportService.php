@@ -8,6 +8,7 @@ use App\Services\Imports\Drivers\FantasyNFL\EspnDriver;
 use App\Services\Imports\Drivers\NFL\EspnNFLDriver;
 use App\Services\Imports\Drivers\NFL\ProFootballReferenceDriver;
 use App\Services\Imports\Drivers\NFLStats\NflverseDriver;
+use App\Services\Imports\Importers\EspnRankingsImporter;
 use App\Services\Imports\Importers\FantasyNFLImporter;
 use App\Services\Imports\Importers\FantasyProsProjectionsImporter;
 use App\Services\Imports\Importers\FantasyProsRankingsImporter;
@@ -96,6 +97,16 @@ class ImportService
         }
 
         return new NFLStatsImporter(new $driverClass(...$args));
+    }
+
+    /**
+     * ESPN Draft Rankings Import
+     *
+     * Takes the pool the fetch stage already shaped, so it needs no driver.
+     */
+    public function espnRankings(): EspnRankingsImporter
+    {
+        return new EspnRankingsImporter;
     }
 
     /**

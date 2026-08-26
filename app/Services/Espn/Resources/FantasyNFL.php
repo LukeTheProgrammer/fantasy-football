@@ -6,6 +6,7 @@ use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use App\Services\Espn\Resources\FantasyNFL\GetDraftRecap;
 use App\Services\Espn\Resources\FantasyNFL\GetLeague;
 use App\Services\Espn\Resources\FantasyNFL\GetMatchup;
+use App\Services\Espn\Resources\FantasyNFL\GetPlayers;
 use App\Services\Espn\Resources\FantasyNFL\GetRoster;
 use App\Services\Espn\Resources\FantasyNFL\GetSettings;
 use App\Services\Espn\Resources\FantasyNFL\GetStandings;
@@ -45,6 +46,22 @@ class FantasyNFL extends BaseResourceCollection
         $resource->dataFormat($this->dataFormat);
 
         $resource->setOpts(Arr::get($opts, 'teamId'));
+
+        return $resource->fetch();
+    }
+
+    /**
+     * The draftable player pool, carrying ESPN's own average auction value and
+     * average draft position for each man.
+     */
+    public function getPlayers(array|CredentialsData $credentials, array $opts = [])
+    {
+        $resource = new GetPlayers($credentials);
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
+
+        $resource->setOpts(Arr::get($opts, 'season'));
 
         return $resource->fetch();
     }

@@ -155,6 +155,19 @@ class EspnService
             ->getDraftRecap($credentials, $opts);
     }
 
+    /**
+     * The draftable player pool with ESPN's average auction value and average
+     * draft position for each player.
+     */
+    public function getFantasyPlayers(array|CredentialsData $credentials, int|string|null $season = null)
+    {
+        $resource = new FantasyNFL;
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getPlayers($credentials, ['season' => $season]);
+    }
+
     public function getFantasyLeague(array|CredentialsData $credentials, int|string|null $season = null)
     {
         $resource = new FantasyNFL($credentials);
