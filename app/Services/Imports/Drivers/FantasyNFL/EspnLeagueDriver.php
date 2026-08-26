@@ -3,6 +3,8 @@
 namespace App\Services\Imports\Drivers\FantasyNFL;
 
 use App\Facades\Data;
+use App\Facades\Espn;
+use App\Facades\Player as PlayerFacade;
 use App\Models\DraftPick;
 use App\Models\League;
 use App\Models\LeagueMatchup;
@@ -21,6 +23,13 @@ class EspnLeagueDriver
     private ?CredentialsData $credentials = null;
 
     private array $leagueData = [];
+
+    /**
+     * Draft picks whose player could not be resolved.
+     *
+     * @var array<int, array<string, mixed>>
+     */
+    public array $skippedPicks = [];
 
     public function __construct(private array $metaData = [])
     {
@@ -139,9 +148,18 @@ class EspnLeagueDriver
                 continue;
             }
 
-            $player = Player::espnId($pick['player_id'])->first();
+            // ESPN's fantasy id is not an athlete id when the pick is a team
+            // defense, so it is translated before it is looked up.
+            $player = PlayerFacade::find(
+                Espn::playerLookup($pick['player_id'], Arr::get($pick, 'full_name')),
+                ['source' => static::class]
+            );
 
             if (!$player instanceof Player) {
+                // A dropped pick is a hole in the draft this app exists to read,
+                // so it is counted and reported rather than only logged.
+                $this->skippedPicks[] = $pick;
+
                 Log::error('Player not found for draft pick', $pick);
 
                 continue;

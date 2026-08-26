@@ -2,6 +2,8 @@
 
 namespace App\Services\Espn\Formatters;
 
+use App\Facades\Espn;
+use App\Facades\Player as PlayerFacade;
 use App\Models\NflGame;
 use App\Models\Player;
 use App\Services\Espn\Data\FantasyNFL\PlayerStatsData;
@@ -60,22 +62,12 @@ class FantasyRosterFormatter
         $ratings = $entry->playerPoolEntry->ratings;
         $stats = $player->stats;
 
-        $playerId = $player->id;
-
-        if ($playerId < 0) {
-            // ESPN uses negative numbers for DSTs.
-            $playerId = abs($playerId + 16000);
-        }
-
-        $playerModel = Player::espnId($playerId)->first();
+        $playerModel = PlayerFacade::find(
+            Espn::playerLookup($player->id, $player->fullName),
+            ['source' => static::class]
+        );
 
         if (!$playerModel instanceof Player) {
-            dump('Player Not Found ' . json_encode([
-                'id'       => $player->id,
-                'playerId' => $playerId,
-                'name'     => $player->fullName,
-            ]));
-
             return null;
         }
 

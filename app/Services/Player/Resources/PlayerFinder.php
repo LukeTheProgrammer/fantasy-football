@@ -7,6 +7,7 @@ use App\Facades\Action;
 use App\Models\Player;
 use App\Models\PlayerAlias;
 use App\Models\PlayerMissing;
+use App\Services\Player\Helpers\NormalizedName;
 use Illuminate\Support\Arr;
 
 /**
@@ -48,6 +49,7 @@ class PlayerFinder
     {
         $this->searchBySourceId();
         $this->searchByName();
+        $this->searchByNormalizedName();
         $this->searchByAlias();
         $this->searchByNamePositionAndTeam();
 
@@ -100,6 +102,24 @@ class PlayerFinder
         }
     }
 
+    /**
+     * Sources disagree about suffixes and punctuation more often than they
+     * disagree about who a player is, so the reduced forms are compared before
+     * the search moves on to guessing.
+     */
+    private function searchByNormalizedName(): void
+    {
+        if ($this->player instanceof Player || empty($this->normalizedName())) {
+            return;
+        }
+
+        $query = Player::where('normalized_name', '=', $this->normalizedName());
+
+        if ($query->count() === 1) {
+            $this->player = $query->first();
+        }
+    }
+
     private function searchByAlias(): void
     {
         if ($this->player instanceof Player || empty($this->name())) {
@@ -110,6 +130,14 @@ class PlayerFinder
 
         if ($query->count() === 1) {
             $this->player = $query->first()->player;
+
+            return;
+        }
+
+        $normalized = PlayerAlias::forNormalizedName($this->normalizedName());
+
+        if ($this->normalizedName() && $normalized->count() === 1) {
+            $this->player = $normalized->first()->player;
         }
     }
 
@@ -118,7 +146,7 @@ class PlayerFinder
      */
     private function searchByNamePositionAndTeam(): void
     {
-        if ($this->player instanceof Player || empty($this->name())) {
+        if ($this->player instanceof Player || empty($this->normalizedName())) {
             return;
         }
 
@@ -129,7 +157,7 @@ class PlayerFinder
             return;
         }
 
-        $query = Player::where('full_name', '=', $this->name())
+        $query = Player::where('normalized_name', '=', $this->normalizedName())
             ->where('position_id', '=', $position)
             ->where('team_id', '=', $team);
 
@@ -140,14 +168,17 @@ class PlayerFinder
 
     /**
      * Log an unresolved player so the gap is visible rather than silent.
+     *
+     * A source id with no name is still worth recording — a draft pick arrives
+     * as nothing but an id, and an unrecorded miss there is a lost pick.
      */
     private function saveMissingPlayer(): void
     {
-        if (!$this->recordMissing || empty($this->name())) {
+        [$idKey, $idValue] = $this->sourceId();
+
+        if (!$this->recordMissing || (empty($this->name()) && empty($idValue))) {
             return;
         }
-
-        [$idKey, $idValue] = $this->sourceId();
 
         Action::model(PlayerMissing::class)->upsert($this->data, $this->source ?? static::class, [
             'unique_id_key'   => $idKey,
@@ -179,6 +210,11 @@ class PlayerFinder
     private function name(): ?string
     {
         return Arr::get($this->data, 'full_name');
+    }
+
+    private function normalizedName(): ?string
+    {
+        return NormalizedName::of($this->name());
     }
 
     /**

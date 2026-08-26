@@ -4,8 +4,12 @@ namespace App\Console\Commands\Data\Imports\Fantasy;
 
 use App\Enums\FantasyPlatforms;
 use App\Facades\Data;
+use App\Models\Draft;
 use App\Models\League;
+use App\Models\PlayerMissing;
 use App\Models\User;
+use App\Services\Imports\Drivers\FantasyNFL\EspnLeagueDriver;
+use Carbon\CarbonInterface;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -55,15 +59,64 @@ class ImportLeagueCommand extends Command
     {
         $this->setUp();
 
+        $startedAt = now();
+
         $this->import();
 
         $this->info($this->league->name . ' imported successfully!');
+
+        $this->reportDraft($startedAt);
 
         $this->league = null;
         $this->platform = null;
         $this->creator = null;
         $this->action = '';
         $this->credentials = [];
+    }
+
+    /**
+     * Say how much of the draft actually landed.
+     *
+     * A pick whose player cannot be resolved is skipped, and a silently short
+     * draft is worse than a loud one: the board reads as though those players
+     * were never drafted at all.
+     */
+    protected function reportDraft(CarbonInterface $startedAt): void
+    {
+        $draft = $this->league->draft;
+
+        if (!$draft instanceof Draft) {
+            return;
+        }
+
+        $picks = $draft->picks()->count();
+        $rounds = $draft->picks()->max('round');
+        $teams = $this->league->members()->count();
+        $expected = $rounds * $teams;
+
+        $this->table(
+            ['Draft picks', 'Rounds', 'Teams', 'Expected'],
+            [[$picks, $rounds, $teams, $expected]]
+        );
+
+        $missed = PlayerMissing::where('source_class', EspnLeagueDriver::class)
+            ->where('updated_at', '>=', $startedAt)
+            ->get();
+
+        if ($missed->isEmpty() && $picks >= $expected) {
+            return;
+        }
+
+        $this->warn('The draft is short ' . max($expected - $picks, 0) . ' picks.');
+
+        if ($missed->isNotEmpty()) {
+            $this->table(
+                ['Unresolved', 'ESPN id'],
+                $missed->map(fn (PlayerMissing $row) => [$row->name ?? '(no name given)', $row->unique_id_value])->all()
+            );
+
+            $this->line('Resolve them with data:clean:players-not-found, then import again.');
+        }
     }
 
     protected function setUp()

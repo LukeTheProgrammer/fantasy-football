@@ -6,6 +6,7 @@ use App\Models\League;
 use App\Models\Team;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use App\Services\Espn\Formatters\FantasyLineupFormatter;
+use App\Services\Espn\Helpers\FantasyPlayerId;
 use App\Services\Espn\Resources\FantasyNFL;
 use App\Services\Espn\Resources\NFL;
 use App\Services\Espn\Resources\NflTeam;
@@ -18,6 +19,17 @@ use Illuminate\Support\Collection;
  */
 class EspnService
 {
+    /**
+     * The data a player lookup needs to resolve one of ESPN's fantasy player
+     * ids, which are not athlete ids when the player is a team defense.
+     *
+     * @return array<string, mixed>
+     */
+    public function playerLookup(int|string $playerId, ?string $name = null): array
+    {
+        return (new FantasyPlayerId)->lookup($playerId, $name);
+    }
+
     use HasDataFormats;
 
     /* ===[ NFL ]=== */

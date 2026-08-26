@@ -71,6 +71,14 @@ Pro Football Reference is **no longer reachable** — it sits behind a Cloudflar
 ./vendor/bin/sail artisan nfl:stats:status 2025       # coverage and internal agreement
 ```
 
+### Player identity
+
+Every source spells names differently and only some carry an id, so resolution goes through `Player::find()` (`app/Services/Player/Resources/PlayerFinder.php`): source id, then exact name, then the **normalised** name, then aliases, then name plus position and team. Each step accepts a match only when exactly one row comes back — an ambiguous name records a `players_missing` row rather than guessing.
+
+- `NormalizedName` reduces a name to what sources agree on: suffixes off, punctuation dropped, accents folded. It is stored on `players.normalized_name` and `player_aliases.normalized_name` and kept current by observers.
+- **Never auto-create a player from a stat line or a pick.** A miss is a matching gap far more often than a genuinely unknown player, and a duplicate silently splits one man's history.
+- ESPN gives team defenses a negative id (`-16000 - teamId`); use `Espn::playerLookup($id)` rather than treating it as an athlete id.
+
 ### Imports (driver pattern)
 
 `ImportService` maps a type + source string to a driver class (`importDrivers()`), wraps it in an importer, and returns it:

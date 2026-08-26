@@ -69,6 +69,7 @@ This project aims to create a web application that assists users during their fa
 #### Data Sources
 - [x] Implement FantasyPros rankings import Command
 - [x] Implement auction value calculations
+- [x] Import Milhaven league history: 2023, 2024, 2025 auctions, 190 picks each
 
 ### 4. Historical League Auction Data
 #### Data Import
@@ -110,9 +111,13 @@ This project aims to create a web application that assists users during their fa
 - [x] Load 2021-2025
 - [ ] Load 1999-2020
 
-#### Known Gaps
+#### Player Matching
+- [x] Name normalisation (`NormalizedName`): suffixes, punctuation, accents, roster notes — stored on players and aliases, maintained by observers
+- [x] ESPN gives team defenses a negative id (`-16000 - teamId`); translated in one place (`Espn::playerLookup`) instead of inline in one formatter
+- [x] Fantasy league imports report a short draft instead of only logging it
 - [ ] Three duplicate player rows predate this work (`Andy Borregales`, `Jalen Moreno-Cropper`, `John Parker Romo`); the importer reports them rather than merging
 - [ ] `PlayerUpsertAction` still carries its own player matching cascade alongside `PlayerFinder`
+- [ ] `Nathan Carter` is the one unresolved `players_missing` row; never played an NFL snap
 
 ### 5. Real-Time Draft Suggestions
 #### Core Logic

@@ -54,9 +54,6 @@ export default function ShowDraft({ draft, seasons }: DraftShowProps) {
           </div>
           <div className="mt-4 flex items-center space-x-2 md:mt-0">
             <SeasonSelect seasons={seasons} season={draft.league.season} routeName="drafts.show" />
-            <Link href={route('drafts.draft-room', draft.id)}>
-              <Button>Draft Room</Button>
-            </Link>
             {isUserDraftAdmin(draft, userId) && (
               <Link href={route('drafts.edit', draft.id)}>
                 <Button variant="outline">Edit Draft</Button>
@@ -72,11 +69,16 @@ export default function ShowDraft({ draft, seasons }: DraftShowProps) {
           {/* League Details Card */}
           <Card>
             <CardContent className="space-y-4">
-              <div className="mb-8 grid w-full">
-                <h2 className="text-lg font-semibold">
-                  {draft.league.name} {draft.league.season} Draft
-                </h2>
-                <p className="text-sm text-muted-foreground">Information about your fantasy football draft.</p>
+              <div className="mb-8 w-full flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold">
+                    {draft.league.name} {draft.league.season} Draft FUCK
+                  </h2>
+                  <p className="text-sm text-muted-foreground">Information about your fantasy football draft.</p>
+                </div>
+                <Link href={route('drafts.draft-room', draft.id)}>
+                  <Button>Draft Room</Button>
+                </Link>
               </div>
 
               <div className="mb-8 grid w-full">
