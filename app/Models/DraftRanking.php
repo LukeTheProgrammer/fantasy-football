@@ -85,11 +85,21 @@ class DraftRanking extends Model
 
     /**
      * Scope a query to the newest rankings held for a season.
+     *
+     * Newest is per source and format, not across the table: sources publish on
+     * their own schedules, so one source importing today would otherwise hide
+     * every format it does not publish.
      */
     public function scopeLatestRanking(Builder $query, int $season): Builder
     {
         return $query->where('season', $season)
-            ->where('ranked_at', DraftRanking::where('season', $season)->max('ranked_at'));
+            ->where('ranked_at', fn ($latest) => $latest->selectRaw('max(ranked_at)')
+                ->from('draft_rankings as latest')
+                ->whereColumn('latest.season', 'draft_rankings.season')
+                ->whereColumn('latest.type', 'draft_rankings.type')
+                ->whereColumn('latest.ppr', 'draft_rankings.ppr')
+                ->whereColumn('latest.superflex', 'draft_rankings.superflex')
+                ->whereColumn('latest.source', 'draft_rankings.source'));
     }
 
     /**
