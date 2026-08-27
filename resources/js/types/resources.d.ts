@@ -29,12 +29,17 @@ export interface LeagueMatchupResource {
   id: string;
   season: number;
   week: number;
+  /** The platform's bracket this game belongs to; null in the regular season. */
+  playoff_tier: string | null;
+  /** Which side won, as the platform recorded it: HOME, AWAY, TIE or UNDECIDED. */
+  winner: string | null;
   home_score: number;
   away_score: number;
   home_projected_score: number;
   away_projected_score: number;
   home_team: LeagueTeamResource;
-  away_team: LeagueTeamResource;
+  /** A first round bye has no opponent. */
+  away_team: LeagueTeamResource | null;
 }
 
 export interface LeagueTeamResource {

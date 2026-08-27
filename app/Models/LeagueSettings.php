@@ -24,6 +24,7 @@ class LeagueSettings extends Model
      */
     protected $casts = [
         'roster_positions'               => 'array',
+        'playoff_reseed'                 => 'boolean',
         'defense_points_allowed_tiers'   => 'array',
         'passing_yards_per_point'        => 'decimal:2',
         'passing_td_points'              => 'decimal:2',

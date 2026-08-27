@@ -39,9 +39,10 @@ export function MatchupsTab({ league, selectedMember }: MatchupsTabProps) {
       matchups.forEach((m: LeagueMatchupResource) => {
         const mid = selectedMember.id;
         const hid = m.home_team.id;
-        const aid = m.away_team.id;
+        const aid = m.away_team?.id;
 
-        if (hid === mid || aid === mid) {
+        // A playoff bye has no opponent, so there is no head to head to show.
+        if (m.away_team && (hid === mid || aid === mid)) {
           leagueMatchups.push(m);
         }
       });
@@ -52,8 +53,10 @@ export function MatchupsTab({ league, selectedMember }: MatchupsTabProps) {
     leagueMatchups.map((m) => {
       const homeTeam = m.home_team.id === selectedMember.id ? 'teamA' : 'teamB';
 
-      const teamA = homeTeam === 'teamA' ? m.home_team : m.away_team;
-      const teamB = homeTeam === 'teamB' ? m.home_team : m.away_team;
+      const opponent = m.away_team as LeagueTeamResource;
+
+      const teamA = homeTeam === 'teamA' ? m.home_team : opponent;
+      const teamB = homeTeam === 'teamB' ? m.home_team : opponent;
 
       const teamAPoints = homeTeam === 'teamA' ? m.home_score : m.away_score;
       const teamBPoints = homeTeam === 'teamB' ? m.home_score : m.away_score;

@@ -66,13 +66,7 @@ export default function ShowDraft({ draft, seasons, rosters, budget }: DraftShow
         <Card className="mb-8">
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between gap-6">
-              <div className="">
-                <h2 className="text-lg font-semibold">
-                  {draft.league.name} {draft.league.season} Draft
-                </h2>
-                <p className="text-sm text-muted-foreground">Information about your fantasy football draft.</p>
-              </div>
-              <div className="flex items-center justify-center gap-24">
+              <div className="flex items-center justify-start gap-24">
                 <div>
                   <p className="text-sm text-muted-foreground">Draft Type</p>
                   <h2 className="text-lg font-semibold">{draft.draft_type === 'auction' ? 'Auction' : 'Snake'}</h2>
@@ -89,15 +83,17 @@ export default function ShowDraft({ draft, seasons, rosters, budget }: DraftShow
                 </div>
               </div>
               <div className="flex items-center justify-end">
-                <Link href={route('drafts.draft-room', draft.id)}>
-                  <Button>Draft Room</Button>
-                </Link>
+                {!draft.is_completed && (
+                  <Link href={route('drafts.draft-room', draft.id)}>
+                    <Button>Draft Room</Button>
+                  </Link>
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {draft.is_completed && (
+        {draft.is_completed && draft.draft_type === 'auction' && (
           <div className="mb-8">
             <Card>
               <CardHeader>

@@ -1,7 +1,7 @@
 import { Heading } from '@/common/heading/Heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { getDraftUserMember } from '@/modules/drafts/helpers/getDraftUserMember';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
 import { AppLayout } from '@/pages/layouts/AppLayout';
@@ -56,36 +56,35 @@ export default function Drafts({ drafts }: DraftIndexProps) {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div>
             {drafts.map((draft) => (
-              <Card key={draft.id} className="overflow-hidden">
-                <CardHeader>
-                  <CardTitle>
+              <Card key={draft.id} className="mb-8 overflow-hidden">
+                <CardContent className="grid grid-cols-3 gap-6">
+                  <div>
                     {draft.league.name} {draft.league.season}
-                  </CardTitle>
-                  <CardDescription>
                     {isUserDraftAdmin(draft, userId) && (
-                      <Badge variant="outline" className="mr-2">
+                      <Badge variant="outline" className="ml-2">
                         Admin
                       </Badge>
                     )}
-                    {draft.draft_type === 'snake' ? 'Snake Draft' : 'Auction Draft'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                    <span>Your team: {getDraftUserMember(draft, userId)?.team_name}</span>
-                    <span className="mx-2">•</span>
-                    <span>{isUserDraftAdmin(draft, userId) ? 'Admin' : 'Player'}</span>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-12">
+                    <p className="m-0">{getDraftUserMember(draft, userId)?.team_name}</p>
+                    <p className="m-0">{new Date(draft.draft_date).toLocaleDateString()}</p>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-4">
+                    {!draft.is_completed && (
+                      <Link href={route('drafts.draft-room', draft.id)}>
+                        <Button variant="outline">Draft Room</Button>
+                      </Link>
+                    )}
+                    <Link href={route('drafts.show', [draft.league_id, draft.league.season])}>
+                      <Button variant="outline">Draft Results</Button>
+                    </Link>
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Link href={route('drafts.show', [draft.league_id, draft.league.season])} className="w-full">
-                    <Button variant="outline" className="w-full">
-                      View Draft
-                    </Button>
-                  </Link>
-                </CardFooter>
               </Card>
             ))}
           </div>

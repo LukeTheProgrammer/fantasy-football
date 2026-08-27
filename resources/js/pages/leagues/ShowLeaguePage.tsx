@@ -92,23 +92,23 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
         </div>
 
         <div className="mb-2">
-          <Tabs defaultValue="rosters">
+          <Tabs defaultValue="standings">
             <div className="mb-2 flex items-center justify-between">
               <div className="flex items-center">
                 <TabsList>
-                  <TabsTrigger className="w-[7rem]" value="rosters">
-                    Rosters
-                  </TabsTrigger>
-                  <TabsTrigger className="w-[7rem]" value="matchups">
-                    Matchups
-                  </TabsTrigger>
-                  <TabsTrigger className="w-[7rem]" value="standings">
+                  <TabsTrigger className="w-28" value="standings">
                     Standings
                   </TabsTrigger>
-                  <TabsTrigger className="w-[7rem]" value="settings">
+                  <TabsTrigger className="w-28" value="rosters">
+                    Rosters
+                  </TabsTrigger>
+                  <TabsTrigger className="w-28" value="matchups">
+                    Matchups
+                  </TabsTrigger>
+                  <TabsTrigger className="w-28" value="settings">
                     Settings
                   </TabsTrigger>
-                  <TabsTrigger className="w-[7rem]" value="draft">
+                  <TabsTrigger className="w-28" value="draft">
                     Draft
                   </TabsTrigger>
                 </TabsList>

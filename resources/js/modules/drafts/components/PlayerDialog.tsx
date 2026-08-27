@@ -79,7 +79,7 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[720px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-180">
         <DialogHeader>
           <div className="flex items-center gap-3">
             {bio?.headshot && <img src={bio.headshot} alt="" className="size-14 rounded-full bg-muted object-cover" />}
@@ -130,7 +130,7 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
 
             {consensus && (
               <Section title="Expert consensus">
-                <div className="flex items-center justify-evenly gap-6 rounded-lg border px-4 py-3 text-sm">
+                <div className="flex items-center justify-between gap-6 rounded-lg border px-4 py-3 text-sm">
                   <p>
                     <span className="text-muted-foreground">Position rank </span>
                     <span className="font-semibold tabular-nums">

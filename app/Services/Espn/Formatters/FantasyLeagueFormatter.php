@@ -8,6 +8,7 @@ use App\Services\Espn\Data\FantasyNFL\ResourceLeagueData;
 use App\Services\Espn\Data\FantasyNFL\ResourceTeamsData;
 use App\Services\Espn\Data\FantasyNFL\RosterSettingsData;
 use App\Services\Espn\Data\FantasyNFL\ScheduleData;
+use App\Services\Espn\Data\FantasyNFL\ScheduleSettingsData;
 use App\Services\Espn\Data\FantasyNFL\SettingsSettingsData;
 use App\Services\Espn\EspnConstants;
 use Illuminate\Support\Arr;
@@ -100,12 +101,21 @@ class FantasyLeagueFormatter
         /** @var LineupSlotCountsData $lineup */
         $lineup = $roster->lineupSlotCounts;
 
+        /** @var ScheduleSettingsData $schedule */
+        $schedule = $this->league->settings->scheduleSettings;
+
         $this->data['settings'] = [
             'roster_positions' => $this->getRosterPositions($lineup),
             'roster_size'      => $lineup->getPositionCount(),
             'starters_count'   => $lineup->getStartersCount(),
             'bench_count'      => $lineup->getBenchCount(),
             'ir_spots'         => $lineup->IR,
+            // How many teams make the playoffs and where the regular season
+            // ends, which is what says which weeks a bracket is drawn from.
+            'playoff_team_count'     => $schedule?->playoffTeamCount,
+            'regular_season_weeks'   => $schedule?->matchupPeriodCount,
+            'playoff_matchup_length' => $schedule?->playoffMatchupPeriodLength,
+            'playoff_reseed'         => (bool) $schedule?->playoffReseed,
             ...$this->mapScoringSettings($scoring->scoringItems),
         ];
 
@@ -181,8 +191,12 @@ class FantasyLeagueFormatter
                 'away_member_id' => $schedule->away->teamId,
                 'season'         => $this->season(),
                 'week'           => $schedule->matchupPeriodId,
-                'home_score'     => $schedule->home->totalPoints,
-                'away_score'     => $schedule->away->totalPoints,
+                // ESPN names the bracket a game belongs to; 'NONE' is the
+                // regular season and is stored as no tier at all.
+                'playoff_tier' => $schedule->playoffTierType === 'NONE' ? null : $schedule->playoffTierType,
+                'winner'       => $schedule->winner,
+                'home_score'   => $schedule->home->totalPoints,
+                'away_score'   => $schedule->away->totalPoints,
             ];
         });
     }

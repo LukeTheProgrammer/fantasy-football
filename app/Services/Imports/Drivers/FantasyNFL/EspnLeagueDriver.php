@@ -186,13 +186,11 @@ class EspnLeagueDriver
     private function createMatchups(League $league)
     {
         foreach ($this->leagueData['schedules'] as $matchup) {
-            // A playoff bye has no opponent, so one side of the matchup is null.
-            if (empty($matchup['home_member_id']) || empty($matchup['away_member_id'])) {
+            if (empty($matchup['home_member_id'])) {
                 continue;
             }
 
             $homeMember = LeagueMember::forLeague($league)->forExtId($matchup['home_member_id'])->first();
-            $awayMember = LeagueMember::forLeague($league)->forExtId($matchup['away_member_id'])->first();
 
             if (!$homeMember instanceof LeagueMember) {
                 Log::error('Member not found for home team id', $matchup);
@@ -200,7 +198,14 @@ class EspnLeagueDriver
                 continue;
             }
 
-            if (!$awayMember instanceof LeagueMember) {
+            // A first round bye is a real game with one team in it, so it is
+            // kept with no opponent rather than dropped: a bracket that hides
+            // the bye cannot show who earned it.
+            $awayMember = empty($matchup['away_member_id'])
+                ? null
+                : LeagueMember::forLeague($league)->forExtId($matchup['away_member_id'])->first();
+
+            if (!empty($matchup['away_member_id']) && !$awayMember instanceof LeagueMember) {
                 Log::error('Member not found for away team id', $matchup);
 
                 continue;
@@ -211,10 +216,12 @@ class EspnLeagueDriver
                 'season'         => $matchup['season'],
                 'week'           => $matchup['week'],
                 'home_member_id' => $homeMember->id,
-                'away_member_id' => $awayMember->id,
+                'away_member_id' => $awayMember?->id,
             ];
 
             $update = array_filter([
+                'playoff_tier'         => Arr::get($matchup, 'playoff_tier'),
+                'winner'               => Arr::get($matchup, 'winner'),
                 'home_score'           => Arr::get($matchup, 'home_score'),
                 'away_score'           => Arr::get($matchup, 'away_score'),
                 'home_projected_score' => Arr::get($matchup, 'home_projected_score'),

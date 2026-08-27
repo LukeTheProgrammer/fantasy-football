@@ -69,6 +69,8 @@ class LeagueShowResource extends JsonResource
                 'id'                   => $matchup->id,
                 'season'               => $matchup->season,
                 'week'                 => $matchup->week,
+                'playoff_tier'         => $matchup->playoff_tier,
+                'winner'               => $matchup->winner,
                 'home_score'           => $matchup->home_score,
                 'away_score'           => $matchup->away_score,
                 'home_projected_score' => $matchup->home_projected_score,
