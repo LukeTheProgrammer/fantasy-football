@@ -53,9 +53,16 @@ class DraftController extends Controller
             ],
         ]);
 
+        // The budget plan is personal and only means anything in an auction,
+        // so it is only sent when the signed in user has a team to plan for.
+        $member = $draft->league->members->firstWhere('user_id', Auth::id());
+
         return Inertia::render('drafts/ShowDraftPage', [
             'draft'   => $draft,
             'seasons' => $this->seasonOptions($draft),
+            'budget'  => $draft->draft_type === 'auction' && $member
+                ? AuctionFacade::budget($draft, $member)
+                : null,
         ]);
     }
 

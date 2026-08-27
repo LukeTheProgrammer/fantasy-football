@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 interface BudgetPlanProps {
   budget: AuctionBudget;
   draftId: number;
+  className?: string;
 }
 
 /**
@@ -30,7 +31,7 @@ function difference(value: number | null) {
  * The plan is never adjusted automatically. An overspent slot shows as a
  * negative difference and what to do about it stays your call.
  */
-export function BudgetPlan({ budget, draftId }: BudgetPlanProps) {
+export function BudgetPlan({ budget, draftId, className }: BudgetPlanProps) {
   const { data, setData, put, processing, isDirty } = useForm<{ allocations: Record<string, string> }>({
     allocations: Object.fromEntries(budget.rows.map((row) => [row.key, row.planned !== null ? String(row.planned) : ''])),
   });
@@ -58,7 +59,7 @@ export function BudgetPlan({ budget, draftId }: BudgetPlanProps) {
   };
 
   return (
-    <Card className="flex h-full min-h-0 flex-col overflow-hidden">
+    <Card className={cn('flex h-full min-h-0 flex-col overflow-hidden', className)}>
       <CardHeader className="py-0">
         <CardTitle>
           <div className="flex items-center justify-between gap-2">

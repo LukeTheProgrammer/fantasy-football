@@ -1,16 +1,18 @@
 import { Heading } from '@/common/heading/Heading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
 import { SeasonSelect } from '@/modules/leagues/components/SeasonSelect';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { PageProps, type BreadcrumbItem, type SharedData } from '@/types';
-import { type Draft, type DraftPick, type SeasonOption } from '@/types/models';
+import { type AuctionBudget, type Draft, type DraftPick, type SeasonOption } from '@/types/models';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 interface DraftShowProps extends PageProps {
   draft: Draft;
   seasons: SeasonOption[];
+  budget: AuctionBudget | null;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -28,7 +30,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function ShowDraft({ draft, seasons }: DraftShowProps) {
+export default function ShowDraft({ draft, seasons, budget }: DraftShowProps) {
   const { auth } = usePage<SharedData>().props;
   const userId = auth.user.id;
 
@@ -54,6 +56,7 @@ export default function ShowDraft({ draft, seasons }: DraftShowProps) {
           </div>
           <div className="mt-4 flex items-center space-x-2 md:mt-0">
             <SeasonSelect seasons={seasons} season={draft.league.season} routeName="drafts.show" />
+            {budget && <BudgetDialog budget={budget} draftId={draft.id} />}
             {isUserDraftAdmin(draft, userId) && (
               <Link href={route('drafts.edit', draft.id)}>
                 <Button variant="outline">Edit Draft</Button>
