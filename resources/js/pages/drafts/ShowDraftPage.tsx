@@ -72,7 +72,7 @@ export default function ShowDraft({ draft, seasons }: DraftShowProps) {
               <div className="mb-8 flex w-full items-center justify-between">
                 <div>
                   <h2 className="text-lg font-semibold">
-                    {draft.league.name} {draft.league.season} Draft FUCK
+                    {draft.league.name} {draft.league.season} Draft
                   </h2>
                   <p className="text-sm text-muted-foreground">Information about your fantasy football draft.</p>
                 </div>
