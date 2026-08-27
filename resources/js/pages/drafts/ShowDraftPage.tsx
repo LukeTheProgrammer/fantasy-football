@@ -1,8 +1,9 @@
 import { Heading } from '@/common/heading/Heading';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
 import { BudgetPlan } from '@/modules/drafts/components/BudgetPlan';
+import { PositionPriceChart } from '@/modules/drafts/components/PositionPriceChart';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
 import { SeasonSelect } from '@/modules/leagues/components/SeasonSelect';
 import { AppLayout } from '@/pages/layouts/AppLayout';
@@ -102,8 +103,22 @@ export default function ShowDraft({ draft, seasons, budget }: DraftShowProps) {
             </CardContent>
           </Card>
 
-          {budget && <BudgetPlan budget={budget} draftId={draft.id} />}
+          {budget && <BudgetPlan budget={budget} draftId={draft.id} canEdit={!draft.is_completed} />}
         </div>
+
+        {draft.is_completed && (
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Prices by Position</CardTitle>
+                <CardDescription>What each position cost, most expensive first.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PositionPriceChart picks={draft.picks} />
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="mb-8 grid grid-cols-5 gap-6">
           {Object.entries(draftPicksByRound).map(([round, draftPicks]) => (

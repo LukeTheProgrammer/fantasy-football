@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { money } from '@/modules/drafts/helpers/money';
 import { type AuctionBudget } from '@/types/models';
 import { useForm } from '@inertiajs/react';
 import { type ReactNode, useMemo, useState } from 'react';
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 
 interface BudgetDialogProps {
   budget: AuctionBudget;
@@ -67,9 +67,7 @@ export function BudgetDialog({ budget, draftId, trigger }: BudgetDialogProps) {
             <TableBody>
               {budget.rows.map((row) => (
                 <TableRow key={row.key}>
-                  <TableCell className="truncate text-xs font-medium">
-                    {row.label}
-                  </TableCell>
+                  <TableCell className="truncate text-xs font-medium">{row.label}</TableCell>
                   <TableCell className="px-1">
                     {/* <Input
                       type="number"

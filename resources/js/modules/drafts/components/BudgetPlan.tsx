@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 interface BudgetPlanProps {
   budget: AuctionBudget;
   draftId: number;
+  canEdit?: boolean;
   className?: string;
 }
 
@@ -31,7 +32,7 @@ function difference(value: number | null) {
  * negative difference and what to do about it stays your call. Editing happens
  * in the dialog behind the Edit button.
  */
-export function BudgetPlan({ budget, draftId, className }: BudgetPlanProps) {
+export function BudgetPlan({ budget, draftId, canEdit = true, className }: BudgetPlanProps) {
   const planned = useMemo(() => budget.rows.reduce((total, row) => total + (row.planned ?? 0), 0), [budget.rows]);
   const spent = useMemo(() => budget.rows.reduce((total, row) => total + (row.actual ?? 0), 0), [budget.rows]);
 
@@ -56,7 +57,7 @@ export function BudgetPlan({ budget, draftId, className }: BudgetPlanProps) {
                 {money(planned)} planned · {unplanned >= 0 ? `${money(unplanned)} unplanned` : `${money(Math.abs(unplanned))} over`}
               </p>
             </div>
-            <BudgetDialog budget={budget} draftId={draftId} trigger={<Button size="sm">Edit</Button>} />
+            {canEdit && <BudgetDialog budget={budget} draftId={draftId} trigger={<Button size="sm">Edit</Button>} />}
           </div>
         </CardTitle>
       </CardHeader>
@@ -77,9 +78,7 @@ export function BudgetPlan({ budget, draftId, className }: BudgetPlanProps) {
             {budget.rows.map((row) => (
               <TableRow key={row.key}>
                 <TableCell className="truncate text-xs font-medium">{row.label}</TableCell>
-                <TableCell className="truncate text-xs font-medium">
-                  {row.filled_by && (<>{row.filled_by}</>)}
-                </TableCell>
+                <TableCell className="truncate text-xs font-medium">{row.filled_by && <>{row.filled_by}</>}</TableCell>
                 <TableCell className="text-center tabular-nums">{row.planned !== null ? money(row.planned) : '—'}</TableCell>
                 <TableCell className="text-center tabular-nums">{row.actual !== null ? money(row.actual) : '—'}</TableCell>
                 <TableCell className="text-center tabular-nums">{difference(differenceFor(row))}</TableCell>
