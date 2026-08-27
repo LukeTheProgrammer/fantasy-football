@@ -24,7 +24,6 @@ return new class extends Migration
             $table->id();
             $table->string('player_ulid');
             $table->string('name');
-            $table->timestamp('last_checked_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

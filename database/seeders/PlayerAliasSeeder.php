@@ -28,15 +28,10 @@ class PlayerAliasSeeder extends Seeder
                 continue;
             }
 
-            PlayerAlias::updateOrCreate(
-                [
-                    'player_ulid' => $player->ulid,
-                    'name'        => Arr::get($alias, 'name'),
-                ],
-                [
-                    'last_checked_at' => Arr::get($alias, 'last_checked_at'),
-                ],
-            );
+            PlayerAlias::firstOrCreate([
+                'player_ulid' => $player->ulid,
+                'name'        => Arr::get($alias, 'name'),
+            ]);
         }
     }
 

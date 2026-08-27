@@ -18,7 +18,6 @@ class CleanPlayerAliasesCommand extends Command
     public function handle(): void
     {
         PlayerAlias::query()
-            ->where(fn ($q) => $q->whereNull('last_checked_at')->orWhereDate('last_checked_at', '<', now()))
             ->get()
             ->each(fn ($alias) => $this->checkAlias($alias));
     }
@@ -28,10 +27,6 @@ class CleanPlayerAliasesCommand extends Command
         $this->info(PHP_EOL . $alias->name . ' => ' . $this->playerLabel($alias->player));
 
         if (confirm('Is this correct?')) {
-            $alias->update([
-                'last_checked_at' => now(),
-            ]);
-
             return;
         }
 
@@ -50,8 +45,7 @@ class CleanPlayerAliasesCommand extends Command
         }
 
         $alias->update([
-            'player_ulid'     => $selected,
-            'last_checked_at' => now(),
+            'player_ulid' => $selected,
         ]);
     }
 
