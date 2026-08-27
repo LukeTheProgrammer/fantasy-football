@@ -10,7 +10,9 @@ use App\Models\LeagueMember;
  * A team's spending plan next to what it has actually spent.
  *
  * One row per roster spot, bench included, keyed by the slot and its number
- * within that slot ("QB1", "RB2", "BE3"). Keying by name rather than by the
+ * within that slot ("QB1", "RB2", "BE3"). A slot the league only has one of
+ * carries no number, since there is nothing to tell it apart from ("TE", "K").
+ * Keying by name rather than by the
  * template's index means a plan survives the league adding a slot ahead of the
  * ones already planned for. The plan itself is never adjusted here: an
  * overspend shows as a difference and what to do about it stays a decision
@@ -31,13 +33,15 @@ class BuildBudgetAction
 
         $plan = $this->plan($draft, $member);
 
+        $plannedSlots = $slots->reject(fn (array $slot) => in_array($slot['slot'], self::UNPLANNED_SLOTS));
+
+        $totals = $plannedSlots->countBy('slot');
         $counts = [];
 
-        $rows = $slots
-            ->reject(fn (array $slot) => in_array($slot['slot'], self::UNPLANNED_SLOTS))
-            ->map(function (array $slot) use (&$counts, $plan) {
+        $rows = $plannedSlots
+            ->map(function (array $slot) use (&$counts, $plan, $totals) {
                 $number = ($counts[$slot['slot']] = ($counts[$slot['slot']] ?? 0) + 1);
-                $key = $slot['label'] . $number;
+                $key = $totals[$slot['slot']] > 1 ? $slot['label'] . $number : $slot['label'];
 
                 return $this->row(
                     key: $key,

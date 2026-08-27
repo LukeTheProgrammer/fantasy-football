@@ -320,11 +320,11 @@ class AuctionDraftRoomTest extends TestCase
         $this->actingAs($this->user)
             ->get(route('drafts.draft-room', $this->draft))
             ->assertInertia(fn ($page) => $page
-                // Every spot in the template, numbered within its own slot.
+                // Every spot in the template; one of each, so no numbering.
                 ->has('budget.rows', 3)
-                ->where('budget.rows.0.key', 'QB1')
-                ->where('budget.rows.1.key', 'RB1')
-                ->where('budget.rows.2.key', 'BE1')
+                ->where('budget.rows.0.key', 'QB')
+                ->where('budget.rows.1.key', 'RB')
+                ->where('budget.rows.2.key', 'BE')
                 ->where('budget.budget', 200)
                 ->where('budget.planned', 0)
                 ->where('budget.unplanned', 200));
@@ -334,7 +334,7 @@ class AuctionDraftRoomTest extends TestCase
     {
         $this->actingAs($this->user)
             ->put(route('drafts.budget.update', $this->draft), [
-                'allocations' => ['QB1' => 90, 'RB1' => 60, 'BE1' => 10],
+                'allocations' => ['QB' => 90, 'RB' => 60, 'BE' => 10],
             ])
             ->assertRedirect();
 
@@ -357,7 +357,7 @@ class AuctionDraftRoomTest extends TestCase
         $player = Player::factory()->quarterback()->create();
 
         $this->actingAs($this->user)->put(route('drafts.budget.update', $this->draft), [
-            'allocations' => ['QB1' => 40],
+            'allocations' => ['QB' => 40],
         ]);
 
         $this->actingAs($this->user)->post(route('drafts.picks.store', $this->draft), [
@@ -379,16 +379,16 @@ class AuctionDraftRoomTest extends TestCase
     public function test_saving_a_budget_replaces_the_previous_plan(): void
     {
         $this->actingAs($this->user)->put(route('drafts.budget.update', $this->draft), [
-            'allocations' => ['QB1' => 90, 'RB1' => 60],
+            'allocations' => ['QB' => 90, 'RB' => 60],
         ]);
 
         $this->actingAs($this->user)->put(route('drafts.budget.update', $this->draft), [
-            'allocations' => ['QB1' => 25, 'RB1' => null],
+            'allocations' => ['QB' => 25, 'RB' => null],
         ]);
 
         $budget = DraftBudget::where('draft_id', $this->draft->id)->firstOrFail();
 
-        $this->assertSame(['QB1' => 25], $budget->allocations);
+        $this->assertSame(['QB' => 25], $budget->allocations);
         $this->assertSame(1, DraftBudget::where('draft_id', $this->draft->id)->count());
     }
 
@@ -397,7 +397,7 @@ class AuctionDraftRoomTest extends TestCase
         $outsider = User::factory()->create();
 
         $this->actingAs($outsider)
-            ->put(route('drafts.budget.update', $this->draft), ['allocations' => ['QB1' => 10]])
+            ->put(route('drafts.budget.update', $this->draft), ['allocations' => ['QB' => 10]])
             ->assertForbidden();
 
         $this->assertSame(0, DraftBudget::count());
