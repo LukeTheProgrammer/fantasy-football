@@ -70,7 +70,6 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
   const bio = profile?.player;
   const valuation = profile?.valuation;
   const consensus = profile?.consensus;
-  const spread = consensus?.min !== null && consensus?.max !== null ? `${consensus?.min}–${consensus?.max}` : null;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -89,7 +88,7 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
                 <PositionBadge position={player.position_id} />
                 {player.full_name}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription asChild>
                 <div className="mt-2 flex items-center justify-start gap-2">
                   <span className="pr-2">{player.team_id}</span>
                   <span className="pr-2">Bye {bio?.bye_week ? bio.bye_week : '-'}</span>
@@ -131,7 +130,7 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
 
             {consensus && (
               <Section title="Expert consensus">
-                <div className="flex items-center gap-6 rounded-lg border px-4 py-3 text-sm">
+                <div className="flex items-center justify-evenly gap-6 rounded-lg border px-4 py-3 text-sm">
                   <p>
                     <span className="text-muted-foreground">Position rank </span>
                     <span className="font-semibold tabular-nums">
@@ -139,16 +138,24 @@ export function PlayerDialog({ player, draftId }: PlayerDialogProps) {
                       {consensus.pos_rank}
                     </span>
                   </p>
-                  {spread && (
-                    <p>
-                      <span className="text-muted-foreground">Range </span>
-                      <span className="font-semibold tabular-nums">{spread}</span>
-                    </p>
-                  )}
-                  {consensus.std !== null && (
+                  <p>
+                    <span className="text-muted-foreground">Max </span>
+                    <span className="font-semibold tabular-nums">
+                      {/* "min" is the lowest number but the highest rank */}
+                      {profile?.consensus?.min ?? '-'}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-muted-foreground">Min </span>
+                    <span className="font-semibold tabular-nums">
+                      {/* "max" is the highest number but the lowest rank */}
+                      {profile?.consensus?.max ?? '-'}
+                    </span>
+                  </p>
+                  {profile?.consensus?.std && (
                     <p>
                       <span className="text-muted-foreground">Disagreement </span>
-                      <span className="font-semibold tabular-nums">±{consensus.std}</span>
+                      <span className="font-semibold tabular-nums">±{profile?.consensus?.std}</span>
                     </p>
                   )}
                 </div>
