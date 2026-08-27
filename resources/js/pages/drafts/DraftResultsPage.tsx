@@ -36,7 +36,7 @@ export default function DraftResults({ draft, teamResults }: DraftResultsProps) 
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
           <Heading title={`${draft.league.name} ${draft.league.season} Draft Results`} />
           <div className="mt-4 flex items-center space-x-2 md:mt-0">
-            <Link href={route('drafts.show', draft.id)}>
+            <Link href={route('drafts.show', [draft.league_id, draft.league.season])}>
               <Button variant="outline">Back to Draft</Button>
             </Link>
           </div>

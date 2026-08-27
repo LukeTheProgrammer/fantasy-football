@@ -80,7 +80,7 @@ export default function Drafts({ drafts }: DraftIndexProps) {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Link href={route('drafts.show', draft.id)} className="w-full">
+                  <Link href={route('drafts.show', [draft.league_id, draft.league.season])} className="w-full">
                     <Button variant="outline" className="w-full">
                       View Draft
                     </Button>

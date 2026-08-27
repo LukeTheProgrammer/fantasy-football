@@ -40,8 +40,24 @@ class DraftController extends Controller
     /**
      * Display the specified draft.
      */
-    public function show(Draft $draft)
+    /**
+     * One league's draft for a season.
+     *
+     * The league in the URL only has to be any season of the league: the season
+     * segment picks the row, so a link keeps working when it is followed a year
+     * later.
+     */
+    public function show(League $league, int $season)
     {
+        $draft = League::sameLeagueAs($league)
+            ->where('season', $season)
+            ->firstOrFail()
+            ->draft;
+
+        if (!$draft instanceof Draft) {
+            abort(404, 'This league has no draft for that season');
+        }
+
         $draft->load([
             'league.members',
             'picks' => [
@@ -68,7 +84,7 @@ class DraftController extends Controller
 
     /**
      * The seasons this league has drafted, newest first, each pointing at the
-     * draft for that season. Seasons with no draft row are omitted.
+     * league row for that season. Seasons with no draft row are omitted.
      */
     private function seasonOptions(Draft $draft): Collection
     {
@@ -78,7 +94,7 @@ class DraftController extends Controller
             ->get()
             ->filter(fn (League $league) => $league->draft !== null)
             ->map(fn (League $league) => [
-                'id'     => $league->draft->id,
+                'id'     => $league->id,
                 'season' => $league->season,
             ])
             ->values();
@@ -95,7 +111,7 @@ class DraftController extends Controller
 
         // Don't allow editing completed drafts
         if ($draft->is_completed) {
-            return redirect()->route('drafts.show', $draft)
+            return redirect()->route('drafts.show', [$draft->league_id, $draft->league->season])
                 ->with('error', 'Cannot edit a completed draft');
         }
 

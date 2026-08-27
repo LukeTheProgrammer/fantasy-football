@@ -31,7 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('drafts')->name('drafts.')->group(function () {
         Route::get('/', [DraftController::class, 'index'])->name('index');
         Route::get('/create', [DraftController::class, 'create'])->name('create');
-        Route::get('/{draft}', [DraftController::class, 'show'])->name('show');
+        // A draft is addressed by its league and the year it was drafted for,
+        // which is what the season picker switches between. The four digit
+        // constraint keeps it clear of the sibling routes below.
+        Route::get('/{league}/{season}', [DraftController::class, 'show'])->name('show')->where('season', '\d{4}');
         Route::get('/{draft}/edit', [DraftController::class, 'edit'])->name('edit');
         Route::get('/{draft}/results', [DraftController::class, 'results'])->name('results');
         Route::get('/{draft}/draft-room', [DraftController::class, 'draftRoom'])->name('draft-room');

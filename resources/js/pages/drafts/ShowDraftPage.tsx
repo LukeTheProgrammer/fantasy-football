@@ -57,16 +57,18 @@ export default function ShowDraft({ draft, seasons, budget }: DraftShowProps) {
             <Heading title={`${draft.league.name} ${draft.league.season}`} />
           </div>
           <div className="mt-4 flex items-center space-x-2 md:mt-0">
-            <SeasonSelect seasons={seasons} season={draft.league.season} routeName="drafts.show" />
-            {budget && <BudgetDialog budget={budget} draftId={draft.id} />}
-            {isUserDraftAdmin(draft, userId) && (
+            <SeasonSelect
+              seasons={seasons}
+              season={draft.league.season}
+              routeName="drafts.show"
+              routeParams={(option) => [option.id, option.season]}
+            />
+            {!draft.is_completed && budget && <BudgetDialog budget={budget} draftId={draft.id} />}
+            {!draft.is_completed && isUserDraftAdmin(draft, userId) && (
               <Link href={route('drafts.edit', draft.id)}>
                 <Button variant="outline">Edit Draft</Button>
               </Link>
             )}
-            <Link href={route('drafts.index')}>
-              <Button variant="outline">Back to Drafts</Button>
-            </Link>
           </div>
         </div>
 

@@ -6,6 +6,8 @@ interface SeasonSelectProps {
   seasons: SeasonOption[];
   season: number;
   routeName: string;
+  /** The route parameters for a season, when the id alone is not the whole address. */
+  routeParams?: (option: SeasonOption) => (string | number)[] | number;
   className?: string;
 }
 
@@ -13,7 +15,7 @@ interface SeasonSelectProps {
  * Switches between the seasons of a league. Each season is a separate record,
  * so choosing one navigates to that season's page rather than filtering.
  */
-export function SeasonSelect({ seasons, season, routeName, className = 'w-[8rem]' }: SeasonSelectProps) {
+export function SeasonSelect({ seasons, season, routeName, routeParams = (option) => option.id, className = 'w-[8rem]' }: SeasonSelectProps) {
   if (seasons.length <= 1) {
     return null;
   }
@@ -22,7 +24,7 @@ export function SeasonSelect({ seasons, season, routeName, className = 'w-[8rem]
     const selected = seasons.find((option) => option.season.toString() === value);
 
     if (selected) {
-      router.visit(route(routeName, selected.id));
+      router.visit(route(routeName, routeParams(selected)).toString());
     }
   };
 
