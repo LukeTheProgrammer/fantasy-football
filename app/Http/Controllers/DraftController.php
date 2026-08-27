@@ -59,7 +59,8 @@ class DraftController extends Controller
         }
 
         $draft->load([
-            'league.members',
+            'league.members.user',
+            'league.settings',
             'picks' => [
                 'leagueMember.user',
                 'player' => [
@@ -76,6 +77,7 @@ class DraftController extends Controller
         return Inertia::render('drafts/ShowDraftPage', [
             'draft'   => $draft,
             'seasons' => $this->seasonOptions($draft),
+            'rosters' => AuctionFacade::rosters($draft),
             'budget'  => $draft->draft_type === 'auction' && $member
                 ? AuctionFacade::budget($draft, $member)
                 : null,

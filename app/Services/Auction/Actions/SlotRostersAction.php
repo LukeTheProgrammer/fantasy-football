@@ -12,8 +12,8 @@ use Illuminate\Support\Collection;
  *
  * Slots are filled in the order the league lists them, and a player takes the
  * first slot he is eligible for: his own position before the flex, the flex
- * before the bench. Picks are slotted most expensive first, since in an auction
- * the price is the clearest signal of who was bought to start.
+ * before the bench. Picks are slotted most expensive first in an auction and in
+ * pick order in a snake, since that is what says who was taken to start.
  */
 class SlotRostersAction
 {
@@ -29,8 +29,11 @@ class SlotRostersAction
     {
         $template = $draft->league->settings?->roster_positions ?? [];
 
-        $picks = $draft->picks
-            ->sortByDesc('amount')
+        // In an auction the price is the clearest signal of who was bought to
+        // start; in a snake it is the order they were taken in.
+        $picks = ($draft->draft_type === 'auction'
+            ? $draft->picks->sortByDesc('amount')
+            : $draft->picks->sortBy('pick_number'))
             ->groupBy('league_member_id');
 
         return $draft->league->members
@@ -85,6 +88,8 @@ class SlotRostersAction
                 'position_id' => $position,
                 'team_id'     => $pick->player?->team_id,
                 'amount'      => (int) $pick->amount,
+                'round'       => $pick->round,
+                'pick_number' => $pick->pick_number,
             ];
         }
 

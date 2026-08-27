@@ -113,6 +113,8 @@ export interface RosterSlotPlayer {
   position_id: string | null;
   team_id: string | null;
   amount: number;
+  round: number;
+  pick_number: number;
 }
 
 export interface RosterSlot {
