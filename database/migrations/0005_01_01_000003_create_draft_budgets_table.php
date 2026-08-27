@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreignId('draft_id')->constrained()->cascadeOnDelete();
             $table->foreignId('league_member_id')->constrained()->cascadeOnDelete();
 
-            // Planned dollars keyed by roster slot index, plus a bench pool.
+            // Planned dollars keyed by roster slot name ("QB1", "RB2", "BE3").
             $table->json('allocations');
 
             $table->timestamps();

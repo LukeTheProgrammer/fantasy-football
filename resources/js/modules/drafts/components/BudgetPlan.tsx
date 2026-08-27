@@ -1,11 +1,10 @@
 import { cn } from '@/common/helpers/cn';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
 import { money } from '@/modules/drafts/helpers/money';
 import { type AuctionBudget, type BudgetRow } from '@/types/models';
-import { useForm } from '@inertiajs/react';
 import { useMemo } from 'react';
 
 interface BudgetPlanProps {
@@ -29,33 +28,21 @@ function difference(value: number | null) {
  * A plan for the auction, slot by slot, against what has actually been spent.
  *
  * The plan is never adjusted automatically. An overspent slot shows as a
- * negative difference and what to do about it stays your call.
+ * negative difference and what to do about it stays your call. Editing happens
+ * in the dialog behind the Edit button.
  */
 export function BudgetPlan({ budget, draftId, className }: BudgetPlanProps) {
-  const { data, setData, put, processing, isDirty } = useForm<{ allocations: Record<string, string> }>({
-    allocations: Object.fromEntries(budget.rows.map((row) => [row.key, row.planned !== null ? String(row.planned) : ''])),
-  });
-
-  // Totals follow what is typed rather than what is saved, so the plan adds up
-  // while it is being written.
-  const planned = useMemo(() => Object.values(data.allocations).reduce((total, amount) => total + (Number(amount) || 0), 0), [data.allocations]);
+  const planned = useMemo(() => budget.rows.reduce((total, row) => total + (row.planned ?? 0), 0), [budget.rows]);
+  const spent = useMemo(() => budget.rows.reduce((total, row) => total + (row.actual ?? 0), 0), [budget.rows]);
 
   const unplanned = budget.budget - planned;
 
-  // The difference follows the box rather than the saved plan, so a number
-  // typed mid auction is measured against what was spent immediately.
   const differenceFor = (row: BudgetRow) => {
-    const typed = data.allocations[row.key];
-
-    if (typed === '' || typed === undefined || row.actual === null) {
+    if (row.planned === null || row.actual === null) {
       return null;
     }
 
-    return (Number(typed) || 0) - row.actual;
-  };
-
-  const handleSave = () => {
-    put(route('drafts.budget.update', draftId), { preserveScroll: true });
+    return row.planned - row.actual;
   };
 
   return (
@@ -69,9 +56,7 @@ export function BudgetPlan({ budget, draftId, className }: BudgetPlanProps) {
                 {money(planned)} planned · {unplanned >= 0 ? `${money(unplanned)} unplanned` : `${money(Math.abs(unplanned))} over`}
               </p>
             </div>
-            <Button size="sm" onClick={handleSave} disabled={processing || !isDirty}>
-              {processing ? 'Saving...' : 'Save'}
-            </Button>
+            <BudgetDialog budget={budget} draftId={draftId} trigger={<Button size="sm">Edit</Button>} />
           </div>
         </CardTitle>
       </CardHeader>
@@ -81,34 +66,32 @@ export function BudgetPlan({ budget, draftId, className }: BudgetPlanProps) {
               not paint over rows scrolling beneath a sticky header. */}
           <TableHeader className="sticky top-0 z-10 bg-card shadow-sm [&_th]:bg-card">
             <TableRow>
-              <TableHead className="w-[30%]">Slot</TableHead>
-              <TableHead className="w-[26%] text-center">Plan</TableHead>
-              <TableHead className="w-[22%] text-center">Actual</TableHead>
-              <TableHead className="w-[22%] text-center">Diff</TableHead>
+              <TableHead>Slot</TableHead>
+              <TableHead>Player</TableHead>
+              <TableHead className="text-center">Plan</TableHead>
+              <TableHead className="text-center">Actual</TableHead>
+              <TableHead className="text-center">Diff</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {budget.rows.map((row) => (
               <TableRow key={row.key}>
+                <TableCell className="truncate text-xs font-medium">{row.label}</TableCell>
                 <TableCell className="truncate text-xs font-medium">
-                  {row.label}
-                  {row.filled_by && <span className="block truncate text-[10px] font-normal text-muted-foreground">{row.filled_by}</span>}
+                  {row.filled_by && (<>{row.filled_by}</>)}
                 </TableCell>
-                <TableCell className="px-1">
-                  <Input
-                    type="number"
-                    min={0}
-                    inputMode="numeric"
-                    placeholder="$"
-                    className="h-8 text-center tabular-nums"
-                    value={data.allocations[row.key] ?? ''}
-                    onChange={(event) => setData('allocations', { ...data.allocations, [row.key]: event.target.value })}
-                  />
-                </TableCell>
+                <TableCell className="text-center tabular-nums">{row.planned !== null ? money(row.planned) : '—'}</TableCell>
                 <TableCell className="text-center tabular-nums">{row.actual !== null ? money(row.actual) : '—'}</TableCell>
                 <TableCell className="text-center tabular-nums">{difference(differenceFor(row))}</TableCell>
               </TableRow>
             ))}
+            <TableRow>
+              <TableCell>&nbsp;</TableCell>
+              <TableCell>&nbsp;</TableCell>
+              <TableCell className="text-center font-bold tabular-nums">{money(planned)}</TableCell>
+              <TableCell className="text-center font-bold tabular-nums">{money(spent)}</TableCell>
+              <TableCell className="text-center tabular-nums">&nbsp;</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </CardContent>

@@ -5,18 +5,25 @@ namespace App\Services\Auction\Actions;
 use App\Models\Draft;
 use App\Models\DraftBudget;
 use App\Models\LeagueMember;
-use Illuminate\Support\Collection;
 
 /**
  * A team's spending plan next to what it has actually spent.
  *
- * One row per starting slot, plus a single row pooling the bench, because a
- * plan for nine individual bench spots is bookkeeping rather than planning.
- * The plan itself is never adjusted here: an overspend shows as a difference
- * and what to do about it stays a decision rather than a calculation.
+ * One row per roster spot, bench included, keyed by the slot and its number
+ * within that slot ("QB1", "RB2", "BE3"). Keying by name rather than by the
+ * template's index means a plan survives the league adding a slot ahead of the
+ * ones already planned for. The plan itself is never adjusted here: an
+ * overspend shows as a difference and what to do about it stays a decision
+ * rather than a calculation.
  */
 class BuildBudgetAction
 {
+    /**
+     * Slots that exist only to hold a pick with nowhere else to go, and so are
+     * never planned for.
+     */
+    private const UNPLANNED_SLOTS = ['OVER'];
+
     public function run(Draft $draft, LeagueMember $member): array
     {
         $rosters = (new SlotRostersAction)->run($draft);
@@ -24,18 +31,23 @@ class BuildBudgetAction
 
         $plan = $this->plan($draft, $member);
 
-        $rows = $slots
-            ->filter(fn (array $slot) => $slot['is_starter'])
-            ->map(fn (array $slot) => $this->row(
-                key: (string) $slot['index'],
-                label: $slot['label'],
-                planned: $plan[(string) $slot['index']] ?? null,
-                actual: $slot['player']['amount'] ?? null,
-                filledBy: $slot['player']['full_name'] ?? null,
-            ))
-            ->values();
+        $counts = [];
 
-        $rows->push($this->benchRow($slots, $plan));
+        $rows = $slots
+            ->reject(fn (array $slot) => in_array($slot['slot'], self::UNPLANNED_SLOTS))
+            ->map(function (array $slot) use (&$counts, $plan) {
+                $number = ($counts[$slot['slot']] = ($counts[$slot['slot']] ?? 0) + 1);
+                $key = $slot['label'] . $number;
+
+                return $this->row(
+                    key: $key,
+                    label: $key,
+                    planned: $plan[$key] ?? null,
+                    actual: $slot['player']['amount'] ?? null,
+                    filledBy: $slot['player']['full_name'] ?? null,
+                );
+            })
+            ->values();
 
         $budget = (int) ($draft->auction_budget ?? 0);
         $planned = $rows->sum('planned');
@@ -51,29 +63,6 @@ class BuildBudgetAction
             'actual'    => $actual,
             'remaining' => $budget - $actual,
         ];
-    }
-
-    /**
-     * The bench planned as one pool, against everything actually spent off the
-     * starting lineup.
-     *
-     * @param Collection<int, array> $slots
-     * @param array<string, int> $plan
-     */
-    private function benchRow(Collection $slots, array $plan): array
-    {
-        $bench = $slots->reject(fn (array $slot) => $slot['is_starter']);
-
-        $spent = $bench->sum(fn (array $slot) => $slot['player']['amount'] ?? 0);
-        $filled = $bench->filter(fn (array $slot) => $slot['player'] !== null)->count();
-
-        return $this->row(
-            key: DraftBudget::BENCH_KEY,
-            label: 'Bench (' . $bench->count() . ')',
-            planned: $plan[DraftBudget::BENCH_KEY] ?? null,
-            actual: $spent > 0 ? $spent : null,
-            filledBy: $filled > 0 ? $filled . ' filled' : null,
-        );
     }
 
     /**
@@ -93,7 +82,7 @@ class BuildBudgetAction
     }
 
     /**
-     * The saved plan, as whole dollars keyed by slot.
+     * The saved plan, as whole dollars keyed by slot name.
      *
      * @return array<string, int>
      */

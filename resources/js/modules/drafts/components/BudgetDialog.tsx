@@ -1,34 +1,112 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { BudgetPlan } from '@/modules/drafts/components/BudgetPlan';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { money } from '@/modules/drafts/helpers/money';
 import { type AuctionBudget } from '@/types/models';
-import { useState } from 'react';
+import { useForm } from '@inertiajs/react';
+import { type ReactNode, useMemo, useState } from 'react';
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 
 interface BudgetDialogProps {
   budget: AuctionBudget;
   draftId: number;
+  trigger?: ReactNode;
 }
 
 /**
- * The auction budget plan away from the draft room, so a plan can be written
- * before draft day rather than only during it.
+ * The editable auction budget plan, slot by slot, out of the league's budget.
  */
-export function BudgetDialog({ budget, draftId }: BudgetDialogProps) {
+export function BudgetDialog({ budget, draftId, trigger }: BudgetDialogProps) {
   const [open, setOpen] = useState(false);
 
+  const { data, setData, put, processing, isDirty, reset } = useForm<{ allocations: Record<string, string> }>({
+    allocations: Object.fromEntries(budget.rows.map((row) => [row.key, row.planned !== null ? String(row.planned) : ''])),
+  });
+
+  // Totals follow what is typed rather than what is saved, so the plan adds up
+  // while it is being written.
+  const planned = useMemo(() => Object.values(data.allocations).reduce((total, amount) => total + (Number(amount) || 0), 0), [data.allocations]);
+
+  const unplanned = budget.budget - planned;
+
+  const handleSave = () => {
+    put(route('drafts.budget.update', draftId), {
+      preserveScroll: true,
+      onSuccess: () => setOpen(false),
+    });
+  };
+
+  // Reopening after a cancel should show the saved plan, not the abandoned edit.
+  const handleOpenChange = (next: boolean) => {
+    if (!next) {
+      reset();
+    }
+
+    setOpen(next);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Edit Budget</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>{trigger ?? <Button variant="outline">Edit Budget</Button>}</DialogTrigger>
       <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Budget Plan</DialogTitle>
           <DialogDescription>Plan what each starting slot is worth to you out of your ${budget.budget} auction budget.</DialogDescription>
         </DialogHeader>
-        {/* The plan card carries its own header and Save button, so it drops
-            in here without any chrome of its own. */}
-        <BudgetPlan budget={budget} draftId={draftId} className="border-0 py-0 shadow-none" />
+        <p className="text-xs text-muted-foreground tabular-nums">
+          {money(planned)} planned · {unplanned >= 0 ? `${money(unplanned)} unplanned` : `${money(Math.abs(unplanned))} over`}
+        </p>
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <Table className="table-fixed" containerClassName="h-full overflow-auto">
+            <TableHeader className="sticky top-0 z-10 bg-background shadow-sm [&_th]:bg-background">
+              <TableRow>
+                <TableHead className="w-[40%]">Slot</TableHead>
+                <TableHead className="w-[30%] text-center">Plan</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {budget.rows.map((row) => (
+                <TableRow key={row.key}>
+                  <TableCell className="truncate text-xs font-medium">
+                    {row.label}
+                  </TableCell>
+                  <TableCell className="px-1">
+                    {/* <Input
+                      type="number"
+                      min={0}
+                      inputMode="numeric"
+                      placeholder="$"
+                      className="h-8 text-center tabular-nums"
+                      value={data.allocations[row.key] ?? ''}
+                      onChange={(event) => setData('allocations', { ...data.allocations, [row.key]: event.target.value })}
+                    /> */}
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <InputGroupText>$</InputGroupText>
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        type="numeric"
+                        min={0}
+                        placeholder="0"
+                        className="h-8 text-center tabular-nums"
+                        value={data.allocations[row.key] ?? ''}
+                        onChange={(event) => setData('allocations', { ...data.allocations, [row.key]: event.target.value })}
+                      />
+                    </InputGroup>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => handleOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={processing || !isDirty}>
+            {processing ? 'Saving...' : 'Save'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

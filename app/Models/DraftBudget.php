@@ -11,12 +11,6 @@ class DraftBudget extends Model
     use HasFactory;
 
     /**
-     * The key the bench pool is stored under, since bench spots are planned as
-     * one number rather than slot by slot.
-     */
-    public const BENCH_KEY = 'bench';
-
-    /**
      * The attributes that are not mass assignable.
      *
      * @var array<int, string>

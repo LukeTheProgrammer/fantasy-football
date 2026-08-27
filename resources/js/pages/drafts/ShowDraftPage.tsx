@@ -2,6 +2,7 @@ import { Heading } from '@/common/heading/Heading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
+import { BudgetPlan } from '@/modules/drafts/components/BudgetPlan';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
 import { SeasonSelect } from '@/modules/leagues/components/SeasonSelect';
 import { AppLayout } from '@/pages/layouts/AppLayout';
@@ -68,7 +69,7 @@ export default function ShowDraft({ draft, seasons, budget }: DraftShowProps) {
           </div>
         </div>
 
-        <div className="mb-8 grid grid-cols-1 gap-6">
+        <div className="mb-8 grid grid-cols-2 gap-6">
           {/* League Details Card */}
           <Card>
             <CardContent className="space-y-4">
@@ -100,6 +101,8 @@ export default function ShowDraft({ draft, seasons, budget }: DraftShowProps) {
               </div>
             </CardContent>
           </Card>
+
+          {budget && <BudgetPlan budget={budget} draftId={draft.id} />}
         </div>
 
         <div className="mb-8 grid grid-cols-5 gap-6">
