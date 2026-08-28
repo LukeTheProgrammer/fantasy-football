@@ -5,8 +5,13 @@ import '@/common/helpers/axios';
 
 import { initializeTheme } from '@/common/appearance/useAppearance';
 import { createInertiaApp, type ResolvedComponent } from '@inertiajs/react';
+import { configureEcho } from '@laravel/echo-react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
+
+configureEcho({
+  broadcaster: 'reverb',
+});
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

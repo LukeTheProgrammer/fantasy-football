@@ -1,9 +1,11 @@
 import { Heading } from '@/common/heading/Heading';
 import { DraftSidePanel } from '@/modules/drafts/components/DraftSidePanel';
+import { DraftSyncToggle } from '@/modules/drafts/components/DraftSyncToggle';
 import { MarketPulse } from '@/modules/drafts/components/MarketPulse';
 import { NominatedPlayer } from '@/modules/drafts/components/NominatedPlayer';
 import { PlayerBoard } from '@/modules/drafts/components/PlayerBoard';
 import { TeamBudgets } from '@/modules/drafts/components/TeamBudgets';
+import { useDraftPickStream } from '@/modules/drafts/helpers/useDraftPickStream';
 import { usePersistentState } from '@/modules/drafts/helpers/usePersistentState';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
@@ -45,6 +47,9 @@ export default function AuctionDraftRoom({ draft, players, market, teams, roster
   const [nominatedId, setNominatedId] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+
+  // Picks made on ESPN arrive here on their own while the sync is running.
+  const sync = useDraftPickStream(draft.id);
 
   const searchRef = useRef<HTMLInputElement | null>(null);
   const teamRef = useRef<HTMLButtonElement | null>(null);
@@ -192,7 +197,10 @@ export default function AuctionDraftRoom({ draft, players, market, teams, roster
       <div className="flex-1 space-y-2 p-6">
         <div className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
           <Heading title={`${draft.league.name} ${draft.league.season}`} containerClass="mb-0" headingClass="mb-0" />
-          <MarketPulse market={market} availableCount={available.length} />
+          <div className="flex items-center gap-4">
+            <DraftSyncToggle draft={draft} sync={sync} />
+            <MarketPulse market={market} availableCount={available.length} />
+          </div>
         </div>
 
         {/* Desktop only: one fixed height row, budgets down the left, the

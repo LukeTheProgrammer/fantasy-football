@@ -146,6 +146,18 @@ class EspnService
 
     /* ===[ Fantasy NFL ]=== */
 
+    /**
+     * The picks made in a league's draft so far.
+     */
+    public function getFantasyDraftDetail(array|CredentialsData $credentials, int|string|null $season = null)
+    {
+        $resource = new FantasyNFL($credentials);
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getDraftDetail($credentials, $season);
+    }
+
     public function getFantasyDraft(array|CredentialsData $credentials, array $opts = [])
     {
         $resource = new FantasyNFL($credentials);

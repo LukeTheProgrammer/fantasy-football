@@ -3,6 +3,7 @@
 namespace App\Services\Actions\Models;
 
 use App\Actions\Models\Draft\DraftCreateAction;
+use App\Actions\Models\DraftPick\DraftPickUpsertAction;
 use App\Actions\Models\LeagueMembers\LeagueMemberCreateAction;
 use App\Actions\Models\LeagueMembers\LeagueMemberUpdateAction;
 use App\Actions\Models\Leagues\LeagueCreateAction;
@@ -17,6 +18,7 @@ use App\Actions\Models\PlayerStatWeekly\PlayerStatWeeklyUpsertAction;
 use App\Actions\Models\PlayerStatYearly\PlayerStatYearlyUpsertAction;
 use App\Actions\Models\PlayerTeam\PlayerTeamUpsertAction;
 use App\Models\Draft;
+use App\Models\DraftPick;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
@@ -33,6 +35,9 @@ class ModelActions
     public $registry = [
         Draft::class => [
             'create' => DraftCreateAction::class,
+        ],
+        DraftPick::class => [
+            'upsert' => DraftPickUpsertAction::class,
         ],
         League::class => [
             'create' => LeagueCreateAction::class,

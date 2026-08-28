@@ -11,6 +11,7 @@ use App\Services\Espn\Data\FantasyNFL\ScheduleData;
 use App\Services\Espn\Data\FantasyNFL\ScheduleSettingsData;
 use App\Services\Espn\Data\FantasyNFL\SettingsSettingsData;
 use App\Services\Espn\EspnConstants;
+use App\Services\Espn\Helpers\DraftPickMapper;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -145,17 +146,7 @@ class FantasyLeagueFormatter
             'is_active'      => false,
         ];
 
-        $draftDetail->picks->each(function ($pick) {
-            $this->data['draftPicks'][] = [
-                'league_member_id'    => $pick->teamId,
-                'player_id'           => $pick->playerId,
-                'round'               => $pick->roundId,
-                'pick_number'         => $pick->roundPickNumber,
-                'overall_pick_number' => $pick->overallPickNumber,
-                'amount'              => $pick->bidAmount,
-                'is_keeper'           => $pick->keeper,
-            ];
-        });
+        $this->data['draftPicks'] = DraftPickMapper::map($draftDetail);
     }
 
     private function formatMembersData()

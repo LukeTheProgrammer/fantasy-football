@@ -1,0 +1,40 @@
+[Unit]
+Description=fantasy-football reverb websocket server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html/fantasy-football
+
+# Bound to loopback: nginx proxies /app and /apps through to it, so the port
+# itself never has to be open on the LAN.
+ExecStart=/usr/bin/php /var/www/html/fantasy-football/artisan reverb:start \
+    --host=127.0.0.1 \
+    --port=8080
+
+# A dropped connection is the client's problem to retry, but the server itself
+# should never stay down mid draft.
+Restart=always
+RestartSec=1
+
+# Open sockets are the whole job, so the process is given time to close them
+# rather than being killed out from under a room full of listeners.
+TimeoutStopSec=30
+KillSignal=SIGTERM
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ff-reverb
+
+# Hardening: matches the queue worker.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/www/html/fantasy-football/storage /var/www/html/fantasy-football/bootstrap/cache
+
+[Install]
+WantedBy=multi-user.target

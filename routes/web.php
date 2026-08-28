@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DraftBudgetController;
 use App\Http\Controllers\DraftController;
 use App\Http\Controllers\DraftRankingController;
+use App\Http\Controllers\DraftSyncController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\PlayersController;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Recording what the room sees: an auction sale, or undoing one.
         Route::post('/{draft}/picks', [AuctionPickController::class, 'store'])->name('picks.store');
+        // Pulling picks from ESPN while the draft is running.
+        Route::post('/{draft}/sync', [DraftSyncController::class, 'store'])->name('sync.store');
+        Route::delete('/{draft}/sync', [DraftSyncController::class, 'destroy'])->name('sync.destroy');
         Route::put('/{draft}/budget', [DraftBudgetController::class, 'update'])->name('budget.update');
         Route::patch('/{draft}/picks/{pick}', [AuctionPickController::class, 'update'])->name('picks.update');
         Route::delete('/{draft}/picks/{pick}', [AuctionPickController::class, 'destroy'])->name('picks.destroy');

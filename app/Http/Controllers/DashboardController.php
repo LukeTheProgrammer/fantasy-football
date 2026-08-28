@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LeagueShowResource;
+use App\Models\League;
 use App\Models\Team;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -13,9 +16,31 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $leagues = League::forUser(Auth::user())
+            ->whereIn('id', League::selectRaw('MAX(id)')->groupBy('platform_id'))
+            ->with(['draft', 'members'])
+            ->get();
+
         return Inertia::render('DashboardPage', [
-            'teams' => Team::all(),
+            'leagues' => $leagues,
         ]);
+
+        // $leagues = League::forUser(Auth::user())
+        //     ->whereIn('id', League::selectRaw('MAX(id)')->groupBy('platform_id'))
+        //     ->with([
+        //         'creator',
+        //         'draft',
+        //         'matchups' => [
+        //             'homeTeam',
+        //             'awayTeam',
+        //         ],
+        //         'members',
+        //     ])
+        //     ->get();
+
+        // return Inertia::render('DashboardPage', [
+        //     'leagues' => LeagueShowResource::collection($leagues),
+        // ]);
     }
 
     /**

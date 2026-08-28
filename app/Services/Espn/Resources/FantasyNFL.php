@@ -3,6 +3,7 @@
 namespace App\Services\Espn\Resources;
 
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
+use App\Services\Espn\Resources\FantasyNFL\GetDraftDetail;
 use App\Services\Espn\Resources\FantasyNFL\GetDraftRecap;
 use App\Services\Espn\Resources\FantasyNFL\GetLeague;
 use App\Services\Espn\Resources\FantasyNFL\GetMatchup;
@@ -15,6 +16,22 @@ use Illuminate\Support\Arr;
 
 class FantasyNFL extends BaseResourceCollection
 {
+    /**
+     * The picks made so far, and nothing else. Cheap enough to poll while a
+     * draft is running.
+     */
+    public function getDraftDetail(array|CredentialsData $credentials, int|string|null $season = null)
+    {
+        $resource = new GetDraftDetail($credentials);
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
+
+        $resource->setOpts($season);
+
+        return $resource->fetch();
+    }
+
     public function getDraftRecap(array|CredentialsData $credentials, array $opts = [])
     {
         $resource = new GetDraftRecap($credentials);

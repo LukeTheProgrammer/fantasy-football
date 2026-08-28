@@ -10,9 +10,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.5",
+        "guzzlehttp/guzzle": "^7.9",
         "inertiajs/inertia-laravel": "^3.3",
         "laravel/framework": "^13.0",
         "laravel/prompts": "^0.3.6",
+        "laravel/reverb": "^1.11",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "spatie/laravel-data": "^4.17",

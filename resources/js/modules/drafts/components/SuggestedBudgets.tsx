@@ -38,7 +38,7 @@ export function SuggestedBudgets({ suggestions, draftId }: SuggestedBudgetsProps
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
       {suggestions.map((suggestion) => (
-        <BudgetPlan suggestion={suggestion} applying={applying === suggestion.focus} onApply={() => apply(suggestion)} />
+        <BudgetPlan key={suggestion.focus} suggestion={suggestion} applying={applying === suggestion.focus} onApply={() => apply(suggestion)} />
       ))}
     </div>
   );

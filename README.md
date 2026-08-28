@@ -84,6 +84,27 @@ You do not have to set these values, as the creation command will prompt you for
 sail artisan import:fantasy-nfl:league
 ```
 
+## Live draft night
+
+The auction draft room can pull picks straight from ESPN instead of having every
+sale typed in. Two extra processes have to be running for it:
+
+```bash
+sail artisan reverb:start   # websocket server the room listens on
+sail artisan queue:work     # runs the sync loop
+```
+
+On the LAN dev server both run as systemd units instead — `system/reverb.service`
+beside the existing `system/queue.service`, with nginx proxying `/app` and
+`/apps` through to Reverb (`system/fantasy.local.conf`), so `REVERB_HOST` is
+`fantasy.local` and `REVERB_PORT` is `80` there.
+
+Then press **Sync from ESPN** in the draft room. It polls ESPN every five
+seconds, writes in picks the board does not have yet, and stops on its own when
+ESPN reports the draft complete. The manual sale form keeps working the whole
+time — ESPN publishes a pick a beat after the room hears it, and a player who
+cannot be matched is counted beside the button rather than silently dropped.
+
 ## Final step
 
 ```bash

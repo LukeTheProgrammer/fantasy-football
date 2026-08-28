@@ -14,6 +14,7 @@ use App\Services\Auction\Actions\SlotRostersAction;
 use App\Services\Auction\Actions\SuggestBudgetsAction;
 use App\Services\Auction\Actions\SummariseMarketAction;
 use App\Services\Auction\Actions\SummariseTeamsAction;
+use App\Services\Auction\Actions\SyncEspnPicksAction;
 use Illuminate\Support\Collection;
 
 /**
@@ -26,6 +27,17 @@ use Illuminate\Support\Collection;
  */
 class AuctionService
 {
+    /**
+     * Pull the picks ESPN has recorded for this draft and write in the ones
+     * the board does not have yet.
+     *
+     * @return array<string, mixed>
+     */
+    public function syncEspnPicks(Draft $draft): array
+    {
+        return (new SyncEspnPicksAction)->run($draft);
+    }
+
     /**
      * Every draftable player with both value estimates attached.
      */

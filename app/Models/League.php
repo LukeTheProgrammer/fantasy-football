@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -86,6 +87,12 @@ class League extends Model
     {
         return $query->where('platform', $league->platform)
             ->where('platform_id', $league->platform_id);
+    }
+
+    #[Scope]
+    protected function forUser(Builder $query, User|int|string $user): Builder
+    {
+        return $query->whereHas('members', fn ($q) => $q->forUser($user));
     }
 
     /* ===[ Helpers ]=== */

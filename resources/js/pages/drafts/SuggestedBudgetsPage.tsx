@@ -1,11 +1,11 @@
 import { Heading } from '@/common/heading/Heading';
 import { Button } from '@/components/ui/button';
+import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
 import { SuggestedBudgets } from '@/modules/drafts/components/SuggestedBudgets';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { PageProps, type BreadcrumbItem } from '@/types';
 import { type AuctionBudget, type BudgetSuggestion, type Draft } from '@/types/models';
 import { Head, Link } from '@inertiajs/react';
-import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
 
 interface SuggestedBudgetsProps extends PageProps {
   draft: Draft;

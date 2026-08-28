@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -103,5 +104,11 @@ class LeagueMember extends Model
     public function scopeForExtId(Builder $query, int|string $extId): Builder
     {
         return $query->where('external_id', $extId);
+    }
+
+    #[Scope]
+    protected function forUser(Builder $query, User|int|string $user): Builder
+    {
+        return $query->where('user_id', '=', ($user instanceof User) ? $user->id : $user);
     }
 }

@@ -4,11 +4,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
-import { type League } from '@/types/models';
+import type { LeagueResource } from '@/types/resources';
 import { Head, Link } from '@inertiajs/react';
-import axios from 'axios';
 import { Play, Plus, Search, Star, Trophy } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -17,23 +15,35 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function Dashboard() {
-  const [leagues, setLeagues] = useState<League[]>([]);
+interface DashboardProps {
+  leagues: LeagueResource[];
+}
 
-  function fetchLeagues() {
-    axios
-      .get('/api/leagues')
-      .then((response) => {
-        setLeagues(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+export default function Dashboard({ leagues }: DashboardProps) {
+  // const [leagues, setLeagues] = useState<League[]>([]);
+
+  // function fetchLeagues() {
+  //   axios
+  //     .get('/api/leagues')
+  //     .then((response) => {
+  //       setLeagues(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }
+
+  // useEffect(() => {
+  //   fetchLeagues();
+  // }, []);
+
+  function draftDate(date: string | null | undefined): string {
+    if (!date) {
+      return '';
+    }
+
+    return new Date(date).toLocaleDateString();
   }
-
-  useEffect(() => {
-    fetchLeagues();
-  }, []);
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -101,7 +111,7 @@ export default function Dashboard() {
                   <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
                 </div>
                 <Select>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-45">
                     <SelectValue placeholder="Filter Leagues" />
                   </SelectTrigger>
                   <SelectContent>
@@ -115,7 +125,7 @@ export default function Dashboard() {
           </div>
 
           <div className="divide-y">
-            {leagues.map((league: League) => (
+            {leagues.map((league) => (
               <div key={league.id} className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
@@ -127,7 +137,7 @@ export default function Dashboard() {
                       <p className="text-sm">
                         {league.team_count} teams • {league.draft?.draft_type}
                       </p>
-                      <p className="text-sm">Draft: {league.draft?.draft_date}</p>
+                      <p className="text-sm">Draft: {draftDate(league.draft?.draft_date)}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
