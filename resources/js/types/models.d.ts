@@ -136,6 +136,27 @@ export interface BudgetRow {
   filled_by: string | null;
 }
 
+export interface BudgetSuggestionPlayer {
+  player_id: number;
+  full_name: string | null;
+  position_id: string | null;
+  rank: number | null;
+}
+
+export interface BudgetSuggestion {
+  /** The position the plan is built around. */
+  focus: string;
+  label: string;
+  /** Dollars per budget row key, ready to apply to the plan. */
+  allocations: Record<string, number>;
+  /** Who the plan expects to buy in each slot, where it expects to buy anyone. */
+  players: Record<string, BudgetSuggestionPlayer | null>;
+  planned: number;
+  unplanned: number;
+  /** What the plan spends on the starting lineup. */
+  starters: number;
+}
+
 export interface AuctionBudget {
   rows: BudgetRow[];
   budget: number;

@@ -7,7 +7,15 @@ import { TeamBudgets } from '@/modules/drafts/components/TeamBudgets';
 import { usePersistentState } from '@/modules/drafts/helpers/usePersistentState';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
-import { type AuctionBudget, type AuctionMarket, type AuctionPlayer, type AuctionTeam, type Draft, type RosterSlot } from '@/types/models';
+import {
+  type AuctionBudget,
+  type AuctionMarket,
+  type AuctionPlayer,
+  type AuctionTeam,
+  type BudgetSuggestion,
+  type Draft,
+  type RosterSlot,
+} from '@/types/models';
 import { PageProps } from '@inertiajs/core';
 import { Head, router } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -22,6 +30,7 @@ interface AuctionDraftRoomProps extends PageProps {
   rosters: Record<string, RosterSlot[]>;
   /** The signed in user's own plan, when they have a team in this league. */
   budget: AuctionBudget | null;
+  suggestions: BudgetSuggestion[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -35,7 +44,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function AuctionDraftRoom({ draft, players, market, teams, rosters, budget }: AuctionDraftRoomProps) {
+export default function AuctionDraftRoom({ draft, players, market, teams, rosters, budget, suggestions }: AuctionDraftRoomProps) {
   // Filters are held in storage: a pick reloads the page, and retyping the
   // search or reselecting the position every time costs the seconds that
   // matter mid auction.
@@ -249,6 +258,7 @@ export default function AuctionDraftRoom({ draft, players, market, teams, roster
             position={position}
             onPositionChange={setPosition}
             budget={budget}
+            suggestions={suggestions}
             selectedTeam={selectedTeam}
             selectedTeamSlots={selectedTeam ? (rosters[String(selectedTeam.id)] ?? []) : []}
             onClearTeam={() => setSelectedTeamId(null)}

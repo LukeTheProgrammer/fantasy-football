@@ -11,6 +11,7 @@ use App\Services\Auction\Actions\BuildPlayerProfileAction;
 use App\Services\Auction\Actions\CalculateMarketValuesAction;
 use App\Services\Auction\Actions\CalculateProjectedValuesAction;
 use App\Services\Auction\Actions\SlotRostersAction;
+use App\Services\Auction\Actions\SuggestBudgetsAction;
 use App\Services\Auction\Actions\SummariseMarketAction;
 use App\Services\Auction\Actions\SummariseTeamsAction;
 use Illuminate\Support\Collection;
@@ -63,6 +64,16 @@ class AuctionService
     public function budget(Draft $draft, LeagueMember $member): array
     {
         return (new BuildBudgetAction)->run($draft, $member);
+    }
+
+    /**
+     * Three budgets to choose between, each built around a different position.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function budgetSuggestions(Draft $draft, LeagueMember $member, ?Collection $cheatSheet = null): array
+    {
+        return (new SuggestBudgetsAction)->run($draft, $member, $cheatSheet);
     }
 
     /**

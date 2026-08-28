@@ -81,6 +81,11 @@ class DraftController extends Controller
             'budget'  => $draft->draft_type === 'auction' && $member
                 ? AuctionFacade::budget($draft, $member)
                 : null,
+            // Suggestions are only worth anything before the draft: once it is
+            // over there is nothing left to plan.
+            'suggestions' => $draft->draft_type === 'auction' && $member && !$draft->is_completed
+                ? AuctionFacade::budgetSuggestions($draft, $member)
+                : [],
         ]);
     }
 
@@ -181,12 +186,15 @@ class DraftController extends Controller
         $players = AuctionFacade::cheatSheet($draft);
 
         return Inertia::render('drafts/AuctionDraftRoomPage', [
-            'draft'   => $draft,
-            'players' => $players,
-            'market'  => AuctionFacade::market($draft, $players),
-            'teams'   => AuctionFacade::teams($draft),
-            'rosters' => AuctionFacade::rosters($draft),
-            'budget'  => $member ? AuctionFacade::budget($draft, $member) : null,
+            'draft'       => $draft,
+            'players'     => $players,
+            'market'      => AuctionFacade::market($draft, $players),
+            'teams'       => AuctionFacade::teams($draft),
+            'rosters'     => AuctionFacade::rosters($draft),
+            'budget'      => $member ? AuctionFacade::budget($draft, $member) : null,
+            'suggestions' => $member && !$draft->is_completed
+                ? AuctionFacade::budgetSuggestions($draft, $member, $players)
+                : [],
         ]);
     }
 

@@ -6,6 +6,7 @@ use App\Facades\Auction as AuctionFacade;
 use App\Models\Draft;
 use App\Models\DraftBudget;
 use App\Models\DraftPick;
+use App\Models\DraftRanking;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
@@ -504,6 +505,145 @@ class AuctionDraftRoomTest extends TestCase
 
         $this->assertSame(['QB' => 25], $budget->allocations);
         $this->assertSame(1, DraftBudget::where('draft_id', $this->draft->id)->count());
+    }
+
+    public function test_each_suggested_budget_buys_the_best_player_at_its_position(): void
+    {
+        $this->rankedPlayers();
+        $this->priorAuction([150, 120, 60, 10, 5, 5]);
+
+        $suggestions = collect(AuctionFacade::budgetSuggestions($this->draft, $this->member));
+
+        $this->assertSame(['QB', 'RB', 'WR'], $suggestions->pluck('focus')->all());
+
+        // The quarterback plan buys the best quarterback outright; the running
+        // back plan spends that money on the best running back instead.
+        $this->assertSame('Best Quarterback', $suggestions->firstWhere('focus', 'QB')['players']['QB']['full_name']);
+        $this->assertSame('Best Runningback', $suggestions->firstWhere('focus', 'RB')['players']['RB']['full_name']);
+
+        // The same quarterback slot is worth far more to the plan built around
+        // him than to the one that spent its money at running back.
+        $this->assertGreaterThan(
+            $suggestions->firstWhere('focus', 'RB')['allocations']['QB'],
+            $suggestions->firstWhere('focus', 'QB')['allocations']['QB'],
+        );
+    }
+
+    public function test_a_suggested_budget_never_plans_past_the_budget(): void
+    {
+        $this->rankedPlayers();
+        $this->priorAuction([150, 120, 60, 10, 5, 5]);
+
+        foreach (AuctionFacade::budgetSuggestions($this->draft, $this->member) as $plan) {
+            $this->assertLessThanOrEqual(200, $plan['planned']);
+            $this->assertSame(200 - $plan['planned'], $plan['unplanned']);
+
+            // Every slot is planned for, since a slot left at zero reads as one
+            // the plan forgot rather than one it means to fill cheaply.
+            $this->assertCount(4, $plan['allocations']);
+        }
+    }
+
+    public function test_a_suggested_budget_keys_its_allocations_the_way_the_plan_does(): void
+    {
+        $this->rankedPlayers();
+        $this->priorAuction([150, 120, 60, 10, 5, 5]);
+
+        $budget = AuctionFacade::budget($this->draft, $this->member);
+        $plan = AuctionFacade::budgetSuggestions($this->draft, $this->member)[0];
+
+        // A suggestion is applied by dropping it straight into the plan, so the
+        // two have to agree on what a slot is called.
+        $this->assertSame(
+            collect($budget['rows'])->pluck('key')->sort()->values()->all(),
+            collect(array_keys($plan['allocations']))->sort()->values()->all(),
+        );
+    }
+
+    public function test_there_is_nothing_to_suggest_without_a_ranked_board(): void
+    {
+        $this->assertSame([], AuctionFacade::budgetSuggestions($this->draft, $this->member));
+    }
+
+    /**
+     * A season the league has already drafted, which is where the price curve
+     * a suggestion spends comes from.
+     */
+    private function priorAuction(array $prices): void
+    {
+        $league = League::create([
+            'created_by_user_id' => $this->user->id,
+            'name'               => 'Test League',
+            'season'             => 2025,
+            'platform'           => 'ESPN',
+            'platform_id'        => '1',
+            'team_count'         => 2,
+            'slug'               => 'test-league-2025',
+        ]);
+
+        $member = LeagueMember::create([
+            'league_id' => $league->id,
+            'user_id'   => $this->user->id,
+            'team_name' => 'My Team',
+        ]);
+
+        $draft = Draft::create([
+            'league_id'      => $league->id,
+            'draft_type'     => 'auction',
+            'auction_budget' => 200,
+            'is_completed'   => true,
+        ]);
+
+        foreach ($prices as $index => $price) {
+            DraftPick::create([
+                'draft_id'         => $draft->id,
+                'league_member_id' => $member->id,
+                'player_id'        => Player::factory()->create()->id,
+                'round'            => 1,
+                'pick_number'      => $index + 1,
+                'amount'           => $price,
+            ]);
+        }
+    }
+
+    /**
+     * A board with one obvious best player at each position.
+     */
+    private function rankedPlayers(): void
+    {
+        // A wide receiver slot as well, so the three plans have somewhere
+        // different to put their money.
+        $this->league->settings->update(['roster_positions' => ['QB', 'RB', 'WR', 'BE']]);
+
+        $players = [
+            ['Best', 'Quarterback', 'QB', 1],
+            ['Second', 'Quarterback', 'QB', 4],
+            ['Best', 'Runningback', 'RB', 2],
+            ['Second', 'Runningback', 'RB', 5],
+            ['Best', 'Receiver', 'WR', 3],
+            ['Second', 'Receiver', 'WR', 6],
+        ];
+
+        foreach ($players as [$first, $last, $position, $rank]) {
+            $player = Player::factory()->create([
+                'first_name'  => $first,
+                'last_name'   => $last,
+                'full_name'   => $first . ' ' . $last,
+                'position_id' => $position,
+            ]);
+
+            DraftRanking::create([
+                'player_id' => $player->id,
+                'season'    => 2026,
+                'ranked_at' => now()->toDateString(),
+                'type'      => 'redraft',
+                'source'    => 'FantasyPros',
+                'ppr'       => 0.5,
+                'superflex' => true,
+                'rank'      => $rank,
+                'tier'      => 1,
+            ]);
+        }
     }
 
     public function test_someone_without_a_team_cannot_save_a_budget(): void

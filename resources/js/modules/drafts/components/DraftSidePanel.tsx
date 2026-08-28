@@ -3,7 +3,14 @@ import { BudgetPlan } from '@/modules/drafts/components/BudgetPlan';
 import { DraftPicks } from '@/modules/drafts/components/DraftPicks';
 import { PositionScarcity } from '@/modules/drafts/components/PositionScarcity';
 import { TeamRoster } from '@/modules/drafts/components/TeamRoster';
-import { type AuctionBudget, type AuctionPlayer, type AuctionTeam, type MarketPosition, type RosterSlot } from '@/types/models';
+import {
+  type AuctionBudget,
+  type AuctionPlayer,
+  type AuctionTeam,
+  type BudgetSuggestion,
+  type MarketPosition,
+  type RosterSlot,
+} from '@/types/models';
 import { useState } from 'react';
 
 type Panel = 'picks' | 'budget' | 'positions';
@@ -20,6 +27,7 @@ interface DraftSidePanelProps {
   onPositionChange: (position: string | null) => void;
   /** The signed in user's own plan, when they have a team in this league. */
   budget: AuctionBudget | null;
+  suggestions: BudgetSuggestion[];
   /** A team being sized up, which takes the column over while it is selected. */
   selectedTeam: AuctionTeam | null;
   selectedTeamSlots: RosterSlot[];
@@ -44,6 +52,7 @@ export function DraftSidePanel({
   position,
   onPositionChange,
   budget,
+  suggestions,
   selectedTeam,
   selectedTeamSlots,
   onClearTeam,
@@ -76,7 +85,7 @@ export function DraftSidePanel({
         {selectedTeam ? (
           <TeamRoster team={selectedTeam} slots={selectedTeamSlots} onClose={onClearTeam} />
         ) : panel === 'budget' && budget ? (
-          <BudgetPlan budget={budget} draftId={draftId} />
+          <BudgetPlan budget={budget} draftId={draftId} suggestions={suggestions} />
         ) : panel === 'positions' ? (
           <PositionScarcity positions={positions} active={position} onSelect={onPositionChange} />
         ) : (
