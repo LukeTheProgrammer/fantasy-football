@@ -22,3 +22,10 @@ export function topPicksAtPosition(picks: DraftPick[], position: string, isAucti
       pick_number: pick.pick_number,
     }));
 }
+
+/**
+ * Everything the league spent at one position, not only what the top ten cost.
+ */
+export function spentAtPosition(picks: DraftPick[], position: string): number {
+  return picks.filter((pick) => pick.player?.position_id === position).reduce((total, pick) => total + Number(pick.amount), 0);
+}

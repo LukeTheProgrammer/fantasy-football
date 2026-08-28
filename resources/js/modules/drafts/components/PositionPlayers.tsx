@@ -6,20 +6,32 @@ interface PositionPlayersProps {
   position: string;
   players: RosterSlotPlayer[];
   isAuction: boolean;
+  /** Everything spent at the position, which is more than the listed players cost. */
+  spent: number;
 }
 
 /**
  * The players who went for the most at one position, best first.
  */
 
-export function PositionPlayers({ position, players, isAuction }: PositionPlayersProps) {
+export function PositionPlayers({ position, players, isAuction, spent }: PositionPlayersProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{position}</CardTitle>
-        <CardDescription>
-          Top {players.length} {position}s drafted.
-        </CardDescription>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <CardTitle>{position}</CardTitle>
+            <CardDescription>
+              Top {players.length} {position}s drafted.
+            </CardDescription>
+          </div>
+          {isAuction && (
+            <div className="text-right">
+              <p className="text-lg font-semibold tabular-nums">{money(spent)}</p>
+              <p className="text-xs text-muted-foreground">spent</p>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">

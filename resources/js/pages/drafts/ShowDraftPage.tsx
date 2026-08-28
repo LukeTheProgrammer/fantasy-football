@@ -6,7 +6,7 @@ import { PositionPlayers } from '@/modules/drafts/components/PositionPlayers';
 import { PositionPriceChart } from '@/modules/drafts/components/PositionPriceChart';
 import { TeamRosters } from '@/modules/drafts/components/TeamRosters';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
-import { topPicksAtPosition } from '@/modules/drafts/helpers/topPicksAtPosition';
+import { spentAtPosition, topPicksAtPosition } from '@/modules/drafts/helpers/topPicksAtPosition';
 import { SeasonSelect } from '@/modules/leagues/components/SeasonSelect';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { PageProps, type BreadcrumbItem, type SharedData } from '@/types';
@@ -118,6 +118,7 @@ export default function ShowDraft({ draft, seasons, rosters, budget }: DraftShow
                   position={position}
                   players={topPicksAtPosition(draft.picks, position, isAuction)}
                   isAuction={isAuction}
+                  spent={spentAtPosition(draft.picks, position)}
                 />
               ))}
             </div>
