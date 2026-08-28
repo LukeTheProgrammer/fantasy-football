@@ -10,6 +10,9 @@ interface PositionPriceChartProps {
 /** Only five chart colours exist, so positions past the fifth reuse them. */
 const CHART_COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)'];
 
+/** Below this a price says more about roster filling than about the position. */
+const MINIMUM_PRICE = 5;
+
 /** The order positions are worth reading in, with anything else after. */
 const POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'DST', 'D/ST'];
 
@@ -29,7 +32,10 @@ export function PositionPriceChart({ picks }: PositionPriceChartProps) {
       const position = pick.player?.position_id;
       const amount = Number(pick.amount);
 
-      if (!position || !Number.isFinite(amount) || amount <= 0) {
+      // Minimum bids are the leftovers at the end of the auction rather than a
+      // price anyone argued over, and a long flat tail at a dollar buries the
+      // shape of what the position actually cost.
+      if (!position || !Number.isFinite(amount) || amount < MINIMUM_PRICE) {
         continue;
       }
 

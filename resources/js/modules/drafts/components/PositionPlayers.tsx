@@ -21,14 +21,13 @@ export function PositionPlayers({ position, players, isAuction, spent }: Positio
         <div className="flex items-start justify-between gap-2">
           <div>
             <CardTitle>{position}</CardTitle>
-            <CardDescription>
+            <CardDescription className="sr-only">
               Top {players.length} {position}s drafted.
             </CardDescription>
           </div>
           {isAuction && (
             <div className="text-right">
               <p className="text-lg font-semibold tabular-nums">{money(spent)}</p>
-              <p className="text-xs text-muted-foreground">spent</p>
             </div>
           )}
         </div>
