@@ -514,18 +514,18 @@ class AuctionDraftRoomTest extends TestCase
 
         $suggestions = collect(AuctionFacade::budgetSuggestions($this->draft, $this->member));
 
-        $this->assertSame(['QB', 'RB', 'WR', 'BEST'], $suggestions->pluck('focus')->all());
+        $this->assertSame(['QB', 'RB', 'WR'], $suggestions->pluck('focus')->all());
 
         // The quarterback plan buys the best quarterback outright; the running
         // back plan spends that money on the best running back instead.
-        $this->assertSame('Best Quarterback', $suggestions->firstWhere('focus', 'QB')['players']['QB']['full_name']);
+        $this->assertSame('Best Quarterback', $suggestions->firstWhere('focus', 'QB')['players']['QB1']['full_name']);
         $this->assertSame('Best Runningback', $suggestions->firstWhere('focus', 'RB')['players']['RB']['full_name']);
 
         // The same quarterback slot is worth far more to the plan built around
         // him than to the one that spent its money at running back.
         $this->assertGreaterThan(
-            $suggestions->firstWhere('focus', 'RB')['allocations']['QB'],
-            $suggestions->firstWhere('focus', 'QB')['allocations']['QB'],
+            $suggestions->firstWhere('focus', 'RB')['allocations']['QB1'],
+            $suggestions->firstWhere('focus', 'QB')['allocations']['QB1'],
         );
     }
 
@@ -540,7 +540,7 @@ class AuctionDraftRoomTest extends TestCase
 
             // Every slot is planned for, since a slot left at zero reads as one
             // the plan forgot rather than one it means to fill cheaply.
-            $this->assertCount(4, $plan['allocations']);
+            $this->assertCount(5, $plan['allocations']);
         }
     }
 
@@ -579,25 +579,37 @@ class AuctionDraftRoomTest extends TestCase
         }
     }
 
-    public function test_the_best_lineup_spends_the_budget_on_the_best_players_it_can(): void
+    public function test_the_saved_budget_names_the_best_player_each_slot_can_afford(): void
     {
         $this->rankedPlayers();
         $this->priorAuction([150, 120, 60, 10, 5, 5]);
 
-        $best = collect(AuctionFacade::budgetSuggestions($this->draft, $this->member))->firstWhere('focus', 'BEST');
+        $this->actingAs($this->user)->put(route('drafts.budget.update', $this->draft), [
+            'allocations' => ['QB1' => 150, 'QB2' => 10, 'RB' => 20, 'WR' => 10],
+        ]);
 
-        // The three best players cost more than the budget between them, so
-        // the lineup is a trade rather than a shopping list: it spends nearly
-        // everything and buys the best board it can for the money.
-        $this->assertLessThanOrEqual(200, $best['planned']);
-        $this->assertGreaterThan(150, $best['planned']);
+        $plan = collect(AuctionFacade::budgetSuggestions($this->draft, $this->member))->firstWhere('focus', 'BUDGET');
 
-        $names = collect(['QB', 'RB', 'WR'])->map(fn (string $slot) => $best['players'][$slot]['full_name']);
+        // The dollars are the ones that were saved, untouched.
+        $this->assertSame(150, $plan['allocations']['QB1']);
+        $this->assertSame(10, $plan['allocations']['QB2']);
 
-        $this->assertTrue($names->contains(fn (string $name) => str_starts_with($name, 'Best')));
+        // $150 reaches the best quarterback; $10 reaches the second one.
+        $this->assertSame('Best Quarterback', $plan['players']['QB1']['full_name']);
+        $this->assertSame('Second Quarterback', $plan['players']['QB2']['full_name']);
 
-        // Nobody is bought twice, however the money is split.
-        $this->assertSame($names->count(), $names->unique()->count());
+        // The best running back costs $120, so $20 does not reach him.
+        $this->assertSame('Second Runningback', $plan['players']['RB']['full_name']);
+    }
+
+    public function test_there_is_no_budget_plan_until_a_budget_is_saved(): void
+    {
+        $this->rankedPlayers();
+        $this->priorAuction([150, 120, 60, 10, 5, 5]);
+
+        $focuses = collect(AuctionFacade::budgetSuggestions($this->draft, $this->member))->pluck('focus');
+
+        $this->assertFalse($focuses->contains('BUDGET'));
     }
 
     public function test_the_suggested_budgets_page_is_only_for_an_unfinished_auction(): void
@@ -673,9 +685,10 @@ class AuctionDraftRoomTest extends TestCase
      */
     private function rankedPlayers(): void
     {
-        // A wide receiver slot as well, so the three plans have somewhere
-        // different to put their money.
-        $this->league->settings->update(['roster_positions' => ['QB', 'RB', 'WR', 'BE']]);
+        // Two quarterback slots and one of everything else, so a plan has
+        // somewhere different to put its money and the saved budget has two
+        // allocations at the same position to tell apart.
+        $this->league->settings->update(['roster_positions' => ['QB', 'QB', 'RB', 'WR', 'BE']]);
 
         $players = [
             ['Best', 'Quarterback', 'QB', 1],
@@ -684,6 +697,11 @@ class AuctionDraftRoomTest extends TestCase
             ['Second', 'Runningback', 'RB', 5],
             ['Best', 'Receiver', 'WR', 3],
             ['Second', 'Receiver', 'WR', 6],
+            // Ranked past the price curve, so these cost the minimum bid and a
+            // slot always has somebody cheap to fall back on.
+            ['Deep', 'Quarterback', 'QB', 7],
+            ['Deep', 'Runningback', 'RB', 8],
+            ['Deep', 'Receiver', 'WR', 9],
         ];
 
         foreach ($players as [$first, $last, $position, $rank]) {

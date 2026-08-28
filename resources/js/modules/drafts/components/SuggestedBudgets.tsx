@@ -75,9 +75,11 @@ function BudgetPlan({ suggestion, applying, onApply }: { suggestion: BudgetSugge
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" size="lg" disabled={applying} onClick={onApply}>
-          {applying ? 'Applying...' : 'Use this plan'}
-        </Button>
+        {suggestion.focus !== 'BEST' && (
+          <Button className="w-full" size="lg" disabled={applying} onClick={onApply}>
+            {applying ? 'Applying...' : 'Use this plan'}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

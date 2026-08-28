@@ -48,12 +48,6 @@ class SuggestBudgetsAction
     private const UNNAMED_SLOTS = ['K', 'DST', 'D/ST', 'DEF'];
 
     /**
-     * How many upgrades a lineup may take before it is called finished, so a
-     * long board cannot turn into a long loop.
-     */
-    private const MAX_UPGRADES = 250;
-
-    /**
      * @return array<int, array<string, mixed>> One plan per focus position.
      */
     public function run(Draft $draft, LeagueMember $member, ?Collection $cheatSheet = null): array
@@ -77,47 +71,59 @@ class SuggestBudgetsAction
             ->filter();
 
         return $plans
-            ->push($this->best($slots, $board, $budget))
+            ->push($this->best($draft, $member, $slots, $board, $budget))
             ->filter()
             ->values()
             ->all();
     }
 
     /**
-     * The best starting lineup the budget can buy, whatever positions it ends
-     * up favouring.
+     * The best lineup the budget you have actually written can buy.
      *
-     * The three focused plans each give a position priority whether or not the
-     * board says it deserves one; this one has no such loyalty. It starts from
-     * the cheapest legal lineup and spends what is left on whichever single
-     * upgrade buys the most projected points per dollar, over and over, until
-     * nothing affordable is worth doing.
+     * Nothing here is invented: the dollars are the ones saved in the plan, and
+     * each slot simply names the best player its own allocation reaches. It is
+     * the answer to "what does my plan buy?" rather than another suggestion —
+     * a slot planned at $53 shows the best $53 player, and one planned at $29
+     * shows the best $29 one.
      *
      * @param Collection<int, array> $slots
      * @param Collection<int, array> $board
      *
      * @return array<string, mixed>|null
      */
-    private function best(Collection $slots, Collection $board, int $budget): ?array
+    private function best(Draft $draft, LeagueMember $member, Collection $slots, Collection $board, int $budget): ?array
     {
-        $named = $slots->filter(fn (array $slot) => $this->isNamed($slot))->values();
+        $planned = collect((new BuildBudgetAction)->run($draft, $member)['rows'])
+            ->filter(fn (array $row) => $row['planned'] !== null)
+            ->mapWithKeys(fn (array $row) => [$row['key'] => (int) $row['planned']]);
 
-        if ($named->isEmpty()) {
+        if ($planned->isEmpty()) {
             return null;
         }
 
-        $bench = $slots->filter(fn (array $slot) => !$slot['is_starter']);
-        $spendable = $budget - ($bench->count() * self::MINIMUM) - $slots->filter(
-            fn (array $slot) => $slot['is_starter'] && !$this->isNamed($slot)
-        )->count() * self::MINIMUM;
+        $named = $slots->filter(fn (array $slot) => $this->isNamed($slot));
 
-        $lineup = $this->cheapestLineup($named, $board);
+        // The richest slots pick first, so the money that was set aside for a
+        // first quarterback is not spent on the second one.
+        $order = $named
+            ->filter(fn (array $slot) => $planned->has($slot['key']))
+            ->sortByDesc(fn (array $slot) => $planned->get($slot['key']))
+            ->values();
 
-        if ($lineup === null) {
-            return null;
+        $claimed = collect();
+        $lineup = [];
+
+        foreach ($order as $slot) {
+            $player = $this->bestAffordable($board, $slot, $claimed, $planned->get($slot['key']));
+
+            if ($player === null) {
+                continue;
+            }
+
+            $claimed->push($player['player_id']);
+
+            $lineup[$slot['key']] = $player;
         }
-
-        $lineup = $this->upgrade($lineup, $named, $board, $spendable);
 
         $rows = [];
 
@@ -125,7 +131,8 @@ class SuggestBudgetsAction
             $player = $lineup[$slot['key']] ?? null;
 
             $rows[$slot['key']] = [
-                'planned' => $player === null ? self::MINIMUM : max((int) round($player['price']), self::MINIMUM),
+                // The plan's own number, kept exactly as it was written.
+                'planned' => $planned->get($slot['key'], 0),
                 'player'  => $player === null ? null : [
                     'player_id'   => $player['player_id'],
                     'full_name'   => $player['full_name'],
@@ -135,102 +142,17 @@ class SuggestBudgetsAction
             ];
         }
 
-        $planned = collect($rows)->sum('planned');
+        $total = collect($rows)->sum('planned');
 
         return [
-            'focus'       => 'BEST',
-            'label'       => 'Best lineup',
+            'focus'       => 'BUDGET',
+            'label'       => 'Your budget',
             'allocations' => collect($rows)->map(fn (array $row) => $row['planned'])->all(),
             'players'     => collect($rows)->map(fn (array $row) => $row['player'])->all(),
-            'planned'     => $planned,
-            'unplanned'   => $budget - $planned,
+            'planned'     => $total,
+            'unplanned'   => $budget - $total,
             'starters'    => collect($rows)->filter(fn (array $row) => $row['player'] !== null)->sum('planned'),
         ];
-    }
-
-    /**
-     * The cheapest player available for every named slot, which is the lineup
-     * every better one is built out of.
-     *
-     * @param Collection<int, array> $named
-     * @param Collection<int, array> $board
-     *
-     * @return array<string, array>|null
-     */
-    private function cheapestLineup(Collection $named, Collection $board): ?array
-    {
-        $lineup = [];
-        $claimed = collect();
-
-        foreach ($named as $slot) {
-            $cheapest = $board
-                ->filter(fn (array $player) => !$claimed->contains($player['player_id'])
-                    && in_array($player['position_id'], $this->eligible($slot['slot'])))
-                ->sortBy('price')
-                ->first();
-
-            if ($cheapest === null) {
-                return null;
-            }
-
-            $claimed->push($cheapest['player_id']);
-
-            $lineup[$slot['key']] = $cheapest;
-        }
-
-        return $lineup;
-    }
-
-    /**
-     * Spend what is left one upgrade at a time, always taking the one that buys
-     * the most value per extra dollar.
-     *
-     * @param array<string, array> $lineup
-     * @param Collection<int, array> $named
-     * @param Collection<int, array> $board
-     *
-     * @return array<string, array>
-     */
-    private function upgrade(array $lineup, Collection $named, Collection $board, int $spendable): array
-    {
-        $spent = collect($lineup)->sum(fn (array $player) => max((int) round($player['price']), self::MINIMUM));
-
-        for ($step = 0; $step < self::MAX_UPGRADES; $step++) {
-            $best = null;
-
-            foreach ($named as $slot) {
-                $current = $lineup[$slot['key']];
-                $claimed = collect($lineup)->pluck('player_id');
-                $room = $spendable - $spent + max((int) round($current['price']), self::MINIMUM);
-
-                $candidates = $board->filter(fn (array $player) => !$claimed->contains($player['player_id'])
-                    && in_array($player['position_id'], $this->eligible($slot['slot']))
-                    && max((int) round($player['price']), self::MINIMUM) <= $room
-                    && $player['value'] > $current['value']);
-
-                foreach ($candidates as $candidate) {
-                    $cost = max((int) round($candidate['price']), self::MINIMUM) - max((int) round($current['price']), self::MINIMUM);
-
-                    // A free or cheaper upgrade is always worth taking, so it
-                    // is ranked above anything that costs money.
-                    $gain = $candidate['value'] - $current['value'];
-                    $ratio = $cost <= 0 ? PHP_FLOAT_MAX : $gain / $cost;
-
-                    if ($best === null || $ratio > $best['ratio']) {
-                        $best = ['slot' => $slot['key'], 'player' => $candidate, 'cost' => $cost, 'ratio' => $ratio];
-                    }
-                }
-            }
-
-            if ($best === null) {
-                return $lineup;
-            }
-
-            $lineup[$best['slot']] = $best['player'];
-            $spent += $best['cost'];
-        }
-
-        return $lineup;
     }
 
     /**
@@ -606,16 +528,6 @@ class SuggestBudgetsAction
         $available = $cheatSheet
             ->filter(fn (array $row) => $row['drafted_by'] === null && $row['position_id'] !== null);
 
-        // Ranks are only meaningful against the board they came from, so the
-        // worst rank on it is what turns a rank into a score.
-        $deepest = (int) $available->max('rank');
-
-        // Points and ranks cannot be mixed in one lineup: a deep player scored
-        // off his rank would outscore a projected star on a different scale.
-        // Points are used when the board carries them for anyone, and a player
-        // it has no projection for is simply worth nothing to the lineup.
-        $projected = $available->contains(fn (array $row) => ($row['projected_points'] ?? 0) > 0);
-
         return $available
             ->map(fn (array $row) => [
                 'player_id'   => $row['player_id'],
@@ -630,9 +542,6 @@ class SuggestBudgetsAction
                 // What the lineup is judged on. Projected points where the
                 // board has them, and the rank itself where it does not, since
                 // a board with no projections still knows who is better.
-                'value' => $projected
-                    ? (float) ($row['projected_points'] ?? 0)
-                    : (float) ($deepest + 1 - $row['rank']),
             ])
             ->sortBy('rank')
             ->values();
