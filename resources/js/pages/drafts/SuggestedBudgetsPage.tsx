@@ -41,6 +41,11 @@ export default function SuggestedBudgetsPage({ draft, budget, suggestions }: Sug
             <Link href={route('drafts.show', [draft.league_id, draft.league.season])}>
               <Button variant="outline">Back to Draft</Button>
             </Link>
+            {!draft.is_completed && (
+              <Link href={route('drafts.draft-room', draft.id)}>
+                <Button>Draft Room</Button>
+              </Link>
+            )}
           </div>
         </div>
 
