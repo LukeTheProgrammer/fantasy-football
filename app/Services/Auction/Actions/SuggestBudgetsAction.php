@@ -42,6 +42,12 @@ class SuggestBudgetsAction
     private const RESERVE_SLOTS = ['BE', 'IR', 'OVER'];
 
     /**
+     * Slots that are not part of the budget at all, because nobody is drafted
+     * into them. They are left out entirely rather than planned at a dollar.
+     */
+    private const UNBUDGETED_SLOTS = ['OVER', 'IR'];
+
+    /**
      * Starting slots left unnamed. A kicker and a defence are streamed off
      * waivers for a dollar, so planning who fills them is false precision.
      */
@@ -500,7 +506,7 @@ class SuggestBudgetsAction
     private function slots(Draft $draft, LeagueMember $member): Collection
     {
         $slots = collect((new SlotRostersAction)->run($draft)->get($member->id) ?? [])
-            ->reject(fn (array $slot) => $slot['slot'] === 'OVER');
+            ->reject(fn (array $slot) => in_array($slot['slot'], self::UNBUDGETED_SLOTS));
 
         $totals = $slots->countBy('slot');
         $counts = [];

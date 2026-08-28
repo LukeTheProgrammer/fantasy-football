@@ -53,9 +53,12 @@ export function BudgetDialog({ budget, draftId, trigger }: BudgetDialogProps) {
           <DialogTitle>Budget Plan</DialogTitle>
           <DialogDescription>Plan what each starting slot is worth to you out of your ${budget.budget} auction budget.</DialogDescription>
         </DialogHeader>
-        <p className="text-xs text-muted-foreground tabular-nums">
-          {money(planned)} planned · {unplanned >= 0 ? `${money(unplanned)} unplanned` : `${money(Math.abs(unplanned))} over`}
-        </p>
+        <div className="w-full flex justify-around gap-4">
+          <p className="m-0 tabular-nums">
+            {unplanned >= 0 ? `${money(unplanned)} remaining` : `${money(Math.abs(unplanned))} over`}
+          </p>
+          <p className="m-0 tabular-nums text-right text-lg font-bold">{money(planned)}</p>
+        </div>
         <div className="min-h-0 flex-1 overflow-y-auto">
           <Table className="table-fixed" containerClassName="h-full overflow-auto">
             <TableHeader className="sticky top-0 z-10 bg-background shadow-sm [&_th]:bg-background">

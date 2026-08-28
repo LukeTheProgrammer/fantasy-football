@@ -21,10 +21,11 @@ use App\Models\LeagueMember;
 class BuildBudgetAction
 {
     /**
-     * Slots that exist only to hold a pick with nowhere else to go, and so are
-     * never planned for.
+     * Slots nobody is drafted into, and so are never planned for: a pick with
+     * nowhere else to go, and injured reserve, which is filled from the roster
+     * during the season rather than bought at auction.
      */
-    private const UNPLANNED_SLOTS = ['OVER'];
+    private const UNPLANNED_SLOTS = ['OVER', 'IR'];
 
     public function run(Draft $draft, LeagueMember $member): array
     {
