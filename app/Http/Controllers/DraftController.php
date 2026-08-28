@@ -151,7 +151,7 @@ class DraftController extends Controller
         [$ppr, $superflex] = $this->rankingFormat($draft->league);
 
         $availablePlayers = DraftRanking::query()
-            ->latestRanking($draft->league->season)
+            ->latestRanking($draft->league->season, $ppr, $superflex)
             ->forFormat($ppr, $superflex)
             ->where(function ($q) {
                 $q->where('rank', '>', 0)

@@ -6,7 +6,6 @@ use App\Enums\Datum;
 use App\Models\Draft;
 use App\Models\DraftPick;
 use App\Models\DraftRanking;
-use App\Models\PlayerProjection;
 use App\Services\Auction\Helpers\PreviousAuction;
 use Illuminate\Support\Collection;
 
@@ -27,10 +26,14 @@ class BuildCheatSheetAction
             return collect();
         }
 
+        $projections = (new CalculateProjectedValuesAction)->projectedPoints($draft);
+
         $marketValues = (new CalculateMarketValuesAction)->run($draft);
-        $projectedValues = (new CalculateProjectedValuesAction)->run($draft);
+        $projectedValues = (new CalculateProjectedValuesAction)->run($draft, $projections);
         $previousPrices = $this->previousPrices($draft);
-        $projectedPoints = $this->projectedPoints($draft);
+        $projectedPoints = $projections->mapWithKeys(fn ($player) => [
+            $player['player_id'] => round($player['points'], 1),
+        ]);
         $averageValues = $this->averageDraftValues($draft);
         $drafted = $draft->picks->keyBy('player_id');
 
@@ -95,7 +98,7 @@ class BuildCheatSheetAction
         }
 
         return DraftRanking::query()
-            ->latestRanking($season)
+            ->latestRanking($season, $format[0], $format[1])
             ->forFormat($format[0], $format[1])
             ->where('rank', '>', 0)
             ->with(['player:id,full_name,position_id,team_id,headshot'])
@@ -145,29 +148,5 @@ class BuildCheatSheetAction
             ->where('adv', '>', 0)
             ->pluck('adv', 'player_id')
             ->map(fn ($value) => round((float) $value));
-    }
-
-    /**
-     * Projected points per player in this league's scoring format.
-     *
-     * @return Collection<int, float> Keyed by player id.
-     */
-    private function projectedPoints(Draft $draft): Collection
-    {
-        $league = $draft->league;
-        $ppr = $league->settings?->pprValue() ?? 0.0;
-
-        return PlayerProjection::query()
-            ->forSeason($league->season)
-            ->fromSource(Datum::SOURCE_FANTASY_PROS)
-            ->where('superflex', false)
-            ->where('projected_points', '>', 0)
-            ->get()
-            ->groupBy('player_id')
-            ->map(function (Collection $rows) use ($ppr) {
-                $row = $rows->firstWhere('ppr', $ppr) ?? $rows->sortBy('ppr')->first();
-
-                return round((float) $row->projected_points, 1);
-            });
     }
 }

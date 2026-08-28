@@ -33,15 +33,20 @@ class CalculateProjectedValuesAction
     public const FLEX_POSITIONS = ['RB', 'WR', 'TE'];
 
     /**
+     * @param Collection|null $points Projected points already fetched by the
+     *                                caller, in the shape projectedPoints()
+     *                                returns, so the sheet and this action
+     *                                read the projections table once.
+     *
      * @return Collection<int, float> Dollar value keyed by player id.
      */
-    public function run(Draft $draft): Collection
+    public function run(Draft $draft, ?Collection $points = null): Collection
     {
         $league = $draft->league;
         $teamCount = max(1, $league->members->count());
         $rosterSize = (int) ($league->settings?->roster_size ?? 0);
 
-        $points = $this->projectedPoints($draft);
+        $points ??= $this->projectedPoints($draft);
 
         if ($points->isEmpty()) {
             return collect();
@@ -81,7 +86,7 @@ class CalculateProjectedValuesAction
      * falling back to standard scoring for positions the format does not
      * publish separately.
      */
-    private function projectedPoints(Draft $draft): Collection
+    public function projectedPoints(Draft $draft): Collection
     {
         $league = $draft->league;
         $ppr = $league->settings?->pprValue() ?? 0.0;

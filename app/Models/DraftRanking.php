@@ -89,17 +89,57 @@ class DraftRanking extends Model
      * Newest is per source and format, not across the table: sources publish on
      * their own schedules, so one source importing today would otherwise hide
      * every format it does not publish.
+     *
+     * Pass the format being asked for whenever the caller knows it. That turns
+     * the lookup into one scalar over a single slice; without it the newest
+     * date has to be worked out for every format at once, which is the same
+     * answer for far more work.
      */
-    public function scopeLatestRanking(Builder $query, int $season): Builder
+    public function scopeLatestRanking(
+        Builder $query,
+        int $season,
+        ?float $ppr = null,
+        ?bool $superflex = null,
+        ?string $type = null,
+        ?string $source = null
+    ): Builder {
+        // Qualified: the all-formats branch joins the table to itself, so a
+        // bare column name is ambiguous there.
+        $query->where('draft_rankings.season', $season);
+
+        if ($ppr === null && $superflex === null && $source === null) {
+            return $this->latestPerFormat($query, $season);
+        }
+
+        $latest = DraftRanking::query()->where('season', $season);
+
+        foreach (compact('ppr', 'superflex', 'type', 'source') as $column => $value) {
+            if ($value !== null) {
+                $latest->where($column, $value);
+            }
+        }
+
+        return $query->where('ranked_at', $latest->max('ranked_at'));
+    }
+
+    /**
+     * The newest date held for each source and format, joined back on so a
+     * caller that spans formats still sees only current rows.
+     */
+    private function latestPerFormat(Builder $query, int $season): Builder
     {
-        return $query->where('season', $season)
-            ->where('ranked_at', fn ($latest) => $latest->selectRaw('max(ranked_at)')
-                ->from('draft_rankings as latest')
-                ->whereColumn('latest.season', 'draft_rankings.season')
-                ->whereColumn('latest.type', 'draft_rankings.type')
-                ->whereColumn('latest.ppr', 'draft_rankings.ppr')
-                ->whereColumn('latest.superflex', 'draft_rankings.superflex')
-                ->whereColumn('latest.source', 'draft_rankings.source'));
+        $latest = DraftRanking::query()
+            ->selectRaw('season, type, ppr, superflex, source, max(ranked_at) as ranked_at')
+            ->where('season', $season)
+            ->groupBy('season', 'type', 'ppr', 'superflex', 'source');
+
+        return $query
+            ->select('draft_rankings.*')
+            ->joinSub($latest, 'latest', function ($join) {
+                foreach (['season', 'type', 'ppr', 'superflex', 'source', 'ranked_at'] as $column) {
+                    $join->on("latest.{$column}", '=', "draft_rankings.{$column}");
+                }
+            });
     }
 
     /**

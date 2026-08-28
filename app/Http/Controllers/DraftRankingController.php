@@ -20,7 +20,7 @@ class DraftRankingController extends Controller
         $format = $this->format(request(), $season);
 
         $draftRankings = DraftRanking::query()
-            ->latestRanking($season)
+            ->latestRanking($season, $format['ppr'], $format['superflex'], $format['type'])
             ->forFormat($format['ppr'], $format['superflex'], $format['type'])
             ->whereNotNull('rank')
             ->where('rank', '>', 0)
