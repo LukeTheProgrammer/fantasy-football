@@ -117,6 +117,8 @@ class LeagueShowResource extends JsonResource
                 'points_for_rank'     => $this->rankName($pfRank),
                 'points_against'      => $member->points_against,
                 'points_against_rank' => $this->rankName($paRank),
+                'playoff_seed'        => $member->playoff_seed,
+                'final_rank'          => $member->final_rank,
                 'faab_balance'        => $member->faab_balance,
                 'rosters'             => $this->formatRosters($member->rosters),
             ];
@@ -144,10 +146,14 @@ class LeagueShowResource extends JsonResource
 
     /* ===[ FORMATTERS ]=== */
 
-    private function formatFantasyTeam(?LeagueMember $team)
+    /**
+     * A missing team is sent as null rather than an empty array: a playoff bye
+     * has no opponent, and an empty array reads as a team on the front end.
+     */
+    private function formatFantasyTeam(?LeagueMember $team): ?array
     {
         if (!$team) {
-            return [];
+            return null;
         }
 
         return [
@@ -155,6 +161,8 @@ class LeagueShowResource extends JsonResource
             'team_name'      => $team->team_name,
             'owner_name'     => $team->owner_name,
             'team_logo'      => $team->team_logo,
+            'playoff_seed'   => $team->playoff_seed,
+            'final_rank'     => $team->final_rank,
             'wins'           => $team->wins,
             'losses'         => $team->losses,
             'ties'           => $team->ties,

@@ -178,7 +178,11 @@ class FantasyLeagueFormatter
                 'ties'           => $record?->ties,
                 'points_for'     => $record?->pointsFor,
                 'points_against' => $record?->pointsAgainst,
-                'faab_balance'   => 200 - intval($team->transactionCounter->acquisitionBudgetSpent),
+                // Where the team went into the playoffs and where it finished.
+                // ESPN only fills the final rank once the season is over.
+                'playoff_seed' => $team->playoffSeed,
+                'final_rank'   => $team->rankCalculatedFinal ?: $team->rankFinal,
+                'faab_balance' => 200 - intval($team->transactionCounter->acquisitionBudgetSpent),
             ];
         });
     }

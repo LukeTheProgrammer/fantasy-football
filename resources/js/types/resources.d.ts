@@ -47,6 +47,10 @@ export interface LeagueTeamResource {
   team_name: string;
   owner_name: string;
   team_logo: string;
+  /** Where the team went into the playoffs; null when it missed them. */
+  playoff_seed: number | null;
+  /** Where it finished, once the platform has settled the season. */
+  final_rank: number | null;
   wins: number;
   losses: number;
   ties: number;
@@ -72,6 +76,10 @@ export interface LeagueMemberResource {
   points_for_rank: string;
   points_against: number;
   points_against_rank: string;
+  /** Where the team went into the playoffs; null when it missed them. */
+  playoff_seed: number | null;
+  /** Where it finished, once the platform has settled the season. */
+  final_rank: number | null;
   faab_balance: number;
 
   rosters: Record<string, LeagueRosterResource[]>;

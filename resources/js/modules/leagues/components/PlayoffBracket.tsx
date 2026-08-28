@@ -51,12 +51,17 @@ export function PlayoffBracket({ league }: PlayoffBracketProps) {
         <h4 className="text-lg font-semibold">Playoff Bracket</h4>
       </div>
 
-      <div className="flex gap-6 overflow-x-auto pb-2">
+      <div className={`grid w-full gap-6 grid-cols-${rounds.length} mb-4`}>
         {rounds.map((round, index) => (
+          <p className="text-center font-medium text-muted-foreground uppercase">
+            {roundName(index, rounds.length)} · Week {round.week}
+          </p>
+        ))}
+      </div>
+
+      <div className="flex gap-6 overflow-x-auto pb-2">
+        {rounds.map((round) => (
           <div key={round.week} className="flex min-w-[16rem] flex-1 flex-col justify-around gap-4">
-            <p className="text-xs font-medium text-muted-foreground uppercase">
-              {roundName(index, rounds.length)} · Week {round.week}
-            </p>
             {round.matchups.map((matchup) => (
               <BracketMatchup key={matchup.id} matchup={matchup} />
             ))}
@@ -124,6 +129,7 @@ function BracketMatchup({ matchup }: { matchup: LeagueMatchupResource }) {
 function BracketTeam({ team, score, won }: { team: LeagueTeamResource; score: number; won: boolean }) {
   return (
     <div className={cn('flex items-center gap-2 px-3 py-2', !won && 'text-muted-foreground')}>
+      {team.playoff_seed !== null && <span className="w-4 shrink-0 text-xs text-muted-foreground tabular-nums">{team.playoff_seed}</span>}
       <TeamAvatar member={team} />
       <span className={cn('min-w-0 flex-1 truncate text-sm', won && 'font-semibold')}>{team.team_name}</span>
       <span className="shrink-0 text-sm tabular-nums">{c(score).toFloat() || '—'}</span>
