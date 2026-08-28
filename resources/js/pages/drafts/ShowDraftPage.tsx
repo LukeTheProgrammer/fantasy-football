@@ -86,7 +86,7 @@ export default function ShowDraft({ draft, seasons, rosters, budget }: DraftShow
                   <h2 className="text-lg font-semibold">{draft.is_completed ? 'Y' : 'N'}</h2>
                 </div>
               </div>
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-end gap-2">
                 {!draft.is_completed && isAuction && (
                   <Link href={route('drafts.budgets', draft.id)}>
                     <Button>Suggested Budgets</Button>

@@ -171,6 +171,13 @@ class SuggestBudgetsAction
             $rows[$slot['key']] = ['planned' => self::MINIMUM, 'player' => null];
         }
 
+        // Slots are bought in one order and read in another: the plan is shown
+        // as a roster, so it comes back the way the league lists its slots.
+        $rows = $slots
+            ->filter(fn (array $slot) => isset($rows[$slot['key']]))
+            ->mapWithKeys(fn (array $slot) => [$slot['key'] => $rows[$slot['key']]])
+            ->all();
+
         $planned = collect($rows)->sum('planned');
 
         return [
