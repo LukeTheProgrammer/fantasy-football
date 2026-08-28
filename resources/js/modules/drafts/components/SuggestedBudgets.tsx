@@ -1,6 +1,5 @@
-import { cn } from '@/common/helpers/cn';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { money } from '@/modules/drafts/helpers/money';
 import { type BudgetSuggestion } from '@/types/models';
 import { router } from '@inertiajs/react';
@@ -37,52 +36,49 @@ export function SuggestedBudgets({ suggestions, draftId }: SuggestedBudgetsProps
   };
 
   return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {suggestions.map((suggestion) => (
+        <BudgetPlan suggestion={suggestion} applying={applying === suggestion.focus} onApply={() => apply(suggestion)} />
+      ))}
+    </div>
+  );
+}
+
+function BudgetPlan({ suggestion, applying, onApply }: { suggestion: BudgetSuggestion; applying: boolean; onApply: () => void }) {
+  return (
     <Card>
       <CardHeader>
+        <CardTitle>{suggestion.label}</CardTitle>
         <CardDescription>
-          Applying a plan saves it as your budget. Nothing else changes: you can still edit it slot by slot afterwards.
+          {money(suggestion.starters)} on starters · {money(suggestion.unplanned)} unplanned
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {suggestions.map((suggestion) => (
-            <div key={suggestion.focus} className="flex flex-col rounded-md border">
-              <div className="border-b px-3 py-2">
-                <p className="font-medium">{suggestion.label}</p>
-                <p className="text-xs text-muted-foreground tabular-nums">
-                  {money(suggestion.starters)} on starters · {money(suggestion.unplanned)} unplanned
-                </p>
+        <div className="flex-1 space-y-3 px-3 py-2">
+          {Object.entries(suggestion.allocations).map(([key, amount]) => {
+            const player = suggestion.players[key];
+
+            // The bench is a dollar a spot by design, so listing it says
+            // nothing the plan does not already say once.
+            if (!player) {
+              return null;
+            }
+
+            return (
+              <div key={key} className="flex items-center gap-2 text-sm">
+                <span className="w-16 shrink-0 text-xs font-medium text-muted-foreground">{key}</span>
+                <span className="min-w-0 flex-1 truncate">{player.full_name}</span>
+                <span className="shrink-0 tabular-nums">{money(amount)}</span>
               </div>
-
-              <div className="flex-1 space-y-1 px-3 py-2">
-                {Object.entries(suggestion.allocations).map(([key, amount]) => {
-                  const player = suggestion.players[key];
-
-                  // The bench is a dollar a spot by design, so listing it says
-                  // nothing the plan does not already say once.
-                  if (!player) {
-                    return null;
-                  }
-
-                  return (
-                    <div key={key} className="flex items-center gap-2 text-sm">
-                      <span className="w-16 shrink-0 text-xs font-medium text-muted-foreground">{key}</span>
-                      <span className="min-w-0 flex-1 truncate">{player.full_name}</span>
-                      <span className="shrink-0 tabular-nums">{money(amount)}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="border-t px-3 py-2">
-                <Button variant="outline" size="sm" className={cn('w-full')} disabled={applying !== null} onClick={() => apply(suggestion)}>
-                  {applying === suggestion.focus ? 'Applying...' : 'Use this plan'}
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
+      <CardFooter>
+        <Button className="w-full" size="lg" disabled={applying} onClick={onApply}>
+          {applying ? 'Applying...' : 'Use this plan'}
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

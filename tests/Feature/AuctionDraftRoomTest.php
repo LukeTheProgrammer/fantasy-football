@@ -514,7 +514,7 @@ class AuctionDraftRoomTest extends TestCase
 
         $suggestions = collect(AuctionFacade::budgetSuggestions($this->draft, $this->member));
 
-        $this->assertSame(['QB', 'RB', 'WR'], $suggestions->pluck('focus')->all());
+        $this->assertSame(['QB', 'RB', 'WR', 'BEST'], $suggestions->pluck('focus')->all());
 
         // The quarterback plan buys the best quarterback outright; the running
         // back plan spends that money on the best running back instead.
@@ -577,6 +577,27 @@ class AuctionDraftRoomTest extends TestCase
             $this->assertNull($plan['players']['K']);
             $this->assertNull($plan['players']['DST']);
         }
+    }
+
+    public function test_the_best_lineup_spends_the_budget_on_the_best_players_it_can(): void
+    {
+        $this->rankedPlayers();
+        $this->priorAuction([150, 120, 60, 10, 5, 5]);
+
+        $best = collect(AuctionFacade::budgetSuggestions($this->draft, $this->member))->firstWhere('focus', 'BEST');
+
+        // The three best players cost more than the budget between them, so
+        // the lineup is a trade rather than a shopping list: it spends nearly
+        // everything and buys the best board it can for the money.
+        $this->assertLessThanOrEqual(200, $best['planned']);
+        $this->assertGreaterThan(150, $best['planned']);
+
+        $names = collect(['QB', 'RB', 'WR'])->map(fn (string $slot) => $best['players'][$slot]['full_name']);
+
+        $this->assertTrue($names->contains(fn (string $name) => str_starts_with($name, 'Best')));
+
+        // Nobody is bought twice, however the money is split.
+        $this->assertSame($names->count(), $names->unique()->count());
     }
 
     public function test_the_suggested_budgets_page_is_only_for_an_unfinished_auction(): void
