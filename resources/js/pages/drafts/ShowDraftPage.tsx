@@ -2,9 +2,11 @@ import { Heading } from '@/common/heading/Heading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
+import { PositionPlayers } from '@/modules/drafts/components/PositionPlayers';
 import { PositionPriceChart } from '@/modules/drafts/components/PositionPriceChart';
 import { TeamRosters } from '@/modules/drafts/components/TeamRosters';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
+import { topPicksAtPosition } from '@/modules/drafts/helpers/topPicksAtPosition';
 import { SeasonSelect } from '@/modules/leagues/components/SeasonSelect';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { PageProps, type BreadcrumbItem, type SharedData } from '@/types';
@@ -37,6 +39,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function ShowDraft({ draft, seasons, rosters, budget }: DraftShowProps) {
   const { auth } = usePage<SharedData>().props;
   const userId = auth.user.id;
+
+  const isAuction = draft.draft_type === 'auction';
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -93,21 +97,34 @@ export default function ShowDraft({ draft, seasons, rosters, budget }: DraftShow
           </CardContent>
         </Card>
 
-        {draft.is_completed && draft.draft_type === 'auction' && (
-          <div className="mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Prices by Position</CardTitle>
-                <CardDescription>What each position cost, most expensive first.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PositionPriceChart picks={draft.picks} />
-              </CardContent>
-            </Card>
-          </div>
+        {draft.is_completed && isAuction && (
+          <>
+            <div className="mb-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Prices by Position</CardTitle>
+                  <CardDescription>What each position cost, most expensive first.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <PositionPriceChart picks={draft.picks} />
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="mb-8 grid grid-cols-4 gap-6">
+              {['QB', 'RB', 'WR', 'TE'].map((position) => (
+                <PositionPlayers
+                  key={position}
+                  position={position}
+                  players={topPicksAtPosition(draft.picks, position, isAuction)}
+                  isAuction={isAuction}
+                />
+              ))}
+            </div>
+          </>
         )}
 
-        <TeamRosters members={draft.league.members} rosters={rosters} isAuction={draft.draft_type === 'auction'} />
+        <TeamRosters members={draft.league.members} rosters={rosters} isAuction={isAuction} />
       </div>
     </AppLayout>
   );
