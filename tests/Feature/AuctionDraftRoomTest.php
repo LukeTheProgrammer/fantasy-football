@@ -560,6 +560,47 @@ class AuctionDraftRoomTest extends TestCase
         );
     }
 
+    public function test_every_named_starting_slot_is_given_a_player(): void
+    {
+        $this->rankedPlayers();
+        $this->priorAuction([150, 120, 60, 10, 5, 5]);
+
+        // A kicker and a defence are streamed for a dollar, so the plan leaves
+        // them unnamed on purpose.
+        $this->league->settings->update(['roster_positions' => ['QB', 'RB', 'WR', 'K', 'DST', 'BE']]);
+
+        foreach (AuctionFacade::budgetSuggestions($this->draft, $this->member) as $plan) {
+            foreach (['QB', 'RB', 'WR'] as $slot) {
+                $this->assertNotNull($plan['players'][$slot], $plan['focus'] . ' plan left ' . $slot . ' empty');
+            }
+
+            $this->assertNull($plan['players']['K']);
+            $this->assertNull($plan['players']['DST']);
+        }
+    }
+
+    public function test_the_suggested_budgets_page_is_only_for_an_unfinished_auction(): void
+    {
+        $this->actingAs($this->user)
+            ->get(route('drafts.budgets', $this->draft))
+            ->assertInertia(fn ($page) => $page->component('drafts/SuggestedBudgetsPage'));
+
+        $this->draft->update(['is_completed' => true]);
+
+        $this->actingAs($this->user)
+            ->get(route('drafts.budgets', $this->draft))
+            ->assertRedirect(route('drafts.show', [$this->league->id, $this->league->season]));
+    }
+
+    public function test_someone_without_a_team_cannot_see_the_suggested_budgets(): void
+    {
+        $outsider = User::factory()->create();
+
+        $this->actingAs($outsider)
+            ->get(route('drafts.budgets', $this->draft))
+            ->assertForbidden();
+    }
+
     public function test_there_is_nothing_to_suggest_without_a_ranked_board(): void
     {
         $this->assertSame([], AuctionFacade::budgetSuggestions($this->draft, $this->member));

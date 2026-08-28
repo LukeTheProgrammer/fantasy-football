@@ -42,6 +42,12 @@ class SuggestBudgetsAction
     private const RESERVE_SLOTS = ['BE', 'IR', 'OVER'];
 
     /**
+     * Starting slots left unnamed. A kicker and a defence are streamed off
+     * waivers for a dollar, so planning who fills them is false precision.
+     */
+    private const UNNAMED_SLOTS = ['K', 'DST', 'D/ST', 'DEF'];
+
+    /**
      * @return array<int, array<string, mixed>> One plan per focus position.
      */
     public function run(Draft $draft, LeagueMember $member, ?Collection $cheatSheet = null): array
@@ -89,11 +95,16 @@ class SuggestBudgetsAction
         $rows = [];
         $carried = 0;
 
+        // Every named slot has to be able to buy somebody, so the cheapest
+        // player it could take is costed out before anything is spent. Without
+        // that floor a plan can run out of money and leave a starting spot
+        // empty, which is not a plan.
+        $floors = $this->floors($order, $board);
+
         // The best player at the focus position is bought outright rather than
         // out of a share: a plan built around a quarterback that cannot reach
         // the best quarterback is not built around him at all.
-        $starters = collect($order)->filter(fn (array $slot) => $slot['is_starter']);
-        $anchor = $this->anchor($order, $board, $focus, $budget - $reserve - ($starters->count() - 1) * self::MINIMUM);
+        $anchor = $this->anchor($order, $board, $focus, $budget - $reserve - array_sum($floors) + ($floors[$this->focusKey($order, $focus)] ?? 0));
 
         if ($anchor !== null) {
             $claimed->push($anchor['player']['player_id']);
@@ -111,24 +122,39 @@ class SuggestBudgetsAction
 
         $remaining = collect($order)->reject(fn (array $slot) => isset($rows[$slot['key']]))->values()->all();
 
-        $shares = $this->shares($remaining, $board, $focus, max($budget - $reserve - ($anchor['price'] ?? 0), 0), $claimed);
+        // The floors of the slots still to come are not available to the ones
+        // in front of them, so each share is drawn from what is left over.
+        $committed = collect($remaining)->sum(fn (array $slot) => $floors[$slot['key']] ?? 0);
 
-        foreach ($remaining as $slot) {
+        $shares = $this->shares($remaining, $board, $focus, max($budget - $reserve - ($anchor['price'] ?? 0) - $committed, 0), $claimed);
+
+        $spent = ($anchor['price'] ?? 0) + $reserve;
+
+        foreach ($remaining as $position => $slot) {
+            $floor = $floors[$slot['key']] ?? 0;
             $share = $shares[$slot['key']] ?? self::MINIMUM;
+
+            // Whatever the shares say, a slot can only spend what is actually
+            // left once the slots behind it can still afford their cheapest
+            // player. That cap is what keeps a plan inside the budget.
+            $later = collect($remaining)
+                ->slice($position + 1)
+                ->sum(fn (array $next) => max($floors[$next['key']] ?? 0, self::MINIMUM));
 
             // What this slot did not need is still on the table for the next
             // one, which is how a plan built on averages survives a cheap slot.
-            $ceiling = $share + $carried;
+            $ceiling = min($floor + $share + $carried, $budget - $spent - $later);
 
             $player = $this->bestAffordable($board, $slot, $claimed, $ceiling);
 
-            $price = $player === null ? $share : max((int) round($player['price']), self::MINIMUM);
+            $price = $player === null ? max($share, self::MINIMUM) : max((int) round($player['price']), self::MINIMUM);
 
             if ($player !== null) {
                 $claimed->push($player['player_id']);
             }
 
             $carried = $ceiling - $price;
+            $spent += $price;
 
             $rows[$slot['key']] = [
                 'planned' => $price,
@@ -232,6 +258,65 @@ class SuggestBudgetsAction
     }
 
     /**
+     * The cheapest player each named starting slot could fall back on, keyed by
+     * slot. A slot nobody is planned for — a kicker, a defence — has no floor.
+     *
+     * @param array<int, array> $order
+     * @param Collection<int, array> $board
+     *
+     * @return array<string, int>
+     */
+    private function floors(array $order, Collection $board): array
+    {
+        $claimed = collect();
+        $floors = [];
+
+        foreach ($order as $slot) {
+            if (!$this->isNamed($slot)) {
+                continue;
+            }
+
+            $cheapest = $board
+                ->filter(fn (array $player) => !$claimed->contains($player['player_id'])
+                    && in_array($player['position_id'], $this->eligible($slot['slot'])))
+                ->sortBy('price')
+                ->first();
+
+            if ($cheapest === null) {
+                continue;
+            }
+
+            $claimed->push($cheapest['player_id']);
+
+            $floors[$slot['key']] = max((int) round($cheapest['price']), self::MINIMUM);
+        }
+
+        return $floors;
+    }
+
+    /**
+     * Whether a slot is one the plan names a player for.
+     *
+     * @param array<string, mixed> $slot
+     */
+    private function isNamed(array $slot): bool
+    {
+        return $slot['is_starter']
+            && !in_array($slot['slot'], self::RESERVE_SLOTS)
+            && !in_array($slot['slot'], self::UNNAMED_SLOTS);
+    }
+
+    /**
+     * The key of the slot the focus position is anchored in.
+     *
+     * @param array<int, array> $order
+     */
+    private function focusKey(array $order, string $focus): ?string
+    {
+        return collect($order)->first(fn (array $slot) => $slot['is_starter'] && $slot['slot'] === $focus)['key'] ?? null;
+    }
+
+    /**
      * The best player at the focus position, and the slot he goes in.
      *
      * A plan that cannot afford him without starving the rest of the roster
@@ -294,7 +379,7 @@ class SuggestBudgetsAction
      */
     private function bestAffordable(Collection $board, array $slot, Collection $claimed, int $ceiling): ?array
     {
-        if (in_array($slot['slot'], self::RESERVE_SLOTS) || $ceiling < self::MINIMUM) {
+        if (!$this->isNamed($slot) || $ceiling < self::MINIMUM) {
             return null;
         }
 

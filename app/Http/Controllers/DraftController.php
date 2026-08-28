@@ -6,6 +6,7 @@ use App\Facades\Auction as AuctionFacade;
 use App\Models\Draft;
 use App\Models\DraftRanking;
 use App\Models\League;
+use App\Models\LeagueMember;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -81,11 +82,6 @@ class DraftController extends Controller
             'budget'  => $draft->draft_type === 'auction' && $member
                 ? AuctionFacade::budget($draft, $member)
                 : null,
-            // Suggestions are only worth anything before the draft: once it is
-            // over there is nothing left to plan.
-            'suggestions' => $draft->draft_type === 'auction' && $member && !$draft->is_completed
-                ? AuctionFacade::budgetSuggestions($draft, $member)
-                : [],
         ]);
     }
 
@@ -105,6 +101,35 @@ class DraftController extends Controller
                 'season' => $league->season,
             ])
             ->values();
+    }
+
+    /**
+     * Three budgets to choose between, each built around a different position.
+     *
+     * Its own page rather than a panel: the plans are read against each other,
+     * and three rosters side by side need the room.
+     */
+    public function budgets(Draft $draft)
+    {
+        $draft->load(['league.members', 'league.settings']);
+
+        $member = $draft->league->members->firstWhere('user_id', Auth::id());
+
+        if (!$member instanceof LeagueMember) {
+            abort(403, 'You do not have a team in this league');
+        }
+
+        if ($draft->draft_type !== 'auction' || $draft->is_completed) {
+            return redirect()
+                ->route('drafts.show', [$draft->league_id, $draft->league->season])
+                ->with('error', 'There is nothing left to plan for this draft.');
+        }
+
+        return Inertia::render('drafts/SuggestedBudgetsPage', [
+            'draft'       => $draft,
+            'budget'      => AuctionFacade::budget($draft, $member),
+            'suggestions' => AuctionFacade::budgetSuggestions($draft, $member),
+        ]);
     }
 
     /**
@@ -186,15 +211,12 @@ class DraftController extends Controller
         $players = AuctionFacade::cheatSheet($draft);
 
         return Inertia::render('drafts/AuctionDraftRoomPage', [
-            'draft'       => $draft,
-            'players'     => $players,
-            'market'      => AuctionFacade::market($draft, $players),
-            'teams'       => AuctionFacade::teams($draft),
-            'rosters'     => AuctionFacade::rosters($draft),
-            'budget'      => $member ? AuctionFacade::budget($draft, $member) : null,
-            'suggestions' => $member && !$draft->is_completed
-                ? AuctionFacade::budgetSuggestions($draft, $member, $players)
-                : [],
+            'draft'   => $draft,
+            'players' => $players,
+            'market'  => AuctionFacade::market($draft, $players),
+            'teams'   => AuctionFacade::teams($draft),
+            'rosters' => AuctionFacade::rosters($draft),
+            'budget'  => $member ? AuctionFacade::budget($draft, $member) : null,
         ]);
     }
 

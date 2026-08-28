@@ -2,9 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { BudgetSuggestions } from '@/modules/drafts/components/BudgetSuggestions';
 import { money } from '@/modules/drafts/helpers/money';
-import { type AuctionBudget, type BudgetSuggestion } from '@/types/models';
+import { type AuctionBudget } from '@/types/models';
 import { useForm } from '@inertiajs/react';
 import { type ReactNode, useMemo, useState } from 'react';
 
@@ -12,16 +11,13 @@ interface BudgetDialogProps {
   budget: AuctionBudget;
   draftId: number;
   trigger?: ReactNode;
-  /** Ready made plans to start from; empty once the draft is over. */
-  suggestions?: BudgetSuggestion[];
 }
 
 /**
  * The editable auction budget plan, slot by slot, out of the league's budget.
  */
-export function BudgetDialog({ budget, draftId, trigger, suggestions = [] }: BudgetDialogProps) {
+export function BudgetDialog({ budget, draftId, trigger }: BudgetDialogProps) {
   const [open, setOpen] = useState(false);
-  const [applied, setApplied] = useState<string | null>(null);
 
   const { data, setData, put, processing, isDirty, reset } = useForm<{ allocations: Record<string, string> }>({
     allocations: Object.fromEntries(budget.rows.map((row) => [row.key, row.planned !== null ? String(row.planned) : ''])),
@@ -44,18 +40,9 @@ export function BudgetDialog({ budget, draftId, trigger, suggestions = [] }: Bud
   const handleOpenChange = (next: boolean) => {
     if (!next) {
       reset();
-      setApplied(null);
     }
 
     setOpen(next);
-  };
-
-  // A suggestion fills the boxes and nothing more: it is saved by the same
-  // button as a plan written by hand.
-  const handleApply = (suggestion: BudgetSuggestion) => {
-    setData('allocations', Object.fromEntries(budget.rows.map((row) => [row.key, String(suggestion.allocations[row.key] ?? '')])));
-
-    setApplied(suggestion.focus);
   };
 
   return (
@@ -66,8 +53,6 @@ export function BudgetDialog({ budget, draftId, trigger, suggestions = [] }: Bud
           <DialogTitle>Budget Plan</DialogTitle>
           <DialogDescription>Plan what each starting slot is worth to you out of your ${budget.budget} auction budget.</DialogDescription>
         </DialogHeader>
-        <BudgetSuggestions suggestions={suggestions} onApply={handleApply} applied={applied} />
-
         <p className="text-xs text-muted-foreground tabular-nums">
           {money(planned)} planned · {unplanned >= 0 ? `${money(unplanned)} unplanned` : `${money(Math.abs(unplanned))} over`}
         </p>

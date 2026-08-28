@@ -4,13 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
 import { money } from '@/modules/drafts/helpers/money';
-import { type AuctionBudget, type BudgetRow, type BudgetSuggestion } from '@/types/models';
+import { type AuctionBudget, type BudgetRow } from '@/types/models';
 import { useMemo } from 'react';
 
 interface BudgetPlanProps {
   budget: AuctionBudget;
   draftId: number;
-  suggestions?: BudgetSuggestion[];
   canEdit?: boolean;
   className?: string;
 }
@@ -33,7 +32,7 @@ function difference(value: number | null) {
  * negative difference and what to do about it stays your call. Editing happens
  * in the dialog behind the Edit button.
  */
-export function BudgetPlan({ budget, draftId, suggestions = [], canEdit = true, className }: BudgetPlanProps) {
+export function BudgetPlan({ budget, draftId, canEdit = true, className }: BudgetPlanProps) {
   const planned = useMemo(() => budget.rows.reduce((total, row) => total + (row.planned ?? 0), 0), [budget.rows]);
   const spent = useMemo(() => budget.rows.reduce((total, row) => total + (row.actual ?? 0), 0), [budget.rows]);
 
@@ -58,7 +57,7 @@ export function BudgetPlan({ budget, draftId, suggestions = [], canEdit = true, 
                 {money(planned)} planned · {unplanned >= 0 ? `${money(unplanned)} unplanned` : `${money(Math.abs(unplanned))} over`}
               </p>
             </div>
-            {canEdit && <BudgetDialog budget={budget} draftId={draftId} suggestions={suggestions} trigger={<Button size="sm">Edit</Button>} />}
+            {canEdit && <BudgetDialog budget={budget} draftId={draftId} trigger={<Button size="sm">Edit</Button>} />}
           </div>
         </CardTitle>
       </CardHeader>

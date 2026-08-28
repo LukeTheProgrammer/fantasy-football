@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{league}/{season}', [DraftController::class, 'show'])->name('show')->where('season', '\d{4}');
         Route::get('/{draft}/edit', [DraftController::class, 'edit'])->name('edit');
         Route::get('/{draft}/results', [DraftController::class, 'results'])->name('results');
+        Route::get('/{draft}/budgets', [DraftController::class, 'budgets'])->name('budgets');
         Route::get('/{draft}/draft-room', [DraftController::class, 'draftRoom'])->name('draft-room');
 
         // Everything known about one player, for the dialog in the room.
