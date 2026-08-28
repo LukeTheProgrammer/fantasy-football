@@ -1,19 +1,11 @@
 import { cn } from '@/common/helpers/cn';
+import { Card, CardContent } from '@/components/ui/card';
 import { type AuctionMarket } from '@/types/models';
 
 interface MarketPulseProps {
   market: AuctionMarket;
   /** Players still on the board, for the count beside the picks. */
   availableCount: number;
-}
-
-function Figure({ label, value, className }: { label: string; value: string; className?: string }) {
-  return (
-    <div className="text-right">
-      <p className="text-[10px] leading-tight whitespace-nowrap text-muted-foreground uppercase">{label}</p>
-      <p className={cn('text-base leading-tight font-semibold tabular-nums', className)}>{value}</p>
-    </div>
-  );
 }
 
 /**
@@ -28,26 +20,45 @@ export function MarketPulse({ market, availableCount }: MarketPulseProps) {
   const { inflation } = market;
 
   const hot = inflation !== null && inflation > 0;
+  const marketPerc = (market.spent / market.expected).toFixed(0);
+  const moneyPerc = (market.money_left / market.value_left).toFixed(0);
+  const playerPerc = (market.picks / availableCount).toFixed(0);
 
   return (
-    <div className="flex items-center gap-5">
-      <div className="text-right">
-        <p className="text-[10px] leading-tight text-muted-foreground uppercase">Inflation</p>
-        <p
-          className={cn(
-            'text-xl leading-tight font-bold tabular-nums',
-            inflation === null ? 'text-muted-foreground' : hot ? 'text-destructive' : 'text-emerald-600 dark:text-emerald-500',
-          )}
-          title="What the league has paid for the players already sold, against what the board marked them at."
-        >
-          {inflation === null ? '—' : `${inflation > 0 ? '+' : ''}${inflation}%`}
-        </p>
-      </div>
-
-      <Figure label="Spent" value={`$${market.spent} / $${market.expected}`} />
-      <Figure label="Money left" value={`$${market.money_left}`} />
-      <Figure label="Value left" value={`$${market.value_left}`} />
-      <Figure label="Board" value={`${market.picks} picks · ${availableCount} left`} className="text-sm font-medium text-muted-foreground" />
+    <div className="flex items-stretch gap-2">
+      <Inflation inflation={inflation} hot={hot} />
+      <Figure label="Spent" value={`$${market.spent} / $${market.expected}`} sub={`${marketPerc}%`} />
+      <Figure label="Money / Value" value={`$${market.money_left} / $${market.value_left}`} sub={`${moneyPerc}%`} />
+      <Figure
+        label="Players"
+        value={`${market.picks} / ${availableCount}`}
+        sub={`${playerPerc}%`}
+        className="text-sm font-medium text-muted-foreground"
+      />
     </div>
   );
+}
+
+function Figure({ label, value, sub, className }: { label: string; value: string; sub?: string; className?: string }) {
+  return (
+    <Card className="py-4">
+      <CardContent className="text-center">
+        <p className="text-[10px] leading-tight whitespace-nowrap text-muted-foreground">{label}</p>
+        <p className={cn('py-1 text-base leading-tight font-semibold tabular-nums', className)}>{value}</p>
+        {sub && <p className="text-[10px] leading-tight whitespace-nowrap text-muted-foreground">{sub}</p>}
+      </CardContent>
+    </Card>
+  );
+}
+
+function Inflation({ inflation, hot }: { inflation: number | null; hot: boolean }) {
+  const inflationClass = [
+    'text-xl font-bold',
+    inflation === null ? 'text-muted-foreground' : null,
+    hot ? ' text-destructive' : 'text-emerald-600 dark:text-emerald-500',
+  ];
+
+  const formatted = inflation === null ? '-' : `${inflation}%`;
+
+  return <Figure label="Inflation" value={`${hot ? '+' : ''}${formatted}`} className={cn(inflationClass)} />;
 }

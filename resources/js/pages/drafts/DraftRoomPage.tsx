@@ -18,12 +18,12 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-interface DraftIndexProps extends PageProps {
+interface DraftRoomProps extends PageProps {
   draft: Draft;
   availablePlayers: DraftRanking[];
 }
 
-export default function DraftRoom({ draft, availablePlayers }: DraftIndexProps) {
+export default function DraftRoom({ draft, availablePlayers }: DraftRoomProps) {
   const [filterText, setFilterText] = useState('');
 
   const filteredPlayers = useMemo(() => {
@@ -70,7 +70,7 @@ export default function DraftRoom({ draft, availablePlayers }: DraftIndexProps) 
                   <div className="grow-2">
                     <span>Players</span>
                   </div>
-                  <div className="grow-1">
+                  <div className="grow">
                     <Input placeholder="Filter players..." value={filterText} onChange={(e) => setFilterText(e.target.value)} />
                   </div>
                 </div>

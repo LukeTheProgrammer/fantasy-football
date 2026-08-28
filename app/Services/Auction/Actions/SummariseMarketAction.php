@@ -84,7 +84,10 @@ class SummariseMarketAction
                 // position steps up, which is the moment to stop waiting.
                 $topTier = $left->first()['tier'] ?? null;
 
-                $buyers = $teams->filter(fn (array $team) => ($needs->get($team['id'])[$position] ?? 0) > 0
+                // A team is a buyer if it can still start one, whether that is
+                // in the position's own slot or in a flex.
+                $buyers = $teams->filter(fn (array $team) => (($needs->get($team['id'])['dedicated'][$position] ?? 0)
+                    + ($needs->get($team['id'])['flex'][$position] ?? 0)) > 0
                     && $team['remaining'] > 0);
 
                 return [
@@ -95,7 +98,12 @@ class SummariseMarketAction
                     'top_tier_left' => $topTier === null
                         ? 0
                         : $left->where('tier', $topTier)->count(),
-                    'slots_open'    => (int) $needs->sum(fn (array $team) => $team[$position] ?? 0),
+                    'slots_open' => (int) $needs->sum(fn (array $team) => $team['dedicated'][$position] ?? 0),
+                    // Flex slots are held apart rather than added in. One flex
+                    // is a need at every position it accepts, so counting it at
+                    // each of them says every team needs a second tight end
+                    // when between them they only need one more starter.
+                    'flex_open'     => (int) $needs->sum(fn (array $team) => $team['flex'][$position] ?? 0),
                     'teams_needing' => $buyers->count(),
                     'money_chasing' => (int) $buyers->sum('remaining'),
                 ];
@@ -104,25 +112,34 @@ class SummariseMarketAction
     }
 
     /**
-     * Unfilled starting slots per position for every team, counting a flex once
-     * for each position it accepts — a flex is a need at all of them until it
-     * is filled by one.
+     * Unfilled starting slots per position for every team, split by whether the
+     * slot names the position or merely accepts it.
      *
-     * @return Collection<int, array<string, int>> Keyed by league member id.
+     * A flex counts once at every position it takes, which is true of the slot
+     * but not of the league: one open RB/WR/TE is one more starter to buy, not
+     * three. Kept apart so the two are never summed into a need that does not
+     * exist.
+     *
+     * @return Collection<int, array{dedicated: array<string, int>, flex: array<string, int>}> Keyed by league member id.
      */
     private function openStarterSlots(Draft $draft): Collection
     {
         return (new SlotRostersAction)->run($draft)
             ->map(function (array $slots) {
-                $open = array_fill_keys(self::POSITIONS, 0);
+                $open = [
+                    'dedicated' => array_fill_keys(self::POSITIONS, 0),
+                    'flex'      => array_fill_keys(self::POSITIONS, 0),
+                ];
 
                 foreach ($slots as $slot) {
                     if ($slot['player'] !== null || in_array($slot['slot'], self::RESERVE_SLOTS)) {
                         continue;
                     }
 
+                    $kind = str_contains($slot['slot'], '_') ? 'flex' : 'dedicated';
+
                     foreach ($this->accepts($slot['slot']) as $position) {
-                        $open[$position]++;
+                        $open[$kind][$position]++;
                     }
                 }
 

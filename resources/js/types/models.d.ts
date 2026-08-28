@@ -163,6 +163,8 @@ export interface MarketPosition {
   top_tier: number | null;
   top_tier_left: number;
   slots_open: number;
+  /** Flex spots that accept the position, held apart so they are not summed in. */
+  flex_open: number;
   teams_needing: number;
   money_chasing: number;
 }

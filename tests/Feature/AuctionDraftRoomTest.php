@@ -393,12 +393,40 @@ class AuctionDraftRoomTest extends TestCase
         $this->assertSame(2, $positions['RB']['top_tier']);
         $this->assertSame(1, $positions['RB']['top_tier_left']);
         $this->assertSame(1, $positions['RB']['slots_open']);
+        $this->assertSame(0, $positions['RB']['flex_open']);
         $this->assertSame(1, $positions['RB']['teams_needing']);
         $this->assertSame(200, $positions['RB']['money_chasing']);
 
         // Nothing is left at kicker, and no slot asks for one.
         $this->assertSame(0, $positions['K']['available']);
         $this->assertSame(0, $positions['K']['slots_open']);
+        $this->assertSame(0, $positions['K']['flex_open']);
+    }
+
+    public function test_a_flex_slot_is_counted_beside_the_position_need_rather_than_inside_it(): void
+    {
+        $this->league->settings->update([
+            'roster_size'      => 4,
+            'roster_positions' => ['TE', 'RB_WR_TE', 'BE', 'IR'],
+        ]);
+
+        $market = AuctionFacade::market($this->draft->fresh(['league.settings', 'league.members', 'picks.player']), collect());
+
+        $positions = collect($market['positions'])->keyBy('position');
+
+        // The team has one tight end spot and one flex that could take another.
+        // Adding those together would say it needs two tight ends, when between
+        // them they are one tight end and one starter of some kind.
+        $this->assertSame(1, $positions['TE']['slots_open']);
+        $this->assertSame(1, $positions['TE']['flex_open']);
+
+        // A running back has no slot of his own here, only the flex.
+        $this->assertSame(0, $positions['RB']['slots_open']);
+        $this->assertSame(1, $positions['RB']['flex_open']);
+
+        // The flex still makes the team a buyer at every position it accepts.
+        $this->assertSame(1, $positions['RB']['teams_needing']);
+        $this->assertSame(0, $positions['QB']['teams_needing']);
     }
 
     public function test_the_budget_covers_every_roster_slot_bench_included(): void

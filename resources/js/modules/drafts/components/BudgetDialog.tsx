@@ -56,7 +56,7 @@ export function BudgetDialog({ budget, draftId, trigger }: BudgetDialogProps) {
         <p className="text-xs text-muted-foreground tabular-nums">
           {money(planned)} planned · {unplanned >= 0 ? `${money(unplanned)} unplanned` : `${money(Math.abs(unplanned))} over`}
         </p>
-        <div className="min-h-0 flex-1 overflow-hidden">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <Table className="table-fixed" containerClassName="h-full overflow-auto">
             <TableHeader className="sticky top-0 z-10 bg-background shadow-sm [&_th]:bg-background">
               <TableRow>

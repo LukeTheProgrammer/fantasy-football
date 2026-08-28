@@ -5,9 +5,10 @@ import { type Position } from '@/types/models';
 interface PositionBadgeProps {
   /** A position record, or just its abbreviation. */
   position: Position | string;
+  className?: string;
 }
 
-export function PositionBadge({ position }: PositionBadgeProps) {
+export function PositionBadge({ position, className }: PositionBadgeProps) {
   const abbreviation = typeof position === 'string' ? position : position.abbreviation;
 
   const getPositionColor = (pos: string) => {
@@ -30,7 +31,7 @@ export function PositionBadge({ position }: PositionBadgeProps) {
   };
 
   return (
-    <Badge className={cn('px-2 py-1 text-xs font-medium', getPositionColor(abbreviation))}>
+    <Badge className={cn('px-2 py-1 text-xs font-medium', getPositionColor(abbreviation), className)}>
       <div className="flex size-6 items-center justify-center">{abbreviation}</div>
     </Badge>
   );

@@ -24,7 +24,7 @@ function Stat({ label, value, muted = false }: { label: string; value: string | 
   return (
     <div className="text-center">
       <p className="text-xs whitespace-nowrap text-muted-foreground">{label}</p>
-      <p className={muted ? 'text-xl font-semibold text-muted-foreground tabular-nums' : 'text-xl font-semibold tabular-nums'}>{value ?? '—'}</p>
+      <p className={muted ? 'text-lg font-semibold text-muted-foreground tabular-nums' : 'text-lg font-semibold tabular-nums'}>{value ?? '—'}</p>
     </div>
   );
 }
@@ -74,78 +74,88 @@ export function NominatedPlayer({ player, teams, draftId, nextBest = null, teamR
   // let go.
   const overNext = player.market_value !== null && nextBest?.market_value != null ? player.market_value - nextBest.market_value : null;
 
+  // The card's own vertical padding is trimmed: at this height it would eat the
+  // space the columns need to spread their contents into.
   return (
-    <Card className="h-full">
-      <CardContent className="grid h-full grid-cols-3 gap-2">
-        <div className="">
-          <div className="flex items-start justify-start gap-3">
+    <Card className="h-full py-3">
+      <CardContent className="grid min-h-0 flex-1 grid-cols-12 gap-2">
+        <div className="col-span-4 h-full min-h-0">
+          <div className="flex h-full min-h-0 items-center justify-start gap-3">
             {player.headshot && <img src={player.headshot} alt="" className="size-14 shrink-0 rounded-full bg-muted object-cover" />}
             <div className="pt-1">
-              <PositionBadge position={player.position_id} />
+              <PositionBadge position={player.position_id} className="h-full min-h-0" />
             </div>
-            <div>
-              <PlayerDialog player={player} draftId={draftId} />
-              <div className="mt-1 flex items-center justify-start gap-4 text-sm text-muted-foreground">
+            <div className="flex h-full min-h-0 flex-col justify-center gap-0.5">
+              <div className="text-left">
+                <PlayerDialog player={player} draftId={draftId} />
+              </div>
+              <div className="flex items-center justify-start gap-4 text-sm text-muted-foreground">
                 <span>{player.team_id}</span>
                 <span>Rank {player.rank}</span>
                 <span>Tier {player.tier ?? '—'}</span>
                 <span>Bye {player.bye_week ?? '—'}</span>
               </div>
+              <div className="flex gap-3">
+                {nextBest && (
+                  <>
+                    <p className="truncate text-xs text-muted-foreground">
+                      Next Best {player.position_id}: {nextBest.full_name}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">{money(nextBest.market_value)}</p>
+                    <p className="truncate text-xs text-muted-foreground">{nextBest.tier !== null && `  T${nextBest.tier}`}</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div>
-          <div className="flex items-center justify-between rounded-lg border bg-muted/40 px-4 py-2">
+        <div className="col-span-4 flex items-center justify-center">
+          <div className="flex items-center justify-center gap-8 rounded-lg border bg-muted/40 px-4 py-2">
             <Stat label="League" value={player.market_value !== null ? `$${player.market_value}` : null} />
             <Stat label="VAR" value={player.projected_value !== null ? `$${player.projected_value}` : null} />
             <Stat label="ADV" value={player.adv !== null ? `$${player.adv}` : null} muted />
             <Stat label="Diff" value={money(disagreement)} muted />
             <Stat label="Over next" value={money(overNext)} muted />
           </div>
-          {nextBest && (
-            <p className="mt-1 truncate text-center text-xs text-muted-foreground">
-              Next {player.position_id}: {nextBest.full_name} {money(nextBest.market_value)}
-              {nextBest.tier !== null && ` · T${nextBest.tier}`}
-            </p>
-          )}
         </div>
 
-        <div className="flex justify-end">
+        <div className="col-span-4">
           {/* Tabbing runs team, price, pick: the order the sale is entered in.
               The page hands focus to the first of them on nomination. */}
-          <form onSubmit={handleSubmit} data-pick-form className="flex items-center gap-2">
-            <div className="w-48">
-              <label className="sr-only">Picked by</label>
-              <Select value={String(data.league_member_id)} onValueChange={(value) => setData('league_member_id', value)}>
-                <SelectTrigger ref={teamRef} className="w-full">
-                  <SelectValue placeholder="Select team" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teams.map((team) => (
-                    <SelectItem key={team.id} value={String(team.id)} disabled={team.open_spots === 0}>
-                      {team.team_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <form onSubmit={handleSubmit} data-pick-form className="h-full min-h-0">
+            <div className="flex h-full min-h-0 items-center justify-end gap-4">
+              <div className="w-60">
+                <label className="sr-only">Picked by</label>
+                <Select value={String(data.league_member_id)} onValueChange={(value) => setData('league_member_id', value)}>
+                  <SelectTrigger ref={teamRef} className="w-full">
+                    <SelectValue placeholder="Select team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teams.map((team) => (
+                      <SelectItem key={team.id} value={String(team.id)} disabled={team.open_spots === 0}>
+                        {team.team_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="w-24">
-              <label className="sr-only">Amount</label>
-              <Input
-                type="number"
-                min={1}
-                inputMode="numeric"
-                placeholder="$"
-                value={data.amount}
-                onChange={(event) => setData('amount', event.target.value)}
-              />
+              <div className="w-24">
+                <label className="sr-only">Amount</label>
+                <Input
+                  type="number"
+                  min={1}
+                  inputMode="numeric"
+                  placeholder="$"
+                  value={data.amount}
+                  onChange={(event) => setData('amount', event.target.value)}
+                />
+              </div>
+              <Button type="submit" disabled={processing || !data.league_member_id || !data.amount}>
+                Pick
+              </Button>
             </div>
-
-            <Button type="submit" disabled={processing || !data.league_member_id || !data.amount}>
-              Pick
-            </Button>
           </form>
           {Object.values(errors).length > 0 && <p className="shrink-0 text-sm text-destructive">{Object.values(errors)[0]}</p>}
         </div>

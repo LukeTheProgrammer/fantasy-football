@@ -1,13 +1,9 @@
 import { Heading } from '@/common/heading/Heading';
-import { Button } from '@/components/ui/button';
-import { BudgetPlan } from '@/modules/drafts/components/BudgetPlan';
-import { DraftPicks } from '@/modules/drafts/components/DraftPicks';
+import { DraftSidePanel } from '@/modules/drafts/components/DraftSidePanel';
 import { MarketPulse } from '@/modules/drafts/components/MarketPulse';
 import { NominatedPlayer } from '@/modules/drafts/components/NominatedPlayer';
 import { PlayerBoard } from '@/modules/drafts/components/PlayerBoard';
-import { PositionScarcity } from '@/modules/drafts/components/PositionScarcity';
 import { TeamBudgets } from '@/modules/drafts/components/TeamBudgets';
-import { TeamRoster } from '@/modules/drafts/components/TeamRoster';
 import { usePersistentState } from '@/modules/drafts/helpers/usePersistentState';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem } from '@/types';
@@ -49,7 +45,6 @@ export default function AuctionDraftRoom({ draft, players, market, teams, roster
   const [nominatedId, setNominatedId] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
-  const [showBudget, setShowBudget] = useState(false);
 
   const searchRef = useRef<HTMLInputElement | null>(null);
   const teamRef = useRef<HTMLButtonElement | null>(null);
@@ -196,26 +191,19 @@ export default function AuctionDraftRoom({ draft, players, market, teams, roster
 
       <div className="flex-1 space-y-2 p-6">
         <div className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
-          <Heading title={`${draft.league.name} ${draft.league.season}`} description={`Auction cheat sheet · $${draft.auction_budget} per team`} />
+          <Heading title={`${draft.league.name} ${draft.league.season}`} containerClass="mb-0" headingClass="mb-0" />
           <MarketPulse market={market} availableCount={available.length} />
         </div>
 
         {/* Desktop only: one fixed height row, budgets down the left, the
             nominated player as a bar over the board and the pick list. */}
         <div className="grid h-[calc(100vh-14rem)] grid-cols-[1fr_3fr_2fr] grid-rows-[auto_1fr] gap-4">
-          <div className="row-span-2 flex min-h-0 flex-col gap-2 overflow-auto pr-1">
-            <PositionScarcity positions={market.positions} active={position} onSelect={setPosition} />
-
-            <div className="min-h-0 flex-1">
-              <TeamBudgets
-                teams={teams}
-                selectedTeamId={selectedTeamId}
-                onSelect={(teamId) => {
-                  setShowBudget(false);
-                  setSelectedTeamId(selectedTeamId === teamId ? null : teamId);
-                }}
-              />
-            </div>
+          <div className="row-span-2 min-h-0 overflow-auto pr-1">
+            <TeamBudgets
+              teams={teams}
+              selectedTeamId={selectedTeamId}
+              onSelect={(teamId) => setSelectedTeamId(selectedTeamId === teamId ? null : teamId)}
+            />
           </div>
 
           <div className="col-span-2 h-[6.5rem]">
@@ -252,44 +240,20 @@ export default function AuctionDraftRoom({ draft, players, market, teams, roster
             searchRef={searchRef}
           />
 
-          {/* One column, three jobs: your own plan, a team's roster while you
-              size up a bid, and the running list of picks otherwise. */}
-          <div className="flex min-h-0 flex-col gap-2">
-            {budget && (
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant={showBudget ? 'default' : 'outline'}
-                  onClick={() => {
-                    setShowBudget(true);
-                    setSelectedTeamId(null);
-                  }}
-                >
-                  My budget
-                </Button>
-                <Button
-                  size="sm"
-                  variant={!showBudget && !selectedTeam ? 'default' : 'outline'}
-                  onClick={() => {
-                    setShowBudget(false);
-                    setSelectedTeamId(null);
-                  }}
-                >
-                  Picks
-                </Button>
-              </div>
-            )}
-
-            <div className="min-h-0 flex-1">
-              {showBudget && budget ? (
-                <BudgetPlan budget={budget} draftId={draft.id} />
-              ) : selectedTeam ? (
-                <TeamRoster team={selectedTeam} slots={rosters[String(selectedTeam.id)] ?? []} onClose={() => setSelectedTeamId(null)} />
-              ) : (
-                <DraftPicks players={picks} teams={teams} teamsById={teamsById} draftId={draft.id} onUndo={handleUndo} />
-              )}
-            </div>
-          </div>
+          <DraftSidePanel
+            draftId={draft.id}
+            picks={picks}
+            teams={teams}
+            teamsById={teamsById}
+            positions={market.positions}
+            position={position}
+            onPositionChange={setPosition}
+            budget={budget}
+            selectedTeam={selectedTeam}
+            selectedTeamSlots={selectedTeam ? (rosters[String(selectedTeam.id)] ?? []) : []}
+            onClearTeam={() => setSelectedTeamId(null)}
+            onUndo={handleUndo}
+          />
         </div>
       </div>
     </AppLayout>
