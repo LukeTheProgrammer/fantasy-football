@@ -57,7 +57,7 @@ export function PositionScarcity({ positions, active, onSelect }: PositionScarci
             >
               <PositionBadge position={position.position} />
               <span className="text-right text-sm tabular-nums">{position.available}</span>
-              <span className={cn('text-right text-sm tabular-nums', thin && 'font-bold text-destructive')}>
+              <span className={cn('text-right text-sm tabular-nums', thin && 'font-bold text-destructive-foreground')}>
                 {position.top_tier === null ? '—' : `${position.top_tier_left} @ T${position.top_tier}`}
               </span>
               <span className="text-right text-sm tabular-nums">

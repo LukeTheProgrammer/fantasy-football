@@ -97,7 +97,7 @@ export function PlayerBoard({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow overflow-hidden py-0">
+      <CardContent className="grow overflow-hidden py-0">
         <Table containerClassName="h-full overflow-auto">
           {/* Cells carry the background too: a background on thead alone does not
               paint over rows scrolling beneath a sticky header. */}
@@ -125,7 +125,9 @@ export function PlayerBoard({
                 className={cn(
                   'cursor-pointer',
                   nominatedId === player.player_id && 'bg-muted',
-                  index === activeIndex && 'ring-1 ring-primary ring-inset',
+                  // The keyboard's position is a tint rather than an outline, so
+                  // it reads as one row highlighted rather than one boxed in.
+                  index === activeIndex && 'bg-primary/15 hover:bg-primary/15',
                   player.drafted_by !== null && 'opacity-50',
                 )}
               >
