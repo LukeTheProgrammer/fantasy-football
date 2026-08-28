@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Facades\Auction as AuctionFacade;
 use App\Models\Draft;
 use App\Models\DraftBudget;
 use App\Models\DraftPick;
@@ -313,6 +314,91 @@ class AuctionDraftRoomTest extends TestCase
             ->assertForbidden();
 
         $this->assertSame(0, DraftPick::where('draft_id', $this->draft->id)->count());
+    }
+
+    public function test_the_market_reports_inflation_against_the_boards_own_prices(): void
+    {
+        $quarterback = Player::factory()->quarterback()->create();
+        $runningBack = Player::factory()->runningBack()->create();
+
+        DraftPick::create([
+            'draft_id'            => $this->draft->id,
+            'league_member_id'    => $this->member->id,
+            'player_id'           => $quarterback->id,
+            'amount'              => 60,
+            'round'               => 0,
+            'pick_number'         => 1,
+            'overall_pick_number' => 1,
+        ]);
+
+        $sheet = collect([
+            [
+                'player_id'       => $quarterback->id,
+                'position_id'     => 'QB',
+                'rank'            => 1,
+                'tier'            => 1,
+                'market_value'    => 50,
+                'projected_value' => 48,
+                'adv'             => 45,
+                'drafted_by'      => $this->member->id,
+                'drafted_for'     => 60,
+            ],
+            [
+                'player_id'       => $runningBack->id,
+                'position_id'     => 'RB',
+                'rank'            => 2,
+                'tier'            => 2,
+                'market_value'    => 30,
+                'projected_value' => 28,
+                'adv'             => 25,
+                'drafted_by'      => null,
+                'drafted_for'     => null,
+            ],
+        ]);
+
+        $market = AuctionFacade::market($this->draft->fresh(['league.settings', 'league.members', 'picks.player']), $sheet);
+
+        // $60 paid for a player the board marked at $50 is twenty percent over.
+        $this->assertSame(60, $market['spent']);
+        $this->assertSame(50, $market['expected']);
+        $this->assertSame(20.0, $market['inflation']);
+        $this->assertSame(140, $market['money_left']);
+    }
+
+    public function test_the_market_counts_what_is_left_at_each_position_and_who_still_needs_it(): void
+    {
+        $runningBack = Player::factory()->runningBack()->create();
+
+        $sheet = collect([
+            [
+                'player_id'       => $runningBack->id,
+                'position_id'     => 'RB',
+                'rank'            => 1,
+                'tier'            => 2,
+                'market_value'    => 30,
+                'projected_value' => 28,
+                'adv'             => 25,
+                'drafted_by'      => null,
+                'drafted_for'     => null,
+            ],
+        ]);
+
+        $market = AuctionFacade::market($this->draft->fresh(['league.settings', 'league.members', 'picks.player']), $sheet);
+
+        $positions = collect($market['positions'])->keyBy('position');
+
+        // The roster is QB, RB, BE: the bench is not a need, so one running back
+        // spot is open and the whole budget is still able to chase it.
+        $this->assertSame(1, $positions['RB']['available']);
+        $this->assertSame(2, $positions['RB']['top_tier']);
+        $this->assertSame(1, $positions['RB']['top_tier_left']);
+        $this->assertSame(1, $positions['RB']['slots_open']);
+        $this->assertSame(1, $positions['RB']['teams_needing']);
+        $this->assertSame(200, $positions['RB']['money_chasing']);
+
+        // Nothing is left at kicker, and no slot asks for one.
+        $this->assertSame(0, $positions['K']['available']);
+        $this->assertSame(0, $positions['K']['slots_open']);
     }
 
     public function test_the_budget_covers_every_roster_slot_bench_included(): void

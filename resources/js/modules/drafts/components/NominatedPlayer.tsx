@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
 import { type AuctionPlayer, type AuctionTeam } from '@/types/models';
 import { useForm } from '@inertiajs/react';
-import { FormEvent } from 'react';
+import { FormEvent, type RefObject } from 'react';
 import { money } from '../helpers/money';
 import { PlayerDialog } from './PlayerDialog';
 
@@ -13,6 +13,10 @@ interface NominatedPlayerProps {
   player: AuctionPlayer | null;
   teams: AuctionTeam[];
   draftId: number;
+  /** The best player left at the same position, once this one is gone. */
+  nextBest?: AuctionPlayer | null;
+  /** Held by the page so Enter on the board jumps straight to the pick form. */
+  teamRef?: RefObject<HTMLButtonElement | null>;
   onPicked?: () => void;
 }
 
@@ -32,7 +36,7 @@ function Stat({ label, value, muted = false }: { label: string; value: string | 
  * Laid out as a bar across the top of the room: identity, then the numbers,
  * then the pick, reading left to right in the order the auction happens.
  */
-export function NominatedPlayer({ player, teams, draftId, onPicked }: NominatedPlayerProps) {
+export function NominatedPlayer({ player, teams, draftId, nextBest = null, teamRef, onPicked }: NominatedPlayerProps) {
   // The page remounts this component per nomination, so form state starts
   // fresh for each player without an effect to reset it.
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -65,6 +69,11 @@ export function NominatedPlayer({ player, teams, draftId, onPicked }: NominatedP
 
   const disagreement = player.market_value !== null && player.projected_value !== null ? player.projected_value - player.market_value : null;
 
+  // What this player actually costs is not his price, it is the gap between him
+  // and the next man at the position — the one who is still there if the bid is
+  // let go.
+  const overNext = player.market_value !== null && nextBest?.market_value != null ? player.market_value - nextBest.market_value : null;
+
   return (
     <Card className="h-full">
       <CardContent className="grid h-full grid-cols-3 gap-2">
@@ -80,6 +89,7 @@ export function NominatedPlayer({ player, teams, draftId, onPicked }: NominatedP
                 <span>{player.team_id}</span>
                 <span>Rank {player.rank}</span>
                 <span>Tier {player.tier ?? '—'}</span>
+                <span>Bye {player.bye_week ?? '—'}</span>
               </div>
             </div>
           </div>
@@ -91,15 +101,24 @@ export function NominatedPlayer({ player, teams, draftId, onPicked }: NominatedP
             <Stat label="VAR" value={player.projected_value !== null ? `$${player.projected_value}` : null} />
             <Stat label="ADV" value={player.adv !== null ? `$${player.adv}` : null} muted />
             <Stat label="Diff" value={money(disagreement)} muted />
+            <Stat label="Over next" value={money(overNext)} muted />
           </div>
+          {nextBest && (
+            <p className="mt-1 truncate text-center text-xs text-muted-foreground">
+              Next {player.position_id}: {nextBest.full_name} {money(nextBest.market_value)}
+              {nextBest.tier !== null && ` · T${nextBest.tier}`}
+            </p>
+          )}
         </div>
 
         <div className="flex justify-end">
-          <form onSubmit={handleSubmit} className="flex items-center gap-2">
+          {/* Tabbing runs team, price, pick: the order the sale is entered in.
+              The page hands focus to the first of them on nomination. */}
+          <form onSubmit={handleSubmit} data-pick-form className="flex items-center gap-2">
             <div className="w-48">
               <label className="sr-only">Picked by</label>
               <Select value={String(data.league_member_id)} onValueChange={(value) => setData('league_member_id', value)}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger ref={teamRef} className="w-full">
                   <SelectValue placeholder="Select team" />
                 </SelectTrigger>
                 <SelectContent>

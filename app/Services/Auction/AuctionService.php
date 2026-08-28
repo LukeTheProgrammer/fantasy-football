@@ -11,6 +11,7 @@ use App\Services\Auction\Actions\BuildPlayerProfileAction;
 use App\Services\Auction\Actions\CalculateMarketValuesAction;
 use App\Services\Auction\Actions\CalculateProjectedValuesAction;
 use App\Services\Auction\Actions\SlotRostersAction;
+use App\Services\Auction\Actions\SummariseMarketAction;
 use App\Services\Auction\Actions\SummariseTeamsAction;
 use Illuminate\Support\Collection;
 
@@ -71,6 +72,20 @@ class AuctionService
     public function rosters(Draft $draft): Collection
     {
         return (new SlotRostersAction)->run($draft);
+    }
+
+    /**
+     * How the room is behaving: inflation against the board's own prices, what
+     * money is left, and which positions still have buyers.
+     *
+     * The cheat sheet is passed in when the caller already has it, so a page
+     * that shows both does not build it twice.
+     *
+     * @return array<string, mixed>
+     */
+    public function market(Draft $draft, ?Collection $cheatSheet = null): array
+    {
+        return (new SummariseMarketAction)->run($draft, $cheatSheet ?? $this->cheatSheet($draft));
     }
 
     /**

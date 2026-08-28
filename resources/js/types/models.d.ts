@@ -38,6 +38,8 @@ export interface AuctionPlayer {
   full_name: string | null;
   position_id: string;
   team_id: string | null;
+  /** The week this player's NFL team does not play. */
+  bye_week: number | null;
   headshot: string | null;
   rank: number | null;
   tier: number | null;
@@ -152,6 +154,29 @@ export interface AuctionTeam {
   filled: number;
   open_spots: number;
   max_bid: number;
+}
+
+export interface MarketPosition {
+  position: string;
+  drafted: number;
+  available: number;
+  top_tier: number | null;
+  top_tier_left: number;
+  slots_open: number;
+  teams_needing: number;
+  money_chasing: number;
+}
+
+export interface AuctionMarket {
+  spent: number;
+  expected: number;
+  picks: number;
+  /** Percent over or under what the board marked the players already sold. */
+  inflation: number | null;
+  money_left: number;
+  spots_left: number;
+  value_left: number;
+  positions: MarketPosition[];
 }
 
 export interface RankingFormat {

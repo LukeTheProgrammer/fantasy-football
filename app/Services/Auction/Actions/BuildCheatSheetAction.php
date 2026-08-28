@@ -6,6 +6,7 @@ use App\Enums\Datum;
 use App\Models\Draft;
 use App\Models\DraftPick;
 use App\Models\DraftRanking;
+use App\Services\Auction\Helpers\ByeWeeks;
 use App\Services\Auction\Helpers\PreviousAuction;
 use Illuminate\Support\Collection;
 
@@ -36,6 +37,7 @@ class BuildCheatSheetAction
         ]);
         $averageValues = $this->averageDraftValues($draft);
         $drafted = $draft->picks->keyBy('player_id');
+        $byeWeeks = ByeWeeks::for($league->season);
 
         return $rankings->map(function (DraftRanking $ranking) use (
             $marketValues,
@@ -44,6 +46,7 @@ class BuildCheatSheetAction
             $projectedPoints,
             $averageValues,
             $drafted,
+            $byeWeeks,
             $league
         ) {
             $player = $ranking->player;
@@ -54,6 +57,7 @@ class BuildCheatSheetAction
                 'full_name'        => $player?->full_name,
                 'position_id'      => $player?->position_id,
                 'team_id'          => $player?->team_id,
+                'bye_week'         => $player?->team_id ? $byeWeeks->get($player->team_id) : null,
                 'headshot'         => $player?->headshot,
                 'rank'             => $ranking->rank,
                 'tier'             => $ranking->tier,

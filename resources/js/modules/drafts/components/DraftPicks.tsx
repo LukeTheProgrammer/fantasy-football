@@ -1,3 +1,4 @@
+import { cn } from '@/common/helpers/cn';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -65,30 +66,48 @@ export function DraftPicks({ players, teams, teamsById, draftId, onUndo }: Draft
               <TableRow>
                 <TableHead className="w-[31%]">Player</TableHead>
                 <TableHead className="w-[26%]">Team</TableHead>
-                <TableHead className="w-[18%] text-center">Price</TableHead>
+                <TableHead className="w-[18%] text-center" title="Price paid, coloured against what the board marked him at">
+                  Price
+                </TableHead>
                 <TableHead className="w-[25%]" />
               </TableRow>
             </TableHeader>
             <TableBody>
-              {found.map((player) => (
-                <TableRow key={player.player_id}>
-                  <TableCell className="truncate font-medium">{player.full_name}</TableCell>
-                  <TableCell className="max-w-[9rem] truncate text-xs text-muted-foreground">
-                    {teamsById.get(player.drafted_by ?? 0)?.team_name}
-                  </TableCell>
-                  <TableCell className="text-center tabular-nums">{money(player.drafted_for)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-1">
-                      <Button size="sm" variant="secondary" onClick={() => player.pick_id && onUndo(player.pick_id)}>
-                        <Undo2 className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="secondary" onClick={() => setEditingId(player.player_id)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {found.map((player) => {
+                // Read against the board's own price: red went over, green came
+                // in under. It is the fastest way to see who is spending badly.
+                const value = player.market_value ?? player.projected_value;
+                const difference = value !== null && player.drafted_for !== null ? player.drafted_for - value : null;
+
+                return (
+                  <TableRow key={player.player_id}>
+                    <TableCell className="truncate font-medium">{player.full_name}</TableCell>
+                    <TableCell className="max-w-[9rem] truncate text-xs text-muted-foreground">
+                      {teamsById.get(player.drafted_by ?? 0)?.team_name}
+                    </TableCell>
+                    <TableCell
+                      className={cn(
+                        'text-center font-medium tabular-nums',
+                        difference !== null && difference > 0 && 'text-destructive',
+                        difference !== null && difference < 0 && 'text-emerald-600 dark:text-emerald-500',
+                      )}
+                      title={difference === null ? undefined : `${difference > 0 ? '+' : ''}${difference} against $${value}`}
+                    >
+                      {money(player.drafted_for)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button size="sm" variant="secondary" onClick={() => player.pick_id && onUndo(player.pick_id)}>
+                          <Undo2 className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="secondary" onClick={() => setEditingId(player.player_id)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         )}

@@ -7,6 +7,7 @@ import { money } from '@/modules/drafts/helpers/money';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
 import { type AuctionPlayer, type AuctionTeam } from '@/types/models';
 import { Search } from 'lucide-react';
+import { useEffect, useRef, type RefObject } from 'react';
 
 const POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K', 'DST'];
 
@@ -24,6 +25,11 @@ interface PlayerBoardProps {
   onPositionChange: (position: string | null) => void;
   showPicked: boolean;
   onShowPickedChange: (showPicked: boolean) => void;
+  /** Row the keyboard is on, as an index into `players`. */
+  activeIndex: number;
+  onActiveIndexChange: (index: number) => void;
+  /** Held by the page so `/` can put the cursor in the search box. */
+  searchRef?: RefObject<HTMLInputElement | null>;
 }
 
 /**
@@ -43,7 +49,18 @@ export function PlayerBoard({
   onPositionChange,
   showPicked,
   onShowPickedChange,
+  activeIndex,
+  onActiveIndexChange,
+  searchRef,
 }: PlayerBoardProps) {
+  const activeRow = useRef<HTMLTableRowElement | null>(null);
+
+  // Arrowing off the visible rows has to bring them with it, or the keyboard
+  // walks the board somewhere the eye cannot follow.
+  useEffect(() => {
+    activeRow.current?.scrollIntoView({ block: 'nearest' });
+  }, [activeIndex]);
+
   return (
     <Card className="flex h-full min-h-0 flex-col">
       <CardHeader className="py-0">
@@ -69,7 +86,13 @@ export function PlayerBoard({
             </div>
             <div className="relative max-w-xs flex-1">
               <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search players..." value={search} onChange={(event) => onSearchChange(event.target.value)} className="pl-8" />
+              <Input
+                ref={searchRef}
+                placeholder="Search players... ( / )"
+                value={search}
+                onChange={(event) => onSearchChange(event.target.value)}
+                className="pl-8"
+              />
             </div>
           </div>
         </CardTitle>
@@ -87,14 +110,24 @@ export function PlayerBoard({
               <TableHead className="w-20 text-center">VAR</TableHead>
               <TableHead className="w-20 text-center">ADV</TableHead>
               <TableHead className="w-20 text-center">{season - 1}</TableHead>
+              <TableHead className="w-12 text-center">Bye</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {players.map((player) => (
+            {players.map((player, index) => (
               <TableRow
                 key={player.player_id}
-                onClick={() => onNominate(player.player_id)}
-                className={cn('cursor-pointer', nominatedId === player.player_id && 'bg-muted', player.drafted_by !== null && 'opacity-50')}
+                ref={index === activeIndex ? activeRow : undefined}
+                onClick={() => {
+                  onActiveIndexChange(index);
+                  onNominate(player.player_id);
+                }}
+                className={cn(
+                  'cursor-pointer',
+                  nominatedId === player.player_id && 'bg-muted',
+                  index === activeIndex && 'ring-1 ring-primary ring-inset',
+                  player.drafted_by !== null && 'opacity-50',
+                )}
               >
                 <TableCell className="text-center tabular-nums">{player.rank}</TableCell>
                 <TableCell>
@@ -114,6 +147,7 @@ export function PlayerBoard({
                 <TableCell className="text-center font-medium tabular-nums">{money(player.projected_value)}</TableCell>
                 <TableCell className="text-center text-muted-foreground tabular-nums">{money(player.adv)}</TableCell>
                 <TableCell className="text-center text-muted-foreground tabular-nums">{money(player.previous_price)}</TableCell>
+                <TableCell className="text-center text-xs text-muted-foreground tabular-nums">{player.bye_week ?? '—'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
