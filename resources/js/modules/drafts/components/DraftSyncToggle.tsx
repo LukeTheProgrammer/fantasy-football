@@ -39,7 +39,7 @@ function statusLabel(draft: Draft, sync: DraftSyncState): string {
 export function DraftSyncToggle({ draft, sync }: DraftSyncToggleProps) {
   const active = !!draft.is_active;
   const failed = sync.stopped?.reason === 'failed';
-  const failMsg = failed ? sync?.stopped?.message ?? 'suck a butt' : null;
+  const failMsg = failed ? (sync?.stopped?.message ?? 'suck a butt') : null;
   const pulse = [
     'size-2 rounded-full',
     active ? 'animate-pulse bg-emerald-500' : null,
@@ -59,8 +59,8 @@ export function DraftSyncToggle({ draft, sync }: DraftSyncToggleProps) {
 
   return (
     <div className="flex items-center justify-end gap-2">
-      <div className="text-[10px] leading-tight flex gap-2">
-        {failMsg && (<span className="text-muted-foreground">{failMsg}</span>)}
+      <div className="flex gap-2 text-[10px] leading-tight">
+        {failMsg && <span className="text-muted-foreground">{failMsg}</span>}
         {sync.skipped > 0 && <span className="text-destructive">{sync.skipped} pick(s) unmatched</span>}
         <span className="font-medium">{statusLabel(draft, sync)}</span>
       </div>

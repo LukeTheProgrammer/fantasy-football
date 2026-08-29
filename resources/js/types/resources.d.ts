@@ -11,6 +11,7 @@ export interface LeagueResource {
   is_public: boolean;
   is_active: boolean;
   is_admin: boolean;
+  is_syncing: boolean;
 
   matchups: Record<string, LeagueMatchupResource[]>;
   members: LeagueMemberResource[];

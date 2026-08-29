@@ -16,7 +16,7 @@ window.addEventListener('message', (event) => {
     // breaking the draft room over.
     try {
         chrome.runtime.sendMessage({ direction, url, at, encoding, frame }).catch(() => {});
-    } catch (e) {
+    } catch {
         // Extension context invalidated — the page outlived a reload.
     }
 });

@@ -31,7 +31,7 @@
      * INIT arrives as binary. Base64 keeps it intact — stringifying a payload
      * that is not UTF-8 silently corrupts it before we ever decode it.
      */
-    const encode = (payload, send) => {
+    const encode = (payload) => {
         if (typeof payload === 'string') {
             return Promise.resolve({ encoding: 'text', frame: payload });
         }

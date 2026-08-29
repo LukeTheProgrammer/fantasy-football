@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Enums\Datum;
 use App\Facades\Data;
+use App\Jobs\SyncLeagueJob;
 use App\Models\DraftPick;
 use App\Models\LeagueMember;
 use App\Models\LeagueMemberRoster;
@@ -52,6 +53,7 @@ class LeagueShowResource extends JsonResource
             'is_public'   => $this->is_public,
             'is_active'   => $this->is_active,
             'is_admin'    => $this->userIsAdmin($request->user()),
+            'is_syncing'  => SyncLeagueJob::isRunning($this->resource),
             'matchups'    => $this->getMatchups(),
             'members'     => $this->getMembers(),
             'creator'     => Arr::only($this->creator->toArray(), ['id', 'name', 'email']),

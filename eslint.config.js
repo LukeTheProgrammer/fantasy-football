@@ -39,6 +39,17 @@ export default [
         },
     },
     {
+        // The extension runs in Chrome, not in the app bundle: it has the
+        // extension APIs as globals and none of the React rules apply.
+        files: ['chrome-extensions/**/*.js'],
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                chrome: 'readonly',
+            },
+        },
+    },
+    {
         ignores: [
             'vendor',
             'node_modules',

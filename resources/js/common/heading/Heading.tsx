@@ -10,8 +10,8 @@ type HeadingProps = {
 
 export function Heading({ title, description, rightContent, containerClass, headingClass }: HeadingProps) {
   return (
-    <div className={cn('mb-6', containerClass)}>
-      <div className={cn('mb-4 flex items-center justify-between', headingClass)}>
+    <div className={cn('mb-6 w-full', containerClass)}>
+      <div className={cn('mb-4 flex w-full items-center justify-between', headingClass)}>
         <div>
           <h1 className="mb-2 text-3xl">{title}</h1>
           <p className="">{description || ''}</p>

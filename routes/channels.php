@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Draft;
+use App\Models\League;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Gate;
@@ -13,4 +14,10 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 // arrive on it, which is the same rule the room itself is opened under.
 Broadcast::channel('draft.{draft}', function (User $user, Draft $draft) {
     return Gate::forUser($user)->allows('view', $draft);
+});
+
+// A league sync finishing. Anyone who may look at the league may hear about
+// it, which is the rule the page itself is opened under.
+Broadcast::channel('league.{league}', function (User $user, League $league) {
+    return Gate::forUser($user)->allows('view', $league);
 });

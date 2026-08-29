@@ -8,6 +8,7 @@ use App\Http\Controllers\DraftController;
 use App\Http\Controllers\DraftRankingController;
 use App\Http\Controllers\DraftSyncController;
 use App\Http\Controllers\LeagueController;
+use App\Http\Controllers\LeagueSyncController;
 use App\Http\Controllers\PlayersController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/create', [LeagueController::class, 'create'])->name('create');
         Route::get('/{league}/edit', [LeagueController::class, 'edit'])->name('edit');
         Route::get('/{league}', [LeagueController::class, 'show'])->name('show');
+        // Re-pull the league and its rosters from the platform.
+        Route::post('/{league}/sync', [LeagueSyncController::class, 'store'])->name('sync.store');
     });
 
     // Draft model

@@ -95,7 +95,7 @@ export default function Dashboard({ leagues }: DashboardProps) {
 
         <Card className="pt-4">
           <CardHeader>
-            <div className="w-full flex items-center justify-between">
+            <div className="flex w-full items-center justify-between">
               <CardTitle>Your Leagues</CardTitle>
               <div className="flex justify-end gap-4">
                 <div className="flex items-center space-x-4">
