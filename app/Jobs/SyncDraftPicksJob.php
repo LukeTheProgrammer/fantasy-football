@@ -28,7 +28,7 @@ class SyncDraftPicksJob implements ShouldQueue
     /**
      * Seconds between polls of ESPN.
      */
-    public const INTERVAL = 5;
+    public const INTERVAL = 10;
 
     /**
      * Consecutive ESPN failures tolerated before the loop gives up.

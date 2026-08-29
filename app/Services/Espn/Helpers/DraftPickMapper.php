@@ -22,6 +22,14 @@ class DraftPickMapper
 
         $picks = ($picks instanceof Collection) ? $picks : collect($picks);
 
+        // A live draft returns every slot on the board, the unfilled ones
+        // carrying playerId and teamId of -1. Only -1: a team defense is
+        // legitimately a negative id (-16000 - teamId), so the test cannot be
+        // a sign test.
+        $picks = $picks->reject(
+            fn ($pick) => $pick->playerId === -1 || $pick->teamId === -1
+        );
+
         return $picks->map(fn ($pick) => [
             'league_member_id'    => $pick->teamId,
             'player_id'           => $pick->playerId,

@@ -41,7 +41,7 @@ export function MarketPulse({ market, availableCount }: MarketPulseProps) {
 
 function Figure({ label, value, sub, className }: { label: string; value: string; sub?: string; className?: string }) {
   return (
-    <Card className="py-4">
+    <Card className="py-2">
       <CardContent className="text-center">
         <p className="text-[10px] leading-tight whitespace-nowrap text-muted-foreground">{label}</p>
         <p className={cn('py-1 text-base leading-tight font-semibold tabular-nums', className)}>{value}</p>

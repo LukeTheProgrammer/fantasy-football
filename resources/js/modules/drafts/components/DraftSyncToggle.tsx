@@ -19,14 +19,14 @@ function statusLabel(draft: Draft, sync: DraftSyncState): string {
       return 'Draft complete';
     }
 
-    return 'ESPN sync off';
+    return '';
   }
 
   if (sync.syncedAt) {
     return `Last pick ${new Date(sync.syncedAt).toLocaleTimeString()}`;
   }
 
-  return 'Watching ESPN';
+  return '';
 }
 
 /**
@@ -37,35 +37,37 @@ function statusLabel(draft: Draft, sync: DraftSyncState): string {
  * skipped count is shown rather than left to be noticed by its absence.
  */
 export function DraftSyncToggle({ draft, sync }: DraftSyncToggleProps) {
+  const active = !!draft.is_active;
   const failed = sync.stopped?.reason === 'failed';
+  const failMsg = failed ? sync?.stopped?.message ?? 'suck a butt' : null;
+  const pulse = [
+    'size-2 rounded-full',
+    active ? 'animate-pulse bg-emerald-500' : null,
+    !active && failed ? 'bg-destructive' : null,
+    !active && !failed ? 'bg-muted-foreground/40' : null,
+  ];
 
   const toggle = () => {
     const options = { preserveScroll: true, preserveState: true };
 
     if (draft.is_active) {
       router.delete(route('drafts.sync.destroy', draft.id), options);
-
-      return;
+    } else {
+      router.post(route('drafts.sync.store', draft.id), {}, options);
     }
-
-    router.post(route('drafts.sync.store', draft.id), {}, options);
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <span
-        className={cn('size-2 rounded-full', draft.is_active ? 'animate-pulse bg-emerald-500' : failed ? 'bg-destructive' : 'bg-muted-foreground/40')}
-        aria-hidden
-      />
-
-      <div className="text-xs leading-tight">
-        <p className="font-medium">{statusLabel(draft, sync)}</p>
-        {sync.skipped > 0 && <p className="text-destructive">{sync.skipped} pick(s) unmatched — enter by hand</p>}
-        {failed && sync.stopped?.message && <p className="max-w-48 truncate text-muted-foreground">{sync.stopped.message}</p>}
+    <div className="flex items-center justify-end gap-2">
+      <div className="text-[10px] leading-tight flex gap-2">
+        {failMsg && (<span className="text-muted-foreground">{failMsg}</span>)}
+        {sync.skipped > 0 && <span className="text-destructive">{sync.skipped} pick(s) unmatched</span>}
+        <span className="font-medium">{statusLabel(draft, sync)}</span>
       </div>
 
-      <Button variant={draft.is_active ? 'outline' : 'default'} size="sm" onClick={toggle}>
-        {draft.is_active ? 'Stop sync' : 'Sync from ESPN'}
+      <Button variant="outline" size="sm" onClick={toggle}>
+        Sync
+        <span className={cn(pulse)} aria-hidden />
       </Button>
     </div>
   );

@@ -9,6 +9,15 @@
 
 	encode zstd gzip
 
+	# Reverb. The browser is on https, so pusher-js insists on wss; terminate
+	# TLS here and hand the socket to Reverb in the clear. /app is the client
+	# socket, /apps the server-side publishing API.
+	@reverb path /app/* /apps/*
+	reverse_proxy @reverb laravel.test:8080 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+	}
+
 	reverse_proxy laravel.test:80 {
 		header_up X-Forwarded-Proto {scheme}
 		header_up X-Forwarded-Host {host}

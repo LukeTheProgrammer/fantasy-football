@@ -7,11 +7,12 @@ import { type ReactNode } from 'react';
 interface AppLayoutProps {
   children: ReactNode;
   breadcrumbs?: BreadcrumbItem[];
+  actionItem?: React.ReactNode;
 }
 
-export const AppLayout = ({ children, breadcrumbs, ...props }: AppLayoutProps) => (
+export const AppLayout = ({ children, breadcrumbs, actionItem, ...props }: AppLayoutProps) => (
   <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-    <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
+    <AppLayoutTemplate breadcrumbs={breadcrumbs} actionItem={actionItem} {...props}>
       {children}
       <Toaster />
     </AppLayoutTemplate>

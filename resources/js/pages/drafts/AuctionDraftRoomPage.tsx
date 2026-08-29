@@ -191,14 +191,13 @@ export default function AuctionDraftRoom({ draft, players, market, teams, roster
   };
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <AppLayout breadcrumbs={breadcrumbs} actionItem={<DraftSyncToggle draft={draft} sync={sync} />}>
       <Head title={`${draft.league.name} Auction Room`} />
 
       <div className="flex-1 space-y-2 p-6">
         <div className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
           <Heading title={`${draft.league.name} ${draft.league.season}`} containerClass="mb-0" headingClass="mb-0" />
           <div className="flex items-center gap-4">
-            <DraftSyncToggle draft={draft} sync={sync} />
             <MarketPulse market={market} availableCount={available.length} />
           </div>
         </div>
