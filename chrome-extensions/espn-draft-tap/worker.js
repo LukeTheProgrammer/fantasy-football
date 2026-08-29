@@ -64,9 +64,15 @@ const flush = async () => {
     }
 };
 
-// The worker is unloaded when idle, so the alarm is what wakes it to flush.
-chrome.alarms.create('flush', { periodInMinutes: 1 / 60 });
-
-chrome.alarms.onAlarm.addListener(flush);
-
+// The interval covers a worker that stays awake; the alarm is what wakes one
+// that has been unloaded. The alarm is created inside a try so a missing
+// permission cannot take the interval down with it.
 setInterval(flush, FLUSH_MS);
+
+try {
+    chrome.alarms.create('flush', { periodInMinutes: 1 / 60 });
+
+    chrome.alarms.onAlarm.addListener(flush);
+} catch (e) {
+    console.warn('espn-draft-tap: alarms unavailable, relying on the interval', e);
+}

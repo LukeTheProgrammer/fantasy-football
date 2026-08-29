@@ -3,26 +3,38 @@
     "name": "ESPN Draft Tap",
     "version": "0.1.0",
     "description": "Tees the ESPN draft room's websocket frames to the local fantasy-football app.",
-    "permissions": ["storage"],
+    "permissions": [
+        "storage",
+        "alarms"
+    ],
     "host_permissions": [
         "http://fantasy.local/*",
         "http://localhost/*",
-        "http://127.0.0.1/*"
+        "http://127.0.0.1/*",
+        "http://192.168.1.219/*"
     ],
     "background": {
         "service_worker": "worker.js"
     },
     "content_scripts": [
         {
-            "matches": ["https://fantasy.espn.com/*"],
-            "js": ["tap.js"],
+            "matches": [
+                "https://fantasy.espn.com/*"
+            ],
+            "js": [
+                "tap.js"
+            ],
             "world": "MAIN",
             "run_at": "document_start",
             "all_frames": true
         },
         {
-            "matches": ["https://fantasy.espn.com/*"],
-            "js": ["bridge.js"],
+            "matches": [
+                "https://fantasy.espn.com/*"
+            ],
+            "js": [
+                "bridge.js"
+            ],
             "world": "ISOLATED",
             "run_at": "document_start",
             "all_frames": true
