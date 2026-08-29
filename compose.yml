@@ -42,6 +42,10 @@ services:
             - laravel.test
     mysql:
         image: 'mysql/mysql-server:8.0'
+        # MySQL 8's default sql_mode less ONLY_FULL_GROUP_BY, so a grouped
+        # query may select columns it does not group by.
+        command:
+            - '--sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
         environment:

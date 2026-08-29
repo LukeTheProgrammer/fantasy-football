@@ -16,8 +16,13 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $ids = League::select(['id', 'platform_id'])
+            ->groupBy('platform_id')
+            ->orderByDesc('season')
+            ->pluck('id');
+
         $leagues = League::forUser(Auth::user())
-            ->whereIn('id', League::selectRaw('MAX(id)')->groupBy('platform_id'))
+            ->whereIn('id', $ids)
             ->with(['draft', 'members'])
             ->get();
 
