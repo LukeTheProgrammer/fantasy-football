@@ -5,6 +5,7 @@ namespace App\Services\Espn\Resources;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use App\Services\Espn\Resources\FantasyNFL\GetDraftDetail;
 use App\Services\Espn\Resources\FantasyNFL\GetDraftRecap;
+use App\Services\Espn\Resources\FantasyNFL\GetDraftSecurity;
 use App\Services\Espn\Resources\FantasyNFL\GetLeague;
 use App\Services\Espn\Resources\FantasyNFL\GetMatchup;
 use App\Services\Espn\Resources\FantasyNFL\GetPlayers;
@@ -28,6 +29,21 @@ class FantasyNFL extends BaseResourceCollection
         $resource->dataFormat($this->dataFormat);
 
         $resource->setOpts($season);
+
+        return $resource->fetch();
+    }
+
+    /**
+     * The draft session token for a team, required by the live draft socket.
+     */
+    public function getDraftSecurity(array|CredentialsData $credentials, int|string $teamId, int|string|null $season = null)
+    {
+        $resource = new GetDraftSecurity($credentials);
+
+        $resource->forcePull($this->forcePull);
+        $resource->dataFormat($this->dataFormat);
+
+        $resource->setOpts($teamId, $season);
 
         return $resource->fetch();
     }
