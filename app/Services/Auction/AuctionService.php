@@ -3,6 +3,7 @@
 namespace App\Services\Auction;
 
 use App\Models\Draft;
+use App\Models\DraftPick;
 use App\Models\LeagueMember;
 use App\Models\Player;
 use App\Services\Auction\Actions\BuildBudgetAction;
@@ -10,6 +11,7 @@ use App\Services\Auction\Actions\BuildCheatSheetAction;
 use App\Services\Auction\Actions\BuildPlayerProfileAction;
 use App\Services\Auction\Actions\CalculateMarketValuesAction;
 use App\Services\Auction\Actions\CalculateProjectedValuesAction;
+use App\Services\Auction\Actions\RecordSoldPickAction;
 use App\Services\Auction\Actions\SlotRostersAction;
 use App\Services\Auction\Actions\SuggestBudgetsAction;
 use App\Services\Auction\Actions\SummariseMarketAction;
@@ -27,6 +29,16 @@ use Illuminate\Support\Collection;
  */
 class AuctionService
 {
+    /**
+     * Write one sale from the live draft socket onto the board.
+     *
+     * @param array<string, int|float> $sold
+     */
+    public function recordSoldPick(Draft $draft, array $sold): ?DraftPick
+    {
+        return (new RecordSoldPickAction)->run($draft, $sold);
+    }
+
     /**
      * Pull the picks ESPN has recorded for this draft and write in the ones
      * the board does not have yet.

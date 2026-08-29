@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DraftFrameStoreRequest;
+use App\Jobs\ProcessDraftFramesJob;
 use App\Models\League;
+use App\Services\Espn\Helpers\DraftFrameParser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 
@@ -14,8 +16,9 @@ use Illuminate\Support\Arr;
  * ESPN evicts a team from the draft room when a second socket joins as that
  * team, so the app cannot connect while a draft is live; the extension in
  * extension/espn-draft-tap watches the room's own socket and posts what it
- * sees here. Nothing is parsed yet — the frame protocol is undocumented, and
- * the log is what the decoding work reads.
+ * sees here. Every frame is logged as it arrives — the protocol is
+ * undocumented, so the log stays the record the decoding work reads — and the
+ * sales among them are queued for the board.
  */
 class DraftFrameController extends Controller
 {
@@ -40,7 +43,44 @@ class DraftFrameController extends Controller
             $written++;
         }
 
+        ProcessDraftFramesJob::dispatch(
+            $this->espnLeagueId($frames),
+            $this->soldFrames($frames),
+        );
+
         return response()->json(['written' => $written]);
+    }
+
+    /**
+     * The text of every SOLD frame in the batch.
+     *
+     * Only what the room received counts: a frame the browser sent is this
+     * client's own bid, not a completed sale.
+     *
+     * @param array<int, array<string, mixed>> $frames
+     *
+     * @return array<int, string>
+     */
+    protected function soldFrames(array $frames): array
+    {
+        return collect($frames)
+            ->where('direction', 'recv')
+            ->where('encoding', 'text')
+            ->pluck('frame')
+            ->filter(fn ($frame) => DraftFrameParser::sold((string) $frame) !== null)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $frames
+     */
+    protected function espnLeagueId(array $frames): int
+    {
+        return (int) collect($frames)
+            ->map(fn ($frame) => DraftFrameParser::leagueId(Arr::get($frame, 'url')))
+            ->filter()
+            ->first();
     }
 
     /**
