@@ -40,6 +40,24 @@ class SyncEspnPicksAction
             $league->season,
         );
 
+        $inProgress = (bool) Arr::get($data, 'in_progress');
+        $isCompleted = (bool) Arr::get($data, 'is_completed');
+
+        // ESPN publishes nothing through this view while a draft is running:
+        // every slot comes back with a player and team of -1, and the picks
+        // being made reach the app over the draft socket instead. Reading the
+        // board now can only produce placeholders, so the poll waits until the
+        // draft commits and the real picks appear.
+        if ($inProgress && !$isCompleted) {
+            return [
+                'created'      => [],
+                'updated'      => 0,
+                'skipped'      => 0,
+                'is_completed' => false,
+                'in_progress'  => true,
+            ];
+        }
+
         $members = LeagueMember::forLeague($league)->get()->keyBy('external_id');
 
         foreach (Arr::get($data, 'draftPicks', []) as $pick) {
@@ -50,8 +68,8 @@ class SyncEspnPicksAction
             'created'      => $this->created,
             'updated'      => count($this->updated),
             'skipped'      => count($this->skipped),
-            'is_completed' => (bool) Arr::get($data, 'is_completed'),
-            'in_progress'  => (bool) Arr::get($data, 'in_progress'),
+            'is_completed' => $isCompleted,
+            'in_progress'  => $inProgress,
         ];
     }
 
