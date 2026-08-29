@@ -158,6 +158,18 @@ class EspnService
             ->getDraftDetail($credentials, $season);
     }
 
+    /**
+     * The draft session token for a team, required by the live draft socket.
+     */
+    public function getFantasyDraftSecurity(array|CredentialsData $credentials, int|string $teamId, int|string|null $season = null)
+    {
+        $resource = new FantasyNFL($credentials);
+
+        return $resource->dataFormat($this->dataFormat)
+            ->forcePull($this->forcePull)
+            ->getDraftSecurity($credentials, $teamId, $season);
+    }
+
     public function getFantasyDraft(array|CredentialsData $credentials, array $opts = [])
     {
         $resource = new FantasyNFL($credentials);

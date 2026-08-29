@@ -17,6 +17,7 @@
         "laravel/reverb": "^1.11",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
+        "ratchet/pawl": "^0.4.3",
         "spatie/laravel-data": "^4.17",
         "tightenco/ziggy": "^2.4"
     },
