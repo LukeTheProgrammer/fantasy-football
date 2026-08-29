@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\DraftController;
+use App\Http\Controllers\Api\DraftFrameController;
 use App\Http\Controllers\Api\LeagueController;
 use App\Http\Controllers\Api\LeagueMemberController;
 use App\Http\Controllers\Api\LeagueSettingsController;
@@ -43,3 +44,7 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::apiResource('leagues.drafts', DraftController::class);
     Route::post('leagues/{league}/drafts/{draft}/picks', [DraftController::class, 'makePick']);
 });
+
+// The draft-room extension posts here; see DraftFrameController for why it sits
+// outside the authenticated group.
+Route::post('draft-frames', [DraftFrameController::class, 'store']);

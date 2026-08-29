@@ -5,10 +5,10 @@ namespace App\Console\Commands\Espn\FantasyNFL;
 use App\Facades\Espn;
 use App\Models\League;
 use App\Models\LeagueMember;
+use App\Services\Espn\Helpers\DraftSocketConnector;
 use App\Services\Espn\Helpers\DraftSocketUrl;
 use Exception;
 use Illuminate\Console\Command;
-use Ratchet\Client\Connector;
 use Ratchet\Client\WebSocket;
 use Ratchet\RFC6455\Messaging\MessageInterface;
 use React\EventLoop\Loop;
@@ -106,15 +106,17 @@ class ListenDraftSocket extends Command
             return;
         }
 
-        $connector = new Connector(Loop::get());
+        $connector = new DraftSocketConnector(Loop::get());
 
-        $credentials = $this->league->credentials;
-
-        // The browser's handshake carries the espn.com cookies with it; without
-        // them ESPN cannot tie the socket to a member and rejects the join.
+        // The handshake carries no cookies at all — the token in the url is the
+        // whole of the auth — but ESPN's load balancer answers 403 to a request
+        // that does not look like a browser.
         $headers = [
-            'Origin' => DraftSocketUrl::ORIGIN,
-            'Cookie' => 'espn_s2=' . $credentials['s2'] . '; SWID=' . $credentials['swid'],
+            'Origin'          => DraftSocketUrl::ORIGIN,
+            'User-Agent'      => DraftSocketUrl::USER_AGENT,
+            'Pragma'          => 'no-cache',
+            'Cache-Control'   => 'no-cache',
+            'Accept-Language' => 'en-US,en;q=0.9',
         ];
 
         $connector($url, [], $headers)->then(

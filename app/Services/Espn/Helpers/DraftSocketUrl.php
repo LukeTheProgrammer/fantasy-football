@@ -25,6 +25,12 @@ class DraftSocketUrl
      */
     public const ORIGIN = 'https://fantasy.espn.com';
 
+    /**
+     * ESPN's load balancer answers 403 to a handshake that does not look like a
+     * browser, so the draft room's own user agent is sent.
+     */
+    public const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
+
     public const GAME_ID = 1;
 
     public const CLIENT = 'KONA';
