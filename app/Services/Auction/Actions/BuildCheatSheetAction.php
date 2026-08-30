@@ -42,6 +42,8 @@ class BuildCheatSheetAction
         $projections = (new CalculateProjectedValuesAction)->projectedPoints($draft);
 
         $marketValues = (new CalculateMarketValuesAction)->run($draft);
+        $positionValues = (new CalculateMarketValuesAction)->byPosition($draft);
+        $positionRanks = $this->positionRanks($rankings);
         $projectedValues = (new CalculateProjectedValuesAction)->run($draft, $projections);
         $previousPrices = $this->previousPrices($draft);
         $projectedPoints = $projections->mapWithKeys(fn ($player) => [
@@ -53,6 +55,8 @@ class BuildCheatSheetAction
 
         return $rankings->map(function (DraftRanking $ranking) use (
             $marketValues,
+            $positionValues,
+            $positionRanks,
             $projectedValues,
             $previousPrices,
             $projectedPoints,
@@ -74,16 +78,66 @@ class BuildCheatSheetAction
                 'rank'             => $ranking->rank,
                 'tier'             => $ranking->tier,
                 'projected_points' => $projectedPoints->get($ranking->player_id),
-                'market_value'     => $marketValues->get($ranking->rank),
-                'projected_value'  => $projectedValues->get($ranking->player_id),
-                'previous_price'   => $previousPrices->get($ranking->player_id),
-                'adv'              => $averageValues->get($ranking->player_id),
-                'drafted_by'       => $pick?->league_member_id,
-                'drafted_for'      => $pick ? (int) $pick->amount : null,
-                'pick_id'          => $pick?->id,
-                'season'           => $league->season_id,
+                'market_value'     => $this->marketValue(
+                    $marketValues,
+                    $positionValues,
+                    $positionRanks,
+                    $ranking,
+                    $player?->position_id,
+                ),
+                'projected_value' => $projectedValues->get($ranking->player_id),
+                'previous_price'  => $previousPrices->get($ranking->player_id),
+                'adv'             => $averageValues->get($ranking->player_id),
+                'drafted_by'      => $pick?->league_member_id,
+                'drafted_for'     => $pick ? (int) $pick->amount : null,
+                'pick_id'         => $pick?->id,
+                'season'          => $league->season_id,
             ];
         })->values();
+    }
+
+    /**
+     * Where each player sits among his own position on this year's board.
+     *
+     * @param Collection<int, DraftRanking> $rankings
+     *
+     * @return Collection<int, int> Positional rank keyed by player id.
+     */
+    private function positionRanks(Collection $rankings): Collection
+    {
+        $counts = [];
+
+        return $rankings->mapWithKeys(function (DraftRanking $ranking) use (&$counts) {
+            $position = $ranking->player?->position_id ?? '';
+
+            $counts[$position] = ($counts[$position] ?? 0) + 1;
+
+            return [$ranking->player_id => $counts[$position]];
+        });
+    }
+
+    /**
+     * What this room has paid for a player of this rank.
+     *
+     * The position's own curve is what the room actually bids against; the
+     * overall curve stands in where the position has no history that deep.
+     *
+     * @param Collection<int, float> $marketValues
+     * @param Collection<string, Collection<int, float>> $positionValues
+     * @param Collection<int, int> $positionRanks
+     */
+    private function marketValue(
+        Collection $marketValues,
+        Collection $positionValues,
+        Collection $positionRanks,
+        DraftRanking $ranking,
+        ?string $position,
+    ): ?float {
+        $positional = $position
+            ? $positionValues->get($position)?->get($positionRanks->get($ranking->player_id))
+            : null;
+
+        return $positional ?? $marketValues->get($ranking->rank);
     }
 
     /**

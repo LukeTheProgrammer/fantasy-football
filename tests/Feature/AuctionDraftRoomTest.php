@@ -647,6 +647,15 @@ class AuctionDraftRoomTest extends TestCase
      * A season the league has already drafted, which is where the price curve
      * a suggestion spends comes from.
      */
+    /**
+     * A finished auction for the season before this one.
+     *
+     * The prices are dealt out one position at a time, matching the order the
+     * board ranks them, so the league's spending at a position is a fact the
+     * test states rather than whatever positions the player factory happened
+     * to roll: prices are read off the curve for the position now, so a random
+     * position makes a random price.
+     */
     private function priorAuction(array $prices): void
     {
         Season::firstOrCreate(['id' => 2025], ['is_current' => false]);
@@ -674,14 +683,18 @@ class AuctionDraftRoomTest extends TestCase
             'is_completed'   => true,
         ]);
 
+        $positions = ['QB', 'RB', 'WR'];
+
         foreach ($prices as $index => $price) {
             DraftPick::create([
                 'draft_id'         => $draft->id,
                 'league_member_id' => $member->id,
-                'player_id'        => Player::factory()->create()->id,
-                'round'            => 1,
-                'pick_number'      => $index + 1,
-                'amount'           => $price,
+                'player_id'        => Player::factory()->create([
+                    'position_id' => $positions[$index % count($positions)],
+                ])->id,
+                'round'       => 1,
+                'pick_number' => $index + 1,
+                'amount'      => $price,
             ]);
         }
     }

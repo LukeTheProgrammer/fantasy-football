@@ -51,7 +51,7 @@ class DraftController extends Controller
     public function show(League $league, int $season)
     {
         $draft = League::sameLeagueAs($league)
-            ->where('season', $season)
+            ->where('season_id', $season)
             ->firstOrFail()
             ->draft;
 

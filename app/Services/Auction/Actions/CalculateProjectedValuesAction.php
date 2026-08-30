@@ -33,6 +33,16 @@ class CalculateProjectedValuesAction
     public const FLEX_POSITIONS = ['RB', 'WR', 'TE'];
 
     /**
+     * Positions nobody bids up, priced inside their own pool.
+     */
+    public const STREAMED_POSITIONS = ['K', 'DST'];
+
+    /**
+     * The most the best streamed player goes for.
+     */
+    public const STREAMED_MAX_BID = 2.0;
+
+    /**
      * @param Collection|null $points Projected points already fetched by the
      *                                caller, in the shape projectedPoints()
      *                                returns, so the sheet and this action
@@ -57,11 +67,16 @@ class CalculateProjectedValuesAction
         $surplus = $points
             ->map(fn ($player) => [
                 'player_id' => $player['player_id'],
+                'position'  => $player['position'],
                 'surplus'   => max(0.0, $player['points'] - ($replacement[$this->pricingGroup($player['position'])] ?? 0.0)),
             ])
             ->filter(fn ($player) => $player['surplus'] > 0);
 
-        $totalSurplus = $surplus->sum('surplus');
+        [$streamed, $bid] = $surplus->partition(
+            fn ($player) => in_array($player['position'], self::STREAMED_POSITIONS)
+        );
+
+        $totalSurplus = $bid->sum('surplus');
 
         if ($totalSurplus <= 0) {
             return collect();
@@ -73,12 +88,58 @@ class CalculateProjectedValuesAction
         $reserved = $teamCount * $rosterSize * self::MINIMUM_BID;
         $biddable = max(0.0, $totalBudget - $reserved);
 
-        return $surplus->mapWithKeys(fn ($player) => [
+        return $bid->mapWithKeys(fn ($player) => [
             $player['player_id'] => round(
                 self::MINIMUM_BID + ($player['surplus'] / $totalSurplus) * $biddable,
                 0
             ),
-        ]);
+            // Union rather than merge: both are keyed by player id, and merge
+            // renumbers integer keys.
+        ])->union($this->streamedValues($streamed));
+    }
+
+    /**
+     * What a kicker or a defense goes for.
+     *
+     * Spreading the budget across surplus points assumes a point is worth the
+     * same wherever it is scored, which holds only where teams bid against
+     * each other for it. They do not here: every team starts exactly one of
+     * each, more playable options exist than teams, and the whole position
+     * spans about a point and a half of surplus. Priced with everything else,
+     * that point and a half picks up the same dollars per point as a running
+     * back's ten and the best kicker comes out at twelve dollars, which is not
+     * a price anyone has ever paid.
+     *
+     * So they are priced inside their own pool instead: the best is worth
+     * STREAMED_MAX_BID, the rest slide to the minimum, and the money that
+     * would have gone to them stays in the pool for the positions that are
+     * genuinely bid up.
+     *
+     * @param Collection<int, array<string, mixed>> $streamed
+     *
+     * @return Collection<int, float> Dollar value keyed by player id.
+     */
+    private function streamedValues(Collection $streamed): Collection
+    {
+        $values = [];
+
+        foreach (self::STREAMED_POSITIONS as $position) {
+            $pool = $streamed->where('position', $position);
+            $best = (float) $pool->max('surplus');
+
+            if ($best <= 0) {
+                continue;
+            }
+
+            foreach ($pool as $player) {
+                $values[$player['player_id']] = round(
+                    self::MINIMUM_BID + ($player['surplus'] / $best) * (self::STREAMED_MAX_BID - self::MINIMUM_BID),
+                    0
+                );
+            }
+        }
+
+        return collect($values);
     }
 
     /**

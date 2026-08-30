@@ -19,6 +19,16 @@ use Illuminate\Support\Collection;
  * prices on its own. The average is weighted towards the recent seasons, since
  * the room that drafted last year is closer to the room drafting this year than
  * the one from four years ago.
+ *
+ * The curve is read per position rather than overall. A room does not pay for
+ * "the best player left", it pays for the best quarterback left and the best
+ * running back left, and it pays differently for each. Reading one overall
+ * curve assumes this year's board is ordered the way past boards were, which
+ * breaks the moment the ranking shifts a position up or down the sheet — in a
+ * superflex league the board can open with six quarterbacks, and the overall
+ * curve then quotes each of them the price this room has only ever paid for
+ * the best running back on the table. Where a position has no history at a
+ * rank, the overall curve stands in.
  */
 class CalculateMarketValuesAction
 {
@@ -27,6 +37,44 @@ class CalculateMarketValuesAction
      * auction carries twice the weight of the one before it, and so back.
      */
     public const RECENCY_DECAY = 0.5;
+
+    /**
+     * The price this room has paid for each rank within a position.
+     *
+     * @return Collection<string, Collection<int, float>> Keyed by position,
+     *                                                    then by positional rank.
+     */
+    public function byPosition(Draft $draft): Collection
+    {
+        $budget = (int) ($draft->auction_budget ?? 0);
+
+        $seasons = PreviousAuctions::for($draft)
+            ->map(fn (Draft $previous) => $this->positionCurves($previous, $budget))
+            ->values();
+
+        return $seasons
+            ->flatMap(fn (Collection $curves) => $curves->keys())
+            ->unique()
+            ->mapWithKeys(function (string $position) use ($seasons) {
+                // Curves come back newest first, and weightedPrice() reads the
+                // index as how many seasons back a curve is, so the ordering is
+                // kept even where a season never drafted the position.
+                $curves = $seasons->map(fn (Collection $season) => $season->get($position) ?? collect());
+
+                $ranks = $curves->map(fn (Collection $curve) => $curve->count())->max();
+
+                if (!$ranks) {
+                    return [];
+                }
+
+                return [$position => collect(range(1, $ranks))
+                    ->mapWithKeys(function (int $rank) use ($curves) {
+                        $price = $this->weightedPrice($curves, $rank);
+
+                        return $price === null ? [] : [$rank => $price];
+                    })];
+            });
+    }
 
     /**
      * @return Collection<int, float> Dollar value keyed by overall rank.
@@ -99,6 +147,41 @@ class CalculateMarketValuesAction
     }
 
     /**
+     * One auction's prices split by position, each highest first and keyed by
+     * that position's own rank.
+     *
+     * @return Collection<string, Collection<int, float>>
+     */
+    private function positionCurves(Draft $previous, int $budget): Collection
+    {
+        $scale = $this->scale($previous, $budget);
+
+        return $previous->picks()
+            ->whereNotNull('amount')
+            ->where('amount', '>', 0)
+            ->with('player:id,position_id')
+            ->get()
+            ->filter(fn ($pick) => $pick->player?->position_id)
+            ->groupBy(fn ($pick) => $pick->player->position_id)
+            ->map(fn (Collection $picks) => $picks
+                ->sortByDesc('amount')
+                ->values()
+                ->mapWithKeys(fn ($pick, $index) => [$index + 1 => (float) $pick->amount * $scale]));
+    }
+
+    /**
+     * What a past auction's prices are multiplied by to describe this year's
+     * money, so a season played for a different budget still describes the
+     * same shape.
+     */
+    private function scale(Draft $previous, int $budget): float
+    {
+        $spent = (int) ($previous->auction_budget ?? 0);
+
+        return $budget > 0 && $spent > 0 ? $budget / $spent : 1.0;
+    }
+
+    /**
      * Every amount paid in one auction, highest first and keyed by rank.
      *
      * Prices are scaled to this year's budget, so a season the league played
@@ -108,9 +191,7 @@ class CalculateMarketValuesAction
      */
     private function curve(Draft $previous, int $budget): Collection
     {
-        $spent = (int) ($previous->auction_budget ?? 0);
-
-        $scale = $budget > 0 && $spent > 0 ? $budget / $spent : 1.0;
+        $scale = $this->scale($previous, $budget);
 
         return $previous->picks()
             ->whereNotNull('amount')
