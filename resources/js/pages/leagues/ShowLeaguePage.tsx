@@ -130,17 +130,15 @@ export default function ShowLeague({ league, seasons }: LeagueShowProps) {
                   <Button onClick={syncLeague} disabled={syncing}>
                     {syncing ? 'Syncing…' : 'Sync League'}
                   </Button>
+                  {league.is_admin && league.is_current_season && (
+                    <Link href={route('leagues.edit', league.id)}>
+                      <Button variant="outline">Edit League</Button>
+                    </Link>
+                  )}
+                  <SeasonSelect seasons={seasons} season={league.season_id} routeName="leagues.show" />
                 </div>
               }
             />
-          </div>
-          <div className="mt-4 flex items-center space-x-2 md:mt-0">
-            <SeasonSelect seasons={seasons} season={league.season} routeName="leagues.show" />
-            {league.is_admin && (
-              <Link href={route('leagues.edit', league.id)}>
-                <Button variant="outline">Edit League</Button>
-              </Link>
-            )}
           </div>
         </div>
 

@@ -70,6 +70,14 @@ class League extends Model
     }
 
     /**
+     * Get the associated season.
+     */
+    public function season(): BelongsTo
+    {
+        return $this->belongsTo(Season::class);
+    }
+
+    /**
      * Get the league settings.
      */
     public function settings(): HasOne

@@ -7,6 +7,7 @@ use App\Models\DraftPick;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\Player;
+use App\Models\Season;
 use App\Models\User;
 use App\Services\Auction\Actions\CalculateMarketValuesAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -85,10 +86,13 @@ class MarketValuesTest extends TestCase
      */
     private function auction(int $season, array $prices, int $budget = 200): Draft
     {
+        // leagues.season keys into seasons.
+        Season::firstOrCreate(['id' => $season], ['is_current' => false]);
+
         $league = League::create([
             'created_by_user_id' => $this->user->id,
             'name'               => 'Test League',
-            'season'             => $season,
+            'season_id'          => $season,
             'platform'           => 'ESPN',
             'platform_id'        => '1',
             'team_count'         => 1,

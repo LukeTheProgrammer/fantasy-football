@@ -11,7 +11,8 @@
         "http://fantasy.local/*",
         "http://localhost/*",
         "http://127.0.0.1/*",
-        "http://192.168.1.219/*"
+        "http://192.168.1.219/*",
+        "http://laravel.test/*"
     ],
     "background": {
         "service_worker": "worker.js"

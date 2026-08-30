@@ -13,6 +13,7 @@ use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
 use App\Models\Player;
 use App\Models\PlayerMissing;
+use App\Models\Season;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
@@ -41,10 +42,13 @@ class DraftSyncTest extends TestCase
 
         $this->user = User::factory()->create();
 
+        // leagues.season keys into seasons.
+        Season::firstOrCreate(['id' => 2026], ['is_current' => true]);
+
         $this->league = League::create([
             'created_by_user_id' => $this->user->id,
             'name'               => 'Test League',
-            'season'             => 2026,
+            'season_id'          => 2026,
             'platform'           => 'ESPN',
             'platform_id'        => '1',
             'team_count'         => 2,

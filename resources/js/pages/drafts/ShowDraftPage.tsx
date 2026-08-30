@@ -44,12 +44,12 @@ export default function ShowDraft({ draft, seasons, rosters, budget }: DraftShow
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={`${draft.league.name} ${draft.league.season}`} />
+      <Head title={`${draft.league.name} ${draft.league.season_id}`} />
 
       <div className="flex-1 p-8">
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
           <div>
-            <Heading title={`${draft.league.name} ${draft.league.season}`} />
+            <Heading title={`${draft.league.name} ${draft.league.season_id}`} />
           </div>
           <div className="mt-4 flex items-center space-x-2 md:mt-0">
             {!draft.is_completed && budget && <BudgetDialog budget={budget} draftId={draft.id} />}
@@ -60,7 +60,7 @@ export default function ShowDraft({ draft, seasons, rosters, budget }: DraftShow
             )}
             <SeasonSelect
               seasons={seasons}
-              season={draft.league.season}
+              season={draft.league.season_id}
               routeName="drafts.show"
               routeParams={(option) => [option.id, option.season]}
             />

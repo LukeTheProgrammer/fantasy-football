@@ -186,7 +186,7 @@ class ImportLeagueCommand extends Command
             $data['league_id'] = $this->league->credentials['leagueId'];
             $data['s2'] = $this->league->credentials['s2'];
             $data['swid'] = $this->league->credentials['swid'];
-            $data['season'] = $data['season'] ?? $this->league->season;
+            $data['season'] = $data['season'] ?? $this->league->season_id;
 
         } else {
             $data['created_by_user_id'] = $this->creator->id;

@@ -38,7 +38,7 @@ export default function SuggestedBudgetsPage({ draft, budget, suggestions }: Sug
           <Heading title="Suggested Budgets" description={`Three ways to spend your $${budget.budget}, each built around a different position.`} />
           <div className="mt-4 flex items-center justify-end space-x-2 md:mt-0">
             {!draft.is_completed && budget && <BudgetDialog budget={budget} draftId={draft.id} />}
-            <Link href={route('drafts.show', [draft.league_id, draft.league.season])}>
+            <Link href={route('drafts.show', [draft.league_id, draft.league.season_id])}>
               <Button variant="outline">Back to Draft</Button>
             </Link>
             {!draft.is_completed && (

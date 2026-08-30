@@ -4,7 +4,7 @@
 	auto_https disable_redirects
 }
 
-{$CADDY_SITE_ADDRESS:laravel.test} {
+http://{$CADDY_SITE_ADDRESS:laravel.test}, https://{$CADDY_SITE_ADDRESS:laravel.test} {
 	tls internal
 
 	encode zstd gzip

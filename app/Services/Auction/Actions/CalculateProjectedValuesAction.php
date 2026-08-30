@@ -92,7 +92,7 @@ class CalculateProjectedValuesAction
         $ppr = $league->settings?->pprValue() ?? 0.0;
 
         $projections = PlayerProjection::query()
-            ->forSeason($league->season)
+            ->forSeason($league->season_id)
             ->fromSource(Datum::SOURCE_FANTASY_PROS)
             ->where('superflex', false)
             ->where('projected_points', '>', 0)

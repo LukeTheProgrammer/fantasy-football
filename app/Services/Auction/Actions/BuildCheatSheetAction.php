@@ -37,7 +37,7 @@ class BuildCheatSheetAction
         ]);
         $averageValues = $this->averageDraftValues($draft);
         $drafted = $draft->picks->keyBy('player_id');
-        $byeWeeks = ByeWeeks::for($league->season);
+        $byeWeeks = ByeWeeks::for($league->season_id);
 
         return $rankings->map(function (DraftRanking $ranking) use (
             $marketValues,
@@ -69,7 +69,7 @@ class BuildCheatSheetAction
                 'drafted_by'       => $pick?->league_member_id,
                 'drafted_for'      => $pick ? (int) $pick->amount : null,
                 'pick_id'          => $pick?->id,
-                'season'           => $league->season,
+                'season'           => $league->season_id,
             ];
         })->values();
     }
@@ -81,7 +81,7 @@ class BuildCheatSheetAction
     {
         $league = $draft->league;
 
-        $season = $league->season;
+        $season = $league->season_id;
         $ppr = $league->settings?->pprValue() ?? 0.0;
         $superflex = (bool) $league->settings?->two_qb;
 
@@ -140,7 +140,7 @@ class BuildCheatSheetAction
      */
     private function averageDraftValues(Draft $draft): Collection
     {
-        $season = $draft->league->season;
+        $season = $draft->league->season_id;
 
         return DraftRanking::query()
             ->where('season', $season)

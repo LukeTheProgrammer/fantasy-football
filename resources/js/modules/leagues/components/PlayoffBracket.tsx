@@ -62,7 +62,7 @@ export function PlayoffBracket({ league }: PlayoffBracketProps) {
 
       <div className={`grid w-full gap-6 grid-cols-${rounds.length} mb-4`}>
         {rounds.map((round, index) => (
-          <p className="text-center font-medium text-muted-foreground uppercase">
+          <p key={index} className="text-center font-medium text-muted-foreground uppercase">
             {roundName(index, rounds.length)} · Week {round.week}
           </p>
         ))}

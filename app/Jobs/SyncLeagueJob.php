@@ -75,10 +75,10 @@ class SyncLeagueJob implements ShouldQueue
                 'league_id'          => $league->credentials['leagueId'],
                 's2'                 => $league->credentials['s2'],
                 'swid'               => $league->credentials['swid'],
-                'season'             => $league->season,
+                'season'             => $league->season_id,
             ]);
 
-            Data::source($league->platform)->importFantasyRosters($league, $league->season);
+            Data::source($league->platform)->importFantasyRosters($league, $league->season_id);
         } finally {
             Cache::forget(self::cacheKey($league));
         }

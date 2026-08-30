@@ -74,7 +74,7 @@ class BuildPlayerProfileAction
         }
 
         return NflGame::query()
-            ->where('season', $draft->league->season)
+            ->where('season', $draft->league->season_id)
             ->where('is_bye', true)
             ->where('home_team_id', $player->team_id)
             ->value('week');
@@ -119,9 +119,9 @@ class BuildPlayerProfileAction
     {
         $leagues = League::query()
             ->sameLeagueAs($draft->league)
-            ->where('season', '<', $draft->league->season)
+            ->where('season_id', '<', $draft->league->season_id)
             ->with(['draft', 'members'])
-            ->orderByDesc('season')
+            ->orderByDesc('season_id')
             ->limit(self::SEASONS)
             ->get()
             ->filter(fn (League $league) => $league->draft !== null);
@@ -137,7 +137,7 @@ class BuildPlayerProfileAction
                 $pick = $picks->get($league->draft->id);
 
                 return [
-                    'season' => (int) $league->season,
+                    'season' => (int) $league->season_id,
                     'amount' => $pick ? (int) $pick->amount : null,
                     'team'   => $pick
                         ? $league->members->firstWhere('id', $pick->league_member_id)?->team_name
@@ -163,7 +163,7 @@ class BuildPlayerProfileAction
 
         $rows = PlayerProjection::query()
             ->where('player_id', $player->id)
-            ->forSeason($draft->league->season)
+            ->forSeason($draft->league->season_id)
             ->fromSource(Datum::SOURCE_FANTASY_PROS)
             ->where('superflex', false)
             ->get();

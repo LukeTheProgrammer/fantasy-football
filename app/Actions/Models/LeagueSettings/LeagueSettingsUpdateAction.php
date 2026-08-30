@@ -10,6 +10,8 @@ class LeagueSettingsUpdateAction
     public function run(LeagueSettings $settings, array $data): LeagueSettings
     {
         $settings->update([
+            'ppr'                         => Arr::get($data, 'ppr', $settings->ppr),
+            'two_qb'                      => Arr::get($data, 'two_qb', $settings->two_qb),
             'roster_positions'            => Arr::get($data, 'roster_positions', $settings->roster_positions),
             'roster_size'                 => Arr::get($data, 'roster_size', $settings->roster_size),
             'starters_count'              => Arr::get($data, 'starters_count', $settings->starters_count),

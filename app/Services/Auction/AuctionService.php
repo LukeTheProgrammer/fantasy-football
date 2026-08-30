@@ -11,6 +11,7 @@ use App\Services\Auction\Actions\BuildCheatSheetAction;
 use App\Services\Auction\Actions\BuildPlayerProfileAction;
 use App\Services\Auction\Actions\CalculateMarketValuesAction;
 use App\Services\Auction\Actions\CalculateProjectedValuesAction;
+use App\Services\Auction\Actions\RecordNominationAction;
 use App\Services\Auction\Actions\RecordSoldPickAction;
 use App\Services\Auction\Actions\SlotRostersAction;
 use App\Services\Auction\Actions\SuggestBudgetsAction;
@@ -37,6 +38,27 @@ class AuctionService
     public function recordSoldPick(Draft $draft, array $sold): ?DraftPick
     {
         return (new RecordSoldPickAction)->run($draft, $sold);
+    }
+
+    /**
+     * Put the player a bid names on the board as the nomination.
+     *
+     * Returns null when the bid is for the player already up, which most of
+     * them are.
+     *
+     * @param array<string, int|float> $bid
+     */
+    public function recordNomination(Draft $draft, array $bid): ?Player
+    {
+        return (new RecordNominationAction)->run($draft, $bid);
+    }
+
+    /**
+     * Forget which player is up, so the next bid is heard as a nomination.
+     */
+    public function clearNomination(Draft $draft): void
+    {
+        (new RecordNominationAction)->clear($draft);
     }
 
     /**

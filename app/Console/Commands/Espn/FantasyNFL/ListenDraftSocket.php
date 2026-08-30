@@ -151,7 +151,7 @@ class ListenDraftSocket extends Command
         $draftSecurity = Espn::getFantasyDraftSecurity(
             $credentials,
             $this->teamId,
-            $this->league->season
+            $this->league->season_id
         );
 
         return DraftSocketUrl::build(

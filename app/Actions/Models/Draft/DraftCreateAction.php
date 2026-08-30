@@ -28,8 +28,19 @@ class DraftCreateAction
         return $draft;
     }
 
+    /**
+     * The empty board a snake draft is picked onto.
+     *
+     * An auction has no pick order to lay out -- a player goes to whoever bids
+     * highest, and the board numbers each sale as it lands -- so a skeleton
+     * would only be rows nobody ever fills.
+     */
     private function createPicks(League $league, Draft $draft): void
     {
+        if ($draft->draft_type === 'auction') {
+            return;
+        }
+
         $members = $league->members->toArray();
 
         for ($round = 0; $round < $league->settings->roster_size; $round++) {

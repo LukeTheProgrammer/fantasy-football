@@ -93,12 +93,12 @@ class DraftController extends Controller
     {
         return League::sameLeagueAs($draft->league)
             ->with('draft')
-            ->orderByDesc('season')
+            ->orderByDesc('season_id')
             ->get()
             ->filter(fn (League $league) => $league->draft !== null)
             ->map(fn (League $league) => [
                 'id'     => $league->id,
-                'season' => $league->season,
+                'season' => $league->season_id,
             ])
             ->values();
     }
@@ -121,7 +121,7 @@ class DraftController extends Controller
 
         if ($draft->draft_type !== 'auction' || $draft->is_completed) {
             return redirect()
-                ->route('drafts.show', [$draft->league_id, $draft->league->season])
+                ->route('drafts.show', [$draft->league_id, $draft->league->season_id])
                 ->with('error', 'There is nothing left to plan for this draft.');
         }
 
@@ -143,7 +143,7 @@ class DraftController extends Controller
 
         // Don't allow editing completed drafts
         if ($draft->is_completed) {
-            return redirect()->route('drafts.show', [$draft->league_id, $draft->league->season])
+            return redirect()->route('drafts.show', [$draft->league_id, $draft->league->season_id])
                 ->with('error', 'Cannot edit a completed draft');
         }
 
@@ -181,7 +181,7 @@ class DraftController extends Controller
         [$ppr, $superflex] = $this->rankingFormat($draft->league);
 
         $availablePlayers = DraftRanking::query()
-            ->latestRanking($draft->league->season, $ppr, $superflex)
+            ->latestRanking($draft->league->season_id, $ppr, $superflex)
             ->forFormat($ppr, $superflex)
             ->where(function ($q) {
                 $q->where('rank', '>', 0)
@@ -235,7 +235,7 @@ class DraftController extends Controller
         $superflex = (bool) $league->settings?->two_qb;
 
         $available = DraftRanking::query()
-            ->availableFormats($league->season)
+            ->availableFormats($league->season_id)
             ->get()
             ->map(fn (DraftRanking $ranking) => [(float) $ranking->ppr, (bool) $ranking->superflex]);
 

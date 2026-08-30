@@ -77,7 +77,7 @@ class LeagueController extends Controller
             return response()->json(['message' => 'Failed to create league', 'error' => $e->getMessage()], 500);
         }
 
-        $this->call('import:fantasy:roster', ['leagueId' => $league->id, 'season' => $league->season]);
+        $this->call('import:fantasy:roster', ['leagueId' => $league->id, 'season' => $league->season_id]);
 
         return response()->json($league->load('settings', 'members'), 201);
     }

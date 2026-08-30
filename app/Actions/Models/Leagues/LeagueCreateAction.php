@@ -9,6 +9,7 @@ use App\Models\Draft;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
+use App\Models\Season;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -21,14 +22,21 @@ class LeagueCreateAction
             return $this->createEspnLeague($creator, $data);
         }
 
+        $season = Arr::get($data, 'season', date('Y'));
+
+        // leagues.season_id is a key into seasons, so the year has to exist
+        // there before a league can claim it.
+        Season::firstOrCreate(['id' => $season], ['is_current' => false]);
+
         $league = League::create([
             'created_by_user_id' => $creator->id,
             'name'               => Arr::get($data, 'name'),
-            'season'             => Arr::get($data, 'season', date('Y')),
+            'season_id'          => $season,
             'slug'               => Str::slug(Arr::get($data, 'name')),
             'description'        => Arr::get($data, 'description'),
             'team_count'         => Arr::get($data, 'team_count'),
             'is_public'          => Arr::get($data, 'is_public'),
+            'platform_id'        => Arr::get($data, 'platform_id'),
             'join_code'          => Str::upper(Str::random(8)),
             'is_active'          => true,
             'credentials'        => Arr::get($data, 'credentials'),
@@ -36,9 +44,9 @@ class LeagueCreateAction
 
         $this->createLeagueSettings($league, $data);
 
-        $this->createLeagueMembers($league, $creator);
+        $this->createLeagueMembers($league, $creator, $data);
 
-        $this->createDraft($league);
+        $this->createDraft($league, $data);
 
         return $league;
     }
@@ -58,6 +66,8 @@ class LeagueCreateAction
         $settings = Arr::get($data, 'settings', []);
 
         Action::model(LeagueSettings::class)->create($league, [
+            'ppr'                         => Arr::get($settings, 'ppr', 'standard'),
+            'two_qb'                      => Arr::get($settings, 'two_qb', false),
             'roster_positions'            => Arr::get($settings, 'roster_positions', []),
             'roster_size'                 => Arr::get($settings, 'roster_size', 16),
             'starters_count'              => Arr::get($settings, 'starters_count', 9),
@@ -76,23 +86,39 @@ class LeagueCreateAction
         ]);
     }
 
-    private function createLeagueMembers(League $league, User $user): void
+    /**
+     * The league's teams. A caller that already knows them -- an import, or a
+     * league mirrored from a platform -- passes them under 'members'; anyone
+     * else gets numbered placeholders. The creator takes the first seat either
+     * way, since that is the seat the app is looked at from.
+     */
+    private function createLeagueMembers(League $league, User $user, array $data): void
     {
+        $members = Arr::get($data, 'members', []);
+
         for ($i = 0; $i < $league->team_count; $i++) {
             $userArg = ($i === 0) ? $user : null;
+
+            $member = Arr::get($members, $i, []);
+
             Action::model(LeagueMember::class)->create($league, $userArg, [
-                'team_name' => ($i === 0) ? $user->name . "'s Team" : 'Team ' . ($i + 1),
-                'is_admin'  => $i === 0,
+                'team_name'   => Arr::get($member, 'team_name', ($i === 0) ? $user->name . "'s Team" : 'Team ' . ($i + 1)),
+                'owner_name'  => Arr::get($member, 'owner_name', ($i === 0) ? $user->name : null),
+                'external_id' => Arr::get($member, 'external_id'),
+                'is_admin'    => $i === 0,
             ]);
         }
     }
 
-    private function createDraft(League $league): void
+    private function createDraft(League $league, array $data): void
     {
+        $draft = Arr::get($data, 'draft', []);
+
         Action::model(Draft::class)->create($league, [
-            'draft_type' => 'snake',
-            'draft_date' => null,
-            'is_active'  => true,
+            'draft_type'     => Arr::get($draft, 'draft_type', 'snake'),
+            'draft_date'     => Arr::get($draft, 'draft_date'),
+            'auction_budget' => Arr::get($draft, 'auction_budget'),
+            'is_active'      => Arr::get($draft, 'is_active', true),
         ]);
     }
 }

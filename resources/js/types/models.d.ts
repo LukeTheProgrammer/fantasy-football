@@ -278,7 +278,7 @@ export interface League {
   id: number;
   created_by_user_id: number;
   name: string;
-  season: number;
+  season_id: number;
   slug: string;
   description: string | null;
   platform: string;

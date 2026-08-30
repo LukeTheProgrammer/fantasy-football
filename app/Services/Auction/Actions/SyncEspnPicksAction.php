@@ -37,7 +37,7 @@ class SyncEspnPicksAction
 
         $data = Espn::forcePull(true)->getFantasyDraftDetail(
             $league->credentials,
-            $league->season,
+            $league->season_id,
         );
 
         $inProgress = (bool) Arr::get($data, 'in_progress');

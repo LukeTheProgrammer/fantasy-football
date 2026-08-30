@@ -19,7 +19,7 @@ class LeagueController extends Controller
         // One card per league, not per season: the most recent season represents
         // the league and carries the list of seasons available for it.
         $leagues = League::with(['members', 'draft'])
-            ->orderByDesc('season')
+            ->orderByDesc('season_id')
             ->get()
             ->groupBy(fn (League $league) => $league->platform . ':' . $league->platform_id)
             ->map(function ($seasons) {
@@ -66,7 +66,7 @@ class LeagueController extends Controller
         return Inertia::render('leagues/ShowLeaguePage', [
             'league'  => new LeagueShowResource($league),
             'seasons' => $this->seasonOptions(
-                League::sameLeagueAs($league)->orderByDesc('season')->get()
+                League::sameLeagueAs($league)->orderByDesc('season_id')->get()
             ),
         ]);
     }
@@ -81,7 +81,7 @@ class LeagueController extends Controller
             ->sortByDesc('season')
             ->map(fn (League $league) => [
                 'id'     => $league->id,
-                'season' => $league->season,
+                'season' => $league->season_id,
             ])
             ->values();
     }

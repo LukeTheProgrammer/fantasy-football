@@ -81,7 +81,7 @@ export default function Leagues({ leagues }: LeagueIndexProps) {
                       {league.members?.length || 'N/A'} / {league.team_count} teams
                     </span>
                     <span className="mx-2">•</span>
-                    <span>{league.season} season</span>
+                    <span>{league.season_id} season</span>
                   </div>
                 </CardContent>
                 <CardFooter>

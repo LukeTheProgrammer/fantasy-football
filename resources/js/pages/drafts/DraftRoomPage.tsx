@@ -47,7 +47,7 @@ export default function DraftRoom({ draft, availablePlayers }: DraftRoomProps) {
       <Head title="Draft Room" />
 
       <div className="flex-1 p-8">
-        <Heading title={`${draft.league.name} ${draft.league.season} Draft Room`} />
+        <Heading title={`${draft.league.name} ${draft.league.season_id} Draft Room`} />
 
         <div className="mb-8">
           <div className="flex gap-2 overflow-x-auto">

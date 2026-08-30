@@ -12,7 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
 /**
- * Turn a batch of draft-socket frames into picks.
+ * Turn a batch of draft-socket frames into picks and nominations.
  *
  * The browser extension posts frames as they arrive, and the post has to
  * return immediately: a player lookup that runs long must not stall the draft
@@ -35,7 +35,7 @@ class ProcessDraftFramesJob implements ShouldQueue
     public function handle(): void
     {
         $league = League::where('platform_id', $this->espnLeagueId)
-            ->latest('season')
+            ->latest('season_id')
             ->first();
 
         $draft = $league?->draft;
@@ -49,12 +49,21 @@ class ProcessDraftFramesJob implements ShouldQueue
         foreach ($this->frames as $frame) {
             $sold = DraftFrameParser::sold((string) $frame);
 
-            if ($sold === null) {
+            if ($sold !== null) {
+                if (Auction::recordSoldPick($draft, $sold) instanceof DraftPick) {
+                    $recorded++;
+                }
+
+                // The sale ends the nomination it belongs to.
+                Auction::clearNomination($draft);
+
                 continue;
             }
 
-            if (Auction::recordSoldPick($draft, $sold) instanceof DraftPick) {
-                $recorded++;
+            $bid = DraftFrameParser::bid((string) $frame);
+
+            if ($bid !== null) {
+                Auction::recordNomination($draft, $bid);
             }
         }
 

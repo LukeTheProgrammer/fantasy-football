@@ -10,6 +10,7 @@ use App\Models\League;
 use App\Models\LeagueMatchup;
 use App\Models\LeagueMember;
 use App\Models\Player;
+use App\Models\Season;
 use App\Models\User;
 use App\Services\Espn\Data\FantasyNFL\CredentialsData;
 use Illuminate\Support\Arr;
@@ -52,7 +53,7 @@ class EspnLeagueDriver
 
         $league = $this->createLeague();
 
-        Data::espn()->getFantasyLeagueRosters($league, $league->season);
+        Data::espn()->getFantasyLeagueRosters($league, $league->season_id);
 
         return $league;
     }
@@ -75,13 +76,21 @@ class EspnLeagueDriver
         $leagueData['platform_id'] = $this->credentials->leagueId;
         $leagueData['credentials'] = $this->credentials;
 
+        // leagues.season_id is a key into seasons, and ESPN publishes a new
+        // season before the season list is refreshed, so the year is made to
+        // exist rather than failing the import over it.
+        Season::firstOrCreate(['id' => $leagueData['season']], ['is_current' => false]);
+
+        // The formatter speaks in seasons; the column is the key into them.
+        $leagueData['season_id'] = Arr::pull($leagueData, 'season');
+
         // Season is part of the key: ESPN reuses a league id year over year, so
         // without it a new season overwrites the previous season's league row.
         $league = League::updateOrCreate(
             [
                 'platform'    => $leagueData['platform'],
                 'platform_id' => $leagueData['platform_id'],
-                'season'      => $leagueData['season'],
+                'season_id'   => $leagueData['season_id'],
             ],
             $leagueData,
         );

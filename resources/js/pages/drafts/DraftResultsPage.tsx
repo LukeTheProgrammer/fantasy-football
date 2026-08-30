@@ -30,13 +30,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function DraftResults({ draft, teamResults }: DraftResultsProps) {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title={`${draft.league.name} ${draft.league.season} Results`} />
+      <Head title={`${draft.league.name} ${draft.league.season_id} Results`} />
 
       <div className="flex-1 p-8">
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row md:items-center">
-          <Heading title={`${draft.league.name} ${draft.league.season} Draft Results`} />
+          <Heading title={`${draft.league.name} ${draft.league.season_id} Draft Results`} />
           <div className="mt-4 flex items-center space-x-2 md:mt-0">
-            <Link href={route('drafts.show', [draft.league_id, draft.league.season])}>
+            <Link href={route('drafts.show', [draft.league_id, draft.league.season_id])}>
               <Button variant="outline">Back to Draft</Button>
             </Link>
           </div>

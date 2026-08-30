@@ -33,7 +33,7 @@ class LeagueShowResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $this->playerProjections = PlayerProjection::forSeason($this->season)
+        $this->playerProjections = PlayerProjection::forSeason($this->season_id)
             ->get()
             ->groupBy('player_id')
             ->map(fn ($projections) => $projections->groupBy('week'));
@@ -41,24 +41,25 @@ class LeagueShowResource extends JsonResource
         $this->data = Data::source($this->platform);
 
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
-            'season'      => $this->season,
-            'week'        => Week::current()->first()->week,
-            'slug'        => $this->slug,
-            'description' => $this->description,
-            'platform'    => $this->platform,
-            'platform_id' => $this->platform_id,
-            'team_count'  => $this->team_count,
-            'is_public'   => $this->is_public,
-            'is_active'   => $this->is_active,
-            'is_admin'    => $this->userIsAdmin($request->user()),
-            'is_syncing'  => SyncLeagueJob::isRunning($this->resource),
-            'matchups'    => $this->getMatchups(),
-            'members'     => $this->getMembers(),
-            'creator'     => Arr::only($this->creator->toArray(), ['id', 'name', 'email']),
-            'draft'       => $this->getDraft(),
-            'settings'    => $this->settings,
+            'id'                => $this->id,
+            'name'              => $this->name,
+            'season_id'         => $this->season_id,
+            'week'              => Week::current()->first()->week,
+            'slug'              => $this->slug,
+            'description'       => $this->description,
+            'platform'          => $this->platform,
+            'platform_id'       => $this->platform_id,
+            'team_count'        => $this->team_count,
+            'is_current_season' => (bool) $this->season->is_current,
+            'is_public'         => $this->is_public,
+            'is_active'         => $this->is_active,
+            'is_admin'          => $this->userIsAdmin($request->user()),
+            'is_syncing'        => SyncLeagueJob::isRunning($this->resource),
+            'matchups'          => $this->getMatchups(),
+            'members'           => $this->getMembers(),
+            'creator'           => Arr::only($this->creator->toArray(), ['id', 'name', 'email']),
+            'draft'             => $this->getDraft(),
+            'settings'          => $this->settings,
         ];
     }
 

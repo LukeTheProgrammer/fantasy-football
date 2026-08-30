@@ -1,13 +1,14 @@
 export interface LeagueResource {
   id: string;
   name: string;
-  season: number;
+  season_id: number;
   week: number;
   slug: string;
   description: string;
   platform: string;
   platform_id: string;
   team_count: number;
+  is_current_season: boolean;
   is_public: boolean;
   is_active: boolean;
   is_admin: boolean;

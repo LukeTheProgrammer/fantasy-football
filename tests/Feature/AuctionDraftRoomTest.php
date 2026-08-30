@@ -11,6 +11,7 @@ use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueSettings;
 use App\Models\Player;
+use App\Models\Season;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -33,10 +34,13 @@ class AuctionDraftRoomTest extends TestCase
 
         $this->user = User::factory()->create();
 
+        // leagues.season keys into seasons.
+        Season::firstOrCreate(['id' => 2026], ['is_current' => true]);
+
         $this->league = League::create([
             'created_by_user_id' => $this->user->id,
             'name'               => 'Test League',
-            'season'             => 2026,
+            'season_id'          => 2026,
             'platform'           => 'ESPN',
             'platform_id'        => '1',
             'team_count'         => 2,
@@ -622,7 +626,7 @@ class AuctionDraftRoomTest extends TestCase
 
         $this->actingAs($this->user)
             ->get(route('drafts.budgets', $this->draft))
-            ->assertRedirect(route('drafts.show', [$this->league->id, $this->league->season]));
+            ->assertRedirect(route('drafts.show', [$this->league->id, $this->league->season_id]));
     }
 
     public function test_someone_without_a_team_cannot_see_the_suggested_budgets(): void
@@ -645,10 +649,12 @@ class AuctionDraftRoomTest extends TestCase
      */
     private function priorAuction(array $prices): void
     {
+        Season::firstOrCreate(['id' => 2025], ['is_current' => false]);
+
         $league = League::create([
             'created_by_user_id' => $this->user->id,
             'name'               => 'Test League',
-            'season'             => 2025,
+            'season_id'          => 2025,
             'platform'           => 'ESPN',
             'platform_id'        => '1',
             'team_count'         => 2,

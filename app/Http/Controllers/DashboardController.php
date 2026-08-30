@@ -18,7 +18,7 @@ class DashboardController extends Controller
     {
         $ids = League::select(['id', 'platform_id'])
             ->groupBy('platform_id')
-            ->orderByDesc('season')
+            ->orderByDesc('season_id')
             ->pluck('id');
 
         $leagues = League::forUser(Auth::user())

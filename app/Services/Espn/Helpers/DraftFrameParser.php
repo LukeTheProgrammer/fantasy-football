@@ -23,12 +23,28 @@ use Illuminate\Support\Str;
  * A team defense arrives as ESPN's negative fantasy id (-16034 for Houston),
  * which Espn::playerLookup() translates.
  *
- * Only SOLD is read. BID moves several times a second and the room is where
- * the bidding is watched; the board only has to change when a player is sold.
+ * SOLD and BID are read. The board only has to change when a player is sold,
+ * but a BID is the only frame that names the player currently up:
+ *
+ *   AUTOSUGGEST 4429795
+ *   NOMINATION 9 15000
+ *   BID 9 4426348 1 15000 15000
+ *
+ * NOMINATION carries the team on the clock and the clock itself, never a
+ * player, and AUTOSUGGEST is ESPN's suggestion rather than the nomination --
+ * on the batch above the suggested player is not the one that went up. So the
+ * opening bid is what a nomination is read from.
+ *
+ * A BID's third field is the price: it opens at 1 and climbs across the
+ * frames of one nomination (1, 14, 20, 24, 27) while the trailing pair counts
+ * down, which is the clock. Note this is not where SOLD keeps its amount --
+ * there the third field is the lineup slot and the fourth is the price.
  */
 class DraftFrameParser
 {
     public const SOLD = 'SOLD';
+
+    public const BID = 'BID';
 
     /**
      * The sale in a frame, or null if the frame is anything else.
@@ -53,6 +69,32 @@ class DraftFrameParser
             'espn_team_id' => (int) $teamId,
             'player_id'    => (int) $playerId,
             'lineup_slot'  => (int) $lineupSlot,
+            'amount'       => (float) $amount,
+        ];
+    }
+
+    /**
+     * The bid in a frame, or null if the frame is anything else.
+     *
+     * @return array<string, int|float>|null
+     */
+    public static function bid(string $frame): ?array
+    {
+        $parts = preg_split('/\s+/', trim($frame));
+
+        if (count($parts) < 3 || $parts[0] !== self::BID) {
+            return null;
+        }
+
+        [$verb, $teamId, $playerId, $amount] = array_pad(array_slice($parts, 0, 4), 4, null);
+
+        if (!is_numeric($teamId) || !is_numeric($playerId)) {
+            return null;
+        }
+
+        return [
+            'espn_team_id' => (int) $teamId,
+            'player_id'    => (int) $playerId,
             'amount'       => (float) $amount,
         ];
     }

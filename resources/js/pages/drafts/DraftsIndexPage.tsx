@@ -61,7 +61,7 @@ export default function Drafts({ drafts }: DraftIndexProps) {
               <Card key={draft.id} className="mb-8 overflow-hidden">
                 <CardContent className="grid grid-cols-3 gap-6">
                   <div>
-                    {draft.league.name} {draft.league.season}
+                    {draft.league.name} {draft.league.season_id}
                     {isUserDraftAdmin(draft, userId) && (
                       <Badge variant="outline" className="ml-2">
                         Admin
@@ -80,7 +80,7 @@ export default function Drafts({ drafts }: DraftIndexProps) {
                         <Button variant="outline">Draft Room</Button>
                       </Link>
                     )}
-                    <Link href={route('drafts.show', [draft.league_id, draft.league.season])}>
+                    <Link href={route('drafts.show', [draft.league_id, draft.league.season_id])}>
                       <Button variant="outline">Draft Results</Button>
                     </Link>
                   </div>

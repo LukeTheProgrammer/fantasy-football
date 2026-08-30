@@ -44,7 +44,7 @@ class ImportEspnRankingsCommand extends Command
             return self::FAILURE;
         }
 
-        $season = (int) ($this->option('season') ?: $league->season);
+        $season = (int) ($this->option('season') ?: $league->season_id);
         $importer = Import::espnRankings();
         $today = now()->toDateString();
 
@@ -89,7 +89,7 @@ class ImportEspnRankingsCommand extends Command
 
         return League::query()
             ->whereNotNull('credentials')
-            ->orderByDesc('season')
+            ->orderByDesc('season_id')
             ->first();
     }
 }

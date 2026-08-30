@@ -12,6 +12,8 @@ class LeagueSettingsCreateAction
     {
         $settings = LeagueSettings::create([
             'league_id'                   => $league->id,
+            'ppr'                         => Arr::get($data, 'ppr', 'standard'),
+            'two_qb'                      => Arr::get($data, 'two_qb', false),
             'roster_positions'            => Arr::get($data, 'roster_positions', []),
             'roster_size'                 => Arr::get($data, 'roster_size', 16),
             'starters_count'              => Arr::get($data, 'starters_count', 9),

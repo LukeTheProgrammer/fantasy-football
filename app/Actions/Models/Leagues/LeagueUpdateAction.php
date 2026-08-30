@@ -35,6 +35,7 @@ class LeagueUpdateAction
             'join_code',
             'is_active',
             'platform',
+            'platform_id',
             'credentials',
         ]);
 

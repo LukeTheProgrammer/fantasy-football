@@ -144,7 +144,7 @@ export default function Dashboard({ leagues }: DashboardProps) {
                           </Link>
                         )}
                         {league?.draft && (
-                          <Link href={route('drafts.show', [league.draft.id, league.season])}>
+                          <Link href={route('drafts.show', [league.draft.id, league.season_id])}>
                             <Button variant="outline">Draft</Button>
                           </Link>
                         )}

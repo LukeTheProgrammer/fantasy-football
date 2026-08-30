@@ -24,7 +24,7 @@ export function DraftTab({ league }: DraftTabProps) {
         <div className="grid grid-cols-3 border-b p-6">
           <div className="text-left">
             <h2 className="text-lg font-semibold">
-              {league.name} {league.season} Draft
+              {league.name} {league.season_id} Draft
             </h2>
             <p>{draft.draft_type === 'snake' ? 'Snake' : 'Auction'}</p>
           </div>

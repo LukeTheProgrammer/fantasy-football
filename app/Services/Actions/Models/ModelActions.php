@@ -3,6 +3,7 @@
 namespace App\Services\Actions\Models;
 
 use App\Actions\Models\Draft\DraftCreateAction;
+use App\Actions\Models\Draft\DraftUpdateAction;
 use App\Actions\Models\DraftPick\DraftPickUpsertAction;
 use App\Actions\Models\LeagueMembers\LeagueMemberCreateAction;
 use App\Actions\Models\LeagueMembers\LeagueMemberUpdateAction;
@@ -35,6 +36,7 @@ class ModelActions
     public $registry = [
         Draft::class => [
             'create' => DraftCreateAction::class,
+            'update' => DraftUpdateAction::class,
         ],
         DraftPick::class => [
             'upsert' => DraftPickUpsertAction::class,
