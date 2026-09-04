@@ -11,15 +11,6 @@ interface PlayerDialogProps {
   playerId: number | null;
 }
 
-function Figure({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border bg-muted/40 px-3 py-2">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-lg font-semibold tabular-nums">{value}</p>
-    </div>
-  );
-}
-
 /**
  * The little worth knowing about one player, opened from his name.
  *
@@ -64,12 +55,12 @@ export function PlayerDialog({ draftId, name, playerId }: PlayerDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             {profile?.headshot && <img src={profile.headshot} alt="" className="size-12 rounded-full bg-muted object-cover" />}
+            {profile?.position && <PositionBadge position={profile.position} />}
             <span className="min-w-0">
               <span className="block truncate">{profile?.full_name ?? name}</span>
               <span className="flex items-center gap-2 text-sm font-normal text-muted-foreground">
-                {profile?.position && <PositionBadge position={profile.position} />}
                 {profile?.team}
-                {profile?.jersey ? `#${profile.jersey}` : null}
+                {profile?.jersey ? ` # ${profile.jersey}` : null}
               </span>
             </span>
           </DialogTitle>
@@ -93,27 +84,26 @@ export function PlayerDialog({ draftId, name, playerId }: PlayerDialogProps) {
               <Figure label="ADV" value={profile.ranking?.adv ? `$${profile.ranking.adv}` : '—'} />
             </div>
 
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+            <dl className="w-full">
               <Detail label="Age" value={profile.age ? String(profile.age) : null} />
               <Detail label="College" value={profile.college} />
               <Detail label="Height" value={profile.height} />
               <Detail label="Weight" value={profile.weight} />
+              <Detail label="Team" value={profile.owner ? `${profile.owner.team_name} (${profile.owner.source})` : 'Undrafted'} />
             </dl>
-
-            <p className="text-sm">
-              {profile.owner ? (
-                <>
-                  <span className="text-muted-foreground">Held by</span> {profile.owner.team_name}{' '}
-                  <span className="text-muted-foreground">({profile.owner.source})</span>
-                </>
-              ) : (
-                <span className="text-muted-foreground">Still available.</span>
-              )}
-            </p>
           </div>
         )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+function Figure({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border bg-muted/40 px-3 py-2">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-lg font-semibold tabular-nums">{value}</p>
+    </div>
   );
 }
 
@@ -123,7 +113,7 @@ function Detail({ label, value }: { label: string; value: string | null }) {
   }
 
   return (
-    <div className="flex justify-between gap-2">
+    <div className="flex items-center justify-between gap-2">
       <dt className="text-muted-foreground">{label}</dt>
       <dd>{value}</dd>
     </div>

@@ -74,10 +74,13 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
       <div className="flex-1 space-y-2 p-6">
         <Heading title={`${draft.league.name} ${draft.league.season_id}`} rightContent={<HeadingOnTheClock clock={clock} />} containerClass="mb-0" />
 
-        {/* Desktop only: one fixed height row, the league down the left, the
-            clock as a bar over the board and the roster panel. */}
-        <div className="grid h-[calc(100vh-14rem)] grid-cols-[1fr_3fr_2fr] grid-rows-[auto_1fr] gap-4">
-          <div className="row-span-2 min-h-0 overflow-auto pr-1">
+        {/*
+          Desktop only: one fixed height row, the league down the left, the
+          clock as a bar over the board and the roster panel.
+          grid-cols-[1fr_3fr_2fr]
+        */}
+        <div className="grid h-[calc(100vh-14rem)] grid-cols-[3fr_2fr] grid-rows-[auto_1fr] gap-4">
+          {/* <div className="row-span-2 min-h-0 overflow-auto pr-1">
             <TeamColumn
               onSelect={(memberId) => setSelectedTeamId(selectedTeamId === memberId ? null : memberId)}
               onTheClockMemberId={clock.current?.league_member_id ?? null}
@@ -85,7 +88,7 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
               rosters={rosters}
               selectedTeamId={selectedTeamId}
             />
-          </div>
+          </div> */}
 
           <div className="col-span-2">
             <OnTheClock canRecord={canRecord} clock={clock} onUndo={undoPick} />
@@ -108,9 +111,9 @@ function HeadingOnTheClock({ clock }: { clock: DraftClock }) {
   return (
     <div className="flex w-lg items-center justify-start gap-8 rounded-lg border-2 bg-card p-2">
       <AlarmClock />
-      <div className="flex items-center justify-start gap-2">
+      <div className="grow flex items-center justify-between gap-2">
         <p className="text-xl font-bold">{clock?.current?.team_name}</p>
-        <p className="text-xs text-muted-foreground">{clock?.current?.owner_name}</p>
+        <p className="text-xs text-muted-foreground pt-1">{clock?.current?.owner_name}</p>
       </div>
     </div>
   );

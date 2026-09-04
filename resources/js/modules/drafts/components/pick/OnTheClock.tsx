@@ -1,7 +1,7 @@
 import { cn } from '@/common/helpers/cn';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { type DraftClock, type RoundSlot } from '@/types/picks';
+import type { DraftClock, RoundSlot, RoundSlotPlayer } from '@/types/picks';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -114,32 +114,69 @@ function RoundPick({ canRecord, onUndo, slot }: RoundPickProps) {
         slot.is_current && 'border-2 border-primary bg-primary/10',
       )}
     >
-      {player && canRecord && (
-        <button
-          type="button"
-          onClick={undo}
-          aria-label={`Undo pick ${pickLabel}`}
-          className="absolute top-0.5 right-0.5 rounded-full bg-background/80 p-0.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive focus-visible:opacity-100"
-        >
-          <X className="size-3" />
-        </button>
-      )}
+      {player && canRecord && <UndoButton label={pickLabel} undo={undo} />}
 
       <span className="text-[10px] text-muted-foreground tabular-nums">
         {slot.round}.{String(slot.pick_number).padStart(2, '0')}
       </span>
       <span className="w-full truncate text-center text-xs">{slot.team_name}</span>
 
+      <Player player={player} />
+    </div>
+  );
+}
+
+function UndoButton({ label, undo }: { label: string; undo: () => void;}) {
+  const classes = [
+    'absolute',
+    'top-0.5',
+    'right-0.5',
+    'rounded-full',
+    'bg-background/80',
+    'p-0.5',
+    'text-muted-foreground',
+    'opacity-0',
+    'transition-opacity',
+    'group-hover:opacity-100',
+    'hover:text-destructive',
+    'focus-visible:opacity-100',
+  ];
+
+  return (
+    <button
+      type="button"
+      onClick={undo}
+      aria-label={`Undo pick ${label}`}
+      className={classes.join(' ')}
+    >
+      <X className="size-3" />
+    </button>
+  );
+}
+
+function Player({ player }: { player: RoundSlotPlayer | null; }) {
+  if (!player) {
+    return (
+      <>
+        <div className="h-20">&nbsp;</div>
+        <div className="h-4">&nbsp;</div>
+      </>
+    );
+  }
+
+  return (
+    <>
       {player?.headshot ? (
         <img src={player.headshot} alt="" className="size-20 rounded-full bg-muted object-cover" />
       ) : (
         <div className="h-20">&nbsp;</div>
       )}
-      {player ? (
-        <span className="w-full truncate text-center text-[10px] text-muted-foreground">{player.full_name}</span>
-      ) : (
-        <div className="h-4">&nbsp;</div>
-      )}
-    </div>
+      <span className="w-full truncate text-center text-[10px] text-muted-foreground">
+        {player.full_name}
+      </span>
+      <span className="w-full truncate text-center text-[8px] text-muted-foreground">
+        {player.position} &nbsp; {player.team}
+      </span>
+    </>
   );
 }

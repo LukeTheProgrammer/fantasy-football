@@ -35,19 +35,18 @@ export function TeamColumn({ onSelect, onTheClockMemberId, remainingByMember, ro
             type="button"
             onClick={() => onSelect?.(roster.league_member_id)}
             className={cn(
-              'rounded-lg border bg-card px-2 py-1.5 text-left transition-colors hover:border-primary/60',
+              'min-h-10 rounded-lg border bg-card px-2 py-1.5 text-left transition-colors hover:border-primary/60',
               selectedTeamId === roster.league_member_id && 'border-primary ring-1 ring-primary',
-              onTheClock && 'border-primary bg-primary/10',
               remaining === 0 && !onTheClock && 'opacity-60',
             )}
           >
-            <div className="flex w-full flex-col items-baseline justify-between gap-2">
-              <div className="flex w-full items-start justify-between gap-2">
-                <p className="truncate leading-tight font-bold">{roster.team_name}</p>
-                <div>{onTheClock && <Clock />}</div>
+            <div className="h-full w-full flex flex-col items-baseline justify-between gap-1">
+              <div className="flex w-full items-start justify-between gap-1">
+                <p className="text-md truncate leading-tight font-bold">{roster.team_name}</p>
+                <div>{onTheClock && <Clock size="12" />}</div>
               </div>
-              <div className="flex w-full items-end justify-between gap-2">
-                <p className="text-sm leading-tight text-muted-foreground">{roster.owner_name}</p>
+              <div className="flex w-full items-end justify-between gap-1">
+                <p className="text-xs leading-tight text-muted-foreground">{roster.owner_name}</p>
                 <RosterCount roster={roster} />
               </div>
             </div>
@@ -70,7 +69,7 @@ function RosterCount({ roster }: { roster: TeamRoster }) {
   }
 
   return (
-    <p>
+    <p className="text-xs leading-tight">
       {rostered} / {total}
     </p>
   );
