@@ -20,31 +20,50 @@ class OnTheClockAction
     {
         $order = $draft->draft_order ?? [];
 
-        // Picks already made are the position in the order, so a pick undone
-        // puts the same slot back on the clock.
-        $made = $draft->picks()->count();
+        // Which slots are filled, rather than how many: undoing a pick from
+        // the middle of the board puts that slot back on the clock, and
+        // counting would send the room to the end of the run instead.
+        $taken = $draft->picks->keyBy('overall_pick_number');
+
+        $next = $this->nextOpenSlot($order, $taken);
 
         $members = $draft->league->members->keyBy('external_id');
 
         $slots = [];
 
-        foreach (array_slice($order, $made, $upcoming + 1, true) as $index => $externalId) {
+        foreach (array_slice($order, $next, $upcoming + 1, true) as $index => $externalId) {
             $member = $members->get($externalId);
 
             $slots[] = $this->slot($index, $member, $draft);
         }
 
         return [
-            'made'      => $made,
+            'made'      => $taken->count(),
             'total'     => count($order),
-            'remaining' => max(count($order) - $made, 0),
+            'remaining' => max(count($order) - $taken->count(), 0),
             'current'   => Arr::first($slots),
             'upcoming'  => array_slice($slots, 1),
             // Every round, so the board can be paged back and forth without
             // another trip to the server.
-            'rounds'        => $this->rounds($draft, $order, $members, $made),
-            'current_round' => $this->currentRound($draft, $order, $made),
+            'rounds'        => $this->rounds($draft, $order, $members, $taken, $next),
+            'current_round' => $this->currentRound($draft, $order, $next),
         ];
+    }
+
+    /**
+     * The first slot in the order with no pick against it.
+     *
+     * @param array<int, string> $order
+     */
+    private function nextOpenSlot(array $order, Collection $taken): int
+    {
+        foreach (array_keys($order) as $index) {
+            if (!$taken->has($index + 1)) {
+                return $index;
+            }
+        }
+
+        return count($order);
     }
 
     /**
@@ -55,17 +74,13 @@ class OnTheClockAction
      *
      * @return array<int, array<int, array<string, mixed>>>
      */
-    private function rounds(Draft $draft, array $order, Collection $members, int $made): array
+    private function rounds(Draft $draft, array $order, Collection $members, Collection $taken, int $next): array
     {
         if (empty($order)) {
             return [];
         }
 
         $teams = max($draft->league->team_count, 1);
-
-        // A made pick is shown as the player who was taken, so the board reads
-        // as a record of the round rather than only a running order.
-        $picks = $draft->picks->keyBy('overall_pick_number');
 
         $rounds = [];
 
@@ -75,9 +90,12 @@ class OnTheClockAction
             foreach ($chunk as $slotIndex => $externalId) {
                 $slots[] = [
                     ...$this->slot($slotIndex, $members->get($externalId), $draft),
-                    'is_made'    => $slotIndex < $made,
-                    'is_current' => $slotIndex === $made,
-                    'player'     => $this->player($picks->get($slotIndex + 1)),
+                    // A made pick is shown as the player who was taken, so the
+                    // board reads as a record of the round rather than only a
+                    // running order.
+                    'is_made'    => $taken->has($slotIndex + 1),
+                    'is_current' => $slotIndex === $next,
+                    'player'     => $this->player($taken->get($slotIndex + 1)),
                 ];
             }
 
@@ -92,7 +110,7 @@ class OnTheClockAction
      *
      * @param array<int, string> $order
      */
-    private function currentRound(Draft $draft, array $order, int $made): int
+    private function currentRound(Draft $draft, array $order, int $next): int
     {
         if (empty($order)) {
             return 1;
@@ -100,7 +118,7 @@ class OnTheClockAction
 
         $teams = max($draft->league->team_count, 1);
 
-        return intdiv(min($made, count($order) - 1), $teams) + 1;
+        return intdiv(min($next, count($order) - 1), $teams) + 1;
     }
 
     /**

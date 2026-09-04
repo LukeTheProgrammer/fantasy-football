@@ -56,13 +56,6 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
   const shownTeamId = selectedTeamId ?? clock.current?.league_member_id ?? null;
   const shownRoster = useMemo(() => rosters.find((roster) => roster.league_member_id === shownTeamId) ?? null, [rosters, shownTeamId]);
 
-  const recentPicks = useMemo(() => {
-    return rosters
-      .flatMap((roster) => roster.picks.map((pick) => ({ ...pick, team_name: roster.team_name })))
-      .sort((a, b) => b.overall_pick_number - a.overall_pick_number)
-      .slice(0, 10);
-  }, [rosters]);
-
   const draftPlayer = (playerId: number) => {
     setRecording(true);
 
@@ -80,7 +73,6 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
       <div className="flex-1 space-y-2 p-6">
         <Heading
           title={`${draft.league.name} ${draft.league.season_id}`}
-          description={`${draft.rounds} rounds`}
           containerClass="mb-0"
           headingClass="mb-0"
         />
@@ -99,7 +91,7 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
           </div>
 
           <div className="col-span-2">
-            <OnTheClock clock={clock} />
+            <OnTheClock canRecord={canRecord} clock={clock} onUndo={undoPick} />
           </div>
 
           <div className="min-h-0 overflow-auto">
@@ -107,31 +99,6 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
           </div>
 
           <div className="min-h-0 space-y-4 overflow-auto pr-1">
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Recent picks</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {recentPicks.length === 0 && <p className="text-sm text-muted-foreground">Nothing drafted yet.</p>}
-
-                <ul className="space-y-2">
-                  {recentPicks.map((pick) => (
-                    <li key={pick.pick_id} className="flex items-center justify-between gap-2 text-sm">
-                      <span className="min-w-0">
-                        <span className="text-muted-foreground tabular-nums">#{pick.overall_pick_number}</span> {pick.full_name}
-                        <span className="block text-xs text-muted-foreground">{pick.team_name}</span>
-                      </span>
-                      {canRecord && (
-                        <Button size="sm" variant="ghost" onClick={() => undoPick(pick.pick_id)}>
-                          Undo
-                        </Button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card> */}
-
             <PickRosters roster={shownRoster} />
           </div>
         </div>

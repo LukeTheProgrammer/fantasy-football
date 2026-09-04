@@ -152,6 +152,44 @@ class PickDraftRoomTest extends TestCase
         $this->assertSame(1, DraftPick::where('draft_id', $this->draft->id)->count());
     }
 
+    public function test_undoing_a_pick_from_the_middle_puts_that_slot_back_on_the_clock(): void
+    {
+        $first = Player::factory()->create();
+        $second = Player::factory()->create();
+
+        foreach ([$first, $second] as $player) {
+            $this->actingAs($this->user)
+                ->post(route('drafts.board-picks.store', $this->draft->id), ['player_id' => $player->id]);
+        }
+
+        // Undo the first, leaving a hole with a later pick still standing.
+        $hole = DraftPick::where('draft_id', $this->draft->id)->where('overall_pick_number', 1)->sole();
+
+        $this->actingAs($this->user)
+            ->delete(route('drafts.board-picks.destroy', [$this->draft->id, $hole->id]))
+            ->assertRedirect();
+
+        $clock = PickFacade::onTheClock($this->draft->fresh()->load(['league.members', 'picks']));
+
+        // The hole is what is on the clock, not the end of the run: counting
+        // picks would have sent the room to slot 2, which is already taken.
+        $this->assertSame(1, $clock['current']['overall_pick_number']);
+        $this->assertSame(1, $clock['made']);
+
+        $round = collect($clock['rounds'][0]);
+        $this->assertFalse($round->firstWhere('overall_pick_number', 1)['is_made']);
+        $this->assertTrue($round->firstWhere('overall_pick_number', 2)['is_made']);
+        $this->assertSame($second->full_name, $round->firstWhere('overall_pick_number', 2)['player']['full_name']);
+
+        // Refilling the hole moves the clock past both.
+        $this->actingAs($this->user)
+            ->post(route('drafts.board-picks.store', $this->draft->id), ['player_id' => Player::factory()->create()->id]);
+
+        $clock = PickFacade::onTheClock($this->draft->fresh()->load(['league.members', 'picks']));
+
+        $this->assertSame(3, $clock['current']['overall_pick_number']);
+    }
+
     public function test_a_player_cannot_be_drafted_twice(): void
     {
         $player = Player::factory()->create();
