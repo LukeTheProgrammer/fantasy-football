@@ -10,6 +10,7 @@ use App\Services\Espn\EspnService;
 use App\Services\FantasyPros\FantasyProsService;
 use App\Services\Imports\ImportService;
 use App\Services\Nflverse\NflverseService;
+use App\Services\Picks\PickService;
 use App\Services\Player\PlayerService;
 use App\Services\ProFootballReference\ProFootballReferenceService;
 use App\Services\Scrapers\ScraperService;
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         'FantasyPros'          => FantasyProsService::class,
         'Import'               => ImportService::class,
         'Nflverse'             => NflverseService::class,
+        'Pick'                 => PickService::class,
         'Player'               => PlayerService::class,
         'ProFootballReference' => ProFootballReferenceService::class,
         'Scraper'              => ScraperService::class,

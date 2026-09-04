@@ -29,6 +29,8 @@ class Draft extends Model
         'is_active'      => 'boolean',
         'auction_budget' => 'integer',
         'time_per_pick'  => 'integer',
+        'rounds'         => 'integer',
+        'draft_order'    => 'array',
     ];
 
     /**

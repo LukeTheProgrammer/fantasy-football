@@ -156,6 +156,7 @@ class FantasyLeagueFormatter
             // A pick draft has no budget to spend.
             'auction_budget' => null,
             'is_active'      => false,
+            'rounds'         => (int) Arr::get($draft, 'rounds', 0),
         ];
 
         // CBS does not publish a clock for a live draft, so the column's own
@@ -166,9 +167,9 @@ class FantasyLeagueFormatter
             $this->data['draft']['time_per_pick'] = $timePerPick;
         }
 
-        // CBS publishes the order as one row per slot for the whole draft,
-        // and this league drafts in a straight order rather than a snake, so
-        // the slots are taken as given rather than derived from a seed order.
+        // CBS publishes the order as one row per slot for the whole draft.
+        // A commissioner can set that order by hand, so it is carried as it
+        // was given rather than derived from a seed order.
         $this->data['draftPicks'] = [];
 
         $teams = max((int) $this->details('num_teams', 0), 1);
@@ -185,6 +186,8 @@ class FantasyLeagueFormatter
                 'overall_pick_number' => $overall,
             ];
         }
+
+        $this->data['draft']['draft_order'] = array_column($this->data['draftPicks'], 'league_member_id');
     }
 
     /**

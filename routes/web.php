@@ -9,6 +9,7 @@ use App\Http\Controllers\DraftRankingController;
 use App\Http\Controllers\DraftSyncController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\LeagueSyncController;
+use App\Http\Controllers\PickController;
 use App\Http\Controllers\PlayersController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/{draft}/budget', [DraftBudgetController::class, 'update'])->name('budget.update');
         Route::patch('/{draft}/picks/{pick}', [AuctionPickController::class, 'update'])->name('picks.update');
         Route::delete('/{draft}/picks/{pick}', [AuctionPickController::class, 'destroy'])->name('picks.destroy');
+
+        // A pick draft records whoever the order has on the clock, so it is a
+        // different write from an auction sale.
+        Route::post('/{draft}/board-picks', [PickController::class, 'store'])->name('board-picks.store');
+        Route::delete('/{draft}/board-picks/{pick}', [PickController::class, 'destroy'])->name('board-picks.destroy');
     });
 
     // DraftRanking model

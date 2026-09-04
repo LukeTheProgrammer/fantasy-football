@@ -8,6 +8,9 @@ export interface Draft {
   current_pick: number | null;
   current_round: number | null;
   time_per_pick: number;
+  rounds: number;
+  /** External team id of each slot, in overall pick order. */
+  draft_order: string[] | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;

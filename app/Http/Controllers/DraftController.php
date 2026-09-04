@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Facades\Auction as AuctionFacade;
+use App\Facades\Pick as PickFacade;
 use App\Models\Draft;
 use App\Models\DraftRanking;
 use App\Models\League;
@@ -180,6 +181,12 @@ class DraftController extends Controller
         // once rather than once per format.
         [$ppr, $superflex] = $this->rankingFormat($draft->league);
 
+        // A pick draft is run off its order rather than off a price, so it is
+        // its own room too.
+        if ($draft->draft_type === 'linear') {
+            return $this->pickDraftRoom($draft, $ppr, $superflex);
+        }
+
         $availablePlayers = DraftRanking::query()
             ->latestRanking($draft->league->season_id, $ppr, $superflex)
             ->forFormat($ppr, $superflex)
@@ -195,6 +202,20 @@ class DraftController extends Controller
         return Inertia::render('drafts/DraftRoomPage', [
             'draft'            => $draft,
             'availablePlayers' => $availablePlayers,
+        ]);
+    }
+
+    /**
+     * The pick board: who is on the clock, who is left, and what each team
+     * already holds.
+     */
+    private function pickDraftRoom(Draft $draft, float $ppr, bool $superflex)
+    {
+        return Inertia::render('drafts/PickDraftRoomPage', [
+            'draft'   => $draft,
+            'clock'   => PickFacade::onTheClock($draft),
+            'players' => PickFacade::board($draft, $ppr, $superflex),
+            'rosters' => PickFacade::rosters($draft),
         ]);
     }
 
