@@ -69,6 +69,7 @@ export function PickRosters({ onClear, roster }: PickRostersProps) {
 
 function SlotRow({ slot }: { slot: RosterSlot }) {
   const player = slot.player;
+  const pos = player?.position ?? '';
 
   return (
     <li className={cn('flex items-center gap-2 rounded px-1 py-0.5 text-sm', !player && 'opacity-50')}>
@@ -76,7 +77,7 @@ function SlotRow({ slot }: { slot: RosterSlot }) {
 
       {player ? (
         <>
-          <PositionBadge position={player.position ?? ''} />
+          <PositionBadge position={pos == 'RB/WR/TE' ? 'Flex' : pos} />
           <span className="truncate">{player.full_name}</span>
           <span className="text-xs text-muted-foreground">{player.team}</span>
           <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">{player.source}</span>

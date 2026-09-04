@@ -46,10 +46,8 @@ export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardP
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex flex-wrap items-center justify-between gap-3">
-          <span>Available &middot; {filtered.length}</span>
-
-          <div className="flex flex-wrap items-center gap-2">
+        <CardTitle className="w-full grid grid-cols-3 gap-3">
+          <div className="col-span-2 flex flex-wrap items-center gap-2">
             <div className="flex gap-1">
               {POSITIONS.map((pos) => (
                 <Button key={pos} size="sm" variant={position === pos ? 'default' : 'outline'} onClick={() => setPosition(pos)}>
@@ -57,8 +55,8 @@ export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardP
                 </Button>
               ))}
             </div>
-            <Input className="w-56" placeholder="Filter players..." value={filterText} onChange={(e) => setFilterText(e.target.value)} />
           </div>
+          <Input className="w-full" placeholder="Filter players..." value={filterText} onChange={(e) => setFilterText(e.target.value)} />
         </CardTitle>
       </CardHeader>
 
