@@ -10,6 +10,7 @@ use App\Http\Controllers\DraftSyncController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\LeagueSyncController;
 use App\Http\Controllers\PickController;
+use App\Http\Controllers\PickPlayerController;
 use App\Http\Controllers\PlayersController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // different write from an auction sale.
         Route::post('/{draft}/board-picks', [PickController::class, 'store'])->name('board-picks.store');
         Route::delete('/{draft}/board-picks/{pick}', [PickController::class, 'destroy'])->name('board-picks.destroy');
+        // The profile behind a name in the pick room.
+        Route::get('/{draft}/board-players/{player}', [PickPlayerController::class, 'show'])->name('board-players.show');
     });
 
     // DraftRanking model

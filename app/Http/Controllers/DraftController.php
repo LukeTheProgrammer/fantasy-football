@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Facades\Auction as AuctionFacade;
 use App\Facades\Pick as PickFacade;
+use App\Facades\Ranking as RankingFacade;
 use App\Models\Draft;
 use App\Models\DraftRanking;
 use App\Models\League;
@@ -179,7 +180,7 @@ class DraftController extends Controller
 
         // The newest rankings in a single scoring format, so a player appears
         // once rather than once per format.
-        [$ppr, $superflex] = $this->rankingFormat($draft->league);
+        [$ppr, $superflex] = RankingFacade::format($draft->league);
 
         // A pick draft is run off its order rather than off a price, so it is
         // its own room too.
@@ -239,46 +240,6 @@ class DraftController extends Controller
             'rosters' => AuctionFacade::rosters($draft),
             'budget'  => $member ? AuctionFacade::budget($draft, $member) : null,
         ]);
-    }
-
-    /**
-     * The closest scoring format to this league's own that rankings were
-     * actually published in.
-     *
-     * Sources do not publish every combination. Superflex changes a draft board
-     * far more than a half point per reception does, so it is matched first.
-     *
-     * @return array{0: float, 1: bool}
-     */
-    private function rankingFormat(League $league): array
-    {
-        $ppr = $league->settings?->pprValue() ?? 0.0;
-        $superflex = (bool) $league->settings?->two_qb;
-
-        $available = DraftRanking::query()
-            ->availableFormats($league->season_id)
-            ->get()
-            ->map(fn (DraftRanking $ranking) => [(float) $ranking->ppr, (bool) $ranking->superflex]);
-
-        if ($available->isEmpty()) {
-            return [$ppr, $superflex];
-        }
-
-        $preferences = [
-            fn ($format) => $format === [$ppr, $superflex],
-            fn ($format) => $superflex && $format[1] === true,
-            fn ($format) => $format[0] === $ppr && $format[1] === false,
-        ];
-
-        foreach ($preferences as $matches) {
-            $match = $available->first($matches);
-
-            if ($match) {
-                return $match;
-            }
-        }
-
-        return $available->first();
     }
 
     /**

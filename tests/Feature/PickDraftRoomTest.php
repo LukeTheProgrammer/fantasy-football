@@ -190,6 +190,49 @@ class PickDraftRoomTest extends TestCase
         $this->assertSame(3, $clock['current']['overall_pick_number']);
     }
 
+    public function test_the_player_profile_says_who_holds_him(): void
+    {
+        $available = Player::factory()->create();
+        $keeper = Player::factory()->create();
+        $drafted = Player::factory()->create();
+
+        LeagueMemberRoster::create([
+            'league_member_id' => $this->members['4']->id,
+            'player_id'        => $keeper->id,
+            'season'           => 2026,
+            'week'             => 0,
+            'lineup_slot_id'   => 0,
+        ]);
+
+        $this->actingAs($this->user)
+            ->post(route('drafts.board-picks.store', $this->draft->id), ['player_id' => $drafted->id]);
+
+        $this->actingAs($this->user)
+            ->getJson(route('drafts.board-players.show', [$this->draft->id, $available->id]))
+            ->assertOk()
+            ->assertJsonPath('full_name', $available->full_name)
+            ->assertJsonPath('owner', null);
+
+        $this->actingAs($this->user)
+            ->getJson(route('drafts.board-players.show', [$this->draft->id, $keeper->id]))
+            ->assertOk()
+            ->assertJsonPath('owner.team_name', 'Mine')
+            ->assertJsonPath('owner.source', 'Keeper');
+
+        $this->actingAs($this->user)
+            ->getJson(route('drafts.board-players.show', [$this->draft->id, $drafted->id]))
+            ->assertOk()
+            ->assertJsonPath('owner.team_name', 'Theirs')
+            ->assertJsonPath('owner.source', 'R1.1');
+    }
+
+    public function test_the_player_profile_is_closed_to_non_members(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->getJson(route('drafts.board-players.show', [$this->draft->id, Player::factory()->create()->id]))
+            ->assertForbidden();
+    }
+
     public function test_a_player_cannot_be_drafted_twice(): void
     {
         $player = Player::factory()->create();

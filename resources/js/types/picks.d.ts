@@ -87,3 +87,18 @@ export interface BoardPlayer {
   team: string | null;
   tier: number | null;
 }
+
+export interface PlayerProfile {
+  age: number | null;
+  college: string | null;
+  full_name: string | null;
+  headshot: string | null;
+  height: string | null;
+  jersey: number | null;
+  owner: { source: string; team_name: string | null } | null;
+  player_id: number;
+  position: string | null;
+  ranking: { adp: string | null; adv: string | null; rank: number | null; tier: number | null } | null;
+  team: string | null;
+  weight: string | null;
+}

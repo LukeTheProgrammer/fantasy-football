@@ -10,6 +10,7 @@ import { type Draft } from '@/types/models';
 import { type BoardPlayer, type DraftClock, type TeamRoster } from '@/types/picks';
 import { PageProps } from '@inertiajs/core';
 import { Head, router, usePage } from '@inertiajs/react';
+import { AlarmClock } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 interface PickDraftRoomProps extends PageProps {
@@ -71,7 +72,7 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
       <Head title={`${draft.league.name} Draft Room`} />
 
       <div className="flex-1 space-y-2 p-6">
-        <Heading title={`${draft.league.name} ${draft.league.season_id}`} containerClass="mb-0" headingClass="mb-0" />
+        <Heading title={`${draft.league.name} ${draft.league.season_id}`} rightContent={<HeadingOnTheClock clock={clock} />} containerClass="mb-0" />
 
         {/* Desktop only: one fixed height row, the league down the left, the
             clock as a bar over the board and the roster panel. */}
@@ -91,14 +92,26 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
           </div>
 
           <div className="min-h-0 overflow-auto">
-            <PickBoard players={players} canRecord={canRecord} recording={recording} onDraft={draftPlayer} />
+            <PickBoard draftId={draft.id} players={players} canRecord={canRecord} recording={recording} onDraft={draftPlayer} />
           </div>
 
           <div className="min-h-0 space-y-4 overflow-auto pr-1">
-            <PickRosters roster={shownRoster} />
+            <PickRosters draftId={draft.id} roster={shownRoster} />
           </div>
         </div>
       </div>
     </AppLayout>
+  );
+}
+
+function HeadingOnTheClock({ clock }: { clock: DraftClock }) {
+  return (
+    <div className="flex w-lg items-center justify-start gap-8 rounded-lg border-2 bg-card p-2">
+      <AlarmClock />
+      <div className="flex items-center justify-start gap-2">
+        <p className="text-xl font-bold">{clock?.current?.team_name}</p>
+        <p className="text-xs text-muted-foreground">{clock?.current?.owner_name}</p>
+      </div>
+    </div>
   );
 }

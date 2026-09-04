@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { PlayerDialog } from '@/modules/drafts/components/pick/PlayerDialog';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
 import { type BoardPlayer } from '@/types/picks';
 import { useMemo, useState } from 'react';
@@ -9,6 +10,7 @@ import { useMemo, useState } from 'react';
 const POSITIONS = ['ALL', 'QB', 'RB', 'WR', 'TE', 'DST', 'K'];
 
 interface PickBoardProps {
+  draftId: number;
   players: BoardPlayer[];
   canRecord: boolean;
   recording: boolean;
@@ -19,7 +21,7 @@ interface PickBoardProps {
  * Everyone still available, best first. Drafting is one click because the
  * order already knows whose pick it is.
  */
-export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardProps) {
+export function PickBoard({ draftId, players, canRecord, recording, onDraft }: PickBoardProps) {
   const [filterText, setFilterText] = useState('');
   const [position, setPosition] = useState('ALL');
 
@@ -78,7 +80,9 @@ export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardP
               {filtered.map((ranking) => (
                 <TableRow key={ranking.id}>
                   <TableCell className="text-muted-foreground">{ranking.rank}</TableCell>
-                  <TableCell className="font-medium">{ranking.full_name}</TableCell>
+                  <TableCell className="font-medium">
+                    <PlayerDialog draftId={draftId} name={ranking.full_name} playerId={ranking.player_id} />
+                  </TableCell>
                   <TableCell>
                     <PositionBadge position={ranking.position ?? ''} />
                   </TableCell>

@@ -1,9 +1,11 @@
 import { cn } from '@/common/helpers/cn';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PlayerDialog } from '@/modules/drafts/components/pick/PlayerDialog';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
 import { type RosterSlot, type TeamRoster } from '@/types/picks';
 
 interface PickRostersProps {
+  draftId: number;
   roster: TeamRoster | null;
 }
 
@@ -14,7 +16,7 @@ interface PickRostersProps {
  * decide who starts, and how a player was come by is said quietly at the end
  * of his row rather than by splitting the squad in two.
  */
-export function PickRosters({ roster }: PickRostersProps) {
+export function PickRosters({ draftId, roster }: PickRostersProps) {
   if (!roster) {
     return (
       <Card>
@@ -45,14 +47,14 @@ export function PickRosters({ roster }: PickRostersProps) {
       <CardContent>
         <ul className="space-y-0.5">
           {starters.map((slot) => (
-            <SlotRow key={slot.index} slot={slot} />
+            <SlotRow key={slot.index} slot={slot} draftId={draftId} />
           ))}
         </ul>
 
         <p className="mt-4 mb-1 text-xs tracking-wide text-muted-foreground uppercase">Bench</p>
         <ul className="space-y-0.5">
           {bench.map((slot) => (
-            <SlotRow key={slot.index} slot={slot} />
+            <SlotRow key={slot.index} slot={slot} draftId={draftId} />
           ))}
         </ul>
       </CardContent>
@@ -60,7 +62,7 @@ export function PickRosters({ roster }: PickRostersProps) {
   );
 }
 
-function SlotRow({ slot }: { slot: RosterSlot }) {
+function SlotRow({ draftId, slot }: { draftId: number; slot: RosterSlot }) {
   const player = slot.player;
   const label = slot.label;
 
@@ -71,7 +73,7 @@ function SlotRow({ slot }: { slot: RosterSlot }) {
       {player ? (
         <>
           <PositionBadge position={player.position ?? ''} />
-          <span className="truncate">{player.full_name}</span>
+          <PlayerDialog draftId={draftId} name={player.full_name} playerId={player.player_id} />
           <span className="text-xs text-muted-foreground">{player.team}</span>
           <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">{player.source}</span>
         </>
