@@ -3,13 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
-import { type DraftRanking } from '@/types/models';
+import { type BoardPlayer } from '@/types/picks';
 import { useMemo, useState } from 'react';
 
 const POSITIONS = ['ALL', 'QB', 'RB', 'WR', 'TE', 'DST', 'K'];
 
 interface PickBoardProps {
-  players: DraftRanking[];
+  players: BoardPlayer[];
   canRecord: boolean;
   recording: boolean;
   onDraft: (playerId: number) => void;
@@ -26,8 +26,8 @@ export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardP
   const filtered = useMemo(() => {
     const search = filterText.trim().toLowerCase();
 
-    return players.filter(({ player }) => {
-      if (position !== 'ALL' && player.position_id?.toUpperCase() !== position) {
+    return players.filter((player) => {
+      if (position !== 'ALL' && player.position?.toUpperCase() !== position) {
         return false;
       }
 
@@ -36,9 +36,9 @@ export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardP
       }
 
       return (
-        player.full_name.toLowerCase().includes(search) ||
-        (player.position_id?.toLowerCase().includes(search) ?? false) ||
-        (player.team_id?.toLowerCase().includes(search) ?? false)
+        (player.full_name?.toLowerCase().includes(search) ?? false) ||
+        (player.position?.toLowerCase().includes(search) ?? false) ||
+        (player.team?.toLowerCase().includes(search) ?? false)
       );
     });
   }, [players, filterText, position]);
@@ -78,11 +78,11 @@ export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardP
               {filtered.map((ranking) => (
                 <TableRow key={ranking.id}>
                   <TableCell className="text-muted-foreground">{ranking.rank}</TableCell>
-                  <TableCell className="font-medium">{ranking.player.full_name}</TableCell>
+                  <TableCell className="font-medium">{ranking.full_name}</TableCell>
                   <TableCell>
-                    <PositionBadge position={ranking.player.position ?? ranking.player.position_id} />
+                    <PositionBadge position={ranking.position ?? ''} />
                   </TableCell>
-                  <TableCell>{ranking.player.team?.abbreviation ?? ranking.player.team_id}</TableCell>
+                  <TableCell>{ranking.team}</TableCell>
                   <TableCell>{ranking.tier}</TableCell>
                   <TableCell>{ranking.adp}</TableCell>
                   <TableCell className="text-right">

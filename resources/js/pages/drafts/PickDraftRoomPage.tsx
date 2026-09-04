@@ -6,8 +6,8 @@ import { TeamColumn } from '@/modules/drafts/components/pick/TeamColumn';
 import { getDraftUserMember } from '@/modules/drafts/helpers/getDraftUserMember';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { type Draft, type DraftRanking } from '@/types/models';
-import { type DraftClock, type TeamRoster } from '@/types/picks';
+import { type Draft } from '@/types/models';
+import { type BoardPlayer, type DraftClock, type TeamRoster } from '@/types/picks';
 import { PageProps } from '@inertiajs/core';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
@@ -15,7 +15,7 @@ import { useMemo, useState } from 'react';
 interface PickDraftRoomProps extends PageProps {
   clock: DraftClock;
   draft: Draft;
-  players: DraftRanking[];
+  players: BoardPlayer[];
   rosters: TeamRoster[];
 }
 
@@ -71,11 +71,7 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
       <Head title={`${draft.league.name} Draft Room`} />
 
       <div className="flex-1 space-y-2 p-6">
-        <Heading
-          title={`${draft.league.name} ${draft.league.season_id}`}
-          containerClass="mb-0"
-          headingClass="mb-0"
-        />
+        <Heading title={`${draft.league.name} ${draft.league.season_id}`} containerClass="mb-0" headingClass="mb-0" />
 
         {/* Desktop only: one fixed height row, the league down the left, the
             clock as a bar over the board and the roster panel. */}

@@ -74,3 +74,16 @@ export interface TeamRoster {
   slots: RosterSlot[];
   team_name: string;
 }
+
+export interface BoardPlayer {
+  adp: string | null;
+  adv: string | null;
+  full_name: string | null;
+  /** The draft_rankings row id. */
+  id: number;
+  player_id: number;
+  position: string | null;
+  rank: number | null;
+  team: string | null;
+  tier: number | null;
+}
