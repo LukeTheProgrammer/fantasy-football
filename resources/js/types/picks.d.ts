@@ -1,39 +1,56 @@
 export interface ClockSlot {
-  overall_pick_number: number;
-  round: number;
-  pick_number: number;
-  league_member_id: number | null;
   external_id: string | null;
-  team_name: string | null;
+  league_member_id: number | null;
+  overall_pick_number: number;
   owner_name: string | null;
+  pick_number: number;
+  round: number;
+  team_name: string | null;
 }
 
 export interface DraftClock {
-  made: number;
-  total: number;
-  remaining: number;
   current: ClockSlot | null;
+  made: number;
+  remaining: number;
+  total: number;
   upcoming: ClockSlot[];
 }
 
 export interface RosterPlayer {
-  player_id: number | null;
   full_name: string | null;
+  league_member_id: number;
+  pick_id: number | null;
+  player_id: number | null;
   position: string | null;
+  /** How the team came by him: 'Keeper', or the round and pick he was taken at. */
+  source: string;
   team: string | null;
 }
 
-export interface RosterPick extends RosterPlayer {
-  pick_id: number;
-  round: number;
+export interface RosterSlot {
+  index: number;
+  is_starter: boolean;
+  /** The slot as it reads on a lineup, e.g. 'RB/WR/TE'. */
+  label: string;
+  player: RosterPlayer | null;
+  slot: string;
+}
+
+export interface RosterPick {
+  full_name: string | null;
   overall_pick_number: number;
+  pick_id: number;
+  player_id: number | null;
+  position: string | null;
+  round: number;
+  team: string | null;
 }
 
 export interface TeamRoster {
-  league_member_id: number;
   external_id: string;
-  team_name: string;
+  league_member_id: number;
   owner_name: string;
-  keepers: RosterPlayer[];
   picks: RosterPick[];
+  slots: RosterSlot[];
+  team_name: string;
 }

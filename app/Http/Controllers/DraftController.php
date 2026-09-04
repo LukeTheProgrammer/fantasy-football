@@ -215,7 +215,7 @@ class DraftController extends Controller
             'draft'   => $draft,
             'clock'   => PickFacade::onTheClock($draft),
             'players' => PickFacade::board($draft, $ppr, $superflex),
-            'rosters' => PickFacade::rosters($draft),
+            'rosters' => PickFacade::rosters($draft, $ppr, $superflex),
         ]);
     }
 

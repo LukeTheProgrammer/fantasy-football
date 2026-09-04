@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Facades\Pick as PickFacade;
 use App\Models\Draft;
 use App\Models\DraftPick;
+use App\Models\DraftRanking;
 use App\Models\League;
 use App\Models\LeagueMember;
 use App\Models\LeagueMemberRoster;
@@ -53,6 +54,8 @@ class PickDraftRoomTest extends TestCase
             'two_qb'           => false,
             'roster_size'      => 3,
             'roster_positions' => ['QB', 'RB', 'BE'],
+            'starters_count'   => 2,
+            'bench_count'      => 1,
         ]);
 
         // Numeric string array keys become integers, so the external ids are
@@ -159,10 +162,10 @@ class PickDraftRoomTest extends TestCase
         $this->assertSame(0, DraftPick::where('draft_id', $this->draft->id)->count());
     }
 
-    public function test_the_rosters_keep_keepers_and_picks_apart(): void
+    public function test_a_roster_slots_keepers_and_picks_into_one_lineup(): void
     {
-        $keeper = Player::factory()->create();
-        $drafted = Player::factory()->create();
+        $keeper = Player::factory()->create(['position_id' => 'QB']);
+        $drafted = Player::factory()->create(['position_id' => 'RB']);
 
         LeagueMemberRoster::create([
             'league_member_id' => $this->members['5']->id,
@@ -175,13 +178,67 @@ class PickDraftRoomTest extends TestCase
         $this->actingAs($this->user)
             ->post(route('drafts.board-picks.store', $this->draft->id), ['player_id' => $drafted->id]);
 
-        $rosters = PickFacade::rosters($this->draft->fresh()->load(['league.members', 'picks.player']));
+        $rosters = PickFacade::rosters($this->draft->fresh()->load(['league.members', 'picks.player']), 0.5, false);
 
         $theirs = $rosters->firstWhere('external_id', '5');
 
-        $this->assertCount(1, $theirs['keepers']);
+        $slots = collect($theirs['slots']);
+
+        // Each takes the slot of his own position, and how he was come by is
+        // carried on the player rather than by which list he is in.
+        $qb = $slots->firstWhere('slot', 'QB');
+        $rb = $slots->firstWhere('slot', 'RB');
+
+        $this->assertSame($keeper->full_name, $qb['player']['full_name']);
+        $this->assertSame('Keeper', $qb['player']['source']);
+        $this->assertSame($drafted->full_name, $rb['player']['full_name']);
+        $this->assertSame('R1.1', $rb['player']['source']);
+
+        // The bench is part of the shape, and is empty here.
+        $this->assertTrue($slots->firstWhere('slot', 'BE')['is_starter'] === false);
+        $this->assertNull($slots->firstWhere('slot', 'BE')['player']);
+
+        // The picks are still carried in their own running order.
         $this->assertCount(1, $theirs['picks']);
-        $this->assertSame($keeper->full_name, $theirs['keepers'][0]['full_name']);
-        $this->assertSame($drafted->full_name, $theirs['picks'][0]['full_name']);
+    }
+
+    public function test_the_best_player_starts_and_the_rest_go_to_the_bench(): void
+    {
+        // Two running backs for one starting slot: the better ranked starts.
+        $better = Player::factory()->create(['position_id' => 'RB']);
+        $worse = Player::factory()->create(['position_id' => 'RB']);
+
+        foreach ([[$better, 5], [$worse, 60]] as [$player, $rank]) {
+            DraftRanking::create([
+                'player_id' => $player->id,
+                'season'    => 2026,
+                'ranked_at' => '2026-09-01',
+                'type'      => 'redraft',
+                'source'    => 'FantasyPros',
+                'ppr'       => 0.5,
+                'superflex' => false,
+                'rank'      => $rank,
+            ]);
+        }
+
+        // The worse player is kept, so pick order would start him if the
+        // rankings were not what decided it.
+        LeagueMemberRoster::create([
+            'league_member_id' => $this->members['5']->id,
+            'player_id'        => $worse->id,
+            'season'           => 2026,
+            'week'             => 0,
+            'lineup_slot_id'   => 0,
+        ]);
+
+        $this->actingAs($this->user)
+            ->post(route('drafts.board-picks.store', $this->draft->id), ['player_id' => $better->id]);
+
+        $rosters = PickFacade::rosters($this->draft->fresh()->load(['league.members', 'picks.player']), 0.5, false);
+
+        $slots = collect($rosters->firstWhere('external_id', '5')['slots']);
+
+        $this->assertSame($better->full_name, $slots->firstWhere('slot', 'RB')['player']['full_name']);
+        $this->assertSame($worse->full_name, $slots->firstWhere('slot', 'BE')['player']['full_name']);
     }
 }

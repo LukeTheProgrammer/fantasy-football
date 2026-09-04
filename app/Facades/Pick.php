@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static array onTheClock(Draft $draft, int $upcoming = 8)
  * @method static Collection board(Draft $draft, float $ppr, bool $superflex)
- * @method static Collection rosters(Draft $draft)
+ * @method static Collection rosters(Draft $draft, float $ppr, bool $superflex)
  */
 class Pick extends Facade
 {

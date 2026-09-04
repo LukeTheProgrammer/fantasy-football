@@ -248,7 +248,14 @@ class FantasyLeagueFormatter
 
         $flex = $this->startersCount($positions) - count($slots);
 
-        return array_merge($slots, array_fill(0, max($flex, 0), 'RB_WR_TE'));
+        $slots = array_merge($slots, array_fill(0, max($flex, 0), 'RB_WR_TE'));
+
+        // The bench is part of the roster shape even though CBS states it as a
+        // total rather than as slots, and a board that leaves it out has
+        // nowhere to put the players who are not starting.
+        $bench = $this->rosterSize() - count($slots);
+
+        return array_merge($slots, array_fill(0, max($bench, 0), 'BE'));
     }
 
     private function startersCount(array $positions): int

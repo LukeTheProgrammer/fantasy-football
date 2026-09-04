@@ -13,6 +13,7 @@ use App\Services\Nflverse\NflverseService;
 use App\Services\Picks\PickService;
 use App\Services\Player\PlayerService;
 use App\Services\ProFootballReference\ProFootballReferenceService;
+use App\Services\Rosters\RosterService;
 use App\Services\Scrapers\ScraperService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
@@ -30,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         'Nflverse'             => NflverseService::class,
         'Pick'                 => PickService::class,
         'Player'               => PlayerService::class,
+        'Roster'               => RosterService::class,
         'ProFootballReference' => ProFootballReferenceService::class,
         'Scraper'              => ScraperService::class,
     ];

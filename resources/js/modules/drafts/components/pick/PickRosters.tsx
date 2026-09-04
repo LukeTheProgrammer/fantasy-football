@@ -1,7 +1,8 @@
+import { cn } from '@/common/helpers/cn';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
-import { type TeamRoster } from '@/types/picks';
+import { type RosterSlot, type TeamRoster } from '@/types/picks';
 
 interface PickRostersProps {
   onClear?: () => void;
@@ -9,10 +10,11 @@ interface PickRostersProps {
 }
 
 /**
- * One team's squad, chosen from the column beside the board.
+ * One team's squad laid out as the league's lineup.
  *
- * Keepers and picks are kept apart because a keeper cost no pick, and reading
- * them as one list hides which of the two a player was.
+ * Keepers and picks sit in one list because they play the same: the rankings
+ * decide who starts, and how a player was come by is said quietly at the end
+ * of his row rather than by splitting the squad in two.
  */
 export function PickRosters({ onClear, roster }: PickRostersProps) {
   if (!roster) {
@@ -27,6 +29,9 @@ export function PickRosters({ onClear, roster }: PickRostersProps) {
       </Card>
     );
   }
+
+  const starters = roster.slots.filter((slot) => slot.is_starter);
+  const bench = roster.slots.filter((slot) => !slot.is_starter);
 
   return (
     <Card>
@@ -45,30 +50,40 @@ export function PickRosters({ onClear, roster }: PickRostersProps) {
       </CardHeader>
 
       <CardContent>
-        <p className="mb-1 text-xs tracking-wide text-muted-foreground uppercase">Keepers &middot; {roster.keepers.length}</p>
-        <ul className="space-y-1">
-          {roster.keepers.map((player) => (
-            <li key={player.player_id} className="flex items-center gap-2 text-sm">
-              <PositionBadge position={player.position ?? ''} />
-              <span className="truncate">{player.full_name}</span>
-              <span className="text-muted-foreground">{player.team}</span>
-            </li>
+        <ul className="space-y-0.5">
+          {starters.map((slot) => (
+            <SlotRow key={slot.index} slot={slot} />
           ))}
         </ul>
 
-        <p className="mt-4 mb-1 text-xs tracking-wide text-muted-foreground uppercase">Drafted &middot; {roster.picks.length}</p>
-        {roster.picks.length === 0 && <p className="text-sm text-muted-foreground">No picks yet.</p>}
-        <ul className="space-y-1">
-          {roster.picks.map((pick) => (
-            <li key={pick.pick_id} className="flex items-center gap-2 text-sm">
-              <span className="w-8 text-xs text-muted-foreground tabular-nums">R{pick.round}</span>
-              <PositionBadge position={pick.position ?? ''} />
-              <span className="truncate">{pick.full_name}</span>
-              <span className="text-muted-foreground">{pick.team}</span>
-            </li>
+        <p className="mt-4 mb-1 text-xs tracking-wide text-muted-foreground uppercase">Bench</p>
+        <ul className="space-y-0.5">
+          {bench.map((slot) => (
+            <SlotRow key={slot.index} slot={slot} />
           ))}
         </ul>
       </CardContent>
     </Card>
+  );
+}
+
+function SlotRow({ slot }: { slot: RosterSlot }) {
+  const player = slot.player;
+
+  return (
+    <li className={cn('flex items-center gap-2 rounded px-1 py-0.5 text-sm', !player && 'opacity-50')}>
+      <span className="w-14 shrink-0 text-[10px] tracking-wide text-muted-foreground uppercase">{slot.label}</span>
+
+      {player ? (
+        <>
+          <PositionBadge position={player.position ?? ''} />
+          <span className="truncate">{player.full_name}</span>
+          <span className="text-xs text-muted-foreground">{player.team}</span>
+          <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">{player.source}</span>
+        </>
+      ) : (
+        <span className="text-sm text-muted-foreground">Empty</span>
+      )}
+    </li>
   );
 }

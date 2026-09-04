@@ -29,8 +29,8 @@ class PickService
         return (new BuildBoardAction)->run($draft, $ppr, $superflex);
     }
 
-    public function rosters(Draft $draft): Collection
+    public function rosters(Draft $draft, float $ppr, bool $superflex): Collection
     {
-        return (new SlotRostersAction)->run($draft);
+        return (new SlotRostersAction)->run($draft, $ppr, $superflex);
     }
 }
