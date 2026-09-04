@@ -3,7 +3,7 @@ import { OnTheClock } from '@/modules/drafts/components/pick/OnTheClock';
 import { PickBoard } from '@/modules/drafts/components/pick/PickBoard';
 import { PickRosters } from '@/modules/drafts/components/pick/PickRosters';
 import { TeamColumn } from '@/modules/drafts/components/pick/TeamColumn';
-import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
+import { getDraftUserMember } from '@/modules/drafts/helpers/getDraftUserMember';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type Draft, type DraftRanking } from '@/types/models';
@@ -29,7 +29,10 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
     { title: 'Draft Room', href: '#' },
   ];
 
-  const canRecord = isUserDraftAdmin(draft, auth.user.id);
+  // Recording is open to any member of the league, the same as the policy
+  // behind the route: the board is a personal record of the room, not the
+  // draft itself, and the commissioner is rarely the one holding the laptop.
+  const canRecord = getDraftUserMember(draft, auth.user.id) !== undefined;
 
   // Picks are traded in this league, so how many a team has left is counted
   // from the order itself rather than assumed to be the same for everyone.

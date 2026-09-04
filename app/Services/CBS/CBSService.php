@@ -95,7 +95,13 @@ class CBSService
 
         $owned = array_column($data['keepers'], 'league_member_id');
 
-        foreach (FantasyLeagueFormatter::keepersFromRoster($this->getFantasyRoster($credentials)) as $keeper) {
+        // Asked for no team in particular, CBS answers with the signed in
+        // user's own, which is the only thing that says which team is theirs.
+        $ownRoster = $this->getFantasyRoster($credentials);
+
+        $data['ownTeamId'] = data_get($ownRoster, 'rosters.teams.0.id');
+
+        foreach (FantasyLeagueFormatter::keepersFromRoster($ownRoster) as $keeper) {
             if (!in_array($keeper['league_member_id'], $owned, true)) {
                 $data['keepers'][] = $keeper;
             }

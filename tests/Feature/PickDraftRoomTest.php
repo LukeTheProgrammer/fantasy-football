@@ -129,6 +129,29 @@ class PickDraftRoomTest extends TestCase
         $this->assertSame(0, $clock['made']);
     }
 
+    public function test_any_league_member_may_record_a_pick(): void
+    {
+        // The team that is not the signed in user's, and not the admin either.
+        $member = $this->members['5'];
+        $outsider = User::factory()->create();
+
+        $player = Player::factory()->create();
+
+        // A member of the league records fine, admin or not.
+        $this->assertFalse((bool) $member->is_admin);
+
+        $this->actingAs($this->user)
+            ->post(route('drafts.board-picks.store', $this->draft->id), ['player_id' => $player->id])
+            ->assertRedirect();
+
+        // Somebody with no team in the league does not.
+        $this->actingAs($outsider)
+            ->post(route('drafts.board-picks.store', $this->draft->id), ['player_id' => Player::factory()->create()->id])
+            ->assertForbidden();
+
+        $this->assertSame(1, DraftPick::where('draft_id', $this->draft->id)->count());
+    }
+
     public function test_a_player_cannot_be_drafted_twice(): void
     {
         $player = Player::factory()->create();

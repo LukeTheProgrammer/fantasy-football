@@ -106,7 +106,16 @@ class CbsLeagueDriver
 
     private function createMembers(League $league): void
     {
+        $ownTeamId = Arr::get($this->leagueData, 'ownTeamId');
+
         foreach ($this->leagueData['members'] as $member) {
+            // The operator's own team is linked to their account, or nothing
+            // in the app can tell which of the twelve teams is theirs — and
+            // the draft room only lets a member of the league record a pick.
+            if ($ownTeamId !== null && (string) $member['external_id'] === (string) $ownTeamId) {
+                $member['user_id'] = $this->creator->id;
+            }
+
             $league->members()->updateOrCreate(
                 ['external_id' => $member['external_id']],
                 $member,
