@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { BudgetPlan } from '@/modules/drafts/components/BudgetPlan';
-import { DraftPicks } from '@/modules/drafts/components/DraftPicks';
-import { PositionScarcity } from '@/modules/drafts/components/PositionScarcity';
-import { TeamRoster } from '@/modules/drafts/components/TeamRoster';
+import { BudgetPlan } from '@/modules/drafts/components/auction/BudgetPlan';
+import { DraftPicks } from '@/modules/drafts/components/auction/DraftPicks';
+import { PositionScarcity } from '@/modules/drafts/components/auction/PositionScarcity';
+import { TeamRoster } from '@/modules/drafts/components/auction/TeamRoster';
 import { type AuctionBudget, type AuctionPlayer, type AuctionTeam, type MarketPosition, type RosterSlot } from '@/types/models';
 import { useState } from 'react';
 

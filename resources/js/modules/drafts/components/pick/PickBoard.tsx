@@ -63,7 +63,7 @@ export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardP
       </CardHeader>
 
       <CardContent>
-        <div className="max-h-[60vh] overflow-y-auto">
+        <div className="overflow-y-auto">
           <Table>
             <TableHeader>
               <TableRow>

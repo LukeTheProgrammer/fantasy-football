@@ -2,12 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PlayerDialog } from '@/modules/drafts/components/auction/PlayerDialog';
+import { money } from '@/modules/drafts/helpers/money';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
 import { type AuctionPlayer, type AuctionTeam } from '@/types/models';
 import { useForm } from '@inertiajs/react';
 import { FormEvent, type RefObject } from 'react';
-import { money } from '../helpers/money';
-import { PlayerDialog } from './PlayerDialog';
 
 interface NominatedPlayerProps {
   player: AuctionPlayer | null;

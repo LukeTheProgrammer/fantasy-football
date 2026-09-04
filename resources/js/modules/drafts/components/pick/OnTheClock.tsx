@@ -14,7 +14,7 @@ export function OnTheClock({ clock }: OnTheClockProps) {
 
   if (!current) {
     return (
-      <Card className="mb-6">
+      <Card>
         <CardContent className="py-6 text-center">
           <p className="text-xl font-semibold">The draft is complete.</p>
           <p className="text-sm text-muted-foreground">All {total} picks are in.</p>
@@ -24,7 +24,7 @@ export function OnTheClock({ clock }: OnTheClockProps) {
   }
 
   return (
-    <Card className="mb-6">
+    <Card>
       <CardContent className="flex flex-wrap items-center justify-between gap-6 py-6">
         <div>
           <p className="text-xs tracking-wide text-muted-foreground uppercase">On the clock</p>

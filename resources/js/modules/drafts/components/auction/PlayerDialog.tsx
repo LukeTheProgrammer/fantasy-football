@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PriceHistoryChart } from '@/modules/drafts/components/auction/PriceHistoryChart';
+import { money } from '@/modules/drafts/helpers/money';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
 import type { AuctionPlayer, PlayerProfile } from '@/types/models';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { money } from '../helpers/money';
-import { PriceHistoryChart } from './PriceHistoryChart';
 
 interface PlayerDialogProps {
   player: AuctionPlayer;

@@ -2,7 +2,7 @@ import { cn } from '@/common/helpers/cn';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
+import { BudgetDialog } from '@/modules/drafts/components/auction/BudgetDialog';
 import { money } from '@/modules/drafts/helpers/money';
 import { type AuctionBudget, type BudgetRow } from '@/types/models';
 import { useMemo } from 'react';

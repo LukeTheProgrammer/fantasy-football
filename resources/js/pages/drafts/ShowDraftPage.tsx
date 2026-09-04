@@ -1,9 +1,9 @@
 import { Heading } from '@/common/heading/Heading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BudgetDialog } from '@/modules/drafts/components/BudgetDialog';
+import { BudgetDialog } from '@/modules/drafts/components/auction/BudgetDialog';
+import { PositionPriceChart } from '@/modules/drafts/components/auction/PositionPriceChart';
 import { PositionPlayers } from '@/modules/drafts/components/PositionPlayers';
-import { PositionPriceChart } from '@/modules/drafts/components/PositionPriceChart';
 import { TeamRosters } from '@/modules/drafts/components/TeamRosters';
 import { isUserDraftAdmin } from '@/modules/drafts/helpers/isUserDraftAdmin';
 import { spentAtPosition, topPicksAtPosition } from '@/modules/drafts/helpers/topPicksAtPosition';

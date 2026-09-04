@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { EditPickDialog } from '@/modules/drafts/components/EditPickDialog';
+import { EditPickDialog } from '@/modules/drafts/components/auction/EditPickDialog';
 import { money } from '@/modules/drafts/helpers/money';
 import { type AuctionPlayer, type AuctionTeam } from '@/types/models';
 import { Edit, Search, Undo2 } from 'lucide-react';
