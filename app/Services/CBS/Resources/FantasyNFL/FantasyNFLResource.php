@@ -5,81 +5,126 @@ namespace App\Services\CBS\Resources\FantasyNFL;
 use App\Services\CBS\Data\FantasyNFL\CredentialsData;
 use App\Services\CBS\Enums\Apis;
 use App\Services\CBS\Enums\ApiVersions;
-use App\Services\CBS\Enums\ApiYears;
-use App\Services\CBS\Enums\FantasyNFLViews;
-use App\Services\CBS\Enums\Games;
-use App\Services\CBS\Enums\Leagues;
 use App\Services\CBS\Enums\Sports;
 use App\Services\CBS\Resources\BaseResource;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
+use RuntimeException;
 
 abstract class FantasyNFLResource extends BaseResource
 {
     public ?ApiVersions $apiVersion = ApiVersions::V3;
 
-    public ?ApiYears $apiYear = ApiYears::Y_2026;
-
-    public ?Apis $api = Apis::LM_READS;
-
-    public ?Games $game = Games::FANTASY_FOOTBALL;
-
-    public ?Leagues $league = Leagues::NFL;
+    public ?Apis $api = Apis::FANTASY;
 
     public ?Sports $sport = Sports::FOOTBALL;
 
-    protected array $cookies = [];
-
     public function __construct(public array|CredentialsData $credentials)
     {
+        parent::__construct();
+
         if (!$credentials instanceof CredentialsData) {
             $this->credentials = CredentialsData::from($credentials);
         }
 
         $this->leagueId = $this->credentials->leagueId;
 
-        $this->cookies = [
-            'espn_s2' => $this->credentials->s2,
-            'SWID'    => $this->credentials->swid,
+        $this->cacheBaseDirectory = 'data/cbs/ffl';
+
+        // Every CBS read carries the league, the format and the token.
+        $this->defaultQuery = [
+            'version'         => $this->apiVersion->value,
+            'response_format' => 'json',
+            'SPORT'           => $this->sport->value,
+            'league_id'       => $this->leagueId,
+            'access_token'    => $this->credentials->accessToken,
         ];
-
-        $this->cacheBaseDirectory = 'data/espn/ffl';
-
-        $this->cookieDomain = 'espn.com';
     }
 
-    protected function buildUrl(array $views = [], ?int $teamId = null, ?int $season = null): string
+    /**
+     * The path under /fantasy this resource reads, e.g. 'league/draft/order'.
+     */
+    abstract public function path(): string;
+
+    public function sendRequest()
     {
-        $season = $season ?? $this->apiYear->value;
+        $url = 'https://' . $this->api->value . '/' . $this->path();
 
-        // https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2025/segments/0/leagues/691509
-        $url = $this->assembleUrl([
-            'https://' . $this->api->value,
-            'apis/' . $this->apiVersion->value,
-            'games/' . $this->game->value,
-            'seasons/' . $season,
-            'segments/0/leagues/' . $this->leagueId,
-        ]);
+        try {
+            $response = $this->get($url, $this->query());
+        } catch (RequestException $e) {
+            // A dead token comes back as a 400 the http client turns into a
+            // stack trace, which says nothing about what to do next.
+            $this->guardResponse($e->response);
 
-        $query = $this->buildViewsQuery($views);
-
-        if ($teamId) {
-            $query .= '&rosterForTeamId=' . $teamId;
+            throw $e;
         }
 
-        return $url . $query;
+        $this->guardResponse($response);
+
+        return $this->returnResponse($response);
     }
 
-    protected function buildViewsQuery(array $views = [])
+    /**
+     * CBS answers an expired token with a 401 and a plain-text body, and an
+     * unknown league with a 200 that says "Missing league_id". Neither is
+     * JSON, so the status code alone cannot be trusted to mean success.
+     */
+    protected function guardResponse(Response $response): void
     {
-        $views = empty($views) ? FantasyNFLViews::cases() : $views;
+        $body = $response->body();
 
-        $mapped = array_map(function ($view) {
-            $viewName = ($view instanceof FantasyNFLViews)
-                ? $view
-                : FantasyNFLViews::tryFrom($view);
+        if (str_contains($body, 'Failed Authentication') || $response->status() === 401) {
+            throw new RuntimeException(
+                'CBS access token has expired. Open the league on cbssports.com, run CBSi.token in the '
+                . 'browser console, and put the new value in CBS_ACCESS_TOKEN.'
+            );
+        }
 
-            return ($viewName) ? 'view=' . $viewName->value : null;
-        }, $views);
+        if (str_contains($body, 'User not signed in')) {
+            throw new RuntimeException('CBS rejected the access token for league ' . $this->leagueId . '.');
+        }
 
-        return '?' . implode('&', array_filter($mapped));
+        if (str_contains($body, 'Missing league_id')) {
+            throw new RuntimeException('CBS did not receive a league id.');
+        }
+
+        if ($response->json() === null) {
+            throw new RuntimeException('CBS returned a non-JSON response for ' . $this->path() . '.');
+        }
+    }
+
+    /**
+     * CBS wraps every payload in an envelope; the caller only wants the body.
+     */
+    public function returnRaw(array|Response $response)
+    {
+        $json = is_array($response) ? $response : $response->json();
+
+        return data_get($json, 'body', $json);
+    }
+
+    /**
+     * The fantasy API authenticates on the access token in the query string,
+     * so the session cookies the HTML pages need are not sent.
+     */
+    public function setCookies()
+    {
+        $this->defaultCookies = [];
+    }
+
+    public function setCacheFilePath()
+    {
+        $dirs = [
+            'league-' . $this->leagueId,
+            $this->dataFormat,
+        ];
+
+        $file = [
+            str_replace('/', '-', $this->path()),
+            date('Y-m-d'),
+        ];
+
+        $this->cacheFilePath = $this->getCacheFilePath($dirs, $file);
     }
 }

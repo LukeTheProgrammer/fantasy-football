@@ -21,6 +21,18 @@ return [
         'retry_limit'       => env('ESPN_RETRY_LIMIT', 2),
     ],
 
+    'cbs' => [
+        // Session cookies, used only for the HTML pages.
+        'pid'   => env('CBS_PID'),
+        'token' => env('CBS_TOKEN'),
+
+        // The fantasy JSON API authenticates on CBSi.token instead, which is
+        // scraped from any league page and expires within the day.
+        'default_league_id'    => env('CBS_DEFAULT_LEAGUE_ID'),
+        'default_access_token' => env('CBS_ACCESS_TOKEN'),
+        'retry_limit'          => env('CBS_RETRY_LIMIT', 2),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],

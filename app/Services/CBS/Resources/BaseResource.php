@@ -3,12 +3,8 @@
 namespace App\Services\CBS\Resources;
 
 use App\Enums\Datum;
-use App\Models\Team;
 use App\Services\CBS\Enums\Apis;
 use App\Services\CBS\Enums\ApiVersions;
-use App\Services\CBS\Enums\ApiYears;
-use App\Services\CBS\Enums\Games;
-use App\Services\CBS\Enums\Leagues;
 use App\Services\CBS\Enums\Sports;
 use App\Traits\HasDataFormats;
 use App\Traits\LoadsJsonFiles;
@@ -60,32 +56,11 @@ abstract class BaseResource
     public ?ApiVersions $apiVersion = null;
 
     /**
-     * Api year.
-     *
-     * @var ApiYears|null
-     */
-    public ?ApiYears $apiYear = null;
-
-    /**
      * Api.
      *
      * @var Apis|null
      */
     public ?Apis $api = null;
-
-    /**
-     * Game.
-     *
-     * @var Games|null
-     */
-    public ?Games $game = null;
-
-    /**
-     * League.
-     *
-     * @var Leagues|null
-     */
-    public ?Leagues $league = null;
 
     /**
      * Sport.
