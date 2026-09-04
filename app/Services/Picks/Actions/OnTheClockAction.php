@@ -5,6 +5,7 @@ namespace App\Services\Picks\Actions;
 use App\Models\Draft;
 use App\Models\LeagueMember;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 /**
  * Reads the draft order to say whose turn it is and what comes after.
@@ -38,7 +39,42 @@ class OnTheClockAction
             'remaining' => max(count($order) - $made, 0),
             'current'   => Arr::first($slots),
             'upcoming'  => array_slice($slots, 1),
+            'round'     => $this->round($draft, $order, $members, $made),
         ];
+    }
+
+    /**
+     * Every slot in the round the clock is on, whether it has been used yet
+     * or not, so the board can show the round as a whole.
+     *
+     * @param array<int, string> $order
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function round(Draft $draft, array $order, Collection $members, int $made): array
+    {
+        if (empty($order)) {
+            return [];
+        }
+
+        $teams = max($draft->league->team_count, 1);
+
+        // The clock sits past the end once the draft is done, and the last
+        // round is the one worth showing then.
+        $index = min($made, count($order) - 1);
+        $start = intdiv($index, $teams) * $teams;
+
+        $slots = [];
+
+        foreach (array_slice($order, $start, $teams, true) as $slotIndex => $externalId) {
+            $slots[] = [
+                ...$this->slot($slotIndex, $members->get($externalId), $draft),
+                'is_made'    => $slotIndex < $made,
+                'is_current' => $slotIndex === $made,
+            ];
+        }
+
+        return $slots;
     }
 
     /**

@@ -1,6 +1,4 @@
 import { Heading } from '@/common/heading/Heading';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { OnTheClock } from '@/modules/drafts/components/pick/OnTheClock';
 import { PickBoard } from '@/modules/drafts/components/pick/PickBoard';
 import { PickRosters } from '@/modules/drafts/components/pick/PickRosters';
@@ -106,7 +104,7 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
           </div>
 
           <div className="min-h-0 space-y-4 overflow-auto pr-1">
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Recent picks</CardTitle>
               </CardHeader>
@@ -129,9 +127,9 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
                   ))}
                 </ul>
               </CardContent>
-            </Card>
+            </Card> */}
 
-            <PickRosters roster={shownRoster} onClear={selectedTeamId !== null ? () => setSelectedTeamId(null) : undefined} />
+            <PickRosters roster={shownRoster} />
           </div>
         </div>
       </div>

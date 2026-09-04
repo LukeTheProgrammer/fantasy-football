@@ -1,11 +1,9 @@
 import { cn } from '@/common/helpers/cn';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
 import { type RosterSlot, type TeamRoster } from '@/types/picks';
 
 interface PickRostersProps {
-  onClear?: () => void;
   roster: TeamRoster | null;
 }
 
@@ -16,7 +14,7 @@ interface PickRostersProps {
  * decide who starts, and how a player was come by is said quietly at the end
  * of his row rather than by splitting the squad in two.
  */
-export function PickRosters({ onClear, roster }: PickRostersProps) {
+export function PickRosters({ roster }: PickRostersProps) {
   if (!roster) {
     return (
       <Card>
@@ -41,11 +39,6 @@ export function PickRosters({ onClear, roster }: PickRostersProps) {
             <span className="block truncate">{roster.team_name}</span>
             <span className="block text-xs font-normal text-muted-foreground">{roster.owner_name}</span>
           </span>
-          {onClear && (
-            <Button size="sm" variant="ghost" onClick={onClear}>
-              Clear
-            </Button>
-          )}
         </CardTitle>
       </CardHeader>
 
@@ -69,15 +62,15 @@ export function PickRosters({ onClear, roster }: PickRostersProps) {
 
 function SlotRow({ slot }: { slot: RosterSlot }) {
   const player = slot.player;
-  const pos = player?.position ?? '';
+  const label = slot.label;
 
   return (
-    <li className={cn('flex items-center gap-2 rounded px-1 py-0.5 text-sm', !player && 'opacity-50')}>
-      <span className="w-14 shrink-0 text-[10px] tracking-wide text-muted-foreground uppercase">{slot.label}</span>
+    <li className={cn('flex h-12 items-center gap-2 rounded px-1 py-0.5 text-sm', !player && 'opacity-50')}>
+      <span className="w-14 shrink-0 text-[10px] tracking-wide text-muted-foreground uppercase">{label == 'RB/WR/TE' ? 'Flex' : label}</span>
 
       {player ? (
         <>
-          <PositionBadge position={pos == 'RB/WR/TE' ? 'Flex' : pos} />
+          <PositionBadge position={player.position ?? ''} />
           <span className="truncate">{player.full_name}</span>
           <span className="text-xs text-muted-foreground">{player.team}</span>
           <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">{player.source}</span>

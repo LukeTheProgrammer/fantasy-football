@@ -1,5 +1,6 @@
 import { cn } from '@/common/helpers/cn';
 import { type TeamRoster } from '@/types/picks';
+import { Clock } from 'lucide-react';
 
 interface TeamColumnProps {
   onSelect?: (leagueMemberId: number) => void;
@@ -19,6 +20,7 @@ interface TeamColumnProps {
  *
  * The cards share the column's height evenly and the column scrolls once the
  * league outgrows it, the same as the auction room's budgets.
+ * <span className="text-[9px] tracking-wide text-primary uppercase">ON THE CLOCK</span>
  */
 export function TeamColumn({ onSelect, onTheClockMemberId, remainingByMember, rosters, selectedTeamId }: TeamColumnProps) {
   return (
@@ -33,23 +35,43 @@ export function TeamColumn({ onSelect, onTheClockMemberId, remainingByMember, ro
             type="button"
             onClick={() => onSelect?.(roster.league_member_id)}
             className={cn(
-              'flex flex-col justify-center rounded-lg border bg-card px-2 py-1.5 text-left transition-colors hover:border-primary/60',
+              'rounded-lg border bg-card px-2 py-1.5 text-left transition-colors hover:border-primary/60',
               selectedTeamId === roster.league_member_id && 'border-primary ring-1 ring-primary',
               onTheClock && 'border-primary bg-primary/10',
               remaining === 0 && !onTheClock && 'opacity-60',
             )}
           >
-            <div className="flex items-baseline justify-between gap-1">
-              <p className="truncate text-[11px] leading-tight font-semibold">{roster.team_name}</p>
-              {onTheClock && <span className="text-[9px] tracking-wide text-primary uppercase">On now</span>}
-            </div>
-            <div className="mt-0.5 flex items-baseline justify-between">
-              <span className="text-base leading-none font-bold tabular-nums">{roster.picks.length}</span>
-              <span className="text-right text-[10px] leading-tight text-muted-foreground tabular-nums">{remaining} left</span>
+            <div className="flex w-full flex-col items-baseline justify-between gap-2">
+              <div className="flex w-full items-start justify-between gap-2">
+                <p className="truncate leading-tight font-bold">{roster.team_name}</p>
+                <div>{onTheClock && <Clock />}</div>
+              </div>
+              <div className="flex w-full items-end justify-between gap-2">
+                <p className="text-sm leading-tight text-muted-foreground">{roster.owner_name}</p>
+                <RosterCount roster={roster} />
+              </div>
             </div>
           </button>
         );
       })}
     </div>
+  );
+}
+
+function RosterCount({ roster }: { roster: TeamRoster }) {
+  let rostered = 0;
+  let total = 0;
+
+  for (const slot of roster.slots) {
+    total++;
+    if (slot.player !== null) {
+      rostered++;
+    }
+  }
+
+  return (
+    <p>
+      {rostered} / {total}
+    </p>
   );
 }

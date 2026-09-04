@@ -46,7 +46,7 @@ export function PickBoard({ players, canRecord, recording, onDraft }: PickBoardP
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="w-full grid grid-cols-3 gap-3">
+        <CardTitle className="grid w-full grid-cols-3 gap-3">
           <div className="col-span-2 flex flex-wrap items-center gap-2">
             <div className="flex gap-1">
               {POSITIONS.map((pos) => (

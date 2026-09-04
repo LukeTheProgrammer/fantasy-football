@@ -8,10 +8,17 @@ export interface ClockSlot {
   team_name: string | null;
 }
 
+export interface RoundSlot extends ClockSlot {
+  is_current: boolean;
+  is_made: boolean;
+}
+
 export interface DraftClock {
   current: ClockSlot | null;
   made: number;
   remaining: number;
+  /** Every slot in the round the clock is on, used and unused. */
+  round: RoundSlot[];
   total: number;
   upcoming: ClockSlot[];
 }
