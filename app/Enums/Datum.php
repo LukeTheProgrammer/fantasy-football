@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum Datum: string
 {
+    case SOURCE_CBS = 'CBS';
     case SOURCE_ESPN = 'ESPN';
     case SOURCE_FANTASY_PROS = 'FantasyPros';
     case SOURCE_PFR = 'ProFootballReference';

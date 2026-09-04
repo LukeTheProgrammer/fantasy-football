@@ -59,38 +59,40 @@ class CBSConstants
         'PK'  => NFLPositions::K,
     ];
 
-    // CBS => LeagueSettings Model
+    /**
+     * CBS scoring category => LeagueSettings column.
+     *
+     * CBS names a category once and either prices it flat (points) or over
+     * ranges, so a per-yard rate has to be read off a range rather than a
+     * points value. Categories this app has no column for (return
+     * touchdowns, blocked kicks, points/yards allowed tiers) are dropped.
+     */
     public const SCORING_MAP = [
         // Passing
-        'passingYards'         => 'passing_points_per_yard',
-        'passingTouchdowns'    => 'passing_td_points',
-        'passingInterceptions' => 'interception_points',
+        'PaYd'  => 'passing_points_per_yard',
+        'PaTD'  => 'passing_td_points',
+        'PaInt' => 'interception_points',
 
         // Rushing
-        'rushingYards'      => 'rushing_points_per_yard',
-        'rushingTouchdowns' => 'rushing_td_points',
+        'RuYd' => 'rushing_points_per_yard',
+        'RuTD' => 'rushing_td_points',
 
         // Receiving
-        'receivingYards'      => 'receiving_points_per_yard',
-        'receivingTouchdowns' => 'receiving_td_points',
-        'receivingReceptions' => 'reception_points',
+        'ReYd'  => 'receiving_points_per_yard',
+        'ReTD'  => 'receiving_td_points',
+        'Recpt' => 'reception_points',
 
-        // Misc
-        'lostFumbles'    => 'fumble_lost_points',
-        '2PtConversions' => 'two_point_conversion_points',
-
-        // Kicking
-        'fieldGoal0To39'  => 'field_goal_0_39_points',
-        'fieldGoal40To49' => 'field_goal_40_49_points',
-        'fieldGoal50Plus' => 'field_goal_50_plus_points',
-        'extraPoint'      => 'extra_point_points',
+        // Misc. CBS prices a two point conversion once per way of scoring it;
+        // this app carries a single number, so the passing one stands for all.
+        'FL'   => 'fumble_lost_points',
+        'Pa2P' => 'two_point_conversion_points',
 
         // DST
-        'defenseSacks'            => 'defense_sack_points',
-        'defenseInterceptions'    => 'defense_interception_points',
-        'defenseFumbleRecoveries' => 'defense_fumble_recovery_points',
-        'defenseTouchdowns'       => 'defense_td_points',
-        'defenseSafeties'         => 'defense_safety_points',
+        'SACK' => 'defense_sack_points',
+        'Int'  => 'defense_interception_points',
+        'DFR'  => 'defense_fumble_recovery_points',
+        'DFTD' => 'defense_td_points',
+        'STY'  => 'defense_safety_points',
     ];
 
     public const POSITION_SLOT_MAP = [

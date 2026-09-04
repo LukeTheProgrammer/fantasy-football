@@ -25,7 +25,7 @@ class DraftCreateRequest extends FormRequest
     {
         return [
             'draft_date'     => ['required', 'date', 'after:now'],
-            'draft_type'     => ['required', Rule::in(['snake', 'auction'])],
+            'draft_type'     => ['required', Rule::in(['snake', 'linear', 'auction'])],
             'auction_budget' => ['required_if:draft_type,auction', 'nullable', 'integer', 'min:1', 'max:1000'],
             'time_per_pick'  => ['integer', 'min:10', 'max:600'],
         ];

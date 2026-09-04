@@ -4,6 +4,7 @@ namespace App\Services\Imports;
 
 use App\Enums\Datum;
 use App\Enums\FantasyPlatforms;
+use App\Services\Imports\Drivers\FantasyNFL\CbsDriver;
 use App\Services\Imports\Drivers\FantasyNFL\EspnDriver;
 use App\Services\Imports\Drivers\NFL\EspnNFLDriver;
 use App\Services\Imports\Drivers\NFL\ProFootballReferenceDriver;
@@ -23,6 +24,7 @@ class ImportService
     {
         $drivers = [
             'fantasy_nfl' => [
+                FantasyPlatforms::CBS->value  => CbsDriver::class,
                 FantasyPlatforms::ESPN->value => EspnDriver::class,
             ],
             'nfl_stats' => [

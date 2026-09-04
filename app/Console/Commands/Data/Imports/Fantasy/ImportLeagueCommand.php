@@ -6,8 +6,10 @@ use App\Enums\FantasyPlatforms;
 use App\Facades\Data;
 use App\Models\Draft;
 use App\Models\League;
+use App\Models\LeagueMemberRoster;
 use App\Models\PlayerMissing;
 use App\Models\User;
+use App\Services\Imports\Drivers\FantasyNFL\CbsLeagueDriver;
 use App\Services\Imports\Drivers\FantasyNFL\EspnLeagueDriver;
 use Carbon\CarbonInterface;
 use Illuminate\Console\Command;
@@ -33,6 +35,7 @@ class ImportLeagueCommand extends Command
         { --season=      : Season to pull }
         { --espn-s2=     : ESPN S2 to pull }
         { --espn-swid=   : ESPN SWID to pull }
+        { --cbs-token=   : CBS access token (CBSi.token from a league page) }
     ';
 
     /**
@@ -65,7 +68,11 @@ class ImportLeagueCommand extends Command
 
         $this->info($this->league->name . ' imported successfully!');
 
-        $this->reportDraft($startedAt);
+        if ($this->platform === FantasyPlatforms::CBS) {
+            $this->reportKeepers($startedAt);
+        } else {
+            $this->reportDraft($startedAt);
+        }
 
         $this->league = null;
         $this->platform = null;
@@ -119,6 +126,42 @@ class ImportLeagueCommand extends Command
         }
     }
 
+    /**
+     * Say how many keepers landed.
+     *
+     * A CBS draft has no picks to report before it runs; what the board needs
+     * to be right about beforehand is which players are already owned.
+     */
+    protected function reportKeepers(CarbonInterface $startedAt): void
+    {
+        $members = $this->league->members()->count();
+        $kept = LeagueMemberRoster::whereIn('league_member_id', $this->league->members()->pluck('id'))
+            ->where('season', $this->league->season_id)
+            ->where('week', 0)
+            ->count();
+
+        $this->table(['Keepers', 'Teams'], [[$kept, $members]]);
+
+        $missed = PlayerMissing::where('source_class', CbsLeagueDriver::class)
+            ->where('updated_at', '>=', $startedAt)
+            ->get();
+
+        if ($missed->isEmpty()) {
+            return;
+        }
+
+        // An unresolved keeper reads as a free agent on the board, so it is
+        // reported rather than only logged.
+        $this->warn($missed->count() . ' keepers could not be matched to a player.');
+
+        $this->table(
+            ['Unresolved', 'Position', 'Team'],
+            $missed->map(fn (PlayerMissing $row) => [$row->name, $row->position_id, $row->team_id])->all()
+        );
+
+        $this->line('Resolve them with data:clean:players-not-found, then import again.');
+    }
+
     protected function setUp()
     {
         if ($this->option('create')) {
@@ -169,6 +212,38 @@ class ImportLeagueCommand extends Command
         if ($this->platform === FantasyPlatforms::ESPN) {
             return $this->importEspn();
         }
+
+        if ($this->platform === FantasyPlatforms::CBS) {
+            return $this->importCbs();
+        }
+    }
+
+    protected function importCbs()
+    {
+        $data = [
+            'created_by_user_id' => null,
+            'league_id'          => null,
+            'access_token'       => null,
+            'season'             => $this->option('season') ?: null,
+        ];
+
+        if ($this->league instanceof League) {
+            $data['created_by_user_id'] = $this->league->creator->id;
+            $data['league_id'] = $this->league->credentials['leagueId'];
+            $data['season'] = $data['season'] ?? $this->league->season_id;
+        } else {
+            $data['created_by_user_id'] = $this->creator->id;
+            $data['league_id'] = $this->option('platform-id')
+                ?? text('League ID', 'League ID', config('services.cbs.default_league_id'));
+        }
+
+        // The CBS token expires within the day, so a stored one is only ever a
+        // default: the option and the env value both stay available on a sync.
+        $data['access_token'] = $this->option('cbs-token') ?: config('services.cbs.default_access_token');
+
+        $this->info('Importing CBS League ' . $data['league_id'] . ' for user ' . $data['created_by_user_id']);
+
+        $this->league = Data::cbs()->importFantasyLeague($data);
     }
 
     protected function importEspn()

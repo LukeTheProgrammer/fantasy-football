@@ -4,6 +4,7 @@ namespace App\Services\Data;
 
 use App\Enums\Datum;
 use App\Services\Data\Sources\BaseSource;
+use App\Services\Data\Sources\CbsSource;
 use App\Services\Data\Sources\EspnSource;
 use App\Services\Data\Sources\FantasyProsSource;
 use App\Services\Data\Sources\ProFootballReferenceSource;
@@ -15,6 +16,7 @@ class DataService
     public function sources(string $type)
     {
         $sources = [
+            Datum::SOURCE_CBS->value          => CbsSource::class,
             Datum::SOURCE_ESPN->value         => EspnSource::class,
             Datum::SOURCE_FANTASY_PROS->value => FantasyProsSource::class,
             Datum::SOURCE_PFR->value          => ProFootballReferenceSource::class,
@@ -38,6 +40,13 @@ class DataService
         if (!$sourceClass) {
             throw new Exception('Invalid source: ' . $source);
         }
+
+        return new $sourceClass($args);
+    }
+
+    public function cbs(...$args)
+    {
+        $sourceClass = $this->sources(Datum::SOURCE_CBS->value);
 
         return new $sourceClass($args);
     }

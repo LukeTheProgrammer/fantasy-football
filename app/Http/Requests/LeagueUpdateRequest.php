@@ -27,7 +27,7 @@ class LeagueUpdateRequest extends FormRequest
             'description' => ['sometimes', 'nullable', 'string'],
             'team_count'  => ['sometimes', 'integer', 'min:2', 'max:32'],
             'is_public'   => ['sometimes', 'boolean'],
-            'draft_type'  => ['sometimes', 'string', 'in:snake,auction'],
+            'draft_type'  => ['sometimes', 'string', 'in:snake,linear,auction'],
             'draft_date'  => ['sometimes', 'nullable', 'date'],
             'platform'    => ['sometimes', 'string', 'in:espn,cbs'],
 

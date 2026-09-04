@@ -2,7 +2,9 @@
 
 namespace App\Services\CBS;
 
+use App\Enums\Datum;
 use App\Services\CBS\Data\FantasyNFL\CredentialsData;
+use App\Services\CBS\Formatters\FantasyLeagueFormatter;
 use App\Services\CBS\Resources\FantasyNFL\GetDetails;
 use App\Services\CBS\Resources\FantasyNFL\GetDraftConfig;
 use App\Services\CBS\Resources\FantasyNFL\GetDraftOrder;
@@ -67,16 +69,46 @@ class CBSService
         $resource = new GetRosters($credentials);
 
         return $resource->setOpts($teamId)
-            ->dataFormat($this->dataFormat)
+            ->dataFormat(Datum::FORMAT_RAW->value)
             ->forcePull($this->forcePull)
             ->fetch();
+    }
+
+    /**
+     * CBS has no one league endpoint, so a league is the several reads put
+     * together. The keeper list omits the calling user's own team, whose
+     * keepers are read off that team's roster instead.
+     */
+    public function getFantasyLeague(array|CredentialsData $credentials, ?int $season = null)
+    {
+        $payloads = [
+            'details'     => $this->getFantasyDetails($credentials),
+            'owners'      => $this->getFantasyOwners($credentials),
+            'rules'       => $this->getFantasyRules($credentials),
+            'scoring'     => $this->getFantasyScoringRules($credentials),
+            'draftConfig' => $this->getFantasyDraftConfig($credentials),
+            'draftOrder'  => $this->getFantasyDraftOrder($credentials),
+            'keepers'     => $this->getFantasyKeepers($credentials),
+        ];
+
+        $data = FantasyLeagueFormatter::from($payloads, $season ?? (int) date('Y'));
+
+        $owned = array_column($data['keepers'], 'league_member_id');
+
+        foreach (FantasyLeagueFormatter::keepersFromRoster($this->getFantasyRoster($credentials)) as $keeper) {
+            if (!in_array($keeper['league_member_id'], $owned, true)) {
+                $data['keepers'][] = $keeper;
+            }
+        }
+
+        return $data;
     }
 
     private function resource(string $class, array|CredentialsData $credentials)
     {
         $resource = new $class($credentials);
 
-        return $resource->dataFormat($this->dataFormat)
+        return $resource->dataFormat(Datum::FORMAT_RAW->value)
             ->forcePull($this->forcePull)
             ->fetch();
     }
