@@ -8,17 +8,30 @@ export interface ClockSlot {
   team_name: string | null;
 }
 
+export interface RoundSlotPlayer {
+  full_name: string | null;
+  headshot: string | null;
+  pick_id: number;
+  player_id: number | null;
+  position: string | null;
+  team: string | null;
+}
+
 export interface RoundSlot extends ClockSlot {
   is_current: boolean;
   is_made: boolean;
+  /** The player taken in this slot, once it has been used. */
+  player: RoundSlotPlayer | null;
 }
 
 export interface DraftClock {
   current: ClockSlot | null;
   made: number;
+  /** The round the clock is on, 1 based. */
+  current_round: number;
   remaining: number;
-  /** Every slot in the round the clock is on, used and unused. */
-  round: RoundSlot[];
+  /** The draft round by round, so any round can be shown. */
+  rounds: RoundSlot[][];
   total: number;
   upcoming: ClockSlot[];
 }

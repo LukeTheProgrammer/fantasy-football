@@ -3,6 +3,7 @@
 namespace App\Services\Picks\Actions;
 
 use App\Models\Draft;
+use App\Models\DraftPick;
 use App\Models\LeagueMember;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -39,19 +40,22 @@ class OnTheClockAction
             'remaining' => max(count($order) - $made, 0),
             'current'   => Arr::first($slots),
             'upcoming'  => array_slice($slots, 1),
-            'round'     => $this->round($draft, $order, $members, $made),
+            // Every round, so the board can be paged back and forth without
+            // another trip to the server.
+            'rounds'        => $this->rounds($draft, $order, $members, $made),
+            'current_round' => $this->currentRound($draft, $order, $made),
         ];
     }
 
     /**
-     * Every slot in the round the clock is on, whether it has been used yet
-     * or not, so the board can show the round as a whole.
+     * The draft laid out round by round, whether a slot has been used yet or
+     * not, so the board can show any round and not only the live one.
      *
      * @param array<int, string> $order
      *
-     * @return array<int, array<string, mixed>>
+     * @return array<int, array<int, array<string, mixed>>>
      */
-    private function round(Draft $draft, array $order, Collection $members, int $made): array
+    private function rounds(Draft $draft, array $order, Collection $members, int $made): array
     {
         if (empty($order)) {
             return [];
@@ -59,22 +63,63 @@ class OnTheClockAction
 
         $teams = max($draft->league->team_count, 1);
 
-        // The clock sits past the end once the draft is done, and the last
-        // round is the one worth showing then.
-        $index = min($made, count($order) - 1);
-        $start = intdiv($index, $teams) * $teams;
+        // A made pick is shown as the player who was taken, so the board reads
+        // as a record of the round rather than only a running order.
+        $picks = $draft->picks->keyBy('overall_pick_number');
 
-        $slots = [];
+        $rounds = [];
 
-        foreach (array_slice($order, $start, $teams, true) as $slotIndex => $externalId) {
-            $slots[] = [
-                ...$this->slot($slotIndex, $members->get($externalId), $draft),
-                'is_made'    => $slotIndex < $made,
-                'is_current' => $slotIndex === $made,
-            ];
+        foreach (array_chunk($order, $teams, true) as $chunk) {
+            $slots = [];
+
+            foreach ($chunk as $slotIndex => $externalId) {
+                $slots[] = [
+                    ...$this->slot($slotIndex, $members->get($externalId), $draft),
+                    'is_made'    => $slotIndex < $made,
+                    'is_current' => $slotIndex === $made,
+                    'player'     => $this->player($picks->get($slotIndex + 1)),
+                ];
+            }
+
+            $rounds[] = $slots;
         }
 
-        return $slots;
+        return $rounds;
+    }
+
+    /**
+     * The round the clock is on, which is the last round once it is over.
+     *
+     * @param array<int, string> $order
+     */
+    private function currentRound(Draft $draft, array $order, int $made): int
+    {
+        if (empty($order)) {
+            return 1;
+        }
+
+        $teams = max($draft->league->team_count, 1);
+
+        return intdiv(min($made, count($order) - 1), $teams) + 1;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function player(?DraftPick $pick): ?array
+    {
+        if (!$pick instanceof DraftPick) {
+            return null;
+        }
+
+        return [
+            'player_id' => $pick->player_id,
+            'pick_id'   => $pick->id,
+            'full_name' => $pick->player?->full_name,
+            'position'  => $pick->player?->position_id,
+            'team'      => $pick->player?->team_id,
+            'headshot'  => $pick->player?->headshot,
+        ];
     }
 
     /**
