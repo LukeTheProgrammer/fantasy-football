@@ -8,6 +8,7 @@ use App\Services\Picks\Actions\BuildBoardAction;
 use App\Services\Picks\Actions\BuildPlayerProfileAction;
 use App\Services\Picks\Actions\OnTheClockAction;
 use App\Services\Picks\Actions\SlotRostersAction;
+use App\Services\Picks\Actions\SyncCbsPicksAction;
 use Illuminate\Support\Collection;
 
 /**
@@ -18,6 +19,16 @@ use Illuminate\Support\Collection;
  */
 class PickService
 {
+    /**
+     * Write in whatever picks CBS has recorded since the last poll.
+     *
+     * @return array<string, mixed>
+     */
+    public function syncCbsPicks(Draft $draft): array
+    {
+        return (new SyncCbsPicksAction)->run($draft);
+    }
+
     /**
      * @return array<string, mixed>
      */

@@ -8,7 +8,8 @@ use App\Models\Draft;
 use Illuminate\Http\RedirectResponse;
 
 /**
- * Start and stop the loop that pulls picks from ESPN while a draft is live.
+ * Start and stop the loop that pulls picks from the league's platform while a
+ * draft is live.
  */
 class DraftSyncController extends Controller
 {
@@ -20,7 +21,7 @@ class DraftSyncController extends Controller
 
         SyncDraftPicksJob::start($draft);
 
-        return back()->with('success', 'Pulling picks from ESPN.');
+        return back()->with('success', 'Pulling picks from ' . $draft->league->platform . '.');
     }
 
     public function destroy(Draft $draft): RedirectResponse

@@ -12,7 +12,7 @@ interface DraftSyncToggleProps {
 function statusLabel(draft: Draft, sync: DraftSyncState): string {
   if (!draft.is_active) {
     if (sync.stopped?.reason === 'failed') {
-      return 'ESPN sync failed';
+      return `${draft.league.platform} sync failed`;
     }
 
     if (sync.stopped?.reason === 'completed') {
@@ -30,11 +30,12 @@ function statusLabel(draft: Draft, sync: DraftSyncState): string {
 }
 
 /**
- * Start and stop the pull of picks from ESPN.
+ * Start and stop the pull of picks from the league's platform.
  *
- * The manual sale form stays either way: ESPN publishes a pick a beat after the
- * room hears it, and a player who fails to resolve never arrives at all, so the
- * skipped count is shown rather than left to be noticed by its absence.
+ * Recording by hand stays open either way: a platform publishes a pick a beat
+ * after the room hears it, and a player who fails to resolve never arrives at
+ * all, so the skipped count is shown rather than left to be noticed by its
+ * absence.
  */
 export function DraftSyncToggle({ draft, sync }: DraftSyncToggleProps) {
   const active = !!draft.is_active;

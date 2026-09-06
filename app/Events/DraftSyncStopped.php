@@ -5,15 +5,15 @@ namespace App\Events;
 use App\Models\Draft;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 /**
  * The sync loop ended. A reason is carried so the room can say whether the
- * draft finished, someone stopped it, or ESPN stopped answering.
+ * draft finished, someone stopped it, or the platform stopped answering.
  */
-class DraftSyncStopped implements ShouldBroadcast
+class DraftSyncStopped implements ShouldBroadcastNow
 {
     use Dispatchable;
     use InteractsWithSockets;

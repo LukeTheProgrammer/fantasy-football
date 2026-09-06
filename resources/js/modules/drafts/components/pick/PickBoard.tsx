@@ -8,7 +8,12 @@ import { type BoardPlayer } from '@/types/picks';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-const POSITIONS = ['ALL', 'QB', 'RB', 'WR', 'TE', 'DST', 'K'];
+const POSITIONS = ['ALL', 'QB', 'RB', 'WR', 'TE', 'FLEX', 'DST', 'K'];
+
+/** Filters that stand for more than one position, so the board can be read the way a lineup slot is. */
+const POSITION_GROUPS: Record<string, string[]> = {
+  FLEX: ['RB', 'WR', 'TE'],
+};
 
 type SortKey = 'rank' | 'full_name' | 'position' | 'team' | 'tier' | 'adp' | 'delta' | 'points' | 'par' | 'dynasty';
 
@@ -64,8 +69,13 @@ export function PickBoard({ draftId, players, canRecord, currentPick, recording,
     const search = filterText.trim().toLowerCase();
 
     return players.filter((player) => {
-      if (position !== 'ALL' && player.position?.toUpperCase() !== position) {
-        return false;
+      if (position !== 'ALL') {
+        const group = POSITION_GROUPS[position];
+        const playerPosition = player.position?.toUpperCase();
+
+        if (group ? !group.includes(playerPosition ?? '') : playerPosition !== position) {
+          return false;
+        }
       }
 
       if (!search) {

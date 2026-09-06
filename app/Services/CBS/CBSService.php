@@ -4,7 +4,9 @@ namespace App\Services\CBS;
 
 use App\Enums\Datum;
 use App\Services\CBS\Data\FantasyNFL\CredentialsData;
+use App\Services\CBS\Formatters\DraftPicksFormatter;
 use App\Services\CBS\Formatters\FantasyLeagueFormatter;
+use App\Services\CBS\Helpers\PlayerLookup;
 use App\Services\CBS\Resources\FantasyNFL\GetDetails;
 use App\Services\CBS\Resources\FantasyNFL\GetDraftConfig;
 use App\Services\CBS\Resources\FantasyNFL\GetDraftOrder;
@@ -53,6 +55,21 @@ class CBSService
     public function getFantasyDraftResults(array|CredentialsData $credentials)
     {
         return $this->resource(GetDraftResults::class, $credentials);
+    }
+
+    /**
+     * The picks CBS has recorded so far, ready for the draft room to write.
+     *
+     * The raw results carry the whole order, chat and per-team clocks; a live
+     * draft only wants the picks that have actually been made.
+     *
+     * @return array<string, mixed>
+     */
+    public function getFantasyDraftPicks(array|CredentialsData $credentials): array
+    {
+        return DraftPicksFormatter::from(
+            (array) $this->getFantasyDraftResults($credentials)
+        );
     }
 
     public function getFantasyKeepers(array|CredentialsData $credentials)
@@ -108,6 +125,19 @@ class CBSService
         }
 
         return $data;
+    }
+
+    /**
+     * What a CBS player should be resolved by, which is not always the name
+     * CBS printed: a team defense arrives as its nickname alone.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    public function playerLookup(array $data): array
+    {
+        return PlayerLookup::of($data);
     }
 
     private function resource(string $class, array|CredentialsData $credentials)

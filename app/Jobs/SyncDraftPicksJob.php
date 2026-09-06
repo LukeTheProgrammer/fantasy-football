@@ -2,9 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Enums\FantasyPlatforms;
 use App\Events\DraftPicksSynced;
 use App\Events\DraftSyncStopped;
 use App\Facades\Auction;
+use App\Facades\Pick;
 use App\Models\Draft;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -15,8 +17,8 @@ use Illuminate\Support\Str;
 use Throwable;
 
 /**
- * The draft sync loop: pull ESPN, write what is new, tell the room, then queue
- * itself again a few seconds later.
+ * The draft sync loop: pull the platform the league is on, write what is new,
+ * tell the room, then queue itself again a few seconds later.
  *
  * A loop rather than the scheduler because the scheduler cannot run more often
  * than once a minute, and a draft moves faster than that.
@@ -26,12 +28,12 @@ class SyncDraftPicksJob implements ShouldQueue
     use Queueable;
 
     /**
-     * Seconds between polls of ESPN.
+     * Seconds between polls of the platform.
      */
     public const INTERVAL = 10;
 
     /**
-     * Consecutive ESPN failures tolerated before the loop gives up.
+     * Consecutive platform failures tolerated before the loop gives up.
      */
     public const MAX_FAILURES = 5;
 
@@ -47,8 +49,8 @@ class SyncDraftPicksJob implements ShouldQueue
      * The cache key naming the loop that is allowed to be running.
      *
      * Each start writes a fresh token, so pressing start twice does not leave
-     * two loops polling ESPN: the older one sees a token that is no longer its
-     * own on its next tick and stops.
+     * two loops polling the platform: the older one sees a token that is no
+     * longer its own on its next tick and stops.
      */
     public static function tokenKey(Draft $draft): string
     {
@@ -84,7 +86,7 @@ class SyncDraftPicksJob implements ShouldQueue
         }
 
         try {
-            $result = Auction::syncEspnPicks($draft);
+            $result = self::sync($draft);
         } catch (Throwable $e) {
             $this->handleFailure($draft, $e);
 
@@ -116,8 +118,25 @@ class SyncDraftPicksJob implements ShouldQueue
     }
 
     /**
-     * An expired cookie or a blip at ESPN must not end the sync in the middle
-     * of a draft, so failures are counted and only a run of them stops it.
+     * One poll of whichever platform the league is drafting on.
+     *
+     * ESPN publishes nothing usable through its board view while an auction is
+     * running, so its picks arrive over the draft socket and this loop only
+     * fills in behind it. CBS publishes each pick as it is made, so a pick
+     * draft on CBS is kept current by this poll alone.
+     *
+     * @return array<string, mixed>
+     */
+    public static function sync(Draft $draft): array
+    {
+        return $draft->league->platform === FantasyPlatforms::CBS->value
+            ? Pick::syncCbsPicks($draft)
+            : Auction::syncEspnPicks($draft);
+    }
+
+    /**
+     * An expired cookie or a blip at the platform must not end the sync in the
+     * middle of a draft, so failures are counted and only a run of them stops it.
      */
     private function handleFailure(Draft $draft, Throwable $e): void
     {

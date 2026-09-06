@@ -40,7 +40,7 @@ export function PickRosters({ draftId, onSelectTeam, roster, rosters }: PickRost
             <SelectContent>
               {rosters.map((team) => (
                 <SelectItem key={team.league_member_id} value={String(team.league_member_id)}>
-                  {team.team_name} - {roster?.owner_name ?? '\u00a0'}
+                  {team.team_name} - {team.owner_name}
                 </SelectItem>
               ))}
             </SelectContent>

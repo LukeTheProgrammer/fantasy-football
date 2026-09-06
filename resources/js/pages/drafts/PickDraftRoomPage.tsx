@@ -1,8 +1,10 @@
 import { Heading } from '@/common/heading/Heading';
+import { DraftSyncToggle } from '@/modules/drafts/components/DraftSyncToggle';
 import { OnTheClock } from '@/modules/drafts/components/pick/OnTheClock';
 import { PickBoard } from '@/modules/drafts/components/pick/PickBoard';
 import { PickRosters } from '@/modules/drafts/components/pick/PickRosters';
 import { getDraftUserMember } from '@/modules/drafts/helpers/getDraftUserMember';
+import { useDraftPickStream } from '@/modules/drafts/helpers/useDraftPickStream';
 import { AppLayout } from '@/pages/layouts/AppLayout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type Draft } from '@/types/models';
@@ -22,6 +24,9 @@ interface PickDraftRoomProps extends PageProps {
 export default function PickDraftRoom({ clock, draft, players, rosters }: PickDraftRoomProps) {
   const { auth } = usePage<SharedData>().props;
   const [recording, setRecording] = useState(false);
+  // Picks made on the platform arrive here while the sync loop is running, and
+  // reload the board rather than being patched into it.
+  const sync = useDraftPickStream(draft.id);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
 
   const breadcrumbs: BreadcrumbItem[] = [
@@ -55,7 +60,7 @@ export default function PickDraftRoom({ clock, draft, players, rosters }: PickDr
   };
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <AppLayout breadcrumbs={breadcrumbs} actionItem={<DraftSyncToggle draft={draft} sync={sync} />}>
       <Head title={`${draft.league.name} Draft Room`} />
 
       <div className="flex-1 space-y-2 p-6">

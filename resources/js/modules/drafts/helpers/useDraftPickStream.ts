@@ -25,7 +25,7 @@ interface SyncStoppedPayload {
 }
 
 /**
- * Picks arriving from ESPN.
+ * Picks arriving from the league's platform.
  *
  * The board is built server side, so a pick is applied by asking the page for
  * the props it changed rather than by patching state here: one place decides
@@ -51,7 +51,9 @@ export function useDraftPickStream(draftId: number): DraftSyncState {
         stopped: null,
       }));
 
-      router.reload({ only: ['draft', 'players', 'market', 'teams', 'rosters', 'budget'] });
+      // The pick room reads a clock the auction room has no prop for, and
+      // Inertia ignores the names a page does not publish.
+      router.reload({ only: ['clock', 'draft', 'players', 'market', 'teams', 'rosters', 'budget'] });
     },
     [draftId],
   );

@@ -1,10 +1,10 @@
 import { Heading } from '@/common/heading/Heading';
 import { DraftSidePanel } from '@/modules/drafts/components/auction/DraftSidePanel';
-import { DraftSyncToggle } from '@/modules/drafts/components/auction/DraftSyncToggle';
 import { MarketPulse } from '@/modules/drafts/components/auction/MarketPulse';
 import { NominatedPlayer } from '@/modules/drafts/components/auction/NominatedPlayer';
 import { PlayerBoard } from '@/modules/drafts/components/auction/PlayerBoard';
 import { TeamBudgets } from '@/modules/drafts/components/auction/TeamBudgets';
+import { DraftSyncToggle } from '@/modules/drafts/components/DraftSyncToggle';
 import { useDraftNominationStream } from '@/modules/drafts/helpers/useDraftNominationStream';
 import { useDraftPickStream } from '@/modules/drafts/helpers/useDraftPickStream';
 import { usePersistentState } from '@/modules/drafts/helpers/usePersistentState';
