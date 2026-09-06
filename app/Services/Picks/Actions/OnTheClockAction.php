@@ -88,14 +88,22 @@ class OnTheClockAction
             $slots = [];
 
             foreach ($chunk as $slotIndex => $externalId) {
+                $pick = $taken->get($slotIndex + 1);
+
                 $slots[] = [
                     ...$this->slot($slotIndex, $members->get($externalId), $draft),
                     // A made pick is shown as the player who was taken, so the
                     // board reads as a record of the round rather than only a
                     // running order.
-                    'is_made'    => $taken->has($slotIndex + 1),
+                    'is_made'    => $pick instanceof DraftPick,
                     'is_current' => $slotIndex === $next,
-                    'player'     => $this->player($taken->get($slotIndex + 1)),
+                    // A slot given up is used but empty, which is not the same
+                    // as a slot still waiting on its team.
+                    'is_skipped' => $pick instanceof DraftPick && $pick->player_id === null,
+                    // Carried beside the player because a passed slot has no
+                    // player to undo it from and still has to be undoable.
+                    'pick_id' => $pick?->id,
+                    'player'  => $this->player($pick),
                 ];
             }
 
@@ -126,7 +134,7 @@ class OnTheClockAction
      */
     private function player(?DraftPick $pick): ?array
     {
-        if (!$pick instanceof DraftPick) {
+        if (!$pick instanceof DraftPick || $pick->player_id === null) {
             return null;
         }
 

@@ -73,6 +73,17 @@ class AuctionService
     }
 
     /**
+     * Projected points and points above replacement, keyed by player id.
+     *
+     * Lives here rather than in the pick domain because it is the same
+     * calculation the auction prices players with, one step before the money.
+     */
+    public function pointsAboveReplacement(Draft $draft): Collection
+    {
+        return (new CalculateProjectedValuesAction)->pointsAboveReplacement($draft);
+    }
+
+    /**
      * Every draftable player with both value estimates attached.
      */
     public function cheatSheet(Draft $draft): Collection

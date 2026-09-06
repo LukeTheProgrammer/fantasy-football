@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PositionBadge } from '@/modules/players/components/PositionBadge';
-import { type PlayerProfile } from '@/types/picks';
+import { type PlayerProfile, type PlayerSeason } from '@/types/picks';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -51,7 +52,7 @@ export function PlayerDialog({ draftId, name, playerId }: PlayerDialogProps) {
         </button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             {profile?.headshot && <img src={profile.headshot} alt="" className="size-12 rounded-full bg-muted object-cover" />}
@@ -77,18 +78,19 @@ export function PlayerDialog({ draftId, name, playerId }: PlayerDialogProps) {
 
         {profile && (
           <div className="space-y-4">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-6 gap-2">
               <Figure label="Rank" value={profile.ranking?.rank ? String(profile.ranking.rank) : '—'} />
               <Figure label="Tier" value={profile.ranking?.tier ? String(profile.ranking.tier) : '—'} />
-              <Figure label="ADP" value={profile.ranking?.adp ?? '—'} />
+              <Figure label="ADP" value={profile.ranking?.adp ? String(profile.ranking.adp) : '—'} />
               <Figure label="ADV" value={profile.ranking?.adv ? `$${profile.ranking.adv}` : '—'} />
+              <Figure label="Proj" value={profile.projection ? String(profile.projection.points) : '—'} />
+              <Figure label="PAR" value={profile.projection?.par !== null && profile.projection !== null ? String(profile.projection.par) : '—'} />
             </div>
+
+            <SeasonTable position={profile.position} seasons={profile.seasons} />
 
             <dl className="w-full">
               <Detail label="Age" value={profile.age ? String(profile.age) : null} />
-              <Detail label="College" value={profile.college} />
-              <Detail label="Height" value={profile.height} />
-              <Detail label="Weight" value={profile.weight} />
               <Detail label="Team" value={profile.owner ? `${profile.owner.team_name} (${profile.owner.source})` : 'Undrafted'} />
             </dl>
           </div>
@@ -117,5 +119,81 @@ function Detail({ label, value }: { label: string; value: string | null }) {
       <dt className="text-muted-foreground">{label}</dt>
       <dd>{value}</dd>
     </div>
+  );
+}
+
+/**
+ * The last few seasons, most recent first, showing only the columns his
+ * position is actually judged on: nobody argues about a receiver's
+ * interceptions, and the row is unreadable once it carries every stat.
+ */
+function SeasonTable({ position, seasons }: { position: string | null; seasons: PlayerSeason[] }) {
+  if (seasons.length === 0) {
+    return <p className="text-sm text-muted-foreground">No NFL seasons on record.</p>;
+  }
+
+  const pos = position?.toUpperCase() ?? '';
+  const passing = pos === 'QB';
+  const receiving = ['RB', 'WR', 'TE'].includes(pos);
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Year</TableHead>
+          <TableHead>Tm</TableHead>
+          <TableHead title="Games played">G</TableHead>
+          {passing && (
+            <>
+              <TableHead title="Passing yards">PaYd</TableHead>
+              <TableHead title="Passing touchdowns">PaTD</TableHead>
+              <TableHead title="Interceptions">Int</TableHead>
+            </>
+          )}
+          <TableHead title="Carries">Car</TableHead>
+          <TableHead title="Rushing yards">RuYd</TableHead>
+          <TableHead title="Rushing touchdowns">RuTD</TableHead>
+          {receiving && (
+            <>
+              <TableHead title="Targets">Tgt</TableHead>
+              <TableHead title="Receptions">Rec</TableHead>
+              <TableHead title="Receiving yards">ReYd</TableHead>
+              <TableHead title="Receiving touchdowns">ReTD</TableHead>
+            </>
+          )}
+          <TableHead title="Fantasy points in this league's scoring">Pts</TableHead>
+          <TableHead title="Fantasy points per game played">PPG</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {seasons.map((season) => (
+          <TableRow key={season.season}>
+            <TableCell className="font-medium tabular-nums">{season.season}</TableCell>
+            <TableCell className="text-muted-foreground">{season.team ?? '—'}</TableCell>
+            <TableCell className="tabular-nums">{season.games}</TableCell>
+            {passing && (
+              <>
+                <TableCell className="tabular-nums">{season.passing_yards}</TableCell>
+                <TableCell className="tabular-nums">{season.passing_tds}</TableCell>
+                <TableCell className="tabular-nums">{season.interceptions}</TableCell>
+              </>
+            )}
+            <TableCell className="tabular-nums">{season.rushing_carries}</TableCell>
+            <TableCell className="tabular-nums">{season.rushing_yards}</TableCell>
+            <TableCell className="tabular-nums">{season.rushing_tds}</TableCell>
+            {receiving && (
+              <>
+                <TableCell className="tabular-nums">{season.targets}</TableCell>
+                <TableCell className="tabular-nums">{season.receptions}</TableCell>
+                <TableCell className="tabular-nums">{season.receiving_yards}</TableCell>
+                <TableCell className="tabular-nums">{season.receiving_tds}</TableCell>
+              </>
+            )}
+            <TableCell className="tabular-nums">{season.points}</TableCell>
+            <TableCell className="font-medium tabular-nums">{season.points_per_game ?? '—'}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

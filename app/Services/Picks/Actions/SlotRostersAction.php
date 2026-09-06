@@ -34,7 +34,9 @@ class SlotRostersAction
             ->sortBy(fn (array $entry) => $ranks[$entry['player_id']] ?? PHP_INT_MAX)
             ->groupBy('league_member_id');
 
-        $picks = $draft->picks->groupBy('league_member_id');
+        // A passed slot bought nobody, so it is not part of any squad and has
+        // no running order entry to show.
+        $picks = $draft->picks->whereNotNull('player_id')->groupBy('league_member_id');
 
         return $draft->league->members->map(function (LeagueMember $member) use ($template, $squads, $picks) {
             return [
@@ -96,7 +98,7 @@ class SlotRostersAction
                 'source'           => 'Keeper',
             ]);
 
-        $picks = $draft->picks->map(fn ($pick) => [
+        $picks = $draft->picks->whereNotNull('player_id')->map(fn ($pick) => [
             'league_member_id' => $pick->league_member_id,
             'player_id'        => $pick->player_id,
             'pick_id'          => $pick->id,

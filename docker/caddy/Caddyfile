@@ -23,3 +23,16 @@ http://{$CADDY_SITE_ADDRESS:laravel.test}, https://{$CADDY_SITE_ADDRESS:laravel.
 		header_up X-Forwarded-Host {host}
 	}
 }
+
+# Vite's dev server speaks plain HTTP, so an HTTPS page blocks its module
+# scripts as mixed content. Terminate TLS here too and hand the request to
+# Vite in the clear. Port 5173 stays published by the app container for the
+# plain-HTTP case (the LAN box), so this listens on its own port.
+https://{$CADDY_SITE_ADDRESS:laravel.test}:{$VITE_TLS_PORT:5174} {
+	tls internal
+
+	reverse_proxy laravel.test:5173 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+	}
+}

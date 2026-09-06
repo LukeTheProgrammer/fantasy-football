@@ -14,6 +14,14 @@ export default defineConfig(({ mode }) => {
   // the dev server.
   const hmrHost = env.VITE_HMR_HOST || 'localhost';
 
+  // Caddy serves the app over TLS on some machines and plain HTTP on others.
+  // When the page is https, the browser blocks Vite's http module scripts as
+  // mixed content, so assets and the HMR socket have to be reached through
+  // Caddy's TLS listener for the dev server instead of the dev server itself.
+  const isSecure = (env.APP_URL || '').startsWith('https://');
+  const tlsPort = Number(env.VITE_TLS_PORT || 5174);
+  const clientPort = isSecure ? tlsPort : 5173;
+
   // Vite only serves assets to localhost by default, so the same host the
   // browser loads the app from has to be allowed explicitly or every module
   // request is blocked by CORS. The scheme is left open because the app is
@@ -27,9 +35,14 @@ export default defineConfig(({ mode }) => {
       cors: {
         origin: [defaultAllowedOrigins, hmrOrigin, ...(env.APP_URL ? [env.APP_URL] : [])],
       },
+      // The origin is what Laravel writes into the hot file, so it is the
+      // URL the browser uses for every asset.
+      origin: `${isSecure ? 'https' : 'http'}://${hmrHost}:${clientPort}`,
       hmr: {
         host: hmrHost,
         port: 5173,
+        protocol: isSecure ? 'wss' : 'ws',
+        clientPort,
       },
     },
     plugins: [

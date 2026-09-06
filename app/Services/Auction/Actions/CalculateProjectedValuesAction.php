@@ -99,6 +99,51 @@ class CalculateProjectedValuesAction
     }
 
     /**
+     * Projected points and points above replacement for every projected
+     * player, keyed by player id.
+     *
+     * The same two numbers the dollar values are built from, handed over
+     * before they are turned into money, because a pick draft bids picks
+     * rather than dollars and the surplus itself is what it is choosing on.
+     *
+     * Projections are weekly, so both figures are per week.
+     *
+     * A position the lineup never starts has no replacement level and so no
+     * meaningful surplus: measured against nothing, every point a player
+     * scores reads as a point above replacement, and a kicker tops the board.
+     * Those come back with a null par rather than a flattering one.
+     *
+     * @return Collection<int, array<string, float|null>>
+     */
+    public function pointsAboveReplacement(Draft $draft, ?Collection $points = null): Collection
+    {
+        $league = $draft->league;
+
+        $points ??= $this->projectedPoints($draft);
+
+        if ($points->isEmpty()) {
+            return collect();
+        }
+
+        $replacement = $this->replacementLevels(
+            $points,
+            $league->settings?->roster_positions ?? [],
+            max(1, $league->members->count())
+        );
+
+        return $points->mapWithKeys(function ($player) use ($replacement) {
+            $level = $replacement[$this->pricingGroup($player['position'])] ?? null;
+
+            return [
+                $player['player_id'] => [
+                    'points' => round($player['points'], 1),
+                    'par'    => $level === null ? null : round($player['points'] - $level, 1),
+                ],
+            ];
+        });
+    }
+
+    /**
      * What a kicker or a defense goes for.
      *
      * Spreading the budget across surplus points assumes a point is worth the
